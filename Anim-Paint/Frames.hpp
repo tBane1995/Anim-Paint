@@ -24,14 +24,35 @@ public:
 	void setPosition(sf::Vector2f position) {
 		Dialog::setPosition(position);
 
-		first_btn.setPosition(position + sf::Vector2f(16, 48));
-		prev_btn.setPosition(position + sf::Vector2f(16+32, 48));
-		next_btn.setPosition(position + sf::Vector2f(16+96, 48));
-		last_btn.setPosition(position + sf::Vector2f(16+128, 48));
+		first_btn.setPosition(position + sf::Vector2f(dialog_padding, 32 + dialog_padding));
+		prev_btn.setPosition(position + sf::Vector2f(dialog_padding +32, 32 + dialog_padding));
+		next_btn.setPosition(position + sf::Vector2f(getSize().x - dialog_padding - 64, 32 + dialog_padding));
+		last_btn.setPosition(position + sf::Vector2f(getSize().x - dialog_padding - 32, 32 + dialog_padding));
 	}
 
 	void cursorHover() {
 		Dialog::cursorHover();
+
+		if (first_btn.getGlobalBounds().contains(worldMousePosition))
+			first_btn.setTexture(*getTexture(L"tex\\frames\\first_hover.png")->texture);
+		else
+			first_btn.setTexture(*getTexture(L"tex\\frames\\first.png")->texture);
+
+		if (prev_btn.getGlobalBounds().contains(worldMousePosition))
+			prev_btn.setTexture(*getTexture(L"tex\\frames\\prev_hover.png")->texture);
+		else
+			prev_btn.setTexture(*getTexture(L"tex\\frames\\prev.png")->texture);
+
+		if (next_btn.getGlobalBounds().contains(worldMousePosition))
+			next_btn.setTexture(*getTexture(L"tex\\frames\\next_hover.png")->texture);
+		else
+			next_btn.setTexture(*getTexture(L"tex\\frames\\next.png")->texture);
+
+		if (last_btn.getGlobalBounds().contains(worldMousePosition))
+			last_btn.setTexture(*getTexture(L"tex\\frames\\last_hover.png")->texture);
+		else
+			last_btn.setTexture(*getTexture(L"tex\\frames\\last.png")->texture);
+
 	}
 
 	void handleEvent(sf::Event& event) {

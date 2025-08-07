@@ -11,6 +11,28 @@ public:
 		this->size = size;
 		img.create(size.x, size.y, canvas_color);
 
+		sf::Color c1 = sf::Color(64, 64, 64);
+		sf::Color c2 = sf::Color(96, 96, 96);
+
+		for (int y = 0; y < size.y; y++) {
+			for (int x = 0; x < size.x; x++) {
+
+				int xx = x / 8;
+				int yy = y / 8;
+				sf::Color c;
+				if (yy % 2 == 0) {
+					(xx % 2 == 0) ? c = c1 : c = c2;
+				}
+				else {
+					(xx % 2 == 1) ? c = c1 : c = c2;
+				}
+
+				img.setPixel(x, y, c);
+
+				
+			}
+		}
+
 	}
 
 	~Canvas() { }

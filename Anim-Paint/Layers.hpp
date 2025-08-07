@@ -20,13 +20,20 @@ public:
 		Dialog::setPosition(position);
 
 		for (int i = 0; i < visibles.size(); i++) {
-			visibles[i].setPosition(position + sf::Vector2f(8, 32 + 8 + i * 32 + i));
+			visibles[i].setPosition(position + sf::Vector2f(dialog_padding, 32 + dialog_padding + i * 32));
 		}
 		
 	}
 
 	void cursorHover() {
 		Dialog::cursorHover();
+
+		for (auto& v : visibles) {
+			if (v.getGlobalBounds().contains(worldMousePosition))
+				v.setTexture(*getTexture(L"tex\\layers\\visible_hover.png")->texture);
+			else
+				v.setTexture(*getTexture(L"tex\\layers\\visible.png")->texture);
+		}
 	}
 
 	void handleEvent(sf::Event& event) {

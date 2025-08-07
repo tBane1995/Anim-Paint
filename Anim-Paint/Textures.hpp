@@ -34,12 +34,20 @@ void loadTexture(std::wstring path) {
 }
 
 void loadTextures() {
+	// dialog - frames
 	loadTexture(L"tex\\frames\\first.png");
 	loadTexture(L"tex\\frames\\prev.png");
 	loadTexture(L"tex\\frames\\next.png");
 	loadTexture(L"tex\\frames\\last.png");
 
+	loadTexture(L"tex\\frames\\first_hover.png");
+	loadTexture(L"tex\\frames\\prev_hover.png");
+	loadTexture(L"tex\\frames\\next_hover.png");
+	loadTexture(L"tex\\frames\\last_hover.png");
+
+	// dialog - layers
 	loadTexture(L"tex\\layers\\visible.png");
+	loadTexture(L"tex\\layers\\visible_hover.png");
 }
 
 #endif
