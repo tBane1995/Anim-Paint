@@ -1,4 +1,4 @@
-# Simple-Anim-Paint
+# Anim Paint
 
 ## Spis treści
 - [Opis](#opis)
@@ -8,7 +8,7 @@
 - [Licencja](#licencja)
 
 ## Opis
-**Simple-Anim-Paint**
+**Anim Paint**
 
 ## Zrzuty ekranu
 ![Zrzut ekranu](screenshots/01.png)
