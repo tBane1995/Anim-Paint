@@ -13,9 +13,9 @@ target_sources(${PROJECT_NAME} PRIVATE
     Anim-Paint/Button.hpp
     Anim-Paint/Checkbox.hpp
     Anim-Paint/Dialog.hpp
-    Anim-Paint/Canvas.hpp
     Anim-Paint/Frames.hpp
     Anim-Paint/Layers.hpp
+    Anim-Paint/Canvas.hpp
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

@@ -14,6 +14,9 @@ public:
 	sf::Vector2f size;
 	sf::Vector2f position;
 
+	//std::vector < sf::Texture* > canvas_textures;
+	//std::vector < sf::Sprite > canvas_sprites;
+
 	int pixel_size;
 
 	float zoom;			// in percentage
@@ -38,6 +41,19 @@ public:
 		this->offset = sf::Vector2f(0, 0);
 
 		generateBackground();
+
+		//canvas_textures.clear();
+		//canvas_sprites.clear();
+
+		for (auto& layer : layers->layers) {
+			//sf::Texture* tex = new sf::Texture();
+			//tex->loadFromImage(layer->image);
+			//canvas_textures.push_back(tex);
+
+			//sf::Sprite spr(*tex);
+			//canvas_sprites.push_back(spr);
+		}
+
 		setPosition((sf::Vector2f(window->getSize()) - getZoomedSize()) / 2.0f);
 	}
 
@@ -63,10 +79,10 @@ public:
 
 		bg_image = sf::Image();
 		sf::Vector2f s = getZoomedSize();
-		bg_image.create(s.x, s.y, canvas_color);
+		bg_image.create(s.x, s.y, sf::Color::Transparent);
 
-		sf::Color c1 = sf::Color(64, 64, 64);
-		sf::Color c2 = sf::Color(96, 96, 96);
+		sf::Color c1 = canvas_color1;
+		sf::Color c2 = canvas_color2;
 
 		for (int y = 0; y < s.y; y++) {
 			for (int x = 0; x < s.x; x++) {
@@ -92,6 +108,13 @@ public:
 	void setPosition(sf::Vector2f position) {
 		this->position = position;
 		bg_sprite.setPosition(position);
+
+		/*
+		for (auto& sprite : canvas_sprites) {
+			sprite.setPosition(position);
+		}
+		*/
+
 	}
 
 
@@ -104,16 +127,12 @@ public:
 	void setPixel(sf::Vector2f worldMousePosition, sf::Color color) {
 
 		sf::Vector2f s = (worldMousePosition - bg_sprite.getPosition());
-		s.x = int(s.x) / 8 * 8;
-		s.y = int(s.y) / 8 * 8;
+		s.x = int(s.x) / (zoom * zoom_delta);
+		s.y = int(s.y) / (zoom * zoom_delta);
 
-		for (int y = 0; y < pixel_size; y++) {
-			for (int x = 0; x < pixel_size; x++) {
-				bg_image.setPixel(s.x+x, s.y+y, color);
-			}
-		}
+		//std::cout << s.x << ", " << s.y << "\n";
 
-		updateBackgroundSprite();
+		layers->layers[layers->currentLayer]->image.setPixel(s.x, s.y, color);
 
 	}
 
@@ -175,6 +194,21 @@ public:
 	void draw() {
 		
 		window->draw(bg_sprite);
+		
+		
+		for (auto& layer : layers->layers) {
+
+			if (layer->visibling->value == 0) {
+				sf::Texture tex;
+				tex.loadFromImage(layer->image);
+
+				sf::Sprite spr(tex);
+				spr.setPosition(bg_sprite.getPosition());
+				spr.setScale(zoom * zoom_delta, zoom * zoom_delta);
+				window->draw(spr);
+			}
+		}
+		
 	}
 
 };
