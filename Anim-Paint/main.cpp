@@ -42,6 +42,8 @@ int main() {
 		// cursor hovering
 		ElementGUI_hovered = nullptr;
 
+		canvas->cursorHover();
+
 		for (auto& dialog : dialogs)
 			dialog->cursorHover();
 
@@ -57,14 +59,20 @@ int main() {
 				window->close();
 
 			if (event.type == sf::Event::MouseButtonPressed) {
+
+				canvas->handleEvent(event);
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
 			}
 			else if (event.type == sf::Event::MouseButtonReleased) {
+
+				canvas->handleEvent(event);
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
 			}
 			else if(event.type == sf::Event::MouseMoved)
+
+				canvas->handleEvent(event);
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
 		}

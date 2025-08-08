@@ -12,12 +12,14 @@ public:
 	sf::Sprite bg_sprite;
 
 	sf::Vector2f size;
+	int pixel_size;
 	float zoom;	// in percentage
 	float zoom_delta;
 
 	Canvas(sf::Vector2f size) : ElementGUI() {
 		this->size = size;
 
+		this->pixel_size = 8.0f;
 		this->zoom = 1.0f;
 		this->zoom_delta = 16.0f;
 
@@ -44,8 +46,8 @@ public:
 		for (int y = 0; y < s.y; y++) {
 			for (int x = 0; x < s.x; x++) {
 
-				int xx = x / 8;
-				int yy = y / 8;
+				int xx = x / pixel_size;
+				int yy = y / pixel_size;
 
 				sf::Color c;
 
@@ -66,11 +68,49 @@ public:
 		bg_sprite.setPosition(sf::Vector2f(window->getSize()) / 2.0f - s / 2.0f);
 	}
 
+	void setPixel(sf::Vector2f worldMousePosition, sf::Color color) {
+
+		float whole_zoom = zoom_delta * zoom;
+		sf::Vector2f s = (worldMousePosition - bg_sprite.getPosition());
+		s.x = int(s.x) / 8 * 8;
+		s.y = int(s.y) / 8 * 8;
+		std::cout << s.x << ", " << s.y << "\n";
+
+		for (int y = 0; y < pixel_size; y++) {
+			for (int x = 0; x < pixel_size; x++) {
+				bg_image.setPixel(s.x+x, s.y+y, color);
+			}
+		}
+
+		
+
+		s = sf::Vector2f(int(size.x * whole_zoom), int(size.y * whole_zoom));
+		bg_texture = sf::Texture();
+		bg_texture.loadFromImage(bg_image);
+
+		bg_sprite = sf::Sprite(bg_texture);
+		bg_sprite.setPosition(sf::Vector2f(window->getSize()) / 2.0f - s / 2.0f);
+
+	}
+
 	void cursorHover() {
+		if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
+			ElementGUI_hovered = this;
+		}
 	}
 
 	void handleEvent(sf::Event& event) {
+		if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
+			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+				ElementGUI_pressed = this;
 
+				setPixel(worldMousePosition, sf::Color::Black);
+			}
+
+			if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+				setPixel(worldMousePosition, sf::Color::Black);
+			}
+		}
 	}
 
 	void update() {
