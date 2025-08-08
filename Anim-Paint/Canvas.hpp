@@ -106,7 +106,6 @@ public:
 		sf::Vector2f s = (worldMousePosition - bg_sprite.getPosition());
 		s.x = int(s.x) / 8 * 8;
 		s.y = int(s.y) / 8 * 8;
-		std::cout << s.x << ", " << s.y << "\n";
 
 		for (int y = 0; y < pixel_size; y++) {
 			for (int x = 0; x < pixel_size; x++) {
@@ -132,7 +131,7 @@ public:
 				setPixel(worldMousePosition, sf::Color::Black);
 			}
 
-			if (event.type == sf::Event::MouseMoved && event.mouseButton.button == sf::Mouse::Left) {
+			if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 				setPixel(worldMousePosition, sf::Color::Black);
 			}
 
@@ -164,7 +163,12 @@ public:
 
 	void update() {
 		if (isMoved == true) {
-			setPosition(worldMousePosition + offset);
+
+			float x = std::clamp((worldMousePosition + offset).x, 0.0f, window->getSize().x - bg_sprite.getGlobalBounds().width);
+			float y = std::clamp((worldMousePosition + offset).y, 0.0f, window->getSize().y - bg_sprite.getGlobalBounds().height);
+
+			setPosition(sf::Vector2f(x,y));
+			
 		}
 	}
 

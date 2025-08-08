@@ -20,7 +20,7 @@ void createDialogs() {
 	dialogs.push_back(new Frames(L"Frames", sf::Vector2f(192, 32 + 32 + dialog_padding * 2), dialogs.back()->getPosition() + sf::Vector2f(0,dialogs.back()->getSize().y + dialog_margin)));
 	dialogs.push_back(new Layers(L"Layers", sf::Vector2f(160, 32 + 4 * 32 + dialog_padding*2), sf::Vector2f(window->getSize().x - 160 - dialog_margin, dialogs.back()->getPosition().y + dialogs.back()->getSize().y + dialog_margin)));
 	dialogs.push_back(new Dialog(L"Tools", sf::Vector2f(128, 256), sf::Vector2f(dialog_margin, dialog_margin)));
-	dialogs.push_back(new Dialog(L"Colors", sf::Vector2f(128, 256), sf::Vector2f(dialog_margin, window->getSize().y - 256 - dialog_margin)));
+	dialogs.push_back(new Dialog(L"Colors", sf::Vector2f(128, 256), dialogs.back()->getPosition() + sf::Vector2f(0, dialogs.back()->getSize().y + dialog_margin)));
 
 }
 
