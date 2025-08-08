@@ -48,6 +48,7 @@ int main() {
 			dialog->cursorHover();
 
 		// Element GUI update before handle events
+		canvas->update();
 		for (auto& dialog : dialogs)
 			dialog->update();
 		// handle events

@@ -12,6 +12,7 @@ public:
 	sf::Sprite bg_sprite;
 
 	sf::Vector2f size;
+	sf::Vector2f position;
 
 	int pixel_size;
 
@@ -19,6 +20,9 @@ public:
 	float zoom_delta;	// const
 	float min_zoom;
 	float max_zoom;
+
+	bool isMoved;
+	sf::Vector2f offset;	// to movements of canvas
 
 	Canvas(sf::Vector2f size) : ElementGUI() {
 		this->size = size;
@@ -30,28 +34,35 @@ public:
 		this->min_zoom = 0.25;
 		this->max_zoom = 2.0f;
 
-		generateBackground();
+		this->isMoved = false;
+		this->offset = sf::Vector2f(0, 0);
 
+		generateBackground();
+		setPosition((sf::Vector2f(window->getSize()) - getZoomedSize()) / 2.0f);
 	}
 
 	~Canvas() { }
 
+	sf::Vector2f getZoomedSize() {
+		return sf::Vector2f(int(this->size.x * zoom_delta * zoom), int(this->size.y * zoom_delta * zoom));
+	}
+
 	void updateBackgroundSprite() {
 
-		sf::Vector2f s = sf::Vector2f(int(size.x * zoom_delta * zoom), int(size.y * zoom_delta * zoom));
+		sf::Vector2f size = sf::Vector2f(int(this->size.x * zoom_delta * zoom), int(this->size.y * zoom_delta * zoom));
 
 		bg_texture = sf::Texture();
 		bg_texture.loadFromImage(bg_image);
 
 		bg_sprite = sf::Sprite(bg_texture);
-		bg_sprite.setPosition(sf::Vector2f(window->getSize()) / 2.0f - s / 2.0f);
+		setPosition(position);
+
 	}
 
 	void generateBackground() {
 
 		bg_image = sf::Image();
-		float whole_zoom = zoom_delta * zoom;
-		sf::Vector2f s = sf::Vector2f(int(size.x * whole_zoom), int(size.y * whole_zoom));
+		sf::Vector2f s = getZoomedSize();
 		bg_image.create(s.x, s.y, canvas_color);
 
 		sf::Color c1 = sf::Color(64, 64, 64);
@@ -78,9 +89,11 @@ public:
 		updateBackgroundSprite();
 	}
 
-	float getZoom() {
-		return this->zoom;
+	void setPosition(sf::Vector2f position) {
+		this->position = position;
+		bg_sprite.setPosition(position);
 	}
+
 
 	void setZoom(float zoom) {
 		this->zoom = zoom;
@@ -90,7 +103,6 @@ public:
 
 	void setPixel(sf::Vector2f worldMousePosition, sf::Color color) {
 
-		float whole_zoom = zoom_delta * zoom;
 		sf::Vector2f s = (worldMousePosition - bg_sprite.getPosition());
 		s.x = int(s.x) / 8 * 8;
 		s.y = int(s.y) / 8 * 8;
@@ -120,28 +132,40 @@ public:
 				setPixel(worldMousePosition, sf::Color::Black);
 			}
 
-			if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+			if (event.type == sf::Event::MouseMoved && event.mouseButton.button == sf::Mouse::Left) {
 				setPixel(worldMousePosition, sf::Color::Black);
 			}
 
+			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Middle) {
+				isMoved = true;
+				offset = bg_sprite.getPosition() - worldMousePosition;
+			}
+
+			if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Middle) {
+				isMoved = false;
+			}
+
 			if (event.type == sf::Event::MouseWheelScrolled) {
-				float zoom = getZoom();
+				sf::Vector2f mouseBeforeZoom = worldMousePosition - position;
+				float oldZoom = zoom;
+
 				zoom += 0.25f * event.mouseWheelScroll.delta;
+				zoom = std::clamp(zoom, min_zoom, max_zoom);
 
-				if (zoom > max_zoom)
-					zoom = max_zoom;
+				generateBackground();
 
-				if (zoom < min_zoom)
-					zoom = min_zoom;
-
-				setZoom(zoom);
+				sf::Vector2f mouseAfterZoom = mouseBeforeZoom * (zoom / oldZoom);
+				position += (worldMousePosition - (position + mouseAfterZoom));
+				bg_sprite.setPosition(position);
 				
 			}
 		}
 	}
 
 	void update() {
-
+		if (isMoved == true) {
+			setPosition(worldMousePosition + offset);
+		}
 	}
 
 	void draw() {
