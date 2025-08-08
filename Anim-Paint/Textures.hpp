@@ -47,7 +47,10 @@ void loadTextures() {
 
 	// dialog - layers
 	loadTexture(L"tex\\layers\\visible.png");
+	loadTexture(L"tex\\layers\\unvisible.png");
+
 	loadTexture(L"tex\\layers\\visible_hover.png");
+	loadTexture(L"tex\\layers\\unvisible_hover.png");
 }
 
 #endif

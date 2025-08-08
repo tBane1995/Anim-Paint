@@ -1,12 +1,15 @@
 #include <iostream>
 #include <string>
+#include <functional>
 #include <SFML/Graphics.hpp>
 
 #include "Window.hpp"
 #include "Textures.hpp"
 #include "Theme.hpp"
 #include "Mouse.hpp"
+#include "Time.hpp"
 #include "ElementGUI.hpp"
+#include "Button.hpp"
 #include "Dialog.hpp"
 #include "Canvas.hpp"
 #include "Frames.hpp"
@@ -30,8 +33,8 @@ int main() {
 	createDialogs();
 
 	while (window->isOpen()) {
-		//prevTime = currentTime;
-		//currentTime = timeClock.getElapsedTime();
+		prevTime = currentTime;
+		currentTime = timeClock.getElapsedTime();
 
 		mousePosition = sf::Mouse::getPosition(*window); // get the mouse position about window
 		worldMousePosition = window->mapPixelToCoords(mousePosition); // get global mouse position
@@ -43,7 +46,8 @@ int main() {
 			dialog->cursorHover();
 
 		// Element GUI update before handle events
-		
+		for (auto& dialog : dialogs)
+			dialog->update();
 		// handle events
 		
 		sf::Event event;
@@ -66,8 +70,7 @@ int main() {
 		}
 		
 		// update
-		for (auto& dialog : dialogs)
-			dialog->update();
+		
 
 		// render
 		window->clear(sf::Color(48,48,48));
