@@ -1,4 +1,4 @@
-#ifndef Canvas_hpp
+﻿#ifndef Canvas_hpp
 #define Canvas_hpp
 
 
@@ -12,11 +12,14 @@ public:
 	sf::Sprite bg_sprite;
 
 	sf::Vector2f size;
-	float zoom;
+	float zoom;	// in percentage
+	float zoom_delta;
 
 	Canvas(sf::Vector2f size) : ElementGUI() {
 		this->size = size;
-		this->zoom = 16;
+
+		this->zoom = 1.0f;
+		this->zoom_delta = 16.0f;
 
 		generateBackground();
 
@@ -31,13 +34,15 @@ public:
 	void generateBackground() {
 
 		bg_image = sf::Image();
-		bg_image.create(size.x * zoom, size.y * zoom, canvas_color);
+		float whole_zoom = zoom_delta * zoom;
+		sf::Vector2f s = sf::Vector2f(int(size.x * whole_zoom), int(size.y * whole_zoom));
+		bg_image.create(s.x, s.y, canvas_color);
 
 		sf::Color c1 = sf::Color(64, 64, 64);
 		sf::Color c2 = sf::Color(96, 96, 96);
 
-		for (int y = 0; y < size.y * zoom; y++) {
-			for (int x = 0; x < size.x * zoom; x++) {
+		for (int y = 0; y < s.y; y++) {
+			for (int x = 0; x < s.x; x++) {
 
 				int xx = x / 8;
 				int yy = y / 8;
@@ -49,7 +54,7 @@ public:
 				else
 					(xx % 2 == 1) ? c = c1 : c = c2;
 
-				bg_image.setPixel(x, y, c);
+				bg_image.setPixel(x, y, c); // tu jest błąd - wychodzi poza zakres
 
 			}
 		}
@@ -57,8 +62,8 @@ public:
 		bg_texture = sf::Texture();
 		bg_texture.loadFromImage(bg_image);
 
-		bg_sprite.setTexture(bg_texture);
-		bg_sprite.setPosition(sf::Vector2f(window->getSize()) / 2.0f - size*zoom / 2.0f);
+		bg_sprite = sf::Sprite(bg_texture);
+		bg_sprite.setPosition(sf::Vector2f(window->getSize()) / 2.0f - s / 2.0f);
 	}
 
 	void cursorHover() {
