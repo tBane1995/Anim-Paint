@@ -64,7 +64,6 @@ public:
 
 		if (sprite.getGlobalBounds().contains(worldMousePosition)) {
 			ElementGUI_hovered = this;
-			
 		}
 
 

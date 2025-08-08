@@ -11,6 +11,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     Anim-Paint/Time.hpp
     Anim-Paint/ElementGUI.hpp
     Anim-Paint/Button.hpp
+    Anim-Paint/Checkbox.hpp
     Anim-Paint/Dialog.hpp
     Anim-Paint/Canvas.hpp
     Anim-Paint/Frames.hpp

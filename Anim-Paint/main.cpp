@@ -10,6 +10,7 @@
 #include "Time.hpp"
 #include "ElementGUI.hpp"
 #include "Button.hpp"
+#include "Checkbox.hpp"
 #include "Dialog.hpp"
 #include "Canvas.hpp"
 #include "Frames.hpp"
