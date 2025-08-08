@@ -55,6 +55,11 @@ public:
 
 	void click() {
 		state = CheckboxState::Pressed;
+
+		value += 1;
+		if (value >= textures.size())
+			value = 0;
+
 		sprite.setTexture(*hoverTextures[value]->texture);
 		clickTime = currentTime;
 	}
