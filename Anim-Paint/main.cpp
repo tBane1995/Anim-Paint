@@ -28,7 +28,7 @@ int main() {
 	
 	loadTextures();
 	loadTheme();
-	canvas = new Canvas(sf::Vector2f(256, 256));
+	canvas = new Canvas(sf::Vector2f(16, 16));
 
 	createDialogs();
 

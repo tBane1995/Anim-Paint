@@ -1,22 +1,43 @@
 #ifndef Canvas_hpp
 #define Canvas_hpp
 
+
+
 class Canvas : public ElementGUI {
 public:
 
-	sf::Image background;
+	// background
+	sf::Image bg_image;
+	sf::Texture bg_texture;
+	sf::Sprite bg_sprite;
+
 	sf::Vector2f size;
+	float zoom;
 
 	Canvas(sf::Vector2f size) : ElementGUI() {
 		this->size = size;
+		this->zoom = 16;
 
-		background.create(size.x, size.y, canvas_color);
+		generateBackground();
+
+	}
+
+	~Canvas() { }
+
+	void setZoom(float zoom) {
+		this->zoom = zoom;
+	}
+
+	void generateBackground() {
+
+		bg_image = sf::Image();
+		bg_image.create(size.x * zoom, size.y * zoom, canvas_color);
 
 		sf::Color c1 = sf::Color(64, 64, 64);
 		sf::Color c2 = sf::Color(96, 96, 96);
 
-		for (int y = 0; y < size.y; y++) {
-			for (int x = 0; x < size.x; x++) {
+		for (int y = 0; y < size.y * zoom; y++) {
+			for (int x = 0; x < size.x * zoom; x++) {
 
 				int xx = x / 8;
 				int yy = y / 8;
@@ -28,15 +49,17 @@ public:
 				else
 					(xx % 2 == 1) ? c = c1 : c = c2;
 
-				background.setPixel(x, y, c);
+				bg_image.setPixel(x, y, c);
 
 			}
 		}
 
+		bg_texture = sf::Texture();
+		bg_texture.loadFromImage(bg_image);
+
+		bg_sprite.setTexture(bg_texture);
+		bg_sprite.setPosition(sf::Vector2f(window->getSize()) / 2.0f - size*zoom / 2.0f);
 	}
-
-	~Canvas() { }
-
 
 	void cursorHover() {
 	}
@@ -50,12 +73,8 @@ public:
 	}
 
 	void draw() {
-		sf::Texture tex;
-		tex.loadFromImage(background);
-		sf::Sprite sprite;
-		sprite.setTexture(tex);
-		sprite.setPosition(sf::Vector2f(window->getSize()) / 2.0f - size/2.0f);
-		window->draw(sprite);
+		
+		window->draw(bg_sprite);
 	}
 
 };
