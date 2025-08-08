@@ -12,16 +12,23 @@ public:
 	sf::Sprite bg_sprite;
 
 	sf::Vector2f size;
+
 	int pixel_size;
-	float zoom;	// in percentage
-	float zoom_delta;
+
+	float zoom;			// in percentage
+	float zoom_delta;	// const
+	float min_zoom;
+	float max_zoom;
 
 	Canvas(sf::Vector2f size) : ElementGUI() {
 		this->size = size;
 
 		this->pixel_size = 8.0f;
-		this->zoom = 1.0f;
+
+		this->zoom = 1.0f;			// 100%
 		this->zoom_delta = 16.0f;
+		this->min_zoom = 0.25;
+		this->max_zoom = 2.0f;
 
 		generateBackground();
 
@@ -29,8 +36,15 @@ public:
 
 	~Canvas() { }
 
-	void setZoom(float zoom) {
-		this->zoom = zoom;
+	void updateBackgroundSprite() {
+
+		sf::Vector2f s = sf::Vector2f(int(size.x * zoom_delta * zoom), int(size.y * zoom_delta * zoom));
+
+		bg_texture = sf::Texture();
+		bg_texture.loadFromImage(bg_image);
+
+		bg_sprite = sf::Sprite(bg_texture);
+		bg_sprite.setPosition(sf::Vector2f(window->getSize()) / 2.0f - s / 2.0f);
 	}
 
 	void generateBackground() {
@@ -61,11 +75,17 @@ public:
 			}
 		}
 
-		bg_texture = sf::Texture();
-		bg_texture.loadFromImage(bg_image);
+		updateBackgroundSprite();
+	}
 
-		bg_sprite = sf::Sprite(bg_texture);
-		bg_sprite.setPosition(sf::Vector2f(window->getSize()) / 2.0f - s / 2.0f);
+	float getZoom() {
+		return this->zoom;
+	}
+
+	void setZoom(float zoom) {
+		this->zoom = zoom;
+		generateBackground();
+		updateBackgroundSprite();
 	}
 
 	void setPixel(sf::Vector2f worldMousePosition, sf::Color color) {
@@ -82,14 +102,7 @@ public:
 			}
 		}
 
-		
-
-		s = sf::Vector2f(int(size.x * whole_zoom), int(size.y * whole_zoom));
-		bg_texture = sf::Texture();
-		bg_texture.loadFromImage(bg_image);
-
-		bg_sprite = sf::Sprite(bg_texture);
-		bg_sprite.setPosition(sf::Vector2f(window->getSize()) / 2.0f - s / 2.0f);
+		updateBackgroundSprite();
 
 	}
 
@@ -109,6 +122,20 @@ public:
 
 			if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 				setPixel(worldMousePosition, sf::Color::Black);
+			}
+
+			if (event.type == sf::Event::MouseWheelScrolled) {
+				float zoom = getZoom();
+				zoom += 0.25f * event.mouseWheelScroll.delta;
+
+				if (zoom > max_zoom)
+					zoom = max_zoom;
+
+				if (zoom < min_zoom)
+					zoom = min_zoom;
+
+				setZoom(zoom);
+				
 			}
 		}
 	}

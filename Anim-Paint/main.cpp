@@ -70,11 +70,17 @@ int main() {
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
 			}
-			else if(event.type == sf::Event::MouseMoved)
-
+			else if (event.type == sf::Event::MouseMoved) {
 				canvas->handleEvent(event);
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
+			}
+			else if (event.type == sf::Event::MouseWheelScrolled) {
+				canvas->handleEvent(event);
+			}
+
+				
+
 		}
 		
 		// update
