@@ -1,21 +1,18 @@
-#ifndef Layers_hpp
-#define Layers_hpp
+#ifndef LayersDialog_hpp
+#define LayersDialog_hpp
 
-class Layer : public ElementGUI {
+class LayerBox : public ElementGUI {
 public:
 
 	sf::RectangleShape rect;			
-	std::wstring name;					// name of Layer
 	Checkbox* visibling;				// is Visible or No on Canvas
 	sf::Text textName;					// text for name
 
-	sf::Image image;					// main image - pixels
+	Layer* layer;
 	bool isActive;						// active to draw
 	std::function<void()> onclick_func;	// onclick func
 
-	Layer(std::wstring name, sf::Vector2i size) {
-
-		this->name = name;
+	LayerBox(std::wstring name, sf::Vector2i size) {
 
 		rect = sf::RectangleShape(sf::Vector2f(160 - 2 * dialog_padding, 32));
 		rect.setFillColor(sf::Color::Transparent);
@@ -30,11 +27,10 @@ public:
 
 		// image
 
-		image = sf::Image();
-		image.create(size.x, size.y, sf::Color::Transparent);
+		layer = new Layer(name, size);
 	}
 
-	~Layer() { }
+	~LayerBox() { }
 
 	void setPosition(sf::Vector2f position) {
 		visibling->setPosition(position);
@@ -78,18 +74,18 @@ public:
 	}
 };
 
-class Layers : public Dialog {
+class LayersDialog : public Dialog {
 public:
 
-	std::vector < Layer* > layers;
+	std::vector < LayerBox* > layers;
 	int currentLayer = 3;
 
-	Layers(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) : Dialog(title, size, position) {
+	LayersDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) : Dialog(title, size, position) {
 
 		
 
 		for (int i = 0; i < 4; i++) {
-			layers.push_back(new Layer(L"Layer " + std::to_wstring(i), sf::Vector2i(16, 16)));
+			layers.push_back(new LayerBox(L"Layer " + std::to_wstring(i), sf::Vector2i(16, 16)));
 			layers.back()->onclick_func = [this,i]() { 
 				layers[currentLayer]->isActive = false;
 				currentLayer = i; 
@@ -102,7 +98,7 @@ public:
 		setPosition(position);
 	}
 
-	~Layers() { }
+	~LayersDialog() { }
 
 	void setPosition(sf::Vector2f position) {
 		Dialog::setPosition(position);
@@ -153,6 +149,6 @@ public:
 
 };
 
-Layers* layers = nullptr;
+LayersDialog* layers_dialog = nullptr;
 
 #endif

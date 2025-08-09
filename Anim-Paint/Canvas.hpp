@@ -45,7 +45,7 @@ public:
 		//canvas_textures.clear();
 		//canvas_sprites.clear();
 
-		for (auto& layer : layers->layers) {
+		for (auto& layer : layers_dialog->layers) {
 			//sf::Texture* tex = new sf::Texture();
 			//tex->loadFromImage(layer->image);
 			//canvas_textures.push_back(tex);
@@ -132,7 +132,7 @@ public:
 
 		//std::cout << s.x << ", " << s.y << "\n";
 
-		layers->layers[layers->currentLayer]->image.setPixel(s.x, s.y, color);
+		layers_dialog->layers[layers_dialog->currentLayer]->layer->image.setPixel(s.x, s.y, color);
 
 	}
 
@@ -196,11 +196,11 @@ public:
 		window->draw(bg_sprite);
 		
 		
-		for (auto& layer : layers->layers) {
+		for (auto& layer : layers_dialog->layers) {
 
 			if (layer->visibling->value == 0) {
 				sf::Texture tex;
-				tex.loadFromImage(layer->image);
+				tex.loadFromImage(layer->layer->image);
 
 				sf::Sprite spr(tex);
 				spr.setPosition(bg_sprite.getPosition());

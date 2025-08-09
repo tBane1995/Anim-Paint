@@ -1,38 +1,43 @@
-#ifndef Frames_hpp
-#define Frames_hpp
+#ifndef FramesDialog_hpp
+#define FramesDialog_hpp
 
-class Frames : public Dialog {
+class FramesDialog : public Dialog {
 public:
 
 	Button* first_btn;
 	Button* prev_btn;
 	Button* next_btn;
 	Button* last_btn;
+	sf::Text text;
 
+	std::vector < Frame* > frames;
 	int current_frame;
 
-	Frames(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) : Dialog(title, size, position) {
+	FramesDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) : Dialog(title, size, position) {
 
 		first_btn = new Button(getTexture(L"tex\\frames\\first.png"), getTexture(L"tex\\frames\\first_hover.png"));
 		prev_btn = new Button(getTexture(L"tex\\frames\\prev.png"), getTexture(L"tex\\frames\\prev_hover.png"));
 		next_btn = new Button(getTexture(L"tex\\frames\\next.png"), getTexture(L"tex\\frames\\next_hover.png"));
 		last_btn = new Button(getTexture(L"tex\\frames\\last.png"), getTexture(L"tex\\frames\\last_hover.png"));
 
-		setPosition(position);
-
 		current_frame = 0;
 
+		text = sf::Text(std::to_wstring(current_frame) + L" / " + std::to_wstring(frames.size()), basicFont, 17);
+
+		setPosition(position);
 	}
 
-	~Frames() { }
+	~FramesDialog() { }
 
 	void setPosition(sf::Vector2f position) {
 		Dialog::setPosition(position);
 
 		first_btn->setPosition(position + sf::Vector2f(dialog_padding, 32 + dialog_padding));
-		prev_btn->setPosition(position + sf::Vector2f(dialog_padding +32, 32 + dialog_padding));
+		prev_btn->setPosition(position + sf::Vector2f(dialog_padding + 32, 32 + dialog_padding));
 		next_btn->setPosition(position + sf::Vector2f(getSize().x - dialog_padding - 64, 32 + dialog_padding));
 		last_btn->setPosition(position + sf::Vector2f(getSize().x - dialog_padding - 32, 32 + dialog_padding));
+
+		text.setPosition(position + sf::Vector2f(getSize().x / 2 - text.getGlobalBounds().width / 2.0f, 32 + dialog_padding + (32-basicFont.getLineSpacing(17))/2));
 	}
 
 	void cursorHover() {
@@ -42,8 +47,6 @@ public:
 		prev_btn->cursorHover();
 		next_btn->cursorHover();
 		last_btn->cursorHover();
-
-
 	}
 
 	void handleEvent(sf::Event& event) {
@@ -72,6 +75,7 @@ public:
 		prev_btn->draw();
 		next_btn->draw();
 		last_btn->draw();
+		window->draw(text);
 	}
 
 };
