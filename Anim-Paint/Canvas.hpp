@@ -11,7 +11,7 @@ public:
 	sf::Texture bg_texture;
 	sf::Sprite bg_sprite;
 
-	sf::Vector2f size;
+	sf::Vector2i size;
 	sf::Vector2f position;
 
 	//std::vector < sf::Texture* > canvas_textures;
@@ -27,7 +27,7 @@ public:
 	bool isMoved;
 	sf::Vector2f offset;	// to movements of canvas
 
-	Canvas(sf::Vector2f size) : ElementGUI() {
+	Canvas(sf::Vector2i size) : ElementGUI() {
 		this->size = size;
 
 		this->pixel_size = 8.0f;
@@ -97,12 +97,6 @@ public:
 		this->position = position;
 		bg_sprite.setPosition(position);
 
-		/*
-		for (auto& sprite : canvas_sprites) {
-			sprite.setPosition(position);
-		}
-		*/
-
 	}
 
 
@@ -120,7 +114,7 @@ public:
 
 		//std::cout << s.x << ", " << s.y << "\n";
 
-		layers_dialog->layersBoxes[layers_dialog->currentLayer]->layer->image.setPixel(s.x, s.y, color);
+		layers_dialog->getCurrentLayer()->image.setPixel(s.x, s.y, color);
 
 	}
 
@@ -168,14 +162,19 @@ public:
 		}
 	}
 
+	float clampAxisOverscroll(float v, float content, float viewport, float overscrollRatio = 0.5f) {
+		float overscroll = viewport * overscrollRatio;
+		float minPos = viewport - content - overscroll;
+		float maxPos = overscroll;
+		return std::clamp(v, minPos, maxPos);
+	}
+
 	void update() {
-		if (isMoved == true) {
-
-			float x = std::clamp((worldMousePosition + offset).x, 0.0f, window->getSize().x - bg_sprite.getGlobalBounds().width);
-			float y = std::clamp((worldMousePosition + offset).y, 0.0f, window->getSize().y - bg_sprite.getGlobalBounds().height);
-
-			setPosition(sf::Vector2f(x,y));
-			
+		if (isMoved) {
+			sf::Vector2f target = worldMousePosition + offset;
+			float x = clampAxisOverscroll(target.x, bg_sprite.getGlobalBounds().width, window->getSize().x, 0.5f);
+			float y = clampAxisOverscroll(target.y, bg_sprite.getGlobalBounds().height, window->getSize().y, 0.5f);
+			setPosition(sf::Vector2f(x, y));
 		}
 	}
 

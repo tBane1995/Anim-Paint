@@ -11,7 +11,7 @@ public:
 	sf::Text text;
 
 	std::vector < Frame* > frames;
-	int current_frame;
+	int currentFrameId;
 
 	FramesDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) : Dialog(title, size, position) {
 
@@ -21,36 +21,36 @@ public:
 		last_btn = new Button(getTexture(L"tex\\frames\\last.png"), getTexture(L"tex\\frames\\last_hover.png"));
 
 		first_btn->onclick_func = [this, position]() {
-			current_frame = 0;
+			currentFrameId = 0;
 			generateText();
 			setPosition(position);
 			};
 
 		prev_btn->onclick_func = [this, position]() {
-			current_frame -= 1;
-			if (current_frame < 0)
-				current_frame = frames.size() - 1;
+			currentFrameId -= 1;
+			if (currentFrameId < 0)
+				currentFrameId = frames.size() - 1;
 			generateText();
 			setPosition(position);
 			};
 
 		next_btn->onclick_func = [this, position]() {
-			current_frame += 1;
-			if (current_frame == frames.size())
-				current_frame = 0;
+			currentFrameId += 1;
+			if (currentFrameId == frames.size())
+				currentFrameId = 0;
 			generateText();
 			setPosition(position);
 			};
 
 		last_btn->onclick_func = [this, position]() {
-			current_frame = frames.size() - 1;
+			currentFrameId = frames.size() - 1;
 			generateText();
 			setPosition(position);
 			};
 
 		frames.push_back(new Frame());
 		frames.push_back(new Frame());
-		current_frame = 0;
+		currentFrameId = 0;
 
 		generateText();
 
@@ -59,8 +59,12 @@ public:
 
 	~FramesDialog() { }
 
+	Frame* getCurrentFrame() {
+		return frames[currentFrameId];
+	}
+
 	void generateText() {
-		text = sf::Text(std::to_wstring(current_frame) + L" / " + std::to_wstring(frames.size()-1), basicFont, 17);
+		text = sf::Text(std::to_wstring(currentFrameId) + L" / " + std::to_wstring(frames.size()-1), basicFont, 17);
 	}
 
 	void setPosition(sf::Vector2f position) {

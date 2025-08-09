@@ -48,7 +48,7 @@ int main() {
 	loadTheme();
 	createDialogs();
 
-	canvas = new Canvas(sf::Vector2f(16, 16));
+	canvas = new Canvas(sf::Vector2i(frames_dialog->getCurrentFrame()->layers[0]->image.getSize()));
 
 	while (window->isOpen()) {
 		prevTime = currentTime;

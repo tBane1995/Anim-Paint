@@ -78,7 +78,7 @@ public:
 
 	
 	std::vector < LayerBox* > layersBoxes;
-	int currentLayer = 3;
+	int currentLayerId = 3;
 
 	LayersDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) : Dialog(title, size, position) {
 
@@ -88,6 +88,10 @@ public:
 
 	~LayersDialog() { }
 
+	Layer* getCurrentLayer() {
+		return layersBoxes[currentLayerId]->layer;
+	}
+
 	void loadLayersFromCurrentFrame() {
 
 		for (auto& layerBox : layersBoxes) {
@@ -96,20 +100,20 @@ public:
 
 		layersBoxes.clear();
 
-		int current_frame = frames_dialog->current_frame;
-		int count_layers = frames_dialog->frames[current_frame]->layers.size();
+		int current_frame = frames_dialog->currentFrameId;
+		int count_layers = frames_dialog->getCurrentFrame()->layers.size();
 		for (int i = 0; i < count_layers; i++) {
-			layersBoxes.push_back(new LayerBox(frames_dialog->frames[frames_dialog->current_frame]->layers[i]));
+			layersBoxes.push_back(new LayerBox(frames_dialog->getCurrentFrame()->layers[i]));
 			layersBoxes.back()->onclick_func = [this, i]() {
-				layersBoxes[currentLayer]->isActive = false;
-				currentLayer = i;
-				layersBoxes[currentLayer]->isActive = true;
+				layersBoxes[currentLayerId]->isActive = false;
+				currentLayerId = i;
+				layersBoxes[currentLayerId]->isActive = true;
 				};
 		}
 
 		setPosition(this->getPosition());
 
-		layersBoxes[currentLayer]->isActive = true;
+		layersBoxes[currentLayerId]->isActive = true;
 	}
 
 	void setPosition(sf::Vector2f position) {
@@ -146,7 +150,7 @@ public:
 	void update() {
 		Dialog::update();
 		
-		if (layersBoxes.size() > 0 && layersBoxes[0]->layer != frames_dialog->frames[frames_dialog->current_frame]->layers[0]) {
+		if (layersBoxes.size() > 0 && layersBoxes[0]->layer != frames_dialog->getCurrentFrame()->layers[0]) {
 			loadLayersFromCurrentFrame();
 		}
 
