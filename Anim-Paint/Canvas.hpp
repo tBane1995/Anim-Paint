@@ -32,9 +32,12 @@ public:
 
 		this->pixel_size = 8.0f;
 
-		this->zoom = 1.0f;			// 100%
+		
+		int target_size = 256;
+		float val = std::max(size.x, size.y);
 		this->zoom_delta = 16.0f;
-		this->min_zoom = 0.25;
+		this->zoom = target_size / (this->zoom_delta * val);
+		this->min_zoom = 0.25f;
 		this->max_zoom = 2.0f;
 
 		this->isMoved = false;

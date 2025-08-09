@@ -8,10 +8,11 @@ public:
 
 	Frame() {
 		layers.clear();
-		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(32, 32)));
-		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(32, 32)));
-		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(32, 32)));
-		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(32, 32)));
+		int i = 32;
+		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(i, i)));
+		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(i, i)));
+		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(i, i)));
+		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(i, i)));
 	}
 	~Frame() { }
 };
