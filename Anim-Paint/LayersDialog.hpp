@@ -12,7 +12,9 @@ public:
 	bool isActive;						// active to draw
 	std::function<void()> onclick_func;	// onclick func
 
-	LayerBox(std::wstring name, sf::Vector2i size) {
+	LayerBox(Layer* layer) {
+
+		this->layer = layer;
 
 		rect = sf::RectangleShape(sf::Vector2f(160 - 2 * dialog_padding, 32));
 		rect.setFillColor(sf::Color::Transparent);
@@ -22,12 +24,9 @@ public:
 		visibling->addValue(getTexture(L"tex\\layers\\unvisible.png"), getTexture(L"tex\\layers\\unvisible_hover.png"));
 		visibling->setValue(0);
 
-		textName = sf::Text(name, basicFont, 17);
+		textName = sf::Text(layer->name, basicFont, 17);
 		textName.setFillColor(normal_text_color);
 
-		// image
-
-		layer = new Layer(name, size);
 	}
 
 	~LayerBox() { }
@@ -77,39 +76,52 @@ public:
 class LayersDialog : public Dialog {
 public:
 
-	std::vector < LayerBox* > layers;
+	
+	std::vector < LayerBox* > layersBoxes;
 	int currentLayer = 3;
 
 	LayersDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) : Dialog(title, size, position) {
 
+		loadLayersFromCurrentFrame();
 		
-
-		for (int i = 0; i < 4; i++) {
-			layers.push_back(new LayerBox(L"Layer " + std::to_wstring(i), sf::Vector2i(16, 16)));
-			layers.back()->onclick_func = [this,i]() { 
-				layers[currentLayer]->isActive = false;
-				currentLayer = i; 
-				layers[currentLayer]->isActive = true;
-				};
-		}
-
-		layers[currentLayer]->isActive = true;
-
-		setPosition(position);
 	}
 
 	~LayersDialog() { }
+
+	void loadLayersFromCurrentFrame() {
+
+		for (auto& layerBox : layersBoxes) {
+			delete layerBox;
+		}
+
+		layersBoxes.clear();
+
+		int current_frame = frames_dialog->current_frame;
+		int count_layers = frames_dialog->frames[current_frame]->layers.size();
+		for (int i = 0; i < count_layers; i++) {
+			layersBoxes.push_back(new LayerBox(frames_dialog->frames[frames_dialog->current_frame]->layers[i]));
+			layersBoxes.back()->onclick_func = [this, i]() {
+				layersBoxes[currentLayer]->isActive = false;
+				currentLayer = i;
+				layersBoxes[currentLayer]->isActive = true;
+				};
+		}
+
+		setPosition(this->getPosition());
+
+		layersBoxes[currentLayer]->isActive = true;
+	}
 
 	void setPosition(sf::Vector2f position) {
 		Dialog::setPosition(position);
 
 
-		for (int i = 0; i < layers.size(); i++) {
+		for (int i = 0; i < layersBoxes.size(); i++) {
 
 			sf::Vector2f pos;
-			pos = position + sf::Vector2f(dialog_padding, 32 + dialog_padding + (layers.size() - 1 - i) * 32);
+			pos = position + sf::Vector2f(dialog_padding, 32 + dialog_padding + (layersBoxes.size() - 1 - i) * 32);
 
-			layers[i]->setPosition(pos);
+			layersBoxes[i]->setPosition(pos);
 		}
 		
 	}
@@ -117,16 +129,16 @@ public:
 	void cursorHover() {
 		Dialog::cursorHover();
 
-		for (auto& layer : layers) {
-			layer->cursorHover();
+		for (auto& layerbox : layersBoxes) {
+			layerbox->cursorHover();
 		}
 	}
 
 	void handleEvent(sf::Event& event) {
 		Dialog::handleEvent(event);
 
-		for (auto& layer : layers) {
-			layer->handleEvent(event);
+		for (auto& layerbox : layersBoxes) {
+			layerbox->handleEvent(event);
 		}
 
 	}
@@ -134,16 +146,20 @@ public:
 	void update() {
 		Dialog::update();
 		
-		for (auto& layer : layers) {
-			layer->update();
+		if (layersBoxes.size() > 0 && layersBoxes[0]->layer != frames_dialog->frames[frames_dialog->current_frame]->layers[0]) {
+			loadLayersFromCurrentFrame();
+		}
+
+		for (auto& layerbox : layersBoxes) {
+			layerbox->update();
 		}
 	}
 
 	void draw() {
 		Dialog::draw();
 
-		for (auto& layer : layers) {
-			layer->draw();
+		for (auto& layerbox : layersBoxes) {
+			layerbox->draw();
 		}
 	}
 

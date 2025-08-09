@@ -20,14 +20,48 @@ public:
 		next_btn = new Button(getTexture(L"tex\\frames\\next.png"), getTexture(L"tex\\frames\\next_hover.png"));
 		last_btn = new Button(getTexture(L"tex\\frames\\last.png"), getTexture(L"tex\\frames\\last_hover.png"));
 
+		first_btn->onclick_func = [this, position]() {
+			current_frame = 0;
+			generateText();
+			setPosition(position);
+			};
+
+		prev_btn->onclick_func = [this, position]() {
+			current_frame -= 1;
+			if (current_frame < 0)
+				current_frame = frames.size() - 1;
+			generateText();
+			setPosition(position);
+			};
+
+		next_btn->onclick_func = [this, position]() {
+			current_frame += 1;
+			if (current_frame == frames.size())
+				current_frame = 0;
+			generateText();
+			setPosition(position);
+			};
+
+		last_btn->onclick_func = [this, position]() {
+			current_frame = frames.size() - 1;
+			generateText();
+			setPosition(position);
+			};
+
+		frames.push_back(new Frame());
+		frames.push_back(new Frame());
 		current_frame = 0;
 
-		text = sf::Text(std::to_wstring(current_frame) + L" / " + std::to_wstring(frames.size()), basicFont, 17);
+		generateText();
 
 		setPosition(position);
 	}
 
 	~FramesDialog() { }
+
+	void generateText() {
+		text = sf::Text(std::to_wstring(current_frame) + L" / " + std::to_wstring(frames.size()-1), basicFont, 17);
+	}
 
 	void setPosition(sf::Vector2f position) {
 		Dialog::setPosition(position);
@@ -79,5 +113,7 @@ public:
 	}
 
 };
+
+FramesDialog* frames_dialog = nullptr;
 
 #endif

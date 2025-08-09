@@ -42,18 +42,6 @@ public:
 
 		generateBackground();
 
-		//canvas_textures.clear();
-		//canvas_sprites.clear();
-
-		for (auto& layer : layers_dialog->layers) {
-			//sf::Texture* tex = new sf::Texture();
-			//tex->loadFromImage(layer->image);
-			//canvas_textures.push_back(tex);
-
-			//sf::Sprite spr(*tex);
-			//canvas_sprites.push_back(spr);
-		}
-
 		setPosition((sf::Vector2f(window->getSize()) - getZoomedSize()) / 2.0f);
 	}
 
@@ -132,7 +120,7 @@ public:
 
 		//std::cout << s.x << ", " << s.y << "\n";
 
-		layers_dialog->layers[layers_dialog->currentLayer]->layer->image.setPixel(s.x, s.y, color);
+		layers_dialog->layersBoxes[layers_dialog->currentLayer]->layer->image.setPixel(s.x, s.y, color);
 
 	}
 
@@ -196,7 +184,7 @@ public:
 		window->draw(bg_sprite);
 		
 		
-		for (auto& layer : layers_dialog->layers) {
+		for (auto& layer : layers_dialog->layersBoxes) {
 
 			if (layer->visibling->value == 0) {
 				sf::Texture tex;
