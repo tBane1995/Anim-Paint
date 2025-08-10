@@ -5,7 +5,7 @@
 
 class Dialog: public ElementGUI {
 public:
-
+	sf::Vector2f position;
 	sf::RectangleShape dialog_rect;
 	sf::RectangleShape title_rect;
 	sf::Text title_text;
@@ -19,10 +19,10 @@ public:
 		dialog_rect = sf::RectangleShape(size);
 		dialog_rect.setFillColor(dialog_rect_color);
 
-		title_rect = sf::RectangleShape(sf::Vector2f(size.x-2* dialog_border_width, 32));
+		title_rect = sf::RectangleShape(sf::Vector2f(size.x-2* dialog_border_width, dialog_title_rect_height));
 		title_rect.setFillColor(dialog_title_rect_color);
 
-		title_text = sf::Text(title, basicFont, 17);
+		title_text = sf::Text(title, basicFont, dialog_title_font_size);
 		title_text.setFillColor(dialog_title_text_color);
 
 		content_rect = sf::RectangleShape(sf::Vector2f(size.x-2* dialog_border_width, size.y-2* dialog_border_width-title_rect.getSize().y));
@@ -49,11 +49,14 @@ public:
 	}
 
 	virtual void setPosition(sf::Vector2f position) {
-		dialog_rect.setPosition(position);
-		title_rect.setPosition(position + sf::Vector2f(dialog_border_width, dialog_border_width));
-		sf::Vector2f pos(position + sf::Vector2f(dialog_border_width + (title_rect.getSize().y - title_text.getFont()->getLineSpacing(dialog_title_font_size)) / 2.0f, dialog_border_width + (title_rect.getSize().y - title_text.getFont()->getLineSpacing(dialog_title_font_size)) / 2.0f));
+
+		this->position = sf::Vector2f(sf::Vector2i(position) / 8 * 8);
+
+		dialog_rect.setPosition(this->position);
+		title_rect.setPosition(this->position + sf::Vector2f(dialog_border_width, dialog_border_width));
+		sf::Vector2f pos(this->position + sf::Vector2f(dialog_border_width + (title_rect.getSize().y - title_text.getFont()->getLineSpacing(dialog_title_font_size)) / 2.0f, dialog_border_width + (title_rect.getSize().y - title_text.getFont()->getLineSpacing(dialog_title_font_size)) / 2.0f));
 		title_text.setPosition(pos);
-		content_rect.setPosition(position + sf::Vector2f(dialog_border_width, dialog_border_width + title_rect.getSize().y));
+		content_rect.setPosition(this->position + sf::Vector2f(dialog_border_width, dialog_border_width + title_rect.getSize().y));
 	}
 
 	virtual void cursorHover() {

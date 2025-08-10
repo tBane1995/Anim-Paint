@@ -107,37 +107,44 @@ public:
 
 		// black - grey - white
 		colors.push_back(new ColorBox(sf::Color(0, 0, 0)));
-		colors.push_back(new ColorBox(sf::Color(127, 127, 127)));
+		colors.push_back(new ColorBox(sf::Color(63, 63, 63)));
+		colors.push_back(new ColorBox(sf::Color(191, 191, 191)));
 		colors.push_back(new ColorBox(sf::Color(255, 255, 255)));
 
 		// red
-		colors.push_back(new ColorBox(sf::Color(79, 0, 0)));
-		colors.push_back(new ColorBox(sf::Color(167, 0, 0)));
+		colors.push_back(new ColorBox(sf::Color(63, 0, 0)));
+		colors.push_back(new ColorBox(sf::Color(127, 0, 0)));
+		colors.push_back(new ColorBox(sf::Color(191, 0, 0)));
 		colors.push_back(new ColorBox(sf::Color(255, 0, 0)));
 
 		// green
-		colors.push_back(new ColorBox(sf::Color(0, 79, 0)));
-		colors.push_back(new ColorBox(sf::Color(0, 167, 0)));
+		colors.push_back(new ColorBox(sf::Color(0, 63, 0)));
+		colors.push_back(new ColorBox(sf::Color(0, 127, 0)));
+		colors.push_back(new ColorBox(sf::Color(0, 191, 0)));
 		colors.push_back(new ColorBox(sf::Color(0, 255, 0)));
 
 		// blue
-		colors.push_back(new ColorBox(sf::Color(0, 0, 79)));
-		colors.push_back(new ColorBox(sf::Color(0, 0, 167)));
+		colors.push_back(new ColorBox(sf::Color(0, 0, 63)));
+		colors.push_back(new ColorBox(sf::Color(0, 0, 127)));
+		colors.push_back(new ColorBox(sf::Color(0, 0, 191)));
 		colors.push_back(new ColorBox(sf::Color(0, 0, 255)));
 
 		// yellow
-		colors.push_back(new ColorBox(sf::Color(79, 79, 0)));
-		colors.push_back(new ColorBox(sf::Color(167, 167, 0)));
+		colors.push_back(new ColorBox(sf::Color(63, 63, 0)));
+		colors.push_back(new ColorBox(sf::Color(127, 127, 0)));
+		colors.push_back(new ColorBox(sf::Color(191, 191, 0)));
 		colors.push_back(new ColorBox(sf::Color(255, 255, 0)));
 
 		// magenta
-		colors.push_back(new ColorBox(sf::Color(79, 0, 79)));
-		colors.push_back(new ColorBox(sf::Color(167, 0, 167)));
+		colors.push_back(new ColorBox(sf::Color(63, 0, 63)));
+		colors.push_back(new ColorBox(sf::Color(127, 0, 127)));
+		colors.push_back(new ColorBox(sf::Color(191, 0, 191)));
 		colors.push_back(new ColorBox(sf::Color(255, 0, 255)));
 
 		// cyan
-		colors.push_back(new ColorBox(sf::Color(0, 79, 79)));
-		colors.push_back(new ColorBox(sf::Color(0, 167, 167)));
+		colors.push_back(new ColorBox(sf::Color(0, 63, 63)));
+		colors.push_back(new ColorBox(sf::Color(0, 127, 127)));
+		colors.push_back(new ColorBox(sf::Color(0, 191, 191)));
 		colors.push_back(new ColorBox(sf::Color(0, 255, 255)));
 
 		current_color_id = 0;
@@ -161,8 +168,8 @@ public:
 
 		sf::Vector2f pos;
 		for (int i = 0; i < colors.size(); i++) {
-			pos.x = position.x + dialog_padding + (colors_dialog_margin) * (i%3) + 32 * (i%3);
-			pos.y = position.y + 32 + dialog_padding + (colors_dialog_margin) * (i/3) + 32 * (i/3);
+			pos.x = this->position.x + dialog_padding + (colors_dialog_margin) * (i%4) + 32 * (i%4);
+			pos.y = this->position.y + 32 + dialog_padding + (colors_dialog_margin) * (i/4) + 32 * (i/4);
 
 			colors[i]->setPosition(pos);
 		}

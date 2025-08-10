@@ -70,12 +70,12 @@ public:
 	void setPosition(sf::Vector2f position) {
 		Dialog::setPosition(position);
 
-		first_btn->setPosition(position + sf::Vector2f(dialog_padding, 32 + dialog_padding));
-		prev_btn->setPosition(position + sf::Vector2f(dialog_padding + 32, 32 + dialog_padding));
-		next_btn->setPosition(position + sf::Vector2f(getSize().x - dialog_padding - 64, 32 + dialog_padding));
-		last_btn->setPosition(position + sf::Vector2f(getSize().x - dialog_padding - 32, 32 + dialog_padding));
+		first_btn->setPosition(this->position + sf::Vector2f(dialog_padding, 32 + dialog_padding));
+		prev_btn->setPosition(this->position + sf::Vector2f(dialog_padding + 32, 32 + dialog_padding));
+		next_btn->setPosition(this->position + sf::Vector2f(getSize().x - dialog_padding - 64, 32 + dialog_padding));
+		last_btn->setPosition(this->position + sf::Vector2f(getSize().x - dialog_padding - 32, 32 + dialog_padding));
 
-		text.setPosition(position + sf::Vector2f(getSize().x / 2 - text.getGlobalBounds().width / 2.0f, 32 + dialog_padding + (32-basicFont.getLineSpacing(17))/2));
+		text.setPosition(this->position + sf::Vector2f(getSize().x / 2 - text.getGlobalBounds().width / 2.0f, 32 + dialog_padding + (32-basicFont.getLineSpacing(17))/2));
 	}
 
 	void cursorHover() {
@@ -95,6 +95,15 @@ public:
 		next_btn->handleEvent(event);
 		last_btn->handleEvent(event);
 
+		if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::B) {
+			if(prev_btn->state != ButtonState::Pressed)
+				prev_btn->click();
+		}
+
+		if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::N) {
+			if (next_btn->state != ButtonState::Pressed)
+				next_btn->click();
+		}
 	}
 
 	void update() {

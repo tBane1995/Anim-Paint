@@ -123,7 +123,7 @@ public:
 		for (int i = 0; i < layersBoxes.size(); i++) {
 
 			sf::Vector2f pos;
-			pos = position + sf::Vector2f(dialog_padding, 32 + dialog_padding + (layersBoxes.size() - 1 - i) * 32);
+			pos = this->position + sf::Vector2f(dialog_padding, 32 + dialog_padding + (layersBoxes.size() - 1 - i) * 32);
 
 			layersBoxes[i]->setPosition(pos);
 		}
