@@ -41,7 +41,7 @@ void createDialogs() {
 	dialogs.push_back(new Dialog(L"Tools", sf::Vector2f(128, 256), sf::Vector2f(dialog_margin, dialog_margin)));
 	
 	colors_dialog = new ColorsDialog(L"Colors",
-		sf::Vector2f(116, 182),
+		sf::Vector2f(116, 286),
 		dialogs.back()->getPosition() + sf::Vector2f(0, dialogs.back()->getSize().y + dialog_margin));
 	dialogs.push_back(colors_dialog);
 

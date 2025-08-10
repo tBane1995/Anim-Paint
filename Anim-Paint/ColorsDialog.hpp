@@ -125,6 +125,21 @@ public:
 		colors.push_back(new ColorBox(sf::Color(0, 0, 167)));
 		colors.push_back(new ColorBox(sf::Color(0, 0, 255)));
 
+		// yellow
+		colors.push_back(new ColorBox(sf::Color(79, 79, 0)));
+		colors.push_back(new ColorBox(sf::Color(167, 167, 0)));
+		colors.push_back(new ColorBox(sf::Color(255, 255, 0)));
+
+		// magenta
+		colors.push_back(new ColorBox(sf::Color(79, 0, 79)));
+		colors.push_back(new ColorBox(sf::Color(167, 0, 167)));
+		colors.push_back(new ColorBox(sf::Color(255, 0, 255)));
+
+		// cyan
+		colors.push_back(new ColorBox(sf::Color(0, 79, 79)));
+		colors.push_back(new ColorBox(sf::Color(0, 167, 167)));
+		colors.push_back(new ColorBox(sf::Color(0, 255, 255)));
+
 		current_color_id = 0;
 		for (int i = 0; i < colors.size(); i++) {
 			colors[i]->onclick_func = [this, i]() {
