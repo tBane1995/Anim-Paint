@@ -159,8 +159,6 @@ public:
 	void setPosition(sf::Vector2f position) {
 		Dialog::setPosition(position);
 
-		
-
 		sf::Vector2f pos;
 		for (int i = 0; i < colors.size(); i++) {
 			pos.x = position.x + dialog_padding + (colors_dialog_margin) * (i%3) + 32 * (i%3);
@@ -168,8 +166,6 @@ public:
 
 			colors[i]->setPosition(pos);
 		}
-
-		std::cout << colors.back()->rect.getGlobalBounds().left + colors.back()->rect.getGlobalBounds().width << "\n";
 	}
 
 	void cursorHover() {
