@@ -132,11 +132,11 @@ public:
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 				ElementGUI_pressed = this;
 
-				setPixel(worldMousePosition, sf::Color::Black);
+				setPixel(worldMousePosition, colors_dialog->getCurrentColor());
 			}
 
 			if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-				setPixel(worldMousePosition, sf::Color::Black);
+				setPixel(worldMousePosition, colors_dialog->getCurrentColor());
 			}
 
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Middle) {

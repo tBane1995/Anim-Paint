@@ -40,6 +40,10 @@ public:
 		return dialog_rect.getPosition();
 	}
 
+	sf::Vector2f setSize(sf::Vector2f size) {
+	
+	}
+
 	sf::Vector2f getSize() {
 		return dialog_rect.getSize();
 	}

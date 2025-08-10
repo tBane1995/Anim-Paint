@@ -12,11 +12,12 @@ sf::Color dialog_rect_color;
 sf::Color dialog_title_rect_color;
 sf::Color dialog_content_rect_color;
 
+sf::Color normal_text_color;
+
 sf::Color canvas_color1;
 sf::Color canvas_color2;
 
-
-sf::Color normal_text_color;
+int colors_dialog_margin;
 
 void loadTheme() {
 
@@ -26,14 +27,16 @@ void loadTheme() {
 	dialog_padding = 8;
 	dialog_title_font_size = 17;
 	dialog_border_width = 1;
-	dialog_title_text_color = sf::Color(192, 192, 192);
-	dialog_rect_color = sf::Color(64, 64, 64);
-	dialog_title_rect_color = sf::Color(16, 16, 16);
-	dialog_content_rect_color = sf::Color(32, 32, 32);
+	dialog_title_text_color = sf::Color(191, 191, 191);
+	dialog_rect_color = sf::Color(63, 63, 63);
+	dialog_title_rect_color = sf::Color(15, 15, 15);
+	dialog_content_rect_color = sf::Color(31, 31, 31);
 
-	normal_text_color = sf::Color(192, 192, 192);
+	normal_text_color = sf::Color(191, 191, 191);
 
-	canvas_color1 = sf::Color(64, 64, 64);
-	canvas_color2 = sf::Color(96, 96, 96);
+	canvas_color1 = sf::Color(63, 63, 63);
+	canvas_color2 = sf::Color(95, 95, 95);
+
+	colors_dialog_margin = 2;
 }
 #endif

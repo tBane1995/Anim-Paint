@@ -51,6 +51,10 @@ void loadTextures() {
 
 	loadTexture(L"tex\\layers\\visible_hover.png");
 	loadTexture(L"tex\\layers\\unvisible_hover.png");
+
+	// dialog - colors
+	loadTexture(L"tex\\colors\\frame.png");
+	loadTexture(L"tex\\colors\\frame_hover.png");
 }
 
 #endif
