@@ -121,7 +121,7 @@ int main() {
 		
 
 		// render
-		window->clear(sf::Color(48,48,48));
+		window->clear(sf::Color(56,56,56));
 		canvas->draw();
 		main_menu->draw();
 		for (auto& dialog : dialogs) 
