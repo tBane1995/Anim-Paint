@@ -34,6 +34,10 @@ void loadTexture(std::wstring path) {
 }
 
 void loadTextures() {
+
+	// logos
+	loadTexture(L"tex\\logo\\small_logo.png");
+
 	// dialog - frames
 	loadTexture(L"tex\\frames\\first.png");
 	loadTexture(L"tex\\frames\\prev.png");
