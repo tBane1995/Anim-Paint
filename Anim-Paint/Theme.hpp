@@ -34,6 +34,8 @@ sf::Color optionbox_press_color;
 // tools
 int tools_height;
 sf::Color tools_bar_color;
+int tools_separator_height;
+sf::Color tools_separator_color;
 sf::Color tools_text_color;
 sf::Color tools_text_hover_color;
 
@@ -83,6 +85,8 @@ void loadTheme() {
 	// tools
 	tools_height = 64 + 16;
 	tools_bar_color = sf::Color(31, 31, 31);
+	tools_separator_height = 64+8;
+	tools_separator_color = sf::Color(127, 127, 127);
 	tools_text_color = sf::Color(127, 127, 127);
 	tools_text_hover_color = sf::Color(163, 163, 163);
 
