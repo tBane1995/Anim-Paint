@@ -66,6 +66,7 @@ public:
 	ButtonWithBottomText* btn_copy;
 	ButtonWithBottomText* btn_select;
 	
+	sf::Text colors_text;
 	std::vector < ColorButton* > colors;
 
 
@@ -89,6 +90,9 @@ public:
 		separators.push_back(new Separator());
 
 		// colors
+		colors_text = sf::Text(L"colors", basicFont, 13);
+		colors_text.setFillColor(tools_text_color);
+		 
 		// black - grey - white
 		colors.push_back(new ColorButton(L"black", sf::Color(0, 0, 0)));
 		colors.push_back(new ColorButton(L"white", sf::Color(255, 255, 255)));
@@ -141,12 +145,17 @@ public:
 		x += separators[0]->getSize().x;
 
 		// colors
-		int y = menu_height + tools_height/2 - 32;
+		
+		int old_x = x;
+		int y = menu_height + 4;
 		for (int i = 0; i < colors.size(); i+=2) {
 			colors[i]->setPosition(sf::Vector2f(x + 6, y));
 			colors[i+1]->setPosition(sf::Vector2f(x + 6, y+32));
 			x += 32;
 		}
+
+		colors_text.setPosition((x+old_x) / 2 - colors_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
+
 	}
 
 	void cursorHover() {
@@ -198,6 +207,7 @@ public:
 			col->draw();
 
 		window->draw(clipboard_text);
+		window->draw(colors_text);
 	}
 };
 

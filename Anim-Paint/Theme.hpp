@@ -83,7 +83,7 @@ void loadTheme() {
 	optionbox_press_color = sf::Color(39, 39, 39);
 
 	// tools
-	tools_height = 64 + 16;
+	tools_height = 64 + 24;
 	tools_bar_color = sf::Color(31, 31, 31);
 	tools_separator_height = 64+8;
 	tools_separator_color = sf::Color(127, 127, 127);
