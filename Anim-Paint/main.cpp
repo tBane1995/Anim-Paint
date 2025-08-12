@@ -129,10 +129,11 @@ int main() {
 		window->clear(sf::Color(56,56,56));
 		canvas->draw();
 		
-		for (auto& dialog : dialogs) 
-			dialog->draw();
+		
 		tools->draw();
 		main_menu->draw();
+		for (auto& dialog : dialogs)
+			dialog->draw();
 		window->display();
 
 

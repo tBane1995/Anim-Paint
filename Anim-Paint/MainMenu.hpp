@@ -221,7 +221,7 @@ public:
 
 	MainMenu() : ElementGUI() {
 		rect = sf::RectangleShape(sf::Vector2f(window->getSize().x, menu_height));
-		rect.setFillColor(menu_rect_color);
+		rect.setFillColor(menu_bar_color);
 		rect.setPosition(0, 0);
 
 		logo = sf::Sprite(*getTexture(L"tex\\logo\\small_logo.png")->texture);

@@ -4,10 +4,10 @@
 class FramesDialog : public Dialog {
 public:
 
-	Button* first_btn;
-	Button* prev_btn;
-	Button* next_btn;
-	Button* last_btn;
+	NormalButton* first_btn;
+	NormalButton* prev_btn;
+	NormalButton* next_btn;
+	NormalButton* last_btn;
 	sf::Text text;
 
 	std::vector < Frame* > frames;
@@ -15,10 +15,10 @@ public:
 
 	FramesDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) : Dialog(title, size, position) {
 
-		first_btn = new Button(getTexture(L"tex\\frames\\first.png"), getTexture(L"tex\\frames\\first_hover.png"));
-		prev_btn = new Button(getTexture(L"tex\\frames\\prev.png"), getTexture(L"tex\\frames\\prev_hover.png"));
-		next_btn = new Button(getTexture(L"tex\\frames\\next.png"), getTexture(L"tex\\frames\\next_hover.png"));
-		last_btn = new Button(getTexture(L"tex\\frames\\last.png"), getTexture(L"tex\\frames\\last_hover.png"));
+		first_btn = new NormalButton(getTexture(L"tex\\frames\\first.png"), getTexture(L"tex\\frames\\first_hover.png"));
+		prev_btn = new NormalButton(getTexture(L"tex\\frames\\prev.png"), getTexture(L"tex\\frames\\prev_hover.png"));
+		next_btn = new NormalButton(getTexture(L"tex\\frames\\next.png"), getTexture(L"tex\\frames\\next_hover.png"));
+		last_btn = new NormalButton(getTexture(L"tex\\frames\\last.png"), getTexture(L"tex\\frames\\last_hover.png"));
 
 		first_btn->onclick_func = [this, position]() {
 			currentFrameId = 0;

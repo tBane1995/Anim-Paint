@@ -20,7 +20,7 @@ int menu_height;
 int menu_horizontal_margin;
 int menu_padding;
 int menu_font_size;
-sf::Color menu_rect_color;
+sf::Color menu_bar_color;
 sf::Color menu_text_color;
 sf::Color menubox_idle_color;
 sf::Color menubox_hover_color;
@@ -30,6 +30,12 @@ sf::Color menuoptions_border_color;
 sf::Color optionbox_idle_color;
 sf::Color optionbox_hover_color;
 sf::Color optionbox_press_color;
+
+// tools
+int tools_height;
+sf::Color tools_bar_color;
+sf::Color tools_text_color;
+sf::Color tools_text_hover_color;
 
 // normal text
 sf::Color normal_text_color;
@@ -60,7 +66,7 @@ void loadTheme() {
 	menu_height = 28;
 	menu_horizontal_margin = 8;
 	menu_font_size = 17;
-	menu_rect_color = sf::Color(15, 15, 15);
+	menu_bar_color = sf::Color(15, 15, 15);
 	menu_text_color = sf::Color(191, 191, 191);
 
 	menubox_idle_color = sf::Color(15, 15, 15);
@@ -73,6 +79,12 @@ void loadTheme() {
 	optionbox_idle_color = sf::Color(31, 31, 31);
 	optionbox_hover_color = sf::Color(47, 47, 47);
 	optionbox_press_color = sf::Color(39, 39, 39);
+
+	// tools
+	tools_height = 64 + 16;
+	tools_bar_color = sf::Color(31, 31, 31);
+	tools_text_color = sf::Color(127, 127, 127);
+	tools_text_hover_color = sf::Color(163, 163, 163);
 
 	// normal text
 	normal_text_color = sf::Color(191, 191, 191);
