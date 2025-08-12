@@ -17,7 +17,7 @@ public:
 	Dialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0,0)) {
 
 		dialog_rect = sf::RectangleShape(size);
-		dialog_rect.setFillColor(dialog_rect_color);
+		dialog_rect.setFillColor(dialog_border_color);
 
 		title_rect = sf::RectangleShape(sf::Vector2f(size.x-2* dialog_border_width, dialog_title_rect_height));
 		title_rect.setFillColor(dialog_title_rect_color);

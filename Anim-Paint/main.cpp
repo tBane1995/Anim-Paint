@@ -17,13 +17,14 @@
 #include "Frame.hpp"
 
 #include "MainMenu.hpp"
+#include "Tools.hpp"
 #include "ColorsDialog.hpp"
 #include "FramesDialog.hpp"
 #include "LayersDialog.hpp"
 #include "Canvas.hpp"
 
 void createDialogs() {
-	Dialog* preview = new Dialog(L"Preview", sf::Vector2f(192, 192), sf::Vector2f(window->getSize().x - 192 - dialog_margin, main_menu->getSize().y + dialog_margin));
+	Dialog* preview = new Dialog(L"Preview", sf::Vector2f(192, 192), sf::Vector2f(window->getSize().x - 192 - dialog_margin, main_menu->getSize().y + tools->rect.getSize().y + dialog_margin));
 	dialogs.push_back(preview);
 	
 	frames_dialog = new FramesDialog(L"Frames",
@@ -36,11 +37,9 @@ void createDialogs() {
 		sf::Vector2f(window->getSize().x - 160 - dialog_margin, dialogs.back()->getPosition().y + dialogs.back()->getSize().y + dialog_margin));
 	dialogs.push_back(layers_dialog);
 
-	dialogs.push_back(new Dialog(L"Tools", sf::Vector2f(window->getSize().x - preview->getSize().x - 3* dialog_margin, 128), sf::Vector2f(dialog_margin, main_menu->getSize().y + dialog_margin)));
-
 	colors_dialog = new ColorsDialog(L"Colors",
 		sf::Vector2f(152, 286),
-		sf::Vector2f(dialog_margin, dialogs.back()->getPosition().y + dialogs.back()->getSize().y + dialog_margin));
+		sf::Vector2f(dialog_margin, window->getSize().y - 286 - dialog_margin));
 	dialogs.push_back(colors_dialog);
 }
 
@@ -49,6 +48,8 @@ int main() {
 	loadTextures();
 	loadTheme();
 	main_menu = new MainMenu();
+	tools = new Tools();
+
 	createDialogs();
 
 	canvas = new Canvas(sf::Vector2i(frames_dialog->getCurrentFrame()->layers[0]->image.getSize()));
@@ -64,7 +65,9 @@ int main() {
 		ElementGUI_hovered = nullptr;
 
 		canvas->cursorHover();
+		tools->cursorHover();
 		main_menu->cursorHover();
+		
 
 		for (auto& dialog : dialogs)
 			dialog->cursorHover();
@@ -73,7 +76,9 @@ int main() {
 		canvas->update();
 		for (auto& dialog : dialogs)
 			dialog->update();
+		tools->update();
 		main_menu->update();
+		
 
 
 		// handle events
@@ -123,10 +128,11 @@ int main() {
 		// render
 		window->clear(sf::Color(56,56,56));
 		canvas->draw();
-		main_menu->draw();
+		
 		for (auto& dialog : dialogs) 
 			dialog->draw();
-		
+		tools->draw();
+		main_menu->draw();
 		window->display();
 
 

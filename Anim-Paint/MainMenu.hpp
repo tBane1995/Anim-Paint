@@ -325,6 +325,16 @@ public:
 		window->draw(rect);
 		window->draw(logo);
 
+		if (open_menu_box != nullptr) {
+			if (open_menu_box->options.size() > 0) {
+				sf::RectangleShape rect(sf::Vector2f(open_menu_box->options.front()->rect.getSize().x, open_menu_box->options.size() * menu_height));
+				rect.setPosition(open_menu_box->options.front()->rect.getPosition());
+				rect.setOutlineThickness(menuoptions_border_width);
+				rect.setOutlineColor(menuoptions_border_color);
+				window->draw(rect);
+			}
+		}
+		
 		for (auto& mb : menu_boxes)
 			mb->draw();
 	}

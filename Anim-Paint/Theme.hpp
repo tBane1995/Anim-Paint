@@ -4,15 +4,16 @@
 sf::Font basicFont;
 
 // dialogs
-int dialog_border_width;
-int dialog_margin;						// distance from edge of screen to dialog
+int dialog_margin;				// distance from edge of screen to dialog
 int dialog_padding;
 float dialog_title_font_size;
 int dialog_title_rect_height;
+int dialog_border_width;
+sf::Color dialog_border_color;
 sf::Color dialog_title_text_color;
-sf::Color dialog_rect_color;
 sf::Color dialog_title_rect_color;
 sf::Color dialog_content_rect_color;
+
 
 // main menu
 int menu_height;
@@ -24,6 +25,8 @@ sf::Color menu_text_color;
 sf::Color menubox_idle_color;
 sf::Color menubox_hover_color;
 sf::Color menubox_press_color;
+int menuoptions_border_width;
+sf::Color menuoptions_border_color;
 sf::Color optionbox_idle_color;
 sf::Color optionbox_hover_color;
 sf::Color optionbox_press_color;
@@ -48,8 +51,8 @@ void loadTheme() {
 	dialog_title_font_size = 17;
 	dialog_title_rect_height = 32;
 	dialog_border_width = 1;
+	dialog_border_color = sf::Color(63, 63, 63);
 	dialog_title_text_color = sf::Color(191, 191, 191);
-	dialog_rect_color = sf::Color(63, 63, 63);
 	dialog_title_rect_color = sf::Color(15, 15, 15);
 	dialog_content_rect_color = sf::Color(31, 31, 31);
 
@@ -63,6 +66,9 @@ void loadTheme() {
 	menubox_idle_color = sf::Color(15, 15, 15);
 	menubox_hover_color = sf::Color(47, 47, 47);
 	menubox_press_color = sf::Color(31, 31, 31);
+
+	menuoptions_border_width = 1.0f;
+	menuoptions_border_color = sf::Color(63, 63, 63);
 
 	optionbox_idle_color = sf::Color(31, 31, 31);
 	optionbox_hover_color = sf::Color(47, 47, 47);
