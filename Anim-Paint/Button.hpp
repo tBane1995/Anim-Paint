@@ -14,7 +14,7 @@ public:
 	virtual sf::Vector2f getSize() { return sf::Vector2f(0, 0); }
 	virtual void setPosition(sf::Vector2f position) { }
 	virtual void cursorHover() { }
-	virtual void handleEvents(sf::Event& event) { }
+	virtual void handleEvent(sf::Event& event) { }
 	virtual void update() { }
 	virtual void draw() { }
 

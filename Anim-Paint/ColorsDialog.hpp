@@ -99,7 +99,7 @@ class ColorsDialog : public Dialog {
 public:
 
 	std::vector < ColorBox* > colors;
-	int current_color_id;
+	sf::Color current_color;
 
 	ColorsDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) : Dialog(title, size, position) {
 
@@ -147,10 +147,11 @@ public:
 		colors.push_back(new ColorBox(sf::Color(0, 191, 191)));
 		colors.push_back(new ColorBox(sf::Color(0, 255, 255)));
 
-		current_color_id = 0;
-		for (int i = 0; i < colors.size(); i++) {
-			colors[i]->onclick_func = [this, i]() {
-				current_color_id = i;
+		current_color = sf::Color::Black;
+
+		for (auto& color : colors) {
+			color->onclick_func = [this, color]() {
+				current_color = color->color;
 				};
 		}
 
@@ -160,7 +161,7 @@ public:
 	~ColorsDialog() { }
 
 	sf::Color getCurrentColor() {
-		return colors[current_color_id]->color;
+		return current_color;
 	}
 
 	void setPosition(sf::Vector2f position) {

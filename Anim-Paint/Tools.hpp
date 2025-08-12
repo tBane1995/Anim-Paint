@@ -66,6 +66,13 @@ public:
 	ButtonWithBottomText* btn_copy;
 	ButtonWithBottomText* btn_select;
 	
+	std::vector < NormalButton*> tools;
+	sf::Text tools_text;
+	NormalButton* btn_brush;
+	NormalButton* btn_brush2;
+	NormalButton* btn_brush3;
+	NormalButton* btn_brush4;
+
 	sf::Text colors_text;
 	std::vector < ColorButton* > colors;
 
@@ -89,6 +96,21 @@ public:
 		clipboard.push_back(btn_select);
 		separators.push_back(new Separator());
 
+		// tools
+		tools_text = sf::Text(L"tools", basicFont, 13);
+		tools_text.setFillColor(tools_text_color);
+		btn_brush = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
+		btn_brush2 = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
+		btn_brush3 = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
+		btn_brush4 = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
+
+		tools.clear();
+		tools.push_back(btn_brush);
+		tools.push_back(btn_brush2);
+		tools.push_back(btn_brush3);
+		tools.push_back(btn_brush4);
+		separators.push_back(new Separator());
+
 		// colors
 		colors_text = sf::Text(L"colors", basicFont, 13);
 		colors_text.setFillColor(tools_text_color);
@@ -99,31 +121,44 @@ public:
 
 		// greys
 		colors.push_back(new ColorButton(L"dark grey", sf::Color(63, 63, 63)));
-		colors.push_back(new ColorButton(L"light grey", sf::Color(191, 191, 191)));
+		colors.push_back(new ColorButton(L"light grey", sf::Color(159, 159, 159)));
 
 		// red
 		colors.push_back(new ColorButton(L"dark red", sf::Color(63, 0, 0)));
 		colors.push_back(new ColorButton(L"light red", sf::Color(191, 0, 0)));
 
-		// green
-		colors.push_back(new ColorButton(L"dark green", sf::Color(0, 63, 0)));
-		colors.push_back(new ColorButton(L"light green", sf::Color(0, 191, 0)));
-
-		// blue
-		colors.push_back(new ColorButton(L"dark blue", sf::Color(0, 0, 63)));
-		colors.push_back(new ColorButton(L"light blue", sf::Color(0, 0, 191)));
+		// orange
+		colors.push_back(new ColorButton(L"dark orange", sf::Color(127, 63, 0)));
+		colors.push_back(new ColorButton(L"light orange", sf::Color(255, 127, 0)));
 
 		// yellow
 		colors.push_back(new ColorButton(L"dark yellow", sf::Color(63, 63, 0)));
 		colors.push_back(new ColorButton(L"light yellow", sf::Color(191, 191, 0)));
 
-		// magenta
-		colors.push_back(new ColorButton(L"dark magenta", sf::Color(63, 0, 63)));
-		colors.push_back(new ColorButton(L"light magenta", sf::Color(191, 0, 191)));
+		// green
+		colors.push_back(new ColorButton(L"dark green", sf::Color(0, 63, 0)));
+		colors.push_back(new ColorButton(L"light green", sf::Color(0, 191, 0)));
 
 		// cyan
 		colors.push_back(new ColorButton(L"dark cyan", sf::Color(0, 63, 63)));
 		colors.push_back(new ColorButton(L"light cyan", sf::Color(0, 191, 191)));
+
+		// blue
+		colors.push_back(new ColorButton(L"dark blue", sf::Color(0, 0, 63)));
+		colors.push_back(new ColorButton(L"light blue", sf::Color(0, 0, 191)));
+
+		// magenta
+		colors.push_back(new ColorButton(L"dark magenta", sf::Color(63, 0, 63)));
+		colors.push_back(new ColorButton(L"light magenta", sf::Color(191, 0, 191)));
+
+		
+
+		for (auto& c : colors) {
+			c->onclick_func = [this, c]() {
+				colors_dialog->current_color = c->color;
+				std::cout << "click\n";
+				};
+		}
 
 		setPosition(sf::Vector2f(0, 0));
 	}
@@ -144,13 +179,27 @@ public:
 		separators[0]->setPosition(sf::Vector2f(x, menu_height));
 		x += separators[0]->getSize().x;
 
-		// colors
-		
+		// tools
 		int old_x = x;
 		int y = menu_height + 4;
+		for (int i = 0; i < tools.size(); i+=2) {
+			tools[i]->setPosition(sf::Vector2f(x, y));
+			tools[i + 1]->setPosition(sf::Vector2f(x, y + 32));
+			x += 32;
+		}
+
+		tools_text.setPosition((x+old_x) / 2 - tools_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
+
+		separators[1]->setPosition(sf::Vector2f(x, menu_height));
+		x += separators[1]->getSize().x;
+
+		// colors
+		y = menu_height + 4;
+		x += 4;
+		old_x = x;
 		for (int i = 0; i < colors.size(); i+=2) {
-			colors[i]->setPosition(sf::Vector2f(x + 6, y));
-			colors[i+1]->setPosition(sf::Vector2f(x + 6, y+32));
+			colors[i]->setPosition(sf::Vector2f(x, y));
+			colors[i+1]->setPosition(sf::Vector2f(x, y+32));
 			x += 32;
 		}
 
@@ -164,6 +213,9 @@ public:
 		}
 
 		for (auto& tool : clipboard)
+			tool->cursorHover();
+
+		for (auto& tool : tools)
 			tool->cursorHover();
 
 		for (auto& color : colors)
@@ -181,12 +233,18 @@ public:
 		for (auto& tool : clipboard)
 			tool->handleEvent(event);
 
+		for (auto& tool : tools)
+			tool->handleEvent(event);
+
 		for (auto& color : colors)
 			color->handleEvent(event);
 	}
 
 	void update() {
 		for (auto& tool : clipboard)
+			tool->update();
+
+		for (auto& tool : tools)
 			tool->update();
 
 		for (auto& color : colors)
@@ -203,11 +261,15 @@ public:
 		for(auto& tool : clipboard)
 			tool->draw();
 
+		for (auto& tool : tools)
+			tool->draw();
+
 		for (auto& col : colors)
 			col->draw();
 
 		window->draw(clipboard_text);
 		window->draw(colors_text);
+		window->draw(tools_text);
 	}
 };
 

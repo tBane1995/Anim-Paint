@@ -17,14 +17,14 @@
 #include "Frame.hpp"
 
 #include "MainMenu.hpp"
-#include "Tools.hpp"
 #include "ColorsDialog.hpp"
+#include "Tools.hpp"
 #include "FramesDialog.hpp"
 #include "LayersDialog.hpp"
 #include "Canvas.hpp"
 
 void createDialogs() {
-	Dialog* preview = new Dialog(L"Preview", sf::Vector2f(192, 192), sf::Vector2f(window->getSize().x - 192 - dialog_margin, main_menu->getSize().y + tools->rect.getSize().y + dialog_margin));
+	Dialog* preview = new Dialog(L"Preview", sf::Vector2f(192, 192), sf::Vector2f(window->getSize().x - 192 - dialog_margin, main_menu->getSize().y + tools_height + dialog_margin));
 	dialogs.push_back(preview);
 	
 	frames_dialog = new FramesDialog(L"Frames",
@@ -48,10 +48,8 @@ int main() {
 	loadTextures();
 	loadTheme();
 	main_menu = new MainMenu();
-	tools = new Tools();
-
 	createDialogs();
-
+	tools = new Tools();
 	canvas = new Canvas(sf::Vector2i(frames_dialog->getCurrentFrame()->layers[0]->image.getSize()));
 
 	while (window->isOpen()) {
@@ -90,24 +88,31 @@ int main() {
 
 			if (event.type == sf::Event::MouseButtonPressed) {
 
-				canvas->handleEvent(event);
+				
+				tools->handleEvent(event);
 				main_menu->handleEvent(event);
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
+				canvas->handleEvent(event);
+				
 				
 			}
 			else if (event.type == sf::Event::MouseButtonReleased) {
 
-				canvas->handleEvent(event);
+				
+				tools->handleEvent(event);
 				main_menu->handleEvent(event);
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
+				canvas->handleEvent(event);
 			}
 			else if (event.type == sf::Event::MouseMoved) {
-				canvas->handleEvent(event);
+				
+				tools->handleEvent(event);
 				main_menu->handleEvent(event);
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
+				canvas->handleEvent(event);
 			}
 			else if (event.type == sf::Event::MouseWheelScrolled) {
 				canvas->handleEvent(event);
