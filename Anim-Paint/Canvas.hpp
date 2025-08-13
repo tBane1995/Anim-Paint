@@ -49,7 +49,7 @@ public:
 			start_px.y = end_px.y - sz.y;
 		}
 
-		std::cout << start_px.x << ", " << start_px.y << "\n";
+		//std::cout << start_px.x << ", " << start_px.y << "\n";
 	}
 
 	bool clickOnSelection(sf::Vector2i p) const {
@@ -247,10 +247,7 @@ public:
 				}
 
 				if (tools->toolType == ToolType::Selector) {
-					if (selection->isMoved) {
-						selection->move(worldToTile(worldMousePosition), size);
-					}
-					else {
+					if (!selection->isMoved) {
 						selection->end_px = worldToTile(worldMousePosition);
 					}
 				}
@@ -298,6 +295,9 @@ public:
 					if (std::abs(d.x) >= 1 || std::abs(d.y) >= 1) {
 						selecting = true;
 					}
+				}
+				else {
+					selection->move(worldToTile(worldMousePosition), size);
 				}
 				
 				
