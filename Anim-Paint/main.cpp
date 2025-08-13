@@ -16,6 +16,7 @@
 #include "Checkbox.hpp"
 #include "Dialog.hpp"
 
+#include "WorldToTileConverter.hpp"
 #include "ClipBoard.hpp"
 
 #include "Layer.hpp"
@@ -26,7 +27,9 @@
 
 #include "FramesDialog.hpp"
 #include "LayersDialog.hpp"
+
 #include "Selection.hpp"
+#include "Brush.hpp"
 #include "Tools.hpp"
 #include "Canvas.hpp"
 
@@ -56,7 +59,9 @@ int main() {
 	loadTheme();
 	main_menu = new MainMenu();
 	createDialogs();
+	layers_dialog->setCanvas(canvas);
 	selection = new Selection();
+	brush = new Brush(2);
 	tools = new Tools();
 	canvas = new Canvas(sf::Vector2i(frames_dialog->getCurrentFrame()->layers[0]->image.getSize()));
 

@@ -1,7 +1,6 @@
 ﻿#ifndef Canvas_hpp
 #define Canvas_hpp
 
-
 class Canvas : public ElementGUI {
 public:
 
@@ -27,6 +26,7 @@ public:
 	sf::Vector2f offset;	// to movements of canvas
 
 	bool selecting;
+	bool brush_is_visible;
 
 	Canvas(sf::Vector2i size) : ElementGUI() {
 		this->size = size;
@@ -45,6 +45,7 @@ public:
 		this->offset = sf::Vector2f(0, 0);
 
 		this->selecting = false;
+		this->brush_is_visible = false;
 
 		generateBackground(size);
 
@@ -114,22 +115,32 @@ public:
 		updateBackgroundSprite();
 	}
 
-	sf::Vector2i worldToTile(sf::Vector2f p) {
-		float scale = zoom * zoom_delta;
-		sf::Vector2f local = p - position; // world -> local canvas
-		int tx = std::clamp(int(std::floor(local.x / scale)), 0, size.x);
-		int ty = std::clamp(int(std::floor(local.y / scale)), 0, size.y);
-		return sf::Vector2i(tx, ty);
-	}
-
 	void setPixel(sf::Vector2f worldMousePosition, sf::Color color) {
 
-		sf::Vector2i s = worldToTile(worldMousePosition);
+		sf::Vector2i s = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
 		layers_dialog->getCurrentLayer()->image.setPixel(s.x, s.y, color);
 
 	}
 
-	
+	void drawPixels(sf::Color color) {
+
+		std::vector<std::vector<bool>> b = brushes[brush->size];
+
+		for (int y = 0; y < b.size(); y++) {
+			for (int x = 0; x < b[y].size(); x++) {
+				if (b[y][x]) {
+
+					int tx = brush->pos_px.x - b[y].size() / 2 + x;
+					int ty = brush->pos_px.y - b.size() / 2 + y;
+
+					if (tx < 0 || ty < 0 || tx >= size.x || ty >= size.y)
+						continue;
+
+					layers_dialog->getCurrentLayer()->image.setPixel(tx, ty, color);
+				}
+			}
+		}
+	}
 
 	void cursorHover() {
 		if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
@@ -140,26 +151,30 @@ public:
 	void handleEvent(sf::Event& event) {
 
 		if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
+
+			brush_is_visible = true;
+			brush->setPosition(worldToTile(worldMousePosition,position, size, zoom, zoom_delta));
+
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 				ElementGUI_pressed = this;
 				selecting = false;
 
-				if(tools->toolType == ToolType::Brush)
-					setPixel(worldMousePosition, colors_dialog->getCurrentColor());
+				if (tools->toolType == ToolType::Brush)
+					drawPixels(colors_dialog->current_color);
 				
 				if(tools->toolType == ToolType::Eraser)
-					setPixel(worldMousePosition, sf::Color::Transparent);
+					drawPixels(sf::Color::Transparent);
 
 				if (tools->toolType == ToolType::Selector) {
 					selecting = true;
-					if (selection->clickOnSelection(worldToTile(worldMousePosition))) {
+					if (selection->clickOnSelection(worldToTile(worldMousePosition, position, size, zoom ,zoom_delta))) {
 						if (!selection->isMoved) {
 							selection->isMoved = true;
-							selection->setOffset(worldToTile(worldMousePosition));
+							selection->setOffset(worldToTile(worldMousePosition, position, size, zoom, zoom_delta));
 						}
 					}
 					else {
-						selection->start_px = worldToTile(worldMousePosition);
+						selection->start_px = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
 						selection->end_px = selection->start_px;
 						selection->isMoved = false;
 					}
@@ -169,16 +184,17 @@ public:
 			if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 				
 				if (tools->toolType == ToolType::Brush) {
-					setPixel(worldMousePosition, colors_dialog->getCurrentColor());
+					drawPixels(colors_dialog->getCurrentColor());
 				}
 
 				if (tools->toolType == ToolType::Eraser) {
-					setPixel(worldMousePosition, sf::Color::Transparent);
+					drawPixels(sf::Color::Transparent);
+
 				}
 
 				if (tools->toolType == ToolType::Selector) {
 					if (!selection->isMoved) {
-						selection->end_px = worldToTile(worldMousePosition);
+						selection->end_px = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
 					}
 				}
 			}
@@ -214,12 +230,15 @@ public:
 				
 			}
 		}
+		else {
+			brush_is_visible = false;
+		}
 
 		if (tools->toolType == ToolType::Selector && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 			if ((ElementGUI_hovered == this || ElementGUI_hovered == nullptr ) && (ElementGUI_pressed == this || ElementGUI_pressed == nullptr)) {
 				
 				if (!selection->isMoved) {
-					selection->end_px = worldToTile(worldMousePosition);
+					selection->end_px = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
 					sf::Vector2i d = selection->end_px - selection->start_px;
 
 					if (std::abs(d.x) >= 1 || std::abs(d.y) >= 1) {
@@ -227,7 +246,7 @@ public:
 					}
 				}
 				else {
-					selection->move(worldToTile(worldMousePosition), layers_dialog->getCurrentLayer()->image.getSize());
+					selection->move(worldToTile(worldMousePosition, position, size, zoom, zoom_delta), layers_dialog->getCurrentLayer()->image.getSize());
 				}
 				
 				
@@ -244,8 +263,10 @@ public:
 
 	void update() {
 
+		// TO-DO - nieoptymalne
 		if( size != sf::Vector2i(layers_dialog->getCurrentLayer()->image.getSize()))
 			generateBackground(sf::Vector2i(layers_dialog->getCurrentLayer()->image.getSize()));
+		//
 
 		if (isMoved) {
 			sf::Vector2f target = worldMousePosition + offset;
@@ -275,6 +296,10 @@ public:
 
 		if (selecting) {
 			selection->draw(bg_sprite.getPosition(), zoom * zoom_delta);
+		}
+
+		if (brush_is_visible) {
+			brush->draw(position, size, zoom, zoom_delta);
 		}
 		
 	}

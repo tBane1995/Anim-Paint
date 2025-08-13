@@ -57,6 +57,7 @@ enum class ToolType { Brush, Eraser, Selector, Fill };
 
 class Tools : public ElementGUI {
 public:
+
 	sf::RectangleShape rect;
 
 	std::vector < Separator* > separators;
@@ -81,6 +82,7 @@ public:
 	ToolType toolType;
 
 	Tools() : ElementGUI() {
+
 		rect = sf::RectangleShape(sf::Vector2f(window->getSize().x, tools_height));
 		rect.setFillColor(tools_bar_color);
 		
@@ -90,6 +92,8 @@ public:
 		btn_paste = new ButtonWithBottomText(L"paste", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_paste.png"), getTexture(L"tex\\tools\\btn_paste_hover.png"));
 		btn_paste->onclick_func = [this]() {
 			loadImageFromClipboard(layers_dialog->getCurrentLayer()->image, selection->start_px);
+			sf::Vector2i layer_image_size = sf::Vector2i(layers_dialog->getCurrentLayer()->image.getSize());
+			
 			};
 		btn_cut = new ButtonWithBottomText(L"cut", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_cut.png"), getTexture(L"tex\\tools\\btn_cut_hover.png"));
 		btn_copy = new ButtonWithBottomText(L"copy", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));

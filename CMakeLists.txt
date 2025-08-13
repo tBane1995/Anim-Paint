@@ -14,6 +14,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     Anim-Paint/Checkbox.hpp
     Anim-Paint/Dialog.hpp
     
+    Anim-Paint/WorldToTileConverter.hpp
     Anim-Paint/Clipboard.hpp
 
     Anim-Paint/Layer.hpp
@@ -21,6 +22,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     
     Anim-Paint/MainMenu.hpp
     Anim-Paint/Selection.hpp
+    Anim-Paint/Brush.hpp
     Anim-Paint/Tools.hpp
     Anim-Paint/ColorsDialog.hpp
     Anim-Paint/FramesDialog.hpp

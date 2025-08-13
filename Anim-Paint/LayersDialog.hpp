@@ -1,6 +1,8 @@
 #ifndef LayersDialog_hpp
 #define LayersDialog_hpp
 
+class Canvas;
+
 class LayerBox : public ElementGUI {
 public:
 
@@ -76,17 +78,22 @@ public:
 class LayersDialog : public Dialog {
 public:
 
-	
+	Canvas* canvas;
+
 	std::vector < LayerBox* > layersBoxes;
 	int currentLayerId = 3;
 
 	LayersDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) : Dialog(title, size, position) {
 
 		loadLayersFromCurrentFrame();
-		
+		canvas = nullptr;
 	}
 
 	~LayersDialog() { }
+
+	void setCanvas(Canvas* canvas) {
+		this->canvas = canvas;
+	}
 
 	Layer* getCurrentLayer() {
 		return layersBoxes[currentLayerId]->layer;
@@ -150,6 +157,7 @@ public:
 	void update() {
 		Dialog::update();
 		
+		// TO-DO - not optimize
 		if (layersBoxes.size() > 0 && layersBoxes[0]->layer != frames_dialog->getCurrentFrame()->layers[0]) {
 			loadLayersFromCurrentFrame();
 		}
