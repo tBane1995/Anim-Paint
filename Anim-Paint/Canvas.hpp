@@ -1,7 +1,76 @@
 ﻿#ifndef Canvas_hpp
 #define Canvas_hpp
 
+class Selection {
+public:
+	sf::Vector2i start_px, end_px; // piksele obrazu (0..size.x/y)
+	sf::Vector2i offset;
+	bool isMoved;
 
+	Selection() {
+		start_px = sf::Vector2i(0, 0);
+		end_px = sf::Vector2i(0, 0);
+		offset = sf::Vector2i(0, 0);
+		isMoved = false;
+	}
+
+	void setOffset(sf::Vector2i point_px) {
+		sf::Vector2i s(std::min(start_px.x, end_px.x), std::min(start_px.y, end_px.y));
+		offset = s - point_px;
+	}
+
+	void move(sf::Vector2i point_px, sf::Vector2i map_size) {
+		sf::Vector2i s(std::min(start_px.x, end_px.x), std::min(start_px.y, end_px.y));
+		sf::Vector2i e(std::max(start_px.x, end_px.x), std::max(start_px.y, end_px.y));
+		sf::Vector2i sz = e - s;                 // szerokość/wysokość w pikselach
+
+		sf::Vector2i newMin = point_px + offset;
+
+		start_px = newMin;
+		end_px = newMin + sz;
+
+		if (start_px.x < 0) {
+			start_px.x = 0;
+			end_px.x = sz.x;
+		}
+
+		if (start_px.y < 0) {
+			start_px.y = 0;
+			end_px.y = sz.y;
+		}
+
+		if (end_px.x >= map_size.x) {
+			end_px.x = map_size.x;
+			start_px.x = end_px.x - sz.x;
+		}
+
+		if (end_px.y >= map_size.y) {
+			end_px.y = map_size.y;
+			start_px.y = end_px.y - sz.y;
+		}
+
+		std::cout << start_px.x << ", " << start_px.y << "\n";
+	}
+
+	bool clickOnSelection(sf::Vector2i p) const {
+		sf::Vector2i s(std::min(start_px.x, end_px.x), std::min(start_px.y, end_px.y));
+		sf::Vector2i e(std::max(start_px.x, end_px.x), std::max(start_px.y, end_px.y));
+		return (p.x > s.x && p.x < e.x && p.y > s.y && p.y < e.y);
+	}
+
+	void draw(const sf::Vector2f& canvasPos, float scale) {
+		sf::Vector2i s(std::min(start_px.x, end_px.x), std::min(start_px.y, end_px.y));
+		sf::Vector2i e(std::max(start_px.x, end_px.x), std::max(start_px.y, end_px.y));
+
+		sf::Vector2f topLeft = canvasPos + sf::Vector2f(s.x * scale, s.y * scale);
+		sf::Vector2f size = sf::Vector2f((e.x - s.x) * scale, (e.y - s.y) * scale);
+
+		sf::RectangleShape rect(size);
+		rect.setPosition(topLeft);
+		rect.setFillColor(sf::Color(255, 47, 47, 127));
+		window->draw(rect);
+	}
+};
 
 class Canvas : public ElementGUI {
 public:
@@ -27,6 +96,9 @@ public:
 	bool isMoved;
 	sf::Vector2f offset;	// to movements of canvas
 
+	bool selecting;
+	Selection* selection;
+
 	Canvas(sf::Vector2i size) : ElementGUI() {
 		this->size = size;
 
@@ -42,6 +114,9 @@ public:
 
 		this->isMoved = false;
 		this->offset = sf::Vector2f(0, 0);
+
+		this->selecting = false;
+		this->selection = new Selection();
 
 		generateBackground();
 
@@ -109,17 +184,22 @@ public:
 		updateBackgroundSprite();
 	}
 
+	sf::Vector2i worldToTile(sf::Vector2f p) {
+		float scale = zoom * zoom_delta;
+		sf::Vector2f local = p - position; // world -> local canvas
+		int tx = std::clamp(int(std::floor(local.x / scale)), 0, size.x);
+		int ty = std::clamp(int(std::floor(local.y / scale)), 0, size.y);
+		return sf::Vector2i(tx, ty);
+	}
+
 	void setPixel(sf::Vector2f worldMousePosition, sf::Color color) {
 
-		sf::Vector2f s = (worldMousePosition - bg_sprite.getPosition());
-		s.x = int(s.x) / (zoom * zoom_delta);
-		s.y = int(s.y) / (zoom * zoom_delta);
-
-		//std::cout << s.x << ", " << s.y << "\n";
-
+		sf::Vector2i s = worldToTile(worldMousePosition);
 		layers_dialog->getCurrentLayer()->image.setPixel(s.x, s.y, color);
 
 	}
+
+	
 
 	void cursorHover() {
 		if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
@@ -128,15 +208,59 @@ public:
 	}
 
 	void handleEvent(sf::Event& event) {
+
 		if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 				ElementGUI_pressed = this;
+				selecting = false;
 
-				setPixel(worldMousePosition, colors_dialog->getCurrentColor());
+				if(tools->toolType == ToolType::Brush)
+					setPixel(worldMousePosition, colors_dialog->getCurrentColor());
+				
+				if(tools->toolType == ToolType::Eraser)
+					setPixel(worldMousePosition, sf::Color::Transparent);
+
+				if (tools->toolType == ToolType::Selector) {
+					selecting = true;
+					if (selection->clickOnSelection(worldToTile(worldMousePosition))) {
+						if (!selection->isMoved) {
+							selection->isMoved = true;
+							selection->setOffset(worldToTile(worldMousePosition));
+						}
+					}
+					else {
+						selection->start_px = worldToTile(worldMousePosition);
+						selection->end_px = selection->start_px;
+						selection->isMoved = false;
+					}
+				}
 			}
 
 			if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-				setPixel(worldMousePosition, colors_dialog->getCurrentColor());
+				
+				if (tools->toolType == ToolType::Brush) {
+					setPixel(worldMousePosition, colors_dialog->getCurrentColor());
+				}
+
+				if (tools->toolType == ToolType::Eraser) {
+					setPixel(worldMousePosition, sf::Color::Transparent);
+				}
+
+				if (tools->toolType == ToolType::Selector) {
+					if (selection->isMoved) {
+						selection->move(worldToTile(worldMousePosition), size);
+					}
+					else {
+						selection->end_px = worldToTile(worldMousePosition);
+					}
+				}
+			}
+
+			if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+				if (tools->toolType == ToolType::Selector) {
+					if (selection->isMoved)
+						selection->isMoved = false;
+				}
 			}
 
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Middle) {
@@ -160,6 +284,22 @@ public:
 				sf::Vector2f mouseAfterZoom = mouseBeforeZoom * (zoom / oldZoom);
 				position += (worldMousePosition - (position + mouseAfterZoom));
 				bg_sprite.setPosition(position);
+				
+			}
+		}
+
+		if (tools->toolType == ToolType::Selector && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+			if ((ElementGUI_hovered == this || ElementGUI_hovered == nullptr ) && (ElementGUI_pressed == this || ElementGUI_pressed == nullptr)) {
+				
+				if (!selection->isMoved) {
+					selection->end_px = worldToTile(worldMousePosition);
+					sf::Vector2i d = selection->end_px - selection->start_px;
+
+					if (std::abs(d.x) >= 1 || std::abs(d.y) >= 1) {
+						selecting = true;
+					}
+				}
+				
 				
 			}
 		}
@@ -197,6 +337,10 @@ public:
 				spr.setScale(zoom * zoom_delta, zoom * zoom_delta);
 				window->draw(spr);
 			}
+		}
+
+		if (selecting) {
+			selection->draw(bg_sprite.getPosition(), zoom * zoom_delta);
 		}
 		
 	}

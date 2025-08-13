@@ -52,6 +52,8 @@ public:
 	}
 };
 
+enum class ToolType { Brush, Eraser, Selector, Fill };
+
 
 class Tools : public ElementGUI {
 public:
@@ -70,12 +72,13 @@ public:
 	sf::Text tools_text;
 	NormalButton* btn_brush;
 	NormalButton* btn_brush2;
-	NormalButton* btn_brush3;
-	NormalButton* btn_brush4;
+	NormalButton* btn_fill;
+	NormalButton* btn_eraser;
 
 	sf::Text colors_text;
 	std::vector < ColorButton* > colors;
 
+	ToolType toolType;
 
 	Tools() : ElementGUI() {
 		rect = sf::RectangleShape(sf::Vector2f(window->getSize().x, tools_height));
@@ -88,6 +91,9 @@ public:
 		btn_cut = new ButtonWithBottomText(L"cut", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_cut.png"), getTexture(L"tex\\tools\\btn_cut_hover.png"));
 		btn_copy = new ButtonWithBottomText(L"copy", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));
 		btn_select = new ButtonWithBottomText(L"select", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_select.png"), getTexture(L"tex\\tools\\btn_select_hover.png"));
+		btn_select->onclick_func = [this]() {
+			toolType = ToolType::Selector;
+			};
 
 		clipboard.clear();
 		clipboard.push_back(btn_paste);
@@ -100,15 +106,30 @@ public:
 		tools_text = sf::Text(L"tools", basicFont, 13);
 		tools_text.setFillColor(tools_text_color);
 		btn_brush = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
+		btn_brush->onclick_func = [this]() {
+			toolType = ToolType::Brush;
+			};
 		btn_brush2 = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
-		btn_brush3 = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
-		btn_brush4 = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
+		btn_brush2->onclick_func = [this]() {
+			toolType = ToolType::Brush;
+			};
+		btn_fill = new NormalButton(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"));
+		btn_fill->onclick_func = [this]() {
+			toolType = ToolType::Fill;
+			};
+		btn_eraser= new NormalButton(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"));
+		btn_eraser->onclick_func = [this]() {
+			toolType = ToolType::Eraser;
+			};
 
 		tools.clear();
 		tools.push_back(btn_brush);
 		tools.push_back(btn_brush2);
-		tools.push_back(btn_brush3);
-		tools.push_back(btn_brush4);
+		tools.push_back(btn_fill);
+		tools.push_back(btn_eraser);
+
+		toolType = ToolType::Brush;
+
 		separators.push_back(new Separator());
 
 		// colors

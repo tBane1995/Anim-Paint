@@ -78,6 +78,12 @@ void loadTextures() {
 
 	loadTexture(L"tex\\tools\\btn_brush.png");
 	loadTexture(L"tex\\tools\\btn_brush_hover.png");
+
+	loadTexture(L"tex\\tools\\btn_fill.png");
+	loadTexture(L"tex\\tools\\btn_fill_hover.png");
+
+	loadTexture(L"tex\\tools\\btn_eraser.png");
+	loadTexture(L"tex\\tools\\btn_eraser_hover.png");
 }
 
 #endif
