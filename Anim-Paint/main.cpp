@@ -1,7 +1,10 @@
 #include <iostream>
 #include <string>
 #include <functional>
+#define NOMINMAX
+#include <Windows.h>
 #include <SFML/Graphics.hpp>
+
 
 #include "Window.hpp"
 #include "Textures.hpp"
@@ -13,14 +16,18 @@
 #include "Checkbox.hpp"
 #include "Dialog.hpp"
 
+#include "ClipBoard.hpp"
+
 #include "Layer.hpp"
 #include "Frame.hpp"
 
 #include "MainMenu.hpp"
 #include "ColorsDialog.hpp"
-#include "Tools.hpp"
+
 #include "FramesDialog.hpp"
 #include "LayersDialog.hpp"
+#include "Selection.hpp"
+#include "Tools.hpp"
 #include "Canvas.hpp"
 
 void createDialogs() {
@@ -49,6 +56,7 @@ int main() {
 	loadTheme();
 	main_menu = new MainMenu();
 	createDialogs();
+	selection = new Selection();
 	tools = new Tools();
 	canvas = new Canvas(sf::Vector2i(frames_dialog->getCurrentFrame()->layers[0]->image.getSize()));
 

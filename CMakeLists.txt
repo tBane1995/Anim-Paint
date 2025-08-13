@@ -13,11 +13,14 @@ target_sources(${PROJECT_NAME} PRIVATE
     Anim-Paint/Button.hpp
     Anim-Paint/Checkbox.hpp
     Anim-Paint/Dialog.hpp
+    
+    Anim-Paint/Clipboard.hpp
 
     Anim-Paint/Layer.hpp
     Anim-Paint/Frame.hpp
     
     Anim-Paint/MainMenu.hpp
+    Anim-Paint/Selection.hpp
     Anim-Paint/Tools.hpp
     Anim-Paint/ColorsDialog.hpp
     Anim-Paint/FramesDialog.hpp

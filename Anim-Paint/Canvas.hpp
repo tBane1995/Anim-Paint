@@ -1,76 +1,6 @@
 ﻿#ifndef Canvas_hpp
 #define Canvas_hpp
 
-class Selection {
-public:
-	sf::Vector2i start_px, end_px; // piksele obrazu (0..size.x/y)
-	sf::Vector2i offset;
-	bool isMoved;
-
-	Selection() {
-		start_px = sf::Vector2i(0, 0);
-		end_px = sf::Vector2i(0, 0);
-		offset = sf::Vector2i(0, 0);
-		isMoved = false;
-	}
-
-	void setOffset(sf::Vector2i point_px) {
-		sf::Vector2i s(std::min(start_px.x, end_px.x), std::min(start_px.y, end_px.y));
-		offset = s - point_px;
-	}
-
-	void move(sf::Vector2i point_px, sf::Vector2i map_size) {
-		sf::Vector2i s(std::min(start_px.x, end_px.x), std::min(start_px.y, end_px.y));
-		sf::Vector2i e(std::max(start_px.x, end_px.x), std::max(start_px.y, end_px.y));
-		sf::Vector2i sz = e - s;                 // szerokość/wysokość w pikselach
-
-		sf::Vector2i newMin = point_px + offset;
-
-		start_px = newMin;
-		end_px = newMin + sz;
-
-		if (start_px.x < 0) {
-			start_px.x = 0;
-			end_px.x = sz.x;
-		}
-
-		if (start_px.y < 0) {
-			start_px.y = 0;
-			end_px.y = sz.y;
-		}
-
-		if (end_px.x >= map_size.x) {
-			end_px.x = map_size.x;
-			start_px.x = end_px.x - sz.x;
-		}
-
-		if (end_px.y >= map_size.y) {
-			end_px.y = map_size.y;
-			start_px.y = end_px.y - sz.y;
-		}
-
-		//std::cout << start_px.x << ", " << start_px.y << "\n";
-	}
-
-	bool clickOnSelection(sf::Vector2i p) const {
-		sf::Vector2i s(std::min(start_px.x, end_px.x), std::min(start_px.y, end_px.y));
-		sf::Vector2i e(std::max(start_px.x, end_px.x), std::max(start_px.y, end_px.y));
-		return (p.x > s.x && p.x < e.x && p.y > s.y && p.y < e.y);
-	}
-
-	void draw(const sf::Vector2f& canvasPos, float scale) {
-		sf::Vector2i s(std::min(start_px.x, end_px.x), std::min(start_px.y, end_px.y));
-		sf::Vector2i e(std::max(start_px.x, end_px.x), std::max(start_px.y, end_px.y));
-
-		sf::Vector2f topLeft = canvasPos + sf::Vector2f(s.x * scale, s.y * scale);
-		sf::Vector2f size = sf::Vector2f((e.x - s.x) * scale, (e.y - s.y) * scale);
-
-		sf::RectangleShape rect(size);
-		rect.setPosition(topLeft);
-		rect.setFillColor(sf::Color(255, 47, 47, 127));
-		window->draw(rect);
-	}
-};
 
 class Canvas : public ElementGUI {
 public:
@@ -97,7 +27,6 @@ public:
 	sf::Vector2f offset;	// to movements of canvas
 
 	bool selecting;
-	Selection* selection;
 
 	Canvas(sf::Vector2i size) : ElementGUI() {
 		this->size = size;
@@ -116,9 +45,8 @@ public:
 		this->offset = sf::Vector2f(0, 0);
 
 		this->selecting = false;
-		this->selection = new Selection();
 
-		generateBackground();
+		generateBackground(size);
 
 		setPosition((sf::Vector2f(window->getSize()) - getZoomedSize()) / 2.0f);
 	}
@@ -141,7 +69,9 @@ public:
 
 	}
 
-	void generateBackground() {
+	void generateBackground(sf::Vector2i size) {
+
+		this->size = size;
 
 		bg_image = sf::Image();
 		sf::Vector2f s = getZoomedSize();
@@ -180,7 +110,7 @@ public:
 
 	void setZoom(float zoom) {
 		this->zoom = zoom;
-		generateBackground();
+		generateBackground(size);
 		updateBackgroundSprite();
 	}
 
@@ -276,7 +206,7 @@ public:
 				zoom += 0.25f * event.mouseWheelScroll.delta;
 				zoom = std::clamp(zoom, min_zoom, max_zoom);
 
-				generateBackground();
+				generateBackground(size);
 
 				sf::Vector2f mouseAfterZoom = mouseBeforeZoom * (zoom / oldZoom);
 				position += (worldMousePosition - (position + mouseAfterZoom));
@@ -297,7 +227,7 @@ public:
 					}
 				}
 				else {
-					selection->move(worldToTile(worldMousePosition), size);
+					selection->move(worldToTile(worldMousePosition), layers_dialog->getCurrentLayer()->image.getSize());
 				}
 				
 				
@@ -313,6 +243,10 @@ public:
 	}
 
 	void update() {
+
+		if( size != sf::Vector2i(layers_dialog->getCurrentLayer()->image.getSize()))
+			generateBackground(sf::Vector2i(layers_dialog->getCurrentLayer()->image.getSize()));
+
 		if (isMoved) {
 			sf::Vector2f target = worldMousePosition + offset;
 			float x = clampAxisOverscroll(target.x, bg_sprite.getGlobalBounds().width, window->getSize().x, 0.5f);

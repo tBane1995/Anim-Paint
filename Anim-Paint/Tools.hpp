@@ -1,4 +1,4 @@
-#ifndef Tools_hpp
+﻿#ifndef Tools_hpp
 #define Tools_hpp
 
 class Separator {
@@ -88,8 +88,14 @@ public:
 		clipboard_text = sf::Text(L"clipboard", basicFont, 13);
 		clipboard_text.setFillColor(tools_text_color);
 		btn_paste = new ButtonWithBottomText(L"paste", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_paste.png"), getTexture(L"tex\\tools\\btn_paste_hover.png"));
+		btn_paste->onclick_func = [this]() {
+			loadImageFromClipboard(layers_dialog->getCurrentLayer()->image, selection->start_px);
+			};
 		btn_cut = new ButtonWithBottomText(L"cut", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_cut.png"), getTexture(L"tex\\tools\\btn_cut_hover.png"));
 		btn_copy = new ButtonWithBottomText(L"copy", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));
+		btn_copy->onclick_func = [this](){
+			copyImageToClipboard(layers_dialog->getCurrentLayer()->image, selection->start_px, selection->end_px - selection->start_px);
+			};
 		btn_select = new ButtonWithBottomText(L"select", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_select.png"), getTexture(L"tex\\tools\\btn_select_hover.png"));
 		btn_select->onclick_func = [this]() {
 			toolType = ToolType::Selector;
