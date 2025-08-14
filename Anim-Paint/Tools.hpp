@@ -91,7 +91,7 @@ public:
 		clipboard_text.setFillColor(tools_text_color);
 		btn_paste = new ButtonWithBottomText(L"paste", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_paste.png"), getTexture(L"tex\\tools\\btn_paste_hover.png"));
 		btn_paste->onclick_func = [this]() {
-			loadImageFromClipboard(layers_dialog->getCurrentLayer()->image, selection->start_px);
+			loadImageFromClipboard(layers_dialog->getCurrentLayer()->image);
 			sf::Vector2i layer_image_size = sf::Vector2i(layers_dialog->getCurrentLayer()->image.getSize());
 			
 			};

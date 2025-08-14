@@ -69,7 +69,7 @@ bool copyImageToClipboard(sf::Image& image, sf::Vector2i pos, sf::Vector2i size)
     return true;
 }
 
-bool loadImageFromClipboard(sf::Image& outImage, sf::Vector2i pos) {
+bool loadImageFromClipboard(sf::Image& outImage) {
     if (!OpenClipboard(nullptr))
         return false;
 
@@ -138,7 +138,16 @@ bool loadImageFromClipboard(sf::Image& outImage, sf::Vector2i pos) {
     GlobalUnlock(hData);
     CloseClipboard();
 
-    outImage.create(unsigned(width), unsigned(height), rgba.data());
+    sf::Image src;
+    src.create(width, height, rgba.data());
+
+    if (width <= outImage.getSize().x && height <= outImage.getSize().y) {
+        outImage.copy(src, 0, 0, sf::IntRect(0, 0, width, height), true);
+    }
+    else {
+        outImage.create(width, height, rgba.data());
+        outImage.copy(src, 0, 0, sf::IntRect(0, 0, width, height), true);
+    }
 
     return true;
 }
