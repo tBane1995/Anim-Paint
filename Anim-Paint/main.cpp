@@ -23,7 +23,6 @@
 #include "Frame.hpp"
 
 #include "MainMenu.hpp"
-#include "ColorsDialog.hpp"
 
 #include "FramesDialog.hpp"
 #include "LayersDialog.hpp"
@@ -47,10 +46,6 @@ void createDialogs() {
 		sf::Vector2f(window->getSize().x - 160 - dialog_margin, dialogs.back()->getPosition().y + dialogs.back()->getSize().y + dialog_margin));
 	dialogs.push_back(layers_dialog);
 
-	colors_dialog = new ColorsDialog(L"Colors",
-		sf::Vector2f(152, 286),
-		sf::Vector2f(dialog_margin, window->getSize().y - 286 - dialog_margin));
-	dialogs.push_back(colors_dialog);
 }
 
 int main() {

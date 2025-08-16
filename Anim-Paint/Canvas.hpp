@@ -148,7 +148,7 @@ public:
 
 	void handleEvent(sf::Event& event) {
 
-		if (ElementGUI_hovered == this || ElementGUI_pressed == this) {
+		if ((ElementGUI_hovered == this || ElementGUI_hovered == nullptr) && (ElementGUI_pressed == this || ElementGUI_pressed == nullptr)) {
 			if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 
 				if (tools->toolType == ToolType::Brush || tools->toolType == ToolType::Eraser) {
@@ -158,11 +158,11 @@ public:
 
 
 				if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-					
 
-					
+
+
 					if (tools->toolType == ToolType::Brush) {
-						drawPixels(colors_dialog->getCurrentColor());
+						drawPixels(tools->currentColor);
 					}
 					else if (tools->toolType == ToolType::Eraser) {
 						drawPixels(sf::Color::Transparent);
@@ -175,14 +175,14 @@ public:
 							selection->state = SelectionState::Selecting;
 							selection->rect = sf::IntRect(tile.x, tile.y, 0, 0);
 						}
-					
+
 					}
 				}
 
 				else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 
 					if (tools->toolType == ToolType::Brush) {
-						drawPixels(colors_dialog->getCurrentColor());
+						drawPixels(tools->currentColor);
 					}
 					else if (tools->toolType == ToolType::Eraser) {
 						drawPixels(sf::Color::Transparent);
@@ -220,29 +220,31 @@ public:
 		}
 
 		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-			if (selection->state == SelectionState::Selected) {
-				sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
-				sf::IntRect norm = selection->normalizeRect(selection->rect);
+			if ((ElementGUI_hovered == this || ElementGUI_hovered == nullptr) && (ElementGUI_pressed == this || ElementGUI_pressed == nullptr)){
+				if (selection->state == SelectionState::Selected) {
+					sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
+					sf::IntRect norm = selection->normalizeRect(selection->rect);
 
-				if (selection->clickOnSelection(tile)) {
-					selection->offset = tile - sf::Vector2i(norm.left, norm.top);
-					selection->state = SelectionState::Moving;
+					if (selection->clickOnSelection(tile)) {
+						selection->offset = tile - sf::Vector2i(norm.left, norm.top);
+						selection->state = SelectionState::Moving;
 
-					if (!selection->hasImage) {
-						selection->copyImage(layers_dialog->getCurrentLayer()->image, norm);
-						selection->cutImage(layers_dialog->getCurrentLayer()->image, norm);
+						if (!selection->hasImage) {
+							selection->copyImage(layers_dialog->getCurrentLayer()->image, norm);
+							selection->cutImage(layers_dialog->getCurrentLayer()->image, norm);
+						}
 					}
-				}
-				else {
-					if (selection->hasImage) {
-						selection->pasteImage(layers_dialog->getCurrentLayer()->image, norm);
-						selection->hasImage = false;
-						selection->img = sf::Image();
-					}
+					else {
+						if (selection->hasImage) {
+							selection->pasteImage(layers_dialog->getCurrentLayer()->image, norm);
+							selection->hasImage = false;
+							selection->img = sf::Image();
+						}
 
-					selection->state = SelectionState::Selecting;
-					tile = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
-					selection->rect = sf::IntRect(tile.x, tile.y, 0, 0);
+						selection->state = SelectionState::Selecting;
+						tile = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
+						selection->rect = sf::IntRect(tile.x, tile.y, 0, 0);
+					}
 				}
 			}
 		}
@@ -251,7 +253,7 @@ public:
 			if (tools->toolType == ToolType::Selector) {
 
 				if (selection->state == SelectionState::Selecting) {
-					sf::Vector2i tile = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
+					sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
 					selection->rect.width = tile.x - selection->rect.left;
 					selection->rect.height = tile.y - selection->rect.top;
 				}
@@ -265,21 +267,23 @@ public:
 		}
 
 		if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
-			if (tools->toolType == ToolType::Selector) {
-				if (selection->state == SelectionState::Selecting) {
-					sf::IntRect norm = selection->normalizeRect(selection->rect);
-					if (norm.width <= 0 || norm.height <= 0) {
-						selection->state = SelectionState::Idle;
-						selection->rect = sf::IntRect(0, 0, 0, 0);
+			if ((ElementGUI_hovered == this || ElementGUI_hovered == nullptr) && (ElementGUI_pressed == this || ElementGUI_pressed == nullptr)) {
+				if (tools->toolType == ToolType::Selector) {
+					if (selection->state == SelectionState::Selecting) {
+						sf::IntRect norm = selection->normalizeRect(selection->rect);
+						if (norm.width <= 0 || norm.height <= 0) {
+							selection->state = SelectionState::Idle;
+							selection->rect = sf::IntRect(0, 0, 0, 0);
+						}
+						else {
+							selection->rect = norm;
+							selection->state = SelectionState::Selected;
+						}
 					}
-					else {
-						selection->rect = norm;
+					else if (selection->state == SelectionState::Moving) {
+						selection->rect = selection->normalizeRect(selection->rect);
 						selection->state = SelectionState::Selected;
 					}
-				}
-				else if (selection->state == SelectionState::Moving) {
-					selection->rect = selection->normalizeRect(selection->rect);
-					selection->state = SelectionState::Selected;
 				}
 			}
 		}

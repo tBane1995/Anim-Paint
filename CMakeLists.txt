@@ -24,7 +24,6 @@ target_sources(${PROJECT_NAME} PRIVATE
     Anim-Paint/Selection.hpp
     Anim-Paint/Brush.hpp
     Anim-Paint/Tools.hpp
-    Anim-Paint/ColorsDialog.hpp
     Anim-Paint/FramesDialog.hpp
     Anim-Paint/LayersDialog.hpp
     Anim-Paint/Canvas.hpp

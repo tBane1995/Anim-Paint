@@ -59,11 +59,15 @@ void loadTextures() {
 	loadTexture(L"tex\\layers\\unvisible.png");
 	loadTexture(L"tex\\layers\\unvisible_hover.png");
 
-	// dialog - colors
-	loadTexture(L"tex\\colors\\frame.png");
-	loadTexture(L"tex\\colors\\frame_hover.png");
+	
 
 	// tools
+	loadTexture(L"tex\\tools\\frame.png");
+	loadTexture(L"tex\\tools\\frame_hover.png");
+
+	loadTexture(L"tex\\tools\\frame_large.png");
+	loadTexture(L"tex\\tools\\frame_large_hover.png");
+
 	loadTexture(L"tex\\tools\\btn_paste.png");
 	loadTexture(L"tex\\tools\\btn_paste_hover.png");
 	
@@ -75,6 +79,9 @@ void loadTextures() {
 
 	loadTexture(L"tex\\tools\\btn_select.png");
 	loadTexture(L"tex\\tools\\btn_select_hover.png");
+
+	loadTexture(L"tex\\tools\\btn_lasso.png");
+	loadTexture(L"tex\\tools\\btn_lasso_hover.png");
 
 	loadTexture(L"tex\\tools\\btn_brush.png");
 	loadTexture(L"tex\\tools\\btn_brush_hover.png");

@@ -43,13 +43,28 @@ public:
 	}
 
 	void pasteImage(sf::Image& image, sf::IntRect rect) {
-		sf::IntRect image_rect;
-		image_rect.left = 0;
-		image_rect.top = 0;
-		image_rect.width = image.getSize().x;
-		image_rect.height = image.getSize().y;
-		if(image_rect.intersects(rect))
-			image.copy(this->img, rect.left, rect.top, sf::IntRect(0, 0, this->img.getSize().x, this->img.getSize().y), true);
+		// prostokąt docelowy w granicach obrazu
+		const int IW = (int)image.getSize().x;
+		const int IH = (int)image.getSize().y;
+		sf::IntRect bounds(0, 0, IW, IH);
+
+		sf::IntRect r; // r = przycięty rect (część wspólna z obrazem)
+		if (!rect.intersects(bounds, r) || r.width <= 0 || r.height <= 0) {
+			hasImage = false;
+			this->img = sf::Image();
+			return;
+		}
+
+		// ile „ucięło” z lewej/góry -> o tyle trzeba przesunąć źródło
+		const int srcOffX = r.left - rect.left;
+		const int srcOffY = r.top - rect.top;
+
+		// przycięty prostokąt źródłowy z naszej tymczasowej bitmapy
+		sf::IntRect src(srcOffX, srcOffY, r.width, r.height);
+
+		// wklej w r.left, r.top z odpowiedniego fragmentu img
+		image.copy(this->img, (unsigned)r.left, (unsigned)r.top, src, true);
+
 		hasImage = false;
 		this->img = sf::Image();
 	}
