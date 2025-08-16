@@ -218,7 +218,9 @@ public:
 
 				}
 			}
-
+			else {
+				brush_is_visible = false;
+			}
 		}
 		else {
 			brush_is_visible = false;
