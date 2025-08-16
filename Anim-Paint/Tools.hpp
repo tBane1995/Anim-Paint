@@ -118,8 +118,6 @@ public:
 	sf::Text colors_text;
 	std::vector < ColorButton* > colors;
 
-	sf::Color currentColor = sf::Color(0, 0, 0);
-
 	ToolType toolType;
 
 	Tools() : ElementGUI() {
@@ -211,12 +209,10 @@ public:
 
 		first_color->onclick_func = [this]() {
 			this->active_color = first_color;
-			this->currentColor = first_color->color;
 			};
 
 		second_color->onclick_func = [this]() {
 			this->active_color = second_color;
-			this->currentColor = second_color->color;
 			};
 
 		separators.push_back(new Separator());
@@ -264,7 +260,6 @@ public:
 		for (auto& c : colors) {
 			c->onclick_func = [this, c]() {
 				this->active_color->setColor(c->color);
-				this->currentColor = active_color->color;
 				};
 		}
 

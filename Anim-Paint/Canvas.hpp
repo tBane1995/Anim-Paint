@@ -158,11 +158,8 @@ public:
 
 
 				if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-
-
-
 					if (tools->toolType == ToolType::Brush) {
-						drawPixels(tools->currentColor);
+						drawPixels(tools->first_color->color);
 					}
 					else if (tools->toolType == ToolType::Eraser) {
 						drawPixels(sf::Color::Transparent);
@@ -178,22 +175,30 @@ public:
 
 					}
 				}
-
+				else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right) {
+					if (tools->toolType == ToolType::Brush) {
+						drawPixels(tools->second_color->color);
+					}
+				}
+				else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Middle) {
+					isMoved = true;
+					offset = bg_sprite.getPosition() - worldMousePosition;
+				}
 				else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 
 					if (tools->toolType == ToolType::Brush) {
-						drawPixels(tools->currentColor);
+						drawPixels(tools->first_color->color);
 					}
 					else if (tools->toolType == ToolType::Eraser) {
 						drawPixels(sf::Color::Transparent);
 					}
 				}
+				else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
 
-				else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Middle) {
-					isMoved = true;
-					offset = bg_sprite.getPosition() - worldMousePosition;
+					if (tools->toolType == ToolType::Brush) {
+						drawPixels(tools->second_color->color);
+					}
 				}
-
 				else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Middle) {
 					isMoved = false;
 				}
