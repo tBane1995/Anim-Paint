@@ -1,75 +1,138 @@
 ﻿#ifndef Selection_hpp
 #define Selection_hpp
 
-enum class SelectionState { Idle, Selecting, Selected, Moving };
+void remove(sf::Image& image, sf::IntRect rect)
+{
+	sf::Image src;
+	src.create(rect.width, rect.height, sf::Color::Transparent);
+
+	if (rect.width <= 0 || rect.height <= 0) {
+		rect.width = int(src.getSize().x);
+		rect.height = int(src.getSize().y);
+	}
+
+	const sf::IntRect canvas(0, 0, int(image.getSize().x), int(image.getSize().y));
+
+	sf::IntRect clipped;
+	if (!rect.intersects(canvas, clipped)) {
+		return;
+	}
+
+	const sf::IntRect srcRect(clipped.left - rect.left, clipped.top - rect.top, clipped.width, clipped.height);
+
+	image.copy(src,unsigned(clipped.left), unsigned(clipped.top), srcRect, false);
+}
+
+// 1) Zrzut fragmentu z warstwy do bufora selection->img (na (0,0))
+void copy(sf::Image* dst, const sf::Image* src, sf::IntRect srcRect) {
+	const sf::IntRect srcB(0, 0, int(src->getSize().x), int(src->getSize().y));
+	sf::IntRect s;
+	if (!srcRect.intersects(srcB, s)) return;
+
+	int dw = int(dst->getSize().x), dh = int(dst->getSize().y);
+	if (s.width > dw) s.width = dw;
+	if (s.height > dh) s.height = dh;
+	if (s.width <= 0 || s.height <= 0) return;
+
+	dst->copy(*src, 0u, 0u, s, false);
+}
+
+void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY) {
+	sf::IntRect s(0, 0, int(src->getSize().x), int(src->getSize().y));
+
+	if (dstX < 0) { s.left -= dstX; s.width += dstX; dstX = 0; }
+	if (dstY < 0) { s.top -= dstY; s.height += dstY; dstY = 0; }
+
+	const int dw = int(dst->getSize().x), dh = int(dst->getSize().y);
+	if (dstX >= dw || dstY >= dh) return;
+	if (dstX + s.width > dw) s.width = dw - dstX;
+	if (dstY + s.height > dh) s.height = dh - dstY;
+	if (s.width <= 0 || s.height <= 0) return;
+
+	dst->copy(*src, unsigned(dstX), unsigned(dstY), s, true);
+}
+
+enum class SelectionState { None, Selecting, Selected, Moving };
 
 class Selection {
 public:	
 	SelectionState state;
 	sf::IntRect rect;
 	sf::Vector2i offset;
-	bool hasImage;
-	sf::Image img;
+	sf::Image* img = nullptr;
 
 	Selection() {
-		state = SelectionState::Idle;
+		state = SelectionState::None;
 		rect = sf::IntRect(0, 0, 0, 0);
-		hasImage = false;
-		img = sf::Image();
 	}
 
-	sf::IntRect normalizeRect(sf::IntRect r) {
+	sf::IntRect normalizeRect() {
+		sf::IntRect r = rect;
 		if (r.width < 0) { r.left += r.width; r.width = -r.width; }
 		if (r.height < 0) { r.top += r.height; r.height = -r.height; }
 		return r;
-	}
+	} 
 
-	void copyImage(sf::Image& image, sf::IntRect rect) {
+	void paste(sf::Image* editorImage, sf::Image*& bufferSelection)
+	{
 
-		// copy the image
-		this->img = sf::Image();
-		this->img.create(rect.width, rect.height, sf::Color::Transparent);
-		this->img.copy(image, 0, 0, rect, false);
-		hasImage = true;
-
-	}
-
-	void cutImage(sf::Image& image, sf::IntRect rect) {
-
-		// cut the image
-		sf::Image background;
-		background.create(rect.width, rect.height, sf::Color::Transparent);
-		image.copy(background, rect.left, rect.top, sf::IntRect(0, 0, rect.width, rect.height), false);
-	}
-
-	void pasteImage(sf::Image& image, sf::IntRect rect) {
-		// prostokąt docelowy w granicach obrazu
-		const int IW = (int)image.getSize().x;
-		const int IH = (int)image.getSize().y;
-		sf::IntRect bounds(0, 0, IW, IH);
-
-		sf::IntRect r; // r = przycięty rect (część wspólna z obrazem)
-		if (!rect.intersects(bounds, r) || r.width <= 0 || r.height <= 0) {
-			hasImage = false;
-			this->img = sf::Image();
-			return;
+		if (bufferSelection != nullptr) {
+			sf::IntRect rect = normalizeRect();
+			editorImage->copy(*bufferSelection, rect.left, rect.top, sf::IntRect(0,0,rect.width, rect.height), true);
 		}
-
-		// ile „ucięło” z lewej/góry -> o tyle trzeba przesunąć źródło
-		const int srcOffX = r.left - rect.left;
-		const int srcOffY = r.top - rect.top;
-
-		// przycięty prostokąt źródłowy z naszej tymczasowej bitmapy
-		sf::IntRect src(srcOffX, srcOffY, r.width, r.height);
-
-		// wklej w r.left, r.top z odpowiedniego fragmentu img
-		image.copy(this->img, (unsigned)r.left, (unsigned)r.top, src, true);
-
-		hasImage = false;
-		this->img = sf::Image();
+		else {
+			bufferSelection = new sf::Image();
+		}
+		loadImageFromClipboard(*bufferSelection);
+		state = SelectionState::Selected;
+		rect = sf::IntRect(0, 0, bufferSelection->getSize().x, bufferSelection->getSize().y);
 	}
 
+
+	void copy(sf::Image* editorImage, sf::Image* bufferSelection)
+	{
+		if (state != SelectionState::Selected) 
+			return;
+
+		sf::IntRect r = rect;
+		if (r.width < 0) { r.left += r.width; r.width = -r.width; }
+		if (r.height < 0) { r.top += r.height; r.height = -r.height; }
+
+		sf::IntRect imgRect(0, 0,editorImage->getSize().x, editorImage->getSize().y);
+		sf::IntRect s;
+		if (!r.intersects(imgRect, s)) 
+			return;
+
+		bufferSelection = new sf::Image();
+		bufferSelection->create(s.width, s.height, sf::Color::Transparent);
+		bufferSelection->copy(*editorImage, 0, 0, s, false);
+
+		copyImageToClipboard(bufferSelection, sf::IntRect(0, 0, s.width, s.height));
+	}
+
+
+	void cut(sf::Image* editorImage, sf::Image* bufferSelection, sf::Color emptyColor) {
+		if (state == SelectionState::Selected) {
+			if (img == nullptr) {
+				bufferSelection = new sf::Image();
+				bufferSelection->create(rect.width, rect.height, sf::Color::Transparent);
+				bufferSelection->copy(*editorImage, 0, 0, rect, false);
+				copyImageToClipboard(bufferSelection, sf::IntRect(0,0,bufferSelection->getSize().x, bufferSelection->getSize().y));
+
+				sf::Image empty_rect = sf::Image();
+				empty_rect.create(rect.width, rect.height, emptyColor);
+				editorImage->copy(empty_rect, rect.left, rect.top);
 	
+			}
+			else {
+				copyImageToClipboard(bufferSelection, rect);
+				delete bufferSelection;
+				bufferSelection = nullptr;
+				state == SelectionState::None;
+				rect = sf::IntRect(-1, -1, -1, -1);
+			}
+		}
+	}
 
 	bool clickOnSelection(sf::Vector2i point) {
 
@@ -78,14 +141,14 @@ public:
 
 	void draw(const sf::Vector2f& canvasPos, sf::IntRect rect, float scale) {
 
-		rect = normalizeRect(rect);
+		rect = normalizeRect();
 
 		if (rect.width > 0 && rect.height > 0) {
 
-			if (hasImage) {
+			if (img != nullptr) {
 				sf::Texture tex;
-				tex.create(img.getSize().x, img.getSize().y);
-				tex.loadFromImage(img);
+				tex.create(img->getSize().x, img->getSize().y);
+				tex.loadFromImage(*img);
 				sf::Sprite spr(tex);
 				spr.setPosition(canvasPos + sf::Vector2f(rect.left * scale, rect.top * scale));
 				spr.setScale(scale, scale);

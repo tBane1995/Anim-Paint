@@ -158,21 +158,90 @@ public:
 
 
 				if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+					ElementGUI_pressed = this;
+
+
 					if (tools->toolType == ToolType::Brush) {
-						drawPixels(tools->first_color->color);
+						drawPixels(tools->active_color->color);
 					}
 					else if (tools->toolType == ToolType::Eraser) {
 						drawPixels(sf::Color::Transparent);
 					}
-
 					else if (tools->toolType == ToolType::Selector) {
 
-						if (selection->state == SelectionState::Idle) {
+						if (selection->state == SelectionState::None) {
 							sf::Vector2i tile = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
 							selection->state = SelectionState::Selecting;
 							selection->rect = sf::IntRect(tile.x, tile.y, 0, 0);
 						}
+						else if (selection->state == SelectionState::Selected) {
+							sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
+							sf::IntRect norm = selection->normalizeRect();
 
+							if (selection->clickOnSelection(tile)) {
+								selection->offset = tile - sf::Vector2i(norm.left, norm.top);
+								selection->state = SelectionState::Moving;
+
+								if (selection->img == nullptr) {
+									selection->img = new sf::Image();
+									selection->img->create(norm.width, norm.height, sf::Color::Transparent);
+									copy(selection->img, &layers_dialog->getCurrentLayer()->image, norm);
+									remove(layers_dialog->getCurrentLayer()->image, norm);
+								}
+							}
+							else {
+								if (selection->img != nullptr) {
+									sf::IntRect r = selection->normalizeRect();
+									paste(&layers_dialog->getCurrentLayer()->image, selection->img, norm.left, norm.top);
+									selection->img = nullptr;
+								}
+
+								selection->state = SelectionState::Selecting;
+								selection->rect = sf::IntRect(tile.x, tile.y, 0, 0);
+							}
+						}
+					}
+				}
+
+				else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+					if (tools->toolType == ToolType::Selector) {
+						if (selection->state == SelectionState::Selecting) {
+							sf::IntRect norm = selection->normalizeRect();
+							if (norm.width <= 0 || norm.height <= 0) {
+								selection->state = SelectionState::None;							}
+							else {
+								selection->rect = norm;
+								selection->state = SelectionState::Selected;
+							}
+						}
+						else if (selection->state == SelectionState::Moving) {
+							selection->rect = selection->normalizeRect();
+							selection->state = SelectionState::Selected;
+						}
+					}
+				}
+
+				else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+
+					if (tools->toolType == ToolType::Brush) {
+						drawPixels(tools->active_color->color);
+					}
+					else if (tools->toolType == ToolType::Eraser) {
+						drawPixels(sf::Color::Transparent);
+					}
+					else if (tools->toolType == ToolType::Selector) {
+
+						if (selection->state == SelectionState::Selecting) {
+							sf::Vector2i tile = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
+							selection->rect.width = tile.x - selection->rect.left;
+							selection->rect.height = tile.y - selection->rect.top;
+						}
+						else if (selection->state == SelectionState::Moving) {
+							sf::Vector2i tile = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
+							sf::Vector2i dst = tile - selection->offset;
+							selection->rect.left = dst.x;
+							selection->rect.top = dst.y;
+						}
 					}
 				}
 				else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right) {
@@ -184,15 +253,7 @@ public:
 					isMoved = true;
 					offset = bg_sprite.getPosition() - worldMousePosition;
 				}
-				else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 
-					if (tools->toolType == ToolType::Brush) {
-						drawPixels(tools->first_color->color);
-					}
-					else if (tools->toolType == ToolType::Eraser) {
-						drawPixels(sf::Color::Transparent);
-					}
-				}
 				else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
 
 					if (tools->toolType == ToolType::Brush) {
@@ -226,74 +287,8 @@ public:
 			brush_is_visible = false;
 		}
 
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-			if ((ElementGUI_hovered == this || ElementGUI_hovered == nullptr) && (ElementGUI_pressed == this || ElementGUI_pressed == nullptr)){
-				if (selection->state == SelectionState::Selected) {
-					sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
-					sf::IntRect norm = selection->normalizeRect(selection->rect);
 
-					if (selection->clickOnSelection(tile)) {
-						selection->offset = tile - sf::Vector2i(norm.left, norm.top);
-						selection->state = SelectionState::Moving;
 
-						if (!selection->hasImage) {
-							selection->copyImage(layers_dialog->getCurrentLayer()->image, norm);
-							selection->cutImage(layers_dialog->getCurrentLayer()->image, norm);
-						}
-					}
-					else {
-						if (selection->hasImage) {
-							selection->pasteImage(layers_dialog->getCurrentLayer()->image, norm);
-							selection->hasImage = false;
-							selection->img = sf::Image();
-						}
-
-						selection->state = SelectionState::Selecting;
-						tile = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
-						selection->rect = sf::IntRect(tile.x, tile.y, 0, 0);
-					}
-				}
-			}
-		}
-
-		if(event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-			if (tools->toolType == ToolType::Selector) {
-
-				if (selection->state == SelectionState::Selecting) {
-					sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
-					selection->rect.width = tile.x - selection->rect.left;
-					selection->rect.height = tile.y - selection->rect.top;
-				}
-				else if (selection->state == SelectionState::Moving) {
-					sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
-					sf::Vector2i dst = tile - selection->offset;
-					selection->rect.left = dst.x;
-					selection->rect.top = dst.y;
-				}
-			}
-		}
-
-		if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
-			if ((ElementGUI_hovered == this || ElementGUI_hovered == nullptr) && (ElementGUI_pressed == this || ElementGUI_pressed == nullptr)) {
-				if (tools->toolType == ToolType::Selector) {
-					if (selection->state == SelectionState::Selecting) {
-						sf::IntRect norm = selection->normalizeRect(selection->rect);
-						if (norm.width <= 0 || norm.height <= 0) {
-							selection->state = SelectionState::Idle;
-							selection->rect = sf::IntRect(0, 0, 0, 0);
-						}
-						else {
-							selection->rect = norm;
-							selection->state = SelectionState::Selected;
-						}
-					}
-					else if (selection->state == SelectionState::Moving) {
-						selection->rect = selection->normalizeRect(selection->rect);
-						selection->state = SelectionState::Selected;
-					}
-				}
-			}
-		}
 	}
 
 	float clampAxisOverscroll(float v, float content, float viewport, float overscrollRatio = 0.5f) {

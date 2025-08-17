@@ -1,16 +1,19 @@
 ﻿#ifndef ClipBoard_hpp
 #define ClipBoard_hpp
 
-bool copyImageToClipboard(sf::Image& image, sf::IntRect rect) {
+bool copyImageToClipboard(sf::Image* image, sf::IntRect rect) {
 
-    if (image.getSize().x == 0 || image.getSize().y == 0) {
+    if (image == nullptr)
+        return false;
+
+    if (image->getSize().x == 0 || image->getSize().y == 0) {
         return false;
     }
 
-    int x0 = std::clamp(rect.left, 0, int(image.getSize().x));
-    int y0 = std::clamp(rect.top, 0, int(image.getSize().y));
-    int x1 = std::clamp(rect.left + rect.width, 0, int(image.getSize().x));
-    int y1 = std::clamp(rect.top + rect.height, 0, int(image.getSize().y));
+    int x0 = std::clamp(rect.left, 0, int(image->getSize().x));
+    int y0 = std::clamp(rect.top, 0, int(image->getSize().y));
+    int x1 = std::clamp(rect.left + rect.width, 0, int(image->getSize().x));
+    int y1 = std::clamp(rect.top + rect.height, 0, int(image->getSize().y));
 
     std::cout << x0 << "\n";
     std::cout << y0 << "\n";
@@ -19,7 +22,7 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect) {
 
     const unsigned int w = (x1 > x0) ? unsigned(x1 - x0) : 0u;
     const unsigned int h = (y1 > y0) ? unsigned(y1 - y0) : 0u;
-    sf::IntRect r(0, 0, image.getSize().x, image.getSize().y);
+    sf::IntRect r(0, 0, image->getSize().x, image->getSize().y);
 
     if (!rect.intersects(r) || w == 0 || h == 0) {
         if(w == 0) std::cout << " w is 0\n"; // tu  sie włącza
@@ -27,7 +30,7 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect) {
         return false;
     }
 
-    const sf::Uint8* pixels = image.getPixelsPtr();
+    const sf::Uint8* pixels = image->getPixelsPtr();
 
     BITMAPINFOHEADER bi{};
     bi.biSize = sizeof(BITMAPINFOHEADER);
@@ -48,7 +51,7 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect) {
     std::memcpy(pHeader, &bi, sizeof(BITMAPINFOHEADER));
 
     for (unsigned int y = 0; y < h; ++y) {
-        const sf::Uint8* srcRow = pixels + ((y0 + y) * image.getSize().x + x0) * 4;
+        const sf::Uint8* srcRow = pixels + ((y0 + y) * image->getSize().x + x0) * 4;
         sf::Uint8* dstRow = dstPixels + (y * w) * 4;
 
         for (unsigned int x = 0; x < w; ++x) {
@@ -83,27 +86,37 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect) {
     return true;
 }
 
-sf::Vector2i loadImageFromClipboard(sf::Image& outImage) {
+void loadImageFromClipboard(sf::Image& outImage) {
     if (!OpenClipboard(nullptr))
-        return sf::Vector2i(0,0);
+        return;
 
     HANDLE hData = GetClipboardData(CF_DIBV5);
     if (!hData) hData = GetClipboardData(CF_DIB);
-    if (!hData) { CloseClipboard(); return sf::Vector2i(0, 0); }
+    if (!hData) {
+        CloseClipboard();
+        return;
+    }
 
     void* pData = GlobalLock(hData);
-    if (!pData) { CloseClipboard(); return sf::Vector2i(0, 0); }
+    if (!pData) { 
+        CloseClipboard(); 
+        return; 
+    }
 
     auto* bih = reinterpret_cast<BITMAPINFOHEADER*>(pData);
     if (bih->biBitCount != 32 && bih->biBitCount != 24) {
-        GlobalUnlock(hData); CloseClipboard(); return sf::Vector2i(0, 0);
+        GlobalUnlock(hData); 
+        CloseClipboard(); 
+        return;
     }
 
     const int  width = bih->biWidth;
     const int  height = std::abs(bih->biHeight);
     const bool topDown = (bih->biHeight < 0);
     if (width <= 0 || height <= 0) {
-        GlobalUnlock(hData); CloseClipboard(); return sf::Vector2i(0, 0);
+        GlobalUnlock(hData); 
+        CloseClipboard(); 
+        return;
     }
 
     const DWORD compression = bih->biCompression; // BI_RGB | BI_BITFIELDS
@@ -162,7 +175,5 @@ sf::Vector2i loadImageFromClipboard(sf::Image& outImage) {
         outImage.create(width, height, rgba.data());
         outImage.copy(src, 0, 0, sf::IntRect(0, 0, width, height), true);
     }
-
-    return sf::Vector2i(width, height);
 }
 #endif

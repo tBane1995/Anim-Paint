@@ -130,19 +130,19 @@ public:
 		clipboard_text.setFillColor(tools_text_color);
 		btn_paste = new ButtonWithBottomText(L"paste", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_paste.png"), getTexture(L"tex\\tools\\btn_paste_hover.png"));
 		btn_paste->onclick_func = [this]() {
-			sf::Vector2i rect_size = loadImageFromClipboard(layers_dialog->getCurrentLayer()->image);
-			selection->pasteImage(layers_dialog->getCurrentLayer()->image, selection->rect);
-			selection->rect = sf::IntRect(0, 0, rect_size.x, rect_size.y);
+			selection->paste(&layers_dialog->getCurrentLayer()->image, selection->img);
 			};
 		btn_cut = new ButtonWithBottomText(L"cut", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_cut.png"), getTexture(L"tex\\tools\\btn_cut_hover.png"));
+		btn_cut->onclick_func = [this]() {
+			selection->cut(&layers_dialog->getCurrentLayer()->image, selection->img, second_color->color);
+			};
 		btn_copy = new ButtonWithBottomText(L"copy", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));
 		btn_copy->onclick_func = [this](){
-			copyImageToClipboard(layers_dialog->getCurrentLayer()->image, selection->normalizeRect(selection->rect));
+			selection->copy(&layers_dialog->getCurrentLayer()->image, selection->img);
 			};
 		btn_select = new ButtonWithBottomText(L"select", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_select.png"), getTexture(L"tex\\tools\\btn_select_hover.png"));
 		btn_select->onclick_func = [this]() {
 			toolType = ToolType::Selector;
-			selection->pasteImage(layers_dialog->getCurrentLayer()->image, selection->rect);
 			};
 		btn_lasso = new ButtonWithBottomText(L"lasso", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_lasso.png"), getTexture(L"tex\\tools\\btn_lasso_hover.png"));
 		btn_lasso->onclick_func = [this]() {
@@ -163,22 +163,22 @@ public:
 		btn_brush = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
 		btn_brush->onclick_func = [this]() {
 			toolType = ToolType::Brush;
-			selection->pasteImage(layers_dialog->getCurrentLayer()->image, selection->rect);
+			//copyImage(selection->img, layers_dialog->getCurrentLayer()->image, selection->rect);
 			};
 		btn_brush2 = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
 		btn_brush2->onclick_func = [this]() {
 			toolType = ToolType::Brush;
-			selection->pasteImage(layers_dialog->getCurrentLayer()->image, selection->rect);
+			//copyImage(selection->img, layers_dialog->getCurrentLayer()->image, selection->rect);
 			};
 		btn_fill = new NormalButton(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"));
 		btn_fill->onclick_func = [this]() {
 			toolType = ToolType::Fill;
-			selection->pasteImage(layers_dialog->getCurrentLayer()->image, selection->rect);
+			//copyImage(selection->img, layers_dialog->getCurrentLayer()->image, selection->rect);
 			};
 		btn_eraser= new NormalButton(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"));
 		btn_eraser->onclick_func = [this]() {
 			toolType = ToolType::Eraser;
-			selection->pasteImage(layers_dialog->getCurrentLayer()->image, selection->rect);
+			//copyImage(selection->img, layers_dialog->getCurrentLayer()->image, selection->rect);
 			};
 
 		tools.clear();
