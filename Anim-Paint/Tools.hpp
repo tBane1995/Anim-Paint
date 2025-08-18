@@ -96,8 +96,8 @@ public:
 	std::vector < Button* > clipboard;
 	sf::Text clipboard_text;
 	ButtonWithBottomText* btn_paste;
-	ButtonWithBottomText* btn_cut;
-	ButtonWithBottomText* btn_copy;
+	ButtonWithRightText* btn_cut;
+	ButtonWithRightText* btn_copy;
 	ButtonWithBottomText* btn_select;
 	ButtonWithBottomText* btn_lasso;
 	
@@ -128,15 +128,16 @@ public:
 		// clipboard
 		clipboard_text = sf::Text(L"clipboard", basicFont, 13);
 		clipboard_text.setFillColor(tools_text_color);
+
 		btn_paste = new ButtonWithBottomText(L"paste", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_paste.png"), getTexture(L"tex\\tools\\btn_paste_hover.png"));
 		btn_paste->onclick_func = [this]() {
 			selection->paste(&layers_dialog->getCurrentLayer()->image, selection->img);
 			};
-		btn_cut = new ButtonWithBottomText(L"cut", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_cut.png"), getTexture(L"tex\\tools\\btn_cut_hover.png"));
+		btn_cut = new ButtonWithRightText(L"cut", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_cut.png"), getTexture(L"tex\\tools\\btn_cut_hover.png"));
 		btn_cut->onclick_func = [this]() {
 			selection->cut(&layers_dialog->getCurrentLayer()->image, selection->img, second_color->color);
 			};
-		btn_copy = new ButtonWithBottomText(L"copy", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));
+		btn_copy = new ButtonWithRightText(L"copy", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));
 		btn_copy->onclick_func = [this](){
 			selection->copy(&layers_dialog->getCurrentLayer()->image, selection->img);
 			};
@@ -160,25 +161,26 @@ public:
 		// tools
 		tools_text = sf::Text(L"tools", basicFont, 13);
 		tools_text.setFillColor(tools_text_color);
+
 		btn_brush = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
 		btn_brush->onclick_func = [this]() {
 			toolType = ToolType::Brush;
-			//copyImage(selection->img, layers_dialog->getCurrentLayer()->image, selection->rect);
+			selection->state = SelectionState::None;
 			};
 		btn_brush2 = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
 		btn_brush2->onclick_func = [this]() {
 			toolType = ToolType::Brush;
-			//copyImage(selection->img, layers_dialog->getCurrentLayer()->image, selection->rect);
+			selection->state = SelectionState::None;
 			};
 		btn_fill = new NormalButton(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"));
 		btn_fill->onclick_func = [this]() {
 			toolType = ToolType::Fill;
-			//copyImage(selection->img, layers_dialog->getCurrentLayer()->image, selection->rect);
+			selection->state = SelectionState::None;
 			};
 		btn_eraser= new NormalButton(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"));
 		btn_eraser->onclick_func = [this]() {
 			toolType = ToolType::Eraser;
-			//copyImage(selection->img, layers_dialog->getCurrentLayer()->image, selection->rect);
+			selection->state = SelectionState::None;
 			};
 
 		tools.clear();
@@ -192,8 +194,8 @@ public:
 		separators.push_back(new Separator());
 
 		// main colors
-		first_color = new LargeColorButton(sf::Color::White);
-		second_color = new LargeColorButton(sf::Color::Black);
+		first_color = new LargeColorButton(sf::Color::Black);
+		second_color = new LargeColorButton(sf::Color::White);
 		active_color = first_color;
 
 		first_color_text_col = sf::Text(L"color", basicFont, 13);
@@ -270,15 +272,21 @@ public:
 		rect.setPosition(position + sf::Vector2f(0, menu_height));
 
 		// clipboard
-		int x = 0;
+		clipboard[0]->setPosition(position + sf::Vector2f(0, menu_height));
+		int x = clipboard[0]->getSize().x;
 
-		for (int i = 0; i < clipboard.size(); i++) {
-			clipboard[i]->setPosition(position + sf::Vector2f(x, menu_height));
-			x += clipboard[i]->getSize().x;
-		}
+		clipboard[1]->setPosition(position + sf::Vector2f(x, menu_height+2));
+		clipboard[2]->setPosition(position + sf::Vector2f(x, menu_height+32+2));
+		x += clipboard[2]->getSize().x;
+
+		clipboard[3]->setPosition(position + sf::Vector2f(x, menu_height));
+		x += clipboard[3]->getSize().x;
+
+		clipboard[4]->setPosition(position + sf::Vector2f(x, menu_height));
+		x += clipboard[4]->getSize().x;
 
 		clipboard_text.setPosition(x / 2 - clipboard_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
-
+		
 		separators[0]->setPosition(sf::Vector2f(x, menu_height));
 		x += separators[0]->getSize().x;
 
@@ -313,7 +321,7 @@ public:
 		x += 48 + 4;
 
 		separators[2]->setPosition(sf::Vector2f(x, menu_height));
-		x += separators[1]->getSize().x;
+		x += separators[2]->getSize().x;
 
 		// colors
 		y = menu_height + 4;

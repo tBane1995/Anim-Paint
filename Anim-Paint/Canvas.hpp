@@ -162,7 +162,7 @@ public:
 
 
 					if (tools->toolType == ToolType::Brush) {
-						drawPixels(tools->active_color->color);
+						drawPixels(tools->first_color->color);
 					}
 					else if (tools->toolType == ToolType::Eraser) {
 						drawPixels(sf::Color::Transparent);
@@ -224,7 +224,7 @@ public:
 				else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 
 					if (tools->toolType == ToolType::Brush) {
-						drawPixels(tools->active_color->color);
+						drawPixels(tools->first_color->color);
 					}
 					else if (tools->toolType == ToolType::Eraser) {
 						drawPixels(sf::Color::Transparent);

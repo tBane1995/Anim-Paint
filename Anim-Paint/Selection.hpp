@@ -78,7 +78,28 @@ public:
 
 		if (bufferSelection != nullptr) {
 			sf::IntRect rect = normalizeRect();
-			editorImage->copy(*bufferSelection, rect.left, rect.top, sf::IntRect(0,0,rect.width, rect.height), true);
+
+			int dstW = static_cast<int>(editorImage->getSize().x);
+			int dstH = static_cast<int>(editorImage->getSize().y);
+			int srcW = static_cast<int>(bufferSelection->getSize().x);
+			int srcH = static_cast<int>(bufferSelection->getSize().y);
+
+			int x0 = std::max(0, rect.left);
+			int y0 = std::max(0, rect.top);
+			int x1 = std::min(dstW, rect.left + rect.width);
+			int y1 = std::min(dstH, rect.top + rect.height);
+
+			for (int y = y0; y < y1; ++y) {
+				int sy = y - rect.top;
+				if (sy < 0 || sy >= srcH) continue;
+
+				for (int x = x0; x < x1; ++x) {
+					int sx = x - rect.left;
+					if (sx < 0 || sx >= srcW) continue;
+
+					editorImage->setPixel(x, y, bufferSelection->getPixel(sx, sy));
+				}
+			}
 		}
 		else {
 			bufferSelection = new sf::Image();
@@ -143,7 +164,7 @@ public:
 
 		rect = normalizeRect();
 
-		if (rect.width > 0 && rect.height > 0) {
+		if (state!= SelectionState::None && rect.width > 0 && rect.height > 0) {
 
 			if (img != nullptr) {
 				sf::Texture tex;
