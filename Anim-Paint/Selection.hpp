@@ -160,27 +160,43 @@ public:
 		return rect.contains(point);
 	}
 
-	void draw(const sf::Vector2f& canvasPos, sf::IntRect rect, float scale) {
+	void draw(const sf::Vector2f& canvasPos, sf::Vector2i canvasSize, float scale) {
 
-		rect = normalizeRect();
 
-		if (state!= SelectionState::None && rect.width > 0 && rect.height > 0) {
+		sf::IntRect normRect = normalizeRect();
+
+		if (state!= SelectionState::None && normRect.width > 0 && normRect.height > 0) {
+
+			
 
 			if (img != nullptr) {
 				sf::Texture tex;
 				tex.create(img->getSize().x, img->getSize().y);
 				tex.loadFromImage(*img);
-				sf::Sprite spr(tex);
-				spr.setPosition(canvasPos + sf::Vector2f(rect.left * scale, rect.top * scale));
-				spr.setScale(scale, scale);
-				window->draw(spr);
+
+				sf::IntRect canvasRect(0, 0, canvasSize.x, canvasSize.y);
+				sf::IntRect visibleRect;
+				
+				if (normRect.intersects(canvasRect, visibleRect)) {
+					int tx = visibleRect.left - normRect.left;
+					int ty = visibleRect.top - normRect.top;
+					
+					sf::IntRect texRect(tx, ty, visibleRect.width, visibleRect.height);
+
+					sf::Sprite spr(tex);
+					spr.setTextureRect(texRect);
+					spr.setPosition(canvasPos + sf::Vector2f(visibleRect.left * scale, visibleRect.top * scale));
+					spr.setScale(scale, scale);
+					window->draw(spr);
+				}
 			}
 
-			sf::RectangleShape r(sf::Vector2f(float(rect.width) * scale, float(rect.height) * scale));
-			r.setPosition(canvasPos + sf::Vector2f(float(rect.left) * scale, float(rect.top) * scale));
-			r.setFillColor(sf::Color(255, 47, 47, 127));
+			sf::RectangleShape r(sf::Vector2f(float(normRect.width) * scale, float(normRect.height) * scale));
+			r.setPosition(canvasPos + sf::Vector2f(float(normRect.left) * scale, float(normRect.top) * scale));
+			r.setFillColor(sf::Color::Transparent);
+			r.setOutlineThickness(4.0f);
+			r.setOutlineColor(sf::Color(47, 127, 127, 255));
 			window->draw(r);
-
 			
 		}
 		

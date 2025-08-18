@@ -331,7 +331,7 @@ public:
 			}
 		}
 
-		selection->draw(bg_sprite.getPosition(), selection->rect, zoom * zoom_delta);
+		selection->draw(bg_sprite.getPosition(), size, zoom * zoom_delta);
 
 		if (brush_is_visible) {
 			brush->draw(position, size, zoom, zoom_delta);
