@@ -95,7 +95,8 @@ public:
 
 	std::vector < Button* > clipboard;
 	sf::Text clipboard_text;
-	ButtonWithBottomText* btn_paste;
+	NormalButton* btn_paste;
+	ButtonWithTopTextAndList* btn_paste_2;
 	ButtonWithRightText* btn_cut;
 	ButtonWithRightText* btn_copy;
 	ButtonWithBottomText* btn_select;
@@ -134,9 +135,13 @@ public:
 		clipboard_text = sf::Text(L"clipboard", basicFont, 13);
 		clipboard_text.setFillColor(tools_text_color);
 
-		btn_paste = new ButtonWithBottomText(L"paste", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_paste.png"), getTexture(L"tex\\tools\\btn_paste_hover.png"));
+		btn_paste = new NormalButton(getTexture(L"tex\\tools\\0_btn_test.png"), getTexture(L"tex\\tools\\0_btn_test_hover.png"));
 		btn_paste->onclick_func = [this]() {
 			selection->paste(&layers_dialog->getCurrentLayer()->image, selection->img);
+			};
+		btn_paste_2 = new ButtonWithTopTextAndList(L"paste", sf::Color::Transparent, tools_text_color, tools_text_hover_color);
+		btn_paste_2->onclick_func = [this]() {
+
 			};
 		btn_cut = new ButtonWithRightText(L"cut", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_cut.png"), getTexture(L"tex\\tools\\btn_cut_hover.png"));
 		btn_cut->onclick_func = [this]() {
@@ -157,6 +162,7 @@ public:
 
 		clipboard.clear();
 		clipboard.push_back(btn_paste);
+		clipboard.push_back(btn_paste_2);
 		clipboard.push_back(btn_cut);
 		clipboard.push_back(btn_copy);
 		clipboard.push_back(btn_select);
@@ -301,17 +307,20 @@ public:
 
 		// clipboard
 		clipboard[0]->setPosition(position + sf::Vector2f(0, menu_height));
-		int x = clipboard[0]->getSize().x;
+		
 
-		clipboard[1]->setPosition(position + sf::Vector2f(x, menu_height+2));
-		clipboard[2]->setPosition(position + sf::Vector2f(x, menu_height+32+2));
-		x += clipboard[2]->getSize().x;
+		clipboard[1]->setPosition(position + sf::Vector2f(0, menu_height + 32));
+		int x = clipboard[1]->getSize().x;
 
-		clipboard[3]->setPosition(position + sf::Vector2f(x, menu_height));
+		clipboard[2]->setPosition(position + sf::Vector2f(x, menu_height+2));
+		clipboard[3]->setPosition(position + sf::Vector2f(x, menu_height+32+2));
 		x += clipboard[3]->getSize().x;
 
 		clipboard[4]->setPosition(position + sf::Vector2f(x, menu_height));
 		x += clipboard[4]->getSize().x;
+
+		clipboard[5]->setPosition(position + sf::Vector2f(x, menu_height));
+		x += clipboard[5]->getSize().x;
 
 		clipboard_text.setPosition(x / 2 - clipboard_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
 		
