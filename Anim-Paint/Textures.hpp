@@ -83,9 +83,6 @@ void loadTextures() {
 	loadTexture(L"tex\\tools\\btn_select.png");
 	loadTexture(L"tex\\tools\\btn_select_hover.png");
 
-	loadTexture(L"tex\\tools\\0_btn_test.png");
-	loadTexture(L"tex\\tools\\0_btn_test_hover.png");
-
 	loadTexture(L"tex\\tools\\btn_lasso.png");
 	loadTexture(L"tex\\tools\\btn_lasso_hover.png");
 

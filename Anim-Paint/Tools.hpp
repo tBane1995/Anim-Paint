@@ -135,7 +135,7 @@ public:
 		clipboard_text = sf::Text(L"clipboard", basicFont, 13);
 		clipboard_text.setFillColor(tools_text_color);
 
-		btn_paste = new NormalButton(getTexture(L"tex\\tools\\0_btn_test.png"), getTexture(L"tex\\tools\\0_btn_test_hover.png"));
+		btn_paste = new NormalButton(getTexture(L"tex\\tools\\btn_paste.png"), getTexture(L"tex\\tools\\btn_paste_hover.png"));
 		btn_paste->onclick_func = [this]() {
 			selection->paste(&layers_dialog->getCurrentLayer()->image, selection->img);
 			};
