@@ -83,6 +83,18 @@ public:
         this->size = size;
     }
 
+    void decrease() {
+        this->size--;
+        if (this->size < 0)
+            this->size = 0;
+    }
+
+    void increase() {
+        this->size++;
+        if (this->size > 5)
+            this->size = 5;
+    }
+
     void setPosition(sf::Vector2i pos_px) {
         this->pos_px = pos_px;
     }

@@ -108,6 +108,11 @@ public:
 	NormalButton* btn_fill;
 	NormalButton* btn_eraser;
 
+	std::vector < NormalButton* > sizes;
+	sf::Text sizes_text;
+	NormalButton* size_decrease;
+	NormalButton* size_increase;
+
 	LargeColorButton* first_color;
 	LargeColorButton* second_color;
 	LargeColorButton* active_color;
@@ -190,6 +195,24 @@ public:
 		tools.push_back(btn_eraser);
 
 		toolType = ToolType::Brush;
+
+		separators.push_back(new Separator());
+
+		// increase / decrease brush size
+		sizes_text = sf::Text(L"size", basicFont, 13);
+		sizes_text.setFillColor(tools_text_color);
+
+		size_decrease = new NormalButton(getTexture(L"tex\\tools\\btn_size_decrease.png"), getTexture(L"tex\\tools\\btn_size_decrease_hover.png"));
+		size_decrease->onclick_func = [this]() {
+			brush->decrease();
+			};
+		size_increase = new NormalButton(getTexture(L"tex\\tools\\btn_size_increase.png"), getTexture(L"tex\\tools\\btn_size_increase_hover.png"));
+		size_increase->onclick_func = [this]() {
+			brush->increase();
+			};
+		sizes.clear();
+		sizes.push_back(size_decrease);
+		sizes.push_back(size_increase);
 
 		separators.push_back(new Separator());
 
@@ -304,6 +327,20 @@ public:
 		separators[1]->setPosition(sf::Vector2f(x, menu_height));
 		x += separators[1]->getSize().x;
 
+		// sizes
+		old_x = x;
+
+		x += 4;
+		sizes[0]->setPosition(sf::Vector2f(x, menu_height));
+		sizes[1]->setPosition(sf::Vector2f(x, menu_height + 32));
+		x += 32;
+		x += 4;
+
+		sizes_text.setPosition((x+old_x) / 2 - sizes_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
+
+		separators[2]->setPosition(sf::Vector2f(x, menu_height));
+		x += separators[2]->getSize().x;
+
 		// main colors
 		y = menu_height + 4;
 		x += 4;
@@ -320,8 +357,8 @@ public:
 
 		x += 48 + 4;
 
-		separators[2]->setPosition(sf::Vector2f(x, menu_height));
-		x += separators[2]->getSize().x;
+		separators[3]->setPosition(sf::Vector2f(x, menu_height));
+		x += separators[3]->getSize().x;
 
 		// colors
 		y = menu_height + 4;
@@ -348,6 +385,9 @@ public:
 		for (auto& tool : tools)
 			tool->cursorHover();
 
+		for (auto& tool : sizes)
+			tool->cursorHover();
+
 		first_color->cursorHover();
 		second_color->cursorHover();
 
@@ -369,6 +409,8 @@ public:
 		for (auto& tool : tools)
 			tool->handleEvent(event);
 
+		for (auto& tool : sizes)
+			tool->handleEvent(event);
 
 		first_color->handleEvent(event);
 		second_color->handleEvent(event);
@@ -382,6 +424,9 @@ public:
 			tool->update();
 
 		for (auto& tool : tools)
+			tool->update();
+
+		for (auto& tool : sizes)
 			tool->update();
 
 		first_color->update();
@@ -404,6 +449,10 @@ public:
 		for (auto& tool : tools)
 			tool->draw();
 
+		for (auto size : sizes) {
+			size->draw();
+		}
+
 		first_color->draw();
 		second_color->draw();
 		window->draw(first_color_text_col);
@@ -417,6 +466,7 @@ public:
 		window->draw(clipboard_text);
 		window->draw(colors_text);
 		window->draw(tools_text);
+		window->draw(sizes_text);
 	}
 };
 

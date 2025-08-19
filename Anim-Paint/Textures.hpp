@@ -91,6 +91,12 @@ void loadTextures() {
 
 	loadTexture(L"tex\\tools\\btn_eraser.png");
 	loadTexture(L"tex\\tools\\btn_eraser_hover.png");
+
+	loadTexture(L"tex\\tools\\btn_size_decrease.png");
+	loadTexture(L"tex\\tools\\btn_size_decrease_hover.png");
+
+	loadTexture(L"tex\\tools\\btn_size_increase.png");
+	loadTexture(L"tex\\tools\\btn_size_increase_hover.png");
 }
 
 #endif
