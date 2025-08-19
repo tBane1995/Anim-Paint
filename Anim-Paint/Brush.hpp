@@ -1,7 +1,7 @@
 ﻿#ifndef Brush_hpp
 #define Brush_hpp
 
-std::vector<std::vector<std::vector<bool>>> brushes = {
+std::vector<std::vector<std::vector<bool>>> circle_brushes = {
 
     // 0 - 1x1
     {
@@ -65,18 +65,93 @@ std::vector<std::vector<std::vector<bool>>> brushes = {
     }
 };
 
+std::vector<std::vector<std::vector<bool>>> square_brushes = {
+
+    // 0 - 1x1
+    {
+        {1}
+    },
+
+    // 1 - 3x3
+    {
+        {1, 1, 1},
+        {1, 1, 1},
+        {1, 1, 1}
+    },
+
+    // 2 - 5x5
+    {
+        {1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1}
+    },
+
+    // 3 - 7x7
+    {
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1},
+        {1, 0, 1, 1, 1, 1, 1}
+    },
+
+    // 4 - 9x9
+    {
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1}
+    },
+
+    // 5 - 11x11
+    {
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+
+    }
+};
+
+enum class BrushType { Square, Circle };
+
 class Brush {
 public:
-    sf::Vector2i pos_px;
+    BrushType type;
     int size;
+    sf::Vector2i pos_px;
+    
+    
+
 
     Brush(int size) {
-        pos_px = sf::Vector2i(0, 0);
+        type = BrushType::Circle;
         setSize(size);
+        pos_px = sf::Vector2i(0, 0);
     }
 
     ~Brush() {
 
+    }
+
+    void setBrushType(BrushType type) {
+        this->type = type;
     }
 
     void setSize(int size) {
@@ -99,8 +174,20 @@ public:
         this->pos_px = pos_px;
     }
 
+    std::vector<std::vector<bool>> getBrush() {
+
+        if (type == BrushType::Square) {
+            return square_brushes[size];
+        }
+        else {
+            return circle_brushes[size];
+        }
+    }
+
     void draw(sf::Vector2f canvas_position, sf::Vector2i canvas_size, float zoom, float zoom_delta) {
-        const auto& brush = brushes[size];
+        std::vector<std::vector<bool>> brush = getBrush();
+        
+
         const float scale = zoom * zoom_delta;
 
         const int h = static_cast<int>(brush.size());

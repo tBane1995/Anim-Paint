@@ -122,7 +122,7 @@ public:
 
 	void drawPixels(sf::Color color) {
 
-		std::vector<std::vector<bool>> b = brushes[brush->size];
+		std::vector<std::vector<bool>> b = brush->getBrush();
 
 		for (int y = 0; y < b.size(); y++) {
 			for (int x = 0; x < b[y].size(); x++) {
@@ -148,7 +148,7 @@ public:
 
 	void handleEvent(sf::Event& event) {
 
-		if ((ElementGUI_hovered == this || ElementGUI_hovered == nullptr) && (ElementGUI_pressed == this || ElementGUI_pressed == nullptr)) {
+		if (ElementGUI_hovered == this || ElementGUI_hovered == nullptr) {
 			if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 
 				if (tools->toolType == ToolType::Brush || tools->toolType == ToolType::Eraser) {
