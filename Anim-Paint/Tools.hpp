@@ -305,6 +305,8 @@ public:
 	void setPosition(sf::Vector2f position) {
 		rect.setPosition(position + sf::Vector2f(0, menu_height));
 
+		position += sf::Vector2f(menuoptions_border_width, 0);
+
 		// clipboard
 		clipboard[0]->setPosition(position + sf::Vector2f(0, menu_height));
 		
@@ -457,6 +459,11 @@ public:
 			separator->draw();
 		}
 
+		window->draw(clipboard_text);
+		window->draw(colors_text);
+		window->draw(tools_text);
+		window->draw(sizes_text);
+
 		for(auto& tool : clipboard)
 			tool->draw();
 
@@ -477,10 +484,7 @@ public:
 		for (auto& col : colors)
 			col->draw();
 
-		window->draw(clipboard_text);
-		window->draw(colors_text);
-		window->draw(tools_text);
-		window->draw(sizes_text);
+		
 	}
 };
 

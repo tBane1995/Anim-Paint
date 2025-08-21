@@ -157,7 +157,7 @@ public:
 
 	bool clickOnSelection(sf::Vector2i point) {
 
-		return rect.contains(point);
+		return normalizeRect().contains(point);
 	}
 
 	void draw(const sf::Vector2f& canvasPos, sf::Vector2i canvasSize, float scale) {

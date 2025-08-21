@@ -1,4 +1,4 @@
-#ifndef Button_hpp
+﻿#ifndef Button_hpp
 #define Button_hpp
 
 enum class ButtonState { Idle, Hover, Pressed };
@@ -379,6 +379,131 @@ public:
 
 };
 
+class Option : public Button {
+public:
+
+	Texture* texture;
+	Texture* hoverTexture;
+	sf::Sprite sprite;
+	sf::Text text;
+	sf::RectangleShape rect;
+
+	sf::Vector2f position;
+
+	ButtonState state;
+	std::function<void()> hover_func;
+	std::function<void()> onclick_func;
+	sf::Time clickTime;
+
+
+	Option(std::wstring text, Texture* texture, Texture* hoverTexture, sf::Vector2f position = sf::Vector2f(0, 0)) {
+
+		this->text = sf::Text(text, basicFont, 13);
+		this->text.setFillColor(menu_text_color);
+
+		this->texture = texture;
+		this->hoverTexture = hoverTexture;
+		sprite = sf::Sprite(*texture->texture);
+
+		rect = sf::RectangleShape(sf::Vector2f(32 + this->text.getGlobalBounds().width + 8, 32));
+		rect.setFillColor(optionbox_idle_color);
+		setPosition(position);
+
+		state = ButtonState::Idle;
+
+		hover_func = { };
+		onclick_func = { };
+		clickTime = currentTime;
+
+	}
+
+	~Option() {}
+
+	sf::Vector2f getSize() {
+		return rect.getGlobalBounds().getSize();
+	}
+
+	void setPosition(sf::Vector2f position) {
+		this->position = position;
+		rect.setPosition(position);
+		sprite.setPosition(position);
+		text.setPosition(position + sf::Vector2f(32, 24 - basicFont.getLineSpacing(13)));
+	}
+
+	void unclick() {
+		state = ButtonState::Idle;
+		sprite.setTexture(*texture->texture);
+		rect.setFillColor(optionbox_idle_color);
+		text.setFillColor(menu_text_color);
+	}
+
+	void hover() {
+		state = ButtonState::Hover;
+		sprite.setTexture(*hoverTexture->texture);
+		rect.setFillColor(optionbox_hover_color);
+		text.setFillColor(menu_text_color);
+
+	}
+
+	void click() {
+		state = ButtonState::Pressed;
+		sprite.setTexture(*hoverTexture->texture);
+		rect.setFillColor(optionbox_press_color);
+		text.setFillColor(menu_text_color);
+		clickTime = currentTime;
+	}
+
+
+	void cursorHover() {
+
+		if (rect.getGlobalBounds().contains(worldMousePosition)) {
+			ElementGUI_hovered = this;
+		}
+
+
+	}
+
+	void handleEvent(sf::Event& event) {
+		if (rect.getGlobalBounds().contains(worldMousePosition)) {
+			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+				ElementGUI_pressed = this;
+			}
+			else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+				if (ElementGUI_pressed == this) {
+					click();
+					
+				}
+			}
+
+		}
+	}
+
+	void update() {
+
+		if (state == ButtonState::Pressed) {
+			if ((currentTime - clickTime).asSeconds() > 0.05f) {
+				if (onclick_func) {
+					onclick_func();
+				}
+				ElementGUI_pressed = nullptr;
+				unclick();
+			}
+		}
+		else if (ElementGUI_hovered == this) {
+			hover();
+		}
+		else
+			unclick();
+	}
+
+	void draw() {
+		window->draw(rect);
+		window->draw(sprite);
+		window->draw(text);
+	}
+
+};
+
 class ButtonWithTopTextAndList : public Button {
 public:
 
@@ -397,6 +522,10 @@ public:
 	std::function<void()> onclick_func;
 	sf::Time clickTime;
 
+	sf::RectangleShape list_rect;
+	sf::VertexArray list_border;
+	std::vector < Option* > options;
+	bool isOpen;
 
 	ButtonWithTopTextAndList(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, sf::Vector2f position = sf::Vector2f(0, 0)) {
 
@@ -414,12 +543,20 @@ public:
 		rect.setFillColor(rectColor);
 		setPosition(position);
 
+		list_rect = sf::RectangleShape();
+		list_rect.setFillColor(menuoptions_border_color);
+		options.clear();
+		isOpen = false;
+
 		state = ButtonState::Idle;
 
 		hover_func = { };
 		onclick_func = { };
 		clickTime = currentTime;
 
+		addOption(L"paste");
+		addOption(L"from file");
+		addOption(L"transparency");
 	}
 
 	~ButtonWithTopTextAndList() {}
@@ -428,11 +565,41 @@ public:
 		return rect.getGlobalBounds().getSize();
 	}
 
+	
+
+	void addOption(std::wstring text) {
+		Option* o = new Option(text, getTexture(L"tex\\tools\\btn_none.png"), getTexture(L"tex\\tools\\btn_none_hover.png"));
+		
+		if (options.size() == 0) {
+			options.push_back(o);
+			list_rect.setSize(sf::Vector2f(0, o->rect.getSize().y + menuoptions_border_width));
+			return;
+		}
+
+		int wdt = (options.back()->rect.getSize().x > o->rect.getSize().x) ? options.back()->rect.getSize().x : o->rect.getSize().x;
+		
+		list_rect.setSize(sf::Vector2f(wdt+2*menuoptions_border_width, list_rect.getSize().y + o->rect.getSize().y));
+
+		options.push_back(o);
+		for (auto& o : options) {
+			o->rect.setSize(sf::Vector2f(wdt, 32));
+		}
+	}
+
 	void setPosition(sf::Vector2f position) {
 		this->position = position;
 		rect.setPosition(position);
 		sprite.setPosition(position+sf::Vector2f(0,16));
 		text.setPosition(position + sf::Vector2f(48 / 2 - text.getGlobalBounds().width / 2.0f, 0));
+
+		
+		sf::Vector2f pos = rect.getPosition() + sf::Vector2f(0, rect.getSize().y);
+		
+		this->list_rect.setPosition(pos - sf::Vector2f(menuoptions_border_width, 0));
+		for (auto& o : options) {
+			o->setPosition(pos);
+			pos.y += 32;
+		}
 	}
 
 	void unclick() {
@@ -462,10 +629,19 @@ public:
 			ElementGUI_hovered = this;
 		}
 
+		if (isOpen) {
+			for (auto& option : options)
+				option->cursorHover();
+		}
+			
 
 	}
 
 	void handleEvent(sf::Event& event) {
+
+
+		
+
 		if (rect.getGlobalBounds().contains(worldMousePosition)) {
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 				ElementGUI_pressed = this;
@@ -473,10 +649,28 @@ public:
 			else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
 				if (ElementGUI_pressed == this) {
 					click();
+					isOpen = !isOpen;
 				}
 			}
-
 		}
+
+		bool clicked_in_menu = false;
+
+		if (isOpen) {
+			for (auto& option : options) {
+				option->handleEvent(event);
+				if (ElementGUI_pressed == option)
+					clicked_in_menu = true;
+			}
+		}
+
+		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+			if (clicked_in_menu == false) {
+				isOpen = false;
+			}
+		}
+			
+
 	}
 
 	void update() {
@@ -495,12 +689,24 @@ public:
 		}
 		else
 			unclick();
+
+		for (auto& option : options)
+			option->update();
 	}
 
 	void draw() {
 		window->draw(rect);
 		window->draw(sprite);
 		window->draw(text);
+
+		if (isOpen) {
+
+			window->draw(list_rect);
+			for (auto& o : options) {
+				o->draw();
+			}
+			
+		}
 	}
 
 };

@@ -71,6 +71,9 @@ void loadTextures() {
 	loadTexture(L"tex\\tools\\frame_large.png");
 	loadTexture(L"tex\\tools\\frame_large_hover.png");
 
+	loadTexture(L"tex\\tools\\btn_none.png");
+	loadTexture(L"tex\\tools\\btn_none_hover.png");
+
 	loadTexture(L"tex\\tools\\btn_paste.png");
 	loadTexture(L"tex\\tools\\btn_paste_hover.png");
 	

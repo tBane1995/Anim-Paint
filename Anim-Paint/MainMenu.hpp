@@ -243,6 +243,11 @@ public:
 
 		menu_boxes.push_back(file);
 
+		MenuBox* image = new MenuBox(L"image");
+		menu_boxes.push_back(image);
+
+		MenuBox* selection = new MenuBox(L"selection");
+		menu_boxes.push_back(selection);
 
 		MenuBox* settings = new MenuBox(L"settings");
 		menu_boxes.push_back(settings);

@@ -75,7 +75,7 @@ void loadTheme() {
 	menubox_hover_color = sf::Color(47, 47, 47);
 	menubox_press_color = sf::Color(31, 31, 31);
 
-	menuoptions_border_width = 1.0f;
+	menuoptions_border_width = 2.0f;
 	menuoptions_border_color = sf::Color(63, 63, 63);
 
 	optionbox_idle_color = sf::Color(31, 31, 31);

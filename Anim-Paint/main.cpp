@@ -70,21 +70,22 @@ int main() {
 		// cursor hovering
 		ElementGUI_hovered = nullptr;
 
-		canvas->cursorHover();
 		tools->cursorHover();
 		main_menu->cursorHover();
+		canvas->cursorHover();
 		
 
 		for (auto& dialog : dialogs)
 			dialog->cursorHover();
 
 		// Element GUI update before handle events
-		canvas->update();
+		
 		for (auto& dialog : dialogs)
 			dialog->update();
 		tools->update();
-		main_menu->update();
 		
+		main_menu->update();
+		canvas->update();
 
 
 		// handle events
@@ -96,9 +97,9 @@ int main() {
 
 			if (event.type == sf::Event::MouseButtonPressed) {
 
-				
-				tools->handleEvent(event);
 				main_menu->handleEvent(event);
+				tools->handleEvent(event);
+				
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
 				canvas->handleEvent(event);
@@ -107,17 +108,17 @@ int main() {
 			}
 			else if (event.type == sf::Event::MouseButtonReleased) {
 
-				
-				tools->handleEvent(event);
 				main_menu->handleEvent(event);
+				tools->handleEvent(event);
+				
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
 				canvas->handleEvent(event);
 			}
 			else if (event.type == sf::Event::MouseMoved) {
-				
-				tools->handleEvent(event);
 				main_menu->handleEvent(event);
+				tools->handleEvent(event);
+				
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
 				canvas->handleEvent(event);
@@ -145,6 +146,7 @@ int main() {
 		
 		tools->draw();
 		main_menu->draw();
+
 		for (auto& dialog : dialogs)
 			dialog->draw();
 		window->display();
