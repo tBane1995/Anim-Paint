@@ -264,7 +264,7 @@ public:
 		if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 			if (tools->toolType == ToolType::Selector) {
 				if (selection->state == SelectionState::Moving) {
-					sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
+					sf::Vector2i tile = selectionToTile(worldMousePosition, position, size, selection->rect.getSize(), selection->offset, zoom, zoom_delta);
 					sf::Vector2i dst = tile - selection->offset;
 					selection->rect.left = dst.x;
 					selection->rect.top = dst.y;
