@@ -83,7 +83,7 @@ public:
 	}
 };
 
-enum class ToolType { Brush, Eraser, Selector, Lasso, Fill };
+enum class ToolType { Brush, Eraser, Selector, Lasso, Fill, Picker };
 
 
 class Tools : public ElementGUI {
@@ -105,7 +105,7 @@ public:
 	std::vector < NormalButton*> tools;
 	sf::Text tools_text;
 	NormalButton* btn_brush;
-	NormalButton* btn_brush2;
+	NormalButton* btn_picker;
 	NormalButton* btn_fill;
 	NormalButton* btn_eraser;
 
@@ -179,9 +179,9 @@ public:
 			brush->setBrushType(BrushType::Circle);
 			selection->state = SelectionState::None;
 			};
-		btn_brush2 = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
-		btn_brush2->onclick_func = [this]() {
-			toolType = ToolType::Brush;
+		btn_picker = new NormalButton(getTexture(L"tex\\tools\\btn_picker.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"));
+		btn_picker->onclick_func = [this]() {
+			toolType = ToolType::Picker;
 			brush->setBrushType(BrushType::Circle);
 			selection->state = SelectionState::None;
 			};
@@ -199,7 +199,7 @@ public:
 
 		tools.clear();
 		tools.push_back(btn_brush);
-		tools.push_back(btn_brush2);
+		tools.push_back(btn_picker);
 		tools.push_back(btn_fill);
 		tools.push_back(btn_eraser);
 

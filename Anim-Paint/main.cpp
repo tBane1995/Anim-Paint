@@ -18,14 +18,17 @@
 
 #include "WorldToTileConverter.hpp"
 #include "ClipBoard.hpp"
+#include "Filters.hpp"
 
 #include "Layer.hpp"
 #include "Frame.hpp"
 
-#include "MainMenu.hpp"
+
 
 #include "FramesDialog.hpp"
 #include "LayersDialog.hpp"
+
+#include "MainMenu.hpp"
 
 #include "Selection.hpp"
 #include "Brush.hpp"
@@ -97,8 +100,9 @@ int main() {
 
 			if (event.type == sf::Event::MouseButtonPressed) {
 
-				main_menu->handleEvent(event);
 				tools->handleEvent(event);
+				main_menu->handleEvent(event);
+				
 				
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
@@ -107,17 +111,19 @@ int main() {
 				
 			}
 			else if (event.type == sf::Event::MouseButtonReleased) {
-
-				main_menu->handleEvent(event);
+				
 				tools->handleEvent(event);
+				main_menu->handleEvent(event);
+				
 				
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
 				canvas->handleEvent(event);
 			}
 			else if (event.type == sf::Event::MouseMoved) {
-				main_menu->handleEvent(event);
 				tools->handleEvent(event);
+				main_menu->handleEvent(event);
+				
 				
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);

@@ -1,4 +1,4 @@
-#ifndef MainMenu_hpp
+﻿#ifndef MainMenu_hpp
 #define MainMenu_hpp
 
 class OptionBox : public ElementGUI {
@@ -196,6 +196,7 @@ public:
 		else
 			unclick();
 
+		
 		for (auto& option : options)
 			option->update();
 	}
@@ -226,6 +227,7 @@ public:
 
 		logo = sf::Sprite(*getTexture(L"tex\\logo\\small_logo.png")->texture);
 
+		// FILE
 		MenuBox* file = new MenuBox(L"file");
 		OptionBox* newFile = new OptionBox(L"new file");
 		OptionBox* save = new OptionBox(L"save");
@@ -241,24 +243,82 @@ public:
 		file->addOption(exp);
 		file->addOption(imp);
 
-		menu_boxes.push_back(file);
-
-		MenuBox* image = new MenuBox(L"image");
-		menu_boxes.push_back(image);
-
-		MenuBox* selection = new MenuBox(L"selection");
-		menu_boxes.push_back(selection);
-
-		MenuBox* settings = new MenuBox(L"settings");
-		menu_boxes.push_back(settings);
-
-		file->onclick_func = [this, file](){ 
+		file->onclick_func = [this, file]() {
 			if (open_menu_box != nullptr)
 				open_menu_box->isOpen = false;
 
 			open_menu_box = file;
 			open_menu_box->isOpen = true;
 			};
+
+		menu_boxes.push_back(file);
+
+		// IMAGE
+		MenuBox* image = new MenuBox(L"image");
+		OptionBox* image_resize = new OptionBox(L"resize");
+		OptionBox* image_trim = new OptionBox(L"trim");
+		OptionBox* image_brightness_contrast = new OptionBox(L"brightness-contrast");
+		OptionBox* image_brightness = new OptionBox(L"brightness");
+		image_brightness->onclick_func = [this]() {
+			set_brightness(layers_dialog->getCurrentLayer()->image, 0.15f);
+			std::cout << "click\n";	// nie działa
+			};
+		OptionBox* image_contrast = new OptionBox(L"contrast");
+		image_contrast->onclick_func = [this]() {
+			set_contrast(layers_dialog->getCurrentLayer()->image, 1.5f);
+			std::cout << "click\n";	// działa
+			};
+		OptionBox* image_hue = new OptionBox(L"hue");
+		
+		image->addOption(image_resize);
+		image->addOption(image_trim);
+		image->addOption(image_brightness_contrast);
+		image->addOption(image_brightness);
+		image->addOption(image_contrast);
+		image->addOption(image_hue);
+
+		image->onclick_func = [this, image]() {
+			if (open_menu_box != nullptr)
+				open_menu_box->isOpen = false;
+
+			open_menu_box = image;
+			open_menu_box->isOpen = true;
+			};
+
+		menu_boxes.push_back(image);
+
+		// SELECT
+		MenuBox* select = new MenuBox(L"select");
+		OptionBox* select_all = new OptionBox(L"select all");
+		OptionBox* select_none = new OptionBox(L"none");
+		OptionBox* select_invert = new OptionBox(L"invert");
+		OptionBox* select_brightness_contrast = new OptionBox(L"brightness-contrast");
+		OptionBox* select_brightness = new OptionBox(L"brightness");
+		OptionBox* select_contrast = new OptionBox(L"contrast");
+		OptionBox* select_hue = new OptionBox(L"hue");
+
+		select->addOption(select_all);
+		select->addOption(select_none);
+		select->addOption(select_invert);
+		select->addOption(select_brightness_contrast);
+		select->addOption(select_brightness);
+		select->addOption(select_contrast);
+		select->addOption(select_hue);
+
+		select->onclick_func = [this, select]() {
+			if (open_menu_box != nullptr)
+				open_menu_box->isOpen = false;
+
+			open_menu_box = select;
+			open_menu_box->isOpen = true;
+			};
+
+		menu_boxes.push_back(select);
+
+
+		// SETTINGS
+		MenuBox* settings = new MenuBox(L"settings");
+		menu_boxes.push_back(settings);
 
 		settings->onclick_func = [this, settings]() {
 			if (open_menu_box != nullptr)
@@ -268,6 +328,8 @@ public:
 			open_menu_box->isOpen = true;
 			};
 
+		
+		// POSITIONING
 		open_menu_box = nullptr;
 		setPosition(sf::Vector2f(0, 0));
 	}
@@ -301,20 +363,28 @@ public:
 	}
 
 	void handleEvent(sf::Event& event) {
-
 		bool clicked_in_menu = false;
 
 		for (auto& mb : menu_boxes) {
 			mb->handleEvent(event);
 			if (ElementGUI_pressed == mb) {
-				clicked_in_menu;
-				break;
+				clicked_in_menu = true;
+			}
+
+			if (mb->isOpen) {
+				for (auto& op : mb->options) {
+					op->handleEvent(event);
+					if (ElementGUI_pressed == op) {
+						clicked_in_menu = true;
+					}
+				}
 			}
 		}
 
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-			if (clicked_in_menu == false) {
-				if (open_menu_box != nullptr)
+		if (event.type == sf::Event::MouseButtonPressed &&
+			event.mouseButton.button == sf::Mouse::Left) {
+			if (!clicked_in_menu) {
+				if (open_menu_box != nullptr) 
 					open_menu_box->isOpen = false;
 				open_menu_box = nullptr;
 			}

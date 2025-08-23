@@ -33,8 +33,8 @@ sf::Vector2i worldToTile(sf::Vector2f p, sf::Vector2f position, float zoom, floa
 
 // odwróc funckje
 sf::Vector2f tileToWorld(sf::Vector2i p, sf::Vector2f canvas_position, float zoom, float zoom_delta) {
-	return sf::Vector2f(p) * zoom * zoom_delta + canvas_position;
+	float scale = zoom * zoom_delta;
+	return sf::Vector2f(p) * scale  + canvas_position;
 }
-
 
 #endif

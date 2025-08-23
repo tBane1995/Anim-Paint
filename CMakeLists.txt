@@ -16,6 +16,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     
     Anim-Paint/WorldToTileConverter.hpp
     Anim-Paint/Clipboard.hpp
+    Anim-Paint/Filters.hpp
 
     Anim-Paint/Layer.hpp
     Anim-Paint/Frame.hpp
