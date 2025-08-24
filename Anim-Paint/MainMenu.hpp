@@ -229,20 +229,6 @@ public:
 
 		// FILE
 		MenuBox* file = new MenuBox(L"file");
-		OptionBox* newFile = new OptionBox(L"new file");
-		OptionBox* save = new OptionBox(L"save");
-		OptionBox* saveAs = new OptionBox(L"save as");
-		OptionBox* open = new OptionBox(L"open");
-		OptionBox* exp = new OptionBox(L"export");
-		OptionBox* imp = new OptionBox(L"import");
-		
-		file->addOption(newFile);
-		file->addOption(save);
-		file->addOption(saveAs);
-		file->addOption(open);
-		file->addOption(exp);
-		file->addOption(imp);
-
 		file->onclick_func = [this, file]() {
 			if (open_menu_box != nullptr)
 				open_menu_box->isOpen = false;
@@ -250,33 +236,53 @@ public:
 			open_menu_box = file;
 			open_menu_box->isOpen = true;
 			};
-
 		menu_boxes.push_back(file);
+
+		OptionBox* file_new = new OptionBox(L"new file");
+		file_new->onclick_func = [this]() {
+			dialogs.push_back(new Dialog(L"new file", sf::Vector2f(200, 200)));
+			if (this->open_menu_box != nullptr)
+				open_menu_box->isOpen = false;
+			open_menu_box = nullptr;
+			};
+		OptionBox* file_save = new OptionBox(L"save");
+		OptionBox* file_saveAs = new OptionBox(L"save as");
+		OptionBox* file_open = new OptionBox(L"open");
+		OptionBox* file_export = new OptionBox(L"export");
+		OptionBox* file_import = new OptionBox(L"import");
+		
+		file->addOption(file_new);
+		file->addOption(file_save);
+		file->addOption(file_saveAs);
+		file->addOption(file_open);
+		file->addOption(file_export);
+		file->addOption(file_import);
+
+		// EDIT
+		MenuBox* edit = new MenuBox(L"edit");
+		edit->onclick_func = [this, edit]() {
+			if (open_menu_box != nullptr)
+				open_menu_box->isOpen = false;
+
+			open_menu_box = edit;
+			open_menu_box->isOpen = true;
+			};
+		menu_boxes.push_back(edit);
+
+		OptionBox* edit_undo = new OptionBox(L"undo");
+		OptionBox* edit_redo = new OptionBox(L"redo");
+		OptionBox* edit_cut = new OptionBox(L"cut");
+		OptionBox* edit_copy = new OptionBox(L"copy");
+		OptionBox* edit_paste = new OptionBox(L"paste");
+
+		edit->addOption(edit_undo);
+		edit->addOption(edit_redo);
+		edit->addOption(edit_cut);
+		edit->addOption(edit_copy);
+		edit->addOption(edit_paste);
 
 		// IMAGE
 		MenuBox* image = new MenuBox(L"image");
-		OptionBox* image_resize = new OptionBox(L"resize");
-		OptionBox* image_trim = new OptionBox(L"trim");
-		OptionBox* image_brightness_contrast = new OptionBox(L"brightness-contrast");
-		OptionBox* image_brightness = new OptionBox(L"brightness");
-		image_brightness->onclick_func = [this]() {
-			set_brightness(layers_dialog->getCurrentLayer()->image, 0.15f);
-			std::cout << "click\n";	// nie działa
-			};
-		OptionBox* image_contrast = new OptionBox(L"contrast");
-		image_contrast->onclick_func = [this]() {
-			set_contrast(layers_dialog->getCurrentLayer()->image, 1.5f);
-			std::cout << "click\n";	// działa
-			};
-		OptionBox* image_hue = new OptionBox(L"hue");
-		
-		image->addOption(image_resize);
-		image->addOption(image_trim);
-		image->addOption(image_brightness_contrast);
-		image->addOption(image_brightness);
-		image->addOption(image_contrast);
-		image->addOption(image_hue);
-
 		image->onclick_func = [this, image]() {
 			if (open_menu_box != nullptr)
 				open_menu_box->isOpen = false;
@@ -284,27 +290,35 @@ public:
 			open_menu_box = image;
 			open_menu_box->isOpen = true;
 			};
-
 		menu_boxes.push_back(image);
+
+		OptionBox* image_resize_scale = new OptionBox(L"resize/scale");
+		OptionBox* image_trim = new OptionBox(L"trim");
+		OptionBox* image_brightness_contrast = new OptionBox(L"brightness-contrast");
+		image_brightness_contrast->onclick_func = [this]() {
+			dialogs.push_back(new Dialog(L"brightness-contrast", sf::Vector2f(200, 200), sf::Vector2f(8, 120)));
+			//set_brightness(layers_dialog->getCurrentLayer()->image, 0.15f);
+			//set_contrast(layers_dialog->getCurrentLayer()->image, 1.5f);
+
+			if(open_menu_box!=nullptr)
+				open_menu_box->isOpen = false;
+			open_menu_box = nullptr;
+			};
+		OptionBox* saturation = new OptionBox(L"saturation");
+		OptionBox* image_hue = new OptionBox(L"hue");
+		OptionBox* image_gray = new OptionBox(L"grayscale mode");
+		OptionBox* image_invert = new OptionBox(L"invert colors");
+		
+		image->addOption(image_resize_scale);
+		image->addOption(image_trim);
+		image->addOption(image_brightness_contrast);
+		image->addOption(saturation);
+		image->addOption(image_hue);
+		image->addOption(image_gray);
+		image->addOption(image_invert);
 
 		// SELECT
 		MenuBox* select = new MenuBox(L"select");
-		OptionBox* select_all = new OptionBox(L"select all");
-		OptionBox* select_none = new OptionBox(L"none");
-		OptionBox* select_invert = new OptionBox(L"invert");
-		OptionBox* select_brightness_contrast = new OptionBox(L"brightness-contrast");
-		OptionBox* select_brightness = new OptionBox(L"brightness");
-		OptionBox* select_contrast = new OptionBox(L"contrast");
-		OptionBox* select_hue = new OptionBox(L"hue");
-
-		select->addOption(select_all);
-		select->addOption(select_none);
-		select->addOption(select_invert);
-		select->addOption(select_brightness_contrast);
-		select->addOption(select_brightness);
-		select->addOption(select_contrast);
-		select->addOption(select_hue);
-
 		select->onclick_func = [this, select]() {
 			if (open_menu_box != nullptr)
 				open_menu_box->isOpen = false;
@@ -312,14 +326,32 @@ public:
 			open_menu_box = select;
 			open_menu_box->isOpen = true;
 			};
-
 		menu_boxes.push_back(select);
+
+		OptionBox* select_all = new OptionBox(L"select all");
+		OptionBox* select_none = new OptionBox(L"none");
+		OptionBox* select_invert = new OptionBox(L"invert selection");
+		OptionBox* select_resize_scale = new OptionBox(L"resize/scale");
+		OptionBox* select_brightness_contrast = new OptionBox(L"brightness-contrast");
+		OptionBox* select_saturation = new OptionBox(L"saturation");
+		OptionBox* select_hue = new OptionBox(L"hue");
+		OptionBox* select_gray = new OptionBox(L"grayscale mode");
+		OptionBox* select_invert_colors = new OptionBox(L"invert colors");
+		
+
+		select->addOption(select_all);
+		select->addOption(select_none);
+		select->addOption(select_invert);
+		select->addOption(select_resize_scale);
+		select->addOption(select_brightness_contrast);
+		select->addOption(select_saturation);
+		select->addOption(select_hue);
+		select->addOption(select_gray);
+		select->addOption(select_invert_colors);
 
 
 		// SETTINGS
 		MenuBox* settings = new MenuBox(L"settings");
-		menu_boxes.push_back(settings);
-
 		settings->onclick_func = [this, settings]() {
 			if (open_menu_box != nullptr)
 				open_menu_box->isOpen = false;
@@ -327,6 +359,7 @@ public:
 			open_menu_box = settings;
 			open_menu_box->isOpen = true;
 			};
+		menu_boxes.push_back(settings);
 
 		
 		// POSITIONING

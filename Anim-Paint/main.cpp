@@ -63,6 +63,12 @@ int main() {
 	tools = new Tools();
 	canvas = new Canvas(sf::Vector2i(frames_dialog->getCurrentFrame()->layers[0]->image.getSize()));
 
+	// TO-DO - for development
+
+	main_menu->menu_boxes[1]->options[2]->click();
+
+	//
+
 	while (window->isOpen()) {
 		prevTime = currentTime;
 		currentTime = timeClock.getElapsedTime();
@@ -70,6 +76,17 @@ int main() {
 		mousePosition = sf::Mouse::getPosition(*window); // get the mouse position about window
 		worldMousePosition = window->mapPixelToCoords(mousePosition); // get global mouse position
 		
+		// delete old dialogs
+		for (int i = 0; i < dialogs.size(); ) {
+			if (dialogs[i]->state == DialogState::ToClose) {
+				delete dialogs[i];
+				dialogs.erase(dialogs.begin() + i);
+			}
+			else {
+				i++;
+			}
+		}
+
 		// cursor hovering
 		ElementGUI_hovered = nullptr;
 
@@ -144,7 +161,6 @@ int main() {
 		
 		// update
 		
-
 		// render
 		window->clear(sf::Color(56,56,56));
 		canvas->draw();

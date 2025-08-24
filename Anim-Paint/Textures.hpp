@@ -38,6 +38,10 @@ void loadTextures() {
 	// logos
 	loadTexture(L"tex\\logo\\small_logo.png");
 
+	// dialogs
+	loadTexture(L"tex\\dialog\\close.png");
+	loadTexture(L"tex\\dialog\\close_hover.png");
+
 	// dialog - frames
 	loadTexture(L"tex\\frames\\first.png");
 	loadTexture(L"tex\\frames\\first_hover.png");
