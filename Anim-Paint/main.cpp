@@ -53,6 +53,8 @@ void createDialogs() {
 
 int main() {
 	
+	window  = new sf::RenderWindow(sf::VideoMode(800,600), "Anim Paint", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+
 	loadTextures();
 	loadTheme();
 	main_menu = new MainMenu();
