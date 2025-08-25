@@ -8,7 +8,7 @@ public:
 
 	Frame() {
 		layers.clear();
-		int i = 32;
+		int i = 64;
 		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(i, i)));
 		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(i, i)));
 		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(i, i)));

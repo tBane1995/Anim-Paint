@@ -58,13 +58,7 @@ public:
 	}
 
 	~Dialog_Image_Brightness_Contrast() {
-		for (auto& o : original_layers) {
-			delete o;
-		}
-
-		frames_dialog->getCurrentFrame()->layers.clear();
-		frames_dialog->getCurrentFrame()->layers = edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		
 	}
 
 	void setPosition(sf::Vector2f position) {
