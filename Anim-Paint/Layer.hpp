@@ -13,6 +13,11 @@ public:
 		image.create(size.x, size.y, sf::Color::Transparent);
 	}
 
+	Layer(Layer* layer) {
+		this->name = layer->name;
+		this->image = layer->image;
+	}
+
 	~Layer() { }
 };
 

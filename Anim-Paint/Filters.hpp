@@ -52,6 +52,8 @@ void set_brightness(sf::Image& image, float value) {
 
 void set_contrast(sf::Image& image, float value) {
 
+    value = 1.0f + value;
+
     sf::Texture tex;
     tex.loadFromImage(image);
 

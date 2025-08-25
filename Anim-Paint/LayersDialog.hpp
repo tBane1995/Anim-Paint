@@ -18,6 +18,8 @@ public:
 
 		this->layer = layer;
 
+		isActive = false;
+
 		rect = sf::RectangleShape(sf::Vector2f(160 - 2 * dialog_padding, 32));
 		rect.setFillColor(sf::Color::Transparent);
 
@@ -29,6 +31,7 @@ public:
 		textName = sf::Text(layer->name, basicFont, 17);
 		textName.setFillColor(normal_text_color);
 
+		rect_coloring();
 	}
 
 	~LayerBox() { }
@@ -42,30 +45,55 @@ public:
 	void cursorHover() {
 		visibling->cursorHover();
 
-		if (isActive == true) {
-			(rect.getGlobalBounds().contains(worldMousePosition))? rect.setFillColor(sf::Color(80, 64, 64)) : rect.setFillColor(sf::Color(64, 48, 48));
-		}
-		else {
-			(rect.getGlobalBounds().contains(worldMousePosition))? rect.setFillColor(sf::Color(48, 48, 48)) : rect.setFillColor(sf::Color::Transparent);
+		if (rect.getGlobalBounds().contains(worldMousePosition)) {
+			ElementGUI_hovered = this;
 		}
 	}
 
 	void handleEvent(sf::Event& event) {
-		visibling->handleEvent(event);
-
-
-		if (ElementGUI_pressed != visibling) {
-			if (rect.getGlobalBounds().contains(worldMousePosition)) {
-				if (event.type == event.MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
-					onclick_func();
-				}
+		if (rect.getGlobalBounds().contains(worldMousePosition)) {
+			if (event.type == event.MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+				ElementGUI_pressed == this;
 			}
 		}
 
+		visibling->handleEvent(event);
+
+		
+
+	}
+
+	void rect_coloring() {
+		if (isActive) {
+
+			if (ElementGUI_pressed == this) {
+				rect.setFillColor(sf::Color(127, 63, 63));
+			}
+			else if (ElementGUI_hovered == this) {
+				rect.setFillColor(sf::Color(95, 63, 63));
+			}
+			else {
+				rect.setFillColor(sf::Color(63, 47, 47));
+			}
+
+		}
+		else {
+			if (ElementGUI_pressed == this) {
+				rect.setFillColor(sf::Color(95, 95, 95));
+			}
+			else if (ElementGUI_hovered == this) {
+				rect.setFillColor(sf::Color(63, 63, 63));
+			}
+			else {
+				rect.setFillColor(sf::Color(47, 47, 47));
+			}
+		}
 	}
 
 	void update() {
+
 		visibling->update();
+		rect_coloring();
 	}
 
 	void draw() {
@@ -78,22 +106,15 @@ public:
 class LayersDialog : public Dialog {
 public:
 
-	Canvas* canvas;
-
 	std::vector < LayerBox* > layersBoxes;
 	int currentLayerId = 3;
 
 	LayersDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) : Dialog(title, size, position) {
 
 		loadLayersFromCurrentFrame();
-		canvas = nullptr;
 	}
 
 	~LayersDialog() { }
-
-	void setCanvas(Canvas* canvas) {
-		this->canvas = canvas;
-	}
 
 	Layer* getCurrentLayer() {
 		return layersBoxes[currentLayerId]->layer;
@@ -118,9 +139,14 @@ public:
 				};
 		}
 
-		setPosition(this->getPosition());
-
 		layersBoxes[currentLayerId]->isActive = true;
+
+		for (auto& l : layersBoxes)
+			l->rect_coloring();
+
+		
+
+		setPosition(this->getPosition());
 	}
 
 	void setPosition(sf::Vector2f position) {
@@ -156,11 +182,6 @@ public:
 
 	void update() {
 		Dialog::update();
-		
-		// TO-DO - not optimize
-		if (layersBoxes.size() > 0 && layersBoxes[0]->layer != frames_dialog->getCurrentFrame()->layers[0]) {
-			loadLayersFromCurrentFrame();
-		}
 
 		for (auto& layerbox : layersBoxes) {
 			layerbox->update();

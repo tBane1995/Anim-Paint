@@ -9,9 +9,12 @@ target_sources(${PROJECT_NAME} PRIVATE
     Anim-Paint/Theme.hpp
     Anim-Paint/Mouse.hpp
     Anim-Paint/Time.hpp
+
     Anim-Paint/ElementGUI.hpp
     Anim-Paint/Button.hpp
     Anim-Paint/Checkbox.hpp
+    Anim-Paint/Slider.hpp
+
     Anim-Paint/Dialog.hpp
     
     Anim-Paint/WorldToTileConverter.hpp
@@ -21,12 +24,16 @@ target_sources(${PROJECT_NAME} PRIVATE
     Anim-Paint/Layer.hpp
     Anim-Paint/Frame.hpp
     
+    Anim-Paint/FramesDialog.hpp
+    Anim-Paint/LayersDialog.hpp
+
+    Anim-Paint/dialogs/Dialog_image_brightness-contrast.hpp
+
     Anim-Paint/MainMenu.hpp
+
     Anim-Paint/Selection.hpp
     Anim-Paint/Brush.hpp
     Anim-Paint/Tools.hpp
-    Anim-Paint/FramesDialog.hpp
-    Anim-Paint/LayersDialog.hpp
     Anim-Paint/Canvas.hpp
 )
 

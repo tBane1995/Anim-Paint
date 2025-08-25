@@ -42,6 +42,10 @@ void loadTextures() {
 	loadTexture(L"tex\\dialog\\close.png");
 	loadTexture(L"tex\\dialog\\close_hover.png");
 
+	// slider
+	loadTexture(L"tex\\slider\\bar.png");
+	loadTexture(L"tex\\slider\\slider.png");
+
 	// dialog - frames
 	loadTexture(L"tex\\frames\\first.png");
 	loadTexture(L"tex\\frames\\first_hover.png");

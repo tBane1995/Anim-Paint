@@ -296,7 +296,7 @@ public:
 		OptionBox* image_trim = new OptionBox(L"trim");
 		OptionBox* image_brightness_contrast = new OptionBox(L"brightness-contrast");
 		image_brightness_contrast->onclick_func = [this]() {
-			dialogs.push_back(new Dialog(L"brightness-contrast", sf::Vector2f(200, 200), sf::Vector2f(8, 120)));
+			dialogs.push_back(new Dialog_Image_Brightness_Contrast(frames_dialog->getCurrentFrame()->layers));
 			//set_brightness(layers_dialog->getCurrentLayer()->image, 0.15f);
 			//set_contrast(layers_dialog->getCurrentLayer()->image, 1.5f);
 

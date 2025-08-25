@@ -5,15 +5,17 @@
 #include <Windows.h>
 #include <SFML/Graphics.hpp>
 
-
 #include "Window.hpp"
 #include "Textures.hpp"
 #include "Theme.hpp"
 #include "Mouse.hpp"
 #include "Time.hpp"
+
 #include "ElementGUI.hpp"
 #include "Button.hpp"
 #include "Checkbox.hpp"
+#include "Slider.hpp"
+
 #include "Dialog.hpp"
 
 #include "WorldToTileConverter.hpp"
@@ -23,10 +25,10 @@
 #include "Layer.hpp"
 #include "Frame.hpp"
 
-
-
 #include "FramesDialog.hpp"
 #include "LayersDialog.hpp"
+
+#include "dialogs/dialog_image_brightness_contrast.hpp"
 
 #include "MainMenu.hpp"
 
@@ -59,7 +61,6 @@ int main() {
 	loadTheme();
 	main_menu = new MainMenu();
 	createDialogs();
-	layers_dialog->setCanvas(canvas);
 	selection = new Selection();
 	brush = new Brush(2);
 	tools = new Tools();
