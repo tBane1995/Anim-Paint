@@ -127,6 +127,128 @@ public:
 
 };
 
+class NormalButtonWithText : public Button {
+public:
+
+	sf::RectangleShape rect;
+	sf::Text text;
+	sf::Color normal_color;
+	sf::Color hover_color;
+	sf::Color press_color;
+
+	sf::Vector2f position;
+
+	ButtonState state;
+	std::function<void()> hover_func;
+	std::function<void()> onclick_func;
+	sf::Time clickTime;
+
+
+	NormalButtonWithText(std::wstring text, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) {
+
+		normal_color = button_normal_color;
+		hover_color = button_hover_color;
+		press_color = button_press_color;
+
+		rect = sf::RectangleShape(size);
+		rect.setFillColor(normal_color);
+		rect.setOutlineThickness(dialog_border_width);
+		rect.setOutlineColor(sf::Color(dialog_border_color));
+
+		this->text = sf::Text(text, basicFont, 13);
+		this->text.setFillColor(button_text_color);
+
+		setPosition(position);
+
+		state = ButtonState::Idle;
+
+		hover_func = { };
+		onclick_func = { };
+		clickTime = currentTime;
+
+	}
+
+	~NormalButtonWithText() {}
+
+	sf::Vector2f getSize() {
+		return rect.getSize();
+	}
+
+	void setPosition(sf::Vector2f position) {
+		this->position = position;
+		rect.setPosition(position);
+		sf::Vector2f text_pos;
+		text_pos.x = rect.getPosition().x + rect.getSize().x / 2 - text.getGlobalBounds().width/2;
+		text_pos.y = rect.getPosition().y + rect.getSize().y / 2 - basicFont.getLineSpacing(13) / 2;
+		text.setPosition(text_pos);
+	}
+
+	void unclick() {
+		state = ButtonState::Idle;
+		rect.setFillColor(normal_color);
+	}
+
+	void hover() {
+		state = ButtonState::Hover;
+		rect.setFillColor(hover_color);
+	}
+
+	void click() {
+		state = ButtonState::Pressed;
+		rect.setFillColor(press_color);
+		clickTime = currentTime;
+	}
+
+
+	void cursorHover() {
+
+		if (rect.getGlobalBounds().contains(worldMousePosition)) {
+			ElementGUI_hovered = this;
+		}
+
+
+	}
+
+	void handleEvent(sf::Event& event) {
+		if (rect.getGlobalBounds().contains(worldMousePosition)) {
+			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+				ElementGUI_pressed = this;
+			}
+			else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+				if (ElementGUI_pressed == this) {
+					click();
+				}
+			}
+
+		}
+	}
+
+	void update() {
+
+		if (state == ButtonState::Pressed) {
+			if ((currentTime - clickTime).asSeconds() > 0.05f) {
+				if (onclick_func) {
+					onclick_func();
+				}
+				ElementGUI_pressed = nullptr;
+				unclick();
+			}
+		}
+		else if (ElementGUI_hovered == this) {
+			hover();
+		}
+		else
+			unclick();
+	}
+
+	void draw() {
+		window->draw(rect);
+		window->draw(text);
+	}
+
+};
+
+
 class ButtonWithBottomText : public Button {
 public:
 

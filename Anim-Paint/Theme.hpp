@@ -14,6 +14,11 @@ sf::Color dialog_title_text_color;
 sf::Color dialog_title_rect_color;
 sf::Color dialog_content_rect_color;
 
+// buttons
+sf::Color button_normal_color;
+sf::Color button_hover_color;
+sf::Color button_press_color;
+sf::Color button_text_color;
 
 // main menu
 int menu_height;
@@ -63,6 +68,12 @@ void loadTheme() {
 	dialog_title_text_color = sf::Color(191, 191, 191);
 	dialog_title_rect_color = sf::Color(15, 15, 15);
 	dialog_content_rect_color = sf::Color(31, 31, 31);
+
+	// buttons
+	button_normal_color = sf::Color(47, 47, 47);
+	button_hover_color = sf::Color(31, 31, 31);
+	button_press_color = sf::Color(23, 23, 23);
+	button_text_color = sf::Color(191, 191, 191);
 
 	//main menu
 	menu_height = 28;

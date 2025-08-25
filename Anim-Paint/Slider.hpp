@@ -43,6 +43,8 @@ public:
 		else if (current_value > max_value)
 			current_value = max_value;
 
+		slider_sprite.setPosition(getSliderPosition());
+
 	}
 
 	int getValue() {

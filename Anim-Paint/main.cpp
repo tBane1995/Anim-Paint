@@ -68,7 +68,7 @@ int main() {
 	canvas = new Canvas(sf::Vector2i(frames_dialog->getCurrentFrame()->layers[0]->image.getSize()));
 
 	// TO-DO - for development
-	main_menu->menu_boxes[2]->options[3]->click();
+	main_menu->menu_boxes[2]->options[2]->click();
 
 	while (window->isOpen()) {
 		prevTime = currentTime;
