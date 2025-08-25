@@ -297,14 +297,19 @@ public:
 		OptionBox* image_brightness_contrast = new OptionBox(L"brightness-contrast");
 		image_brightness_contrast->onclick_func = [this]() {
 			dialogs.push_back(new Dialog_Image_Brightness_Contrast(frames_dialog->getCurrentFrame()->layers));
-			//set_brightness(layers_dialog->getCurrentLayer()->image, 0.15f);
-			//set_contrast(layers_dialog->getCurrentLayer()->image, 1.5f);
 
 			if(open_menu_box!=nullptr)
 				open_menu_box->isOpen = false;
 			open_menu_box = nullptr;
 			};
-		OptionBox* saturation = new OptionBox(L"saturation");
+		OptionBox* image_saturation = new OptionBox(L"saturation");
+		image_saturation->onclick_func = [this]() {
+			dialogs.push_back(new Dialog_Image_Saturation(frames_dialog->getCurrentFrame()->layers));
+
+			if (open_menu_box != nullptr)
+				open_menu_box->isOpen = false;
+			open_menu_box = nullptr;
+			};
 		OptionBox* image_hue = new OptionBox(L"hue");
 		OptionBox* image_gray = new OptionBox(L"grayscale mode");
 		OptionBox* image_invert = new OptionBox(L"invert colors");
@@ -312,7 +317,7 @@ public:
 		image->addOption(image_resize_scale);
 		image->addOption(image_trim);
 		image->addOption(image_brightness_contrast);
-		image->addOption(saturation);
+		image->addOption(image_saturation);
 		image->addOption(image_hue);
 		image->addOption(image_gray);
 		image->addOption(image_invert);

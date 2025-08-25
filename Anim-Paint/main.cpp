@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <functional>
 #define NOMINMAX
@@ -28,7 +28,8 @@
 #include "FramesDialog.hpp"
 #include "LayersDialog.hpp"
 
-#include "dialogs/dialog_image_brightness_contrast.hpp"
+#include "dialogs/Dialog_Image_Brightness_Contrast.hpp"
+#include "dialogs/Dialog_Image_Saturation.hpp"
 
 #include "MainMenu.hpp"
 
@@ -67,10 +68,7 @@ int main() {
 	canvas = new Canvas(sf::Vector2i(frames_dialog->getCurrentFrame()->layers[0]->image.getSize()));
 
 	// TO-DO - for development
-
-	main_menu->menu_boxes[1]->options[2]->click();
-
-	//
+	main_menu->menu_boxes[2]->options[3]->click();
 
 	while (window->isOpen()) {
 		prevTime = currentTime;

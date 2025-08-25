@@ -1,8 +1,11 @@
-#ifndef dialog_image_brightness_contrast_hpp
-#define dialog_image_brightness_contrast_hpp
+#ifndef dialog_Image_Brightness_Contrast_hpp
+#define dialog_Image_Brightness_Contrast_hpp
 
 class Dialog_Image_Brightness_Contrast : public Dialog {
 public:
+	sf::Text brightness_text;
+	sf::Text contrast_text;
+	
 	Slider* brightness_slider;
 	Slider* contrast_slider;
 
@@ -10,8 +13,14 @@ public:
 	std::vector < Layer* > edited_layers;
 
 	Dialog_Image_Brightness_Contrast(std::vector < Layer* > layers) : Dialog(L"brightness-contrast", sf::Vector2f(256,160), sf::Vector2f(8, 120)) {
+		
+		
+		brightness_text = sf::Text(L"brightness", basicFont, 13);
+		contrast_text = sf::Text(L"contrast", basicFont, 13);
+
 		brightness_slider = new Slider(-50,50);
 		brightness_slider->setValue(0);
+
 		contrast_slider = new Slider(-50,50);
 		contrast_slider->setValue(0);
 
@@ -37,11 +46,18 @@ public:
 	void setPosition(sf::Vector2f position) {
 		Dialog::setPosition(position);
 
+		sf::Vector2f text_pos;
+		text_pos.x = int(position.x) / 8 * 8 + 24;
+		text_pos.y = int(position.y) / 8 * 8 + 160 / 2 - 12;
+
+		brightness_text.setPosition(text_pos + sf::Vector2f(0,2-basicFont.getLineSpacing(13)/2));
+		contrast_text.setPosition(text_pos + sf::Vector2f(0, 2-basicFont.getLineSpacing(13)/2) + sf::Vector2f(0,48));
+
 		sf::Vector2f slider_pos;
-		slider_pos.x = int(position.x)/8*8 + 256 / 2 - 128 / 2;
-		slider_pos.y = int(position.y)/8*8 + 160 / 2 - 16;
+		slider_pos.x = int(position.x)/8*8 + 256 / 2 - 64 / 2;
+		slider_pos.y = int(position.y)/8*8 + 160 / 2 - 12;
 		brightness_slider->setPosition(slider_pos);
-		contrast_slider->setPosition(slider_pos + sf::Vector2f(0,40));
+		contrast_slider->setPosition(slider_pos + sf::Vector2f(0,48));
 	}
 
 	void cursorHover() {
@@ -87,6 +103,9 @@ public:
 
 	void draw() {
 		Dialog::draw();
+
+		window->draw(brightness_text);
+		window->draw(contrast_text);
 
 		this->brightness_slider->draw();
 		this->contrast_slider->draw();

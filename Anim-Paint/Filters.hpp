@@ -30,6 +30,22 @@ void main() {
 }
 )";
 
+std::string saturation_shader_source = R"(
+uniform sampler2D texture;
+uniform float saturation;
+
+void main() {
+    vec2 uv = gl_TexCoord[0].xy;
+    vec4 color = texture2D(texture, uv);
+
+    vec3 luma = vec3(0.3086, 0.6094, 0.0820);
+    float gray = dot(color.rgb, luma);
+    color.rgb = mix(vec3(gray), color.rgb, saturation);
+
+    gl_FragColor = color;
+}
+)";
+
 void set_brightness(sf::Image& image, float value) {
 
     sf::Texture tex;
@@ -63,6 +79,27 @@ void set_contrast(sf::Image& image, float value) {
     sf::Shader sh;
     sh.loadFromMemory(contrast_shader_source, sf::Shader::Fragment);
     sh.setUniform("contrast", value);
+
+    sf::Sprite spr(tex);
+    rtex.clear(sf::Color::Transparent);
+    rtex.draw(spr, &sh);
+    rtex.display();
+
+    image = rtex.getTexture().copyToImage();
+}
+
+void set_saturation(sf::Image& image, float value) {
+
+
+    sf::Texture tex;
+    tex.loadFromImage(image);
+
+    sf::RenderTexture rtex;
+    rtex.create(tex.getSize().x, tex.getSize().y);
+
+    sf::Shader sh;
+    sh.loadFromMemory(saturation_shader_source, sf::Shader::Fragment);
+    sh.setUniform("saturation", value);
 
     sf::Sprite spr(tex);
     rtex.clear(sf::Color::Transparent);
