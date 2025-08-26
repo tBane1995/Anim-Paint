@@ -1,5 +1,31 @@
-#ifndef Filters_hpp
+﻿#ifndef Filters_hpp
 #define Filter_hpp
+
+std::string rotation_shader_source = R"(
+uniform sampler2D texture;
+uniform float angle;
+
+vec2 rotate(vec2 uv, vec2 pivot, float a) {
+    float c = cos(a);
+    float s = sin(a);
+    mat2 R = mat2(c, -s,
+                  s,  c);
+    return (R * (uv - pivot)) + pivot;
+}
+
+void main() {
+    vec2 uv = gl_TexCoord[0].xy;
+
+    vec2 rotated_uv = rotate(uv, vec2(0.5, 0.5), angle);
+
+    if (rotated_uv.x < 0.0 || rotated_uv.x > 1.0 ||
+        rotated_uv.y < 0.0 || rotated_uv.y > 1.0) {
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+    } else {
+        gl_FragColor = texture2D(texture, rotated_uv);
+    }
+}
+)";
 
 std::string brightness_shader_source = R"(
 uniform sampler2D texture;
@@ -45,6 +71,28 @@ void main() {
     gl_FragColor = color;
 }
 )";
+
+void set_rotation(sf::Image& image, float angle) {
+
+    angle = angle * 3.14159265f / 180.f;
+
+    sf::Texture tex;
+    tex.loadFromImage(image);
+
+    sf::RenderTexture rtex;
+    rtex.create(tex.getSize().x, tex.getSize().y);
+
+    sf::Shader sh;
+    sh.loadFromMemory(rotation_shader_source, sf::Shader::Fragment);
+    sh.setUniform("angle", angle);
+
+    sf::Sprite spr(tex);
+    rtex.clear(sf::Color::Transparent);
+    rtex.draw(spr, &sh);
+    rtex.display();
+
+    image = rtex.getTexture().copyToImage();
+}
 
 void set_brightness(sf::Image& image, float value) {
 

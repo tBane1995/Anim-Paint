@@ -27,6 +27,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     Anim-Paint/FramesDialog.hpp
     Anim-Paint/LayersDialog.hpp
 
+    Anim-Paint/dialogs/Dialog_Image_Rotation.hpp
     Anim-Paint/dialogs/Dialog_Image_Brightness_Contrast.hpp
     Anim-Paint/dialogs/Dialog_Image_Saturation.hpp
 

@@ -28,6 +28,7 @@
 #include "FramesDialog.hpp"
 #include "LayersDialog.hpp"
 
+#include "dialogs/Dialog_Image_Rotation.hpp"
 #include "dialogs/Dialog_Image_Brightness_Contrast.hpp"
 #include "dialogs/Dialog_Image_Saturation.hpp"
 
@@ -69,6 +70,12 @@ int main() {
 
 	// TO-DO - for development
 	main_menu->menu_boxes[2]->options[2]->click();
+
+	for (int y = 0; y < 32; y++) {
+		for (int x = 0; x < 4; x++) {
+			layers_dialog->getCurrentLayer()->image.setPixel(x+6, y+6, sf::Color::Black);
+		}
+	}
 
 	while (window->isOpen()) {
 		prevTime = currentTime;

@@ -294,6 +294,14 @@ public:
 
 		OptionBox* image_resize_scale = new OptionBox(L"resize/scale");
 		OptionBox* image_trim = new OptionBox(L"trim");
+		OptionBox* image_rotation = new OptionBox(L"rotation");
+		image_rotation->onclick_func = [this]() {
+			dialogs.push_back(new Dialog_Image_Rotation(frames_dialog->getCurrentFrame()->layers));
+
+			if (open_menu_box != nullptr)
+				open_menu_box->isOpen = false;
+			open_menu_box = nullptr;
+			};
 		OptionBox* image_brightness_contrast = new OptionBox(L"brightness-contrast");
 		image_brightness_contrast->onclick_func = [this]() {
 			dialogs.push_back(new Dialog_Image_Brightness_Contrast(frames_dialog->getCurrentFrame()->layers));
@@ -316,6 +324,7 @@ public:
 		
 		image->addOption(image_resize_scale);
 		image->addOption(image_trim);
+		image->addOption(image_rotation);
 		image->addOption(image_brightness_contrast);
 		image->addOption(image_saturation);
 		image->addOption(image_hue);
