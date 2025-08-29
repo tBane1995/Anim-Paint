@@ -59,11 +59,12 @@ public:
 	SelectionState state;
 	sf::IntRect rect;
 	sf::Vector2i offset;
-	sf::Image* img = nullptr;
+	sf::Image* img;
 
 	Selection() {
 		state = SelectionState::None;
 		rect = sf::IntRect(0, 0, 0, 0);
+		img = nullptr;
 	}
 
 	sf::IntRect normalizeRect() {

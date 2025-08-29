@@ -173,7 +173,11 @@ public:
 								selection->state = SelectionState::Selecting;
 								selection->rect = sf::IntRect(tile.x, tile.y, 0, 0);
 							}
-							
+						}
+						else if (tools->toolType == ToolType::Lasso) {
+							lasso->unselect();
+							lasso->startSelecting(position, pixel_size, zoom, zoom_delta);
+							lasso->state = LassoState::Selecting;
 						}
 					}
 				}
@@ -251,6 +255,9 @@ public:
 				}
 
 			}
+			else if (tools->toolType == ToolType::Lasso) {
+				lasso->addPoint(worldMousePosition, position, pixel_size, zoom, zoom_delta);
+			}
 		}
 
 		if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
@@ -270,41 +277,48 @@ public:
 					selection->state = SelectionState::Selected;
 				}
 			}
+			else if (tools->toolType == ToolType::Lasso) {
+				lasso->completeSelection(zoom, zoom_delta);
+			}
 		}
 
 		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 
-			sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
-			sf::IntRect norm = selection->normalizeRect();
+			if (tools->toolType == ToolType::Selector) {
+				sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
+				sf::IntRect norm = selection->normalizeRect();
 
-			if (selection->clickOnSelection(tile)) {
-				selection->offset = tile - sf::Vector2i(norm.left, norm.top);
-				selection->state = SelectionState::Moving;
+				if (selection->clickOnSelection(tile)) {
+					selection->offset = tile - sf::Vector2i(norm.left, norm.top);
+					selection->state = SelectionState::Moving;
 
-				if (selection->img == nullptr) {
-					selection->img = new sf::Image();
-					selection->img->create(norm.width, norm.height, sf::Color::Transparent);
-					copy(selection->img, &layers_dialog->getCurrentLayer()->image, norm);
-					remove(layers_dialog->getCurrentLayer()->image, norm);
+					if (selection->img == nullptr) {
+						selection->img = new sf::Image();
+						selection->img->create(norm.width, norm.height, sf::Color::Transparent);
+						copy(selection->img, &layers_dialog->getCurrentLayer()->image, norm);
+						remove(layers_dialog->getCurrentLayer()->image, norm);
+					}
 				}
-			}else if(bg_sprite.getGlobalBounds().contains(worldMousePosition)){
-				if (selection->img != nullptr) {
-					paste(&layers_dialog->getCurrentLayer()->image, selection->img, norm.left, norm.top);
-					selection->img = nullptr;
-				}
+				else if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
+					if (selection->img != nullptr) {
+						paste(&layers_dialog->getCurrentLayer()->image, selection->img, norm.left, norm.top);
+						selection->img = nullptr;
+					}
 
-				selection->state = SelectionState::Selecting;
-				selection->rect = sf::IntRect(tile.x, tile.y, 0, 0);
+					selection->state = SelectionState::Selecting;
+					selection->rect = sf::IntRect(tile.x, tile.y, 0, 0);
+				}
+				else {
+					if (selection->img != nullptr) {
+						paste(&layers_dialog->getCurrentLayer()->image, selection->img, norm.left, norm.top);
+						selection->img = nullptr;
+					}
+
+					selection->state = SelectionState::None;
+					selection->rect = sf::IntRect(0, 0, 0, 0);
+				}
 			}
-			else {
-				if (selection->img != nullptr) {
-					paste(&layers_dialog->getCurrentLayer()->image, selection->img, norm.left, norm.top);
-					selection->img = nullptr;
-				}
-
-				selection->state = SelectionState::None;
-				selection->rect = sf::IntRect(0, 0, 0, 0);
-			}
+			
 		}
 	}
 
@@ -349,6 +363,7 @@ public:
 		}
 
 		selection->draw(bg_sprite.getPosition(), size, zoom * zoom_delta);
+		lasso->draw();
 
 		if (brush_is_visible) {
 			brush->draw(position, size, zoom, zoom_delta);

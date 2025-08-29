@@ -1,8 +1,13 @@
 #ifndef Dialog_Image_Saturation_hpp
 #define Dialog_Image_Saturation_hpp
 
+
+enum class SaturationState { Idle, Edited };
+
 class Dialog_Image_Saturation : public Dialog {
 public:
+	SaturationState state;
+
 	sf::Text saturation_text;
 	Slider* saturation_slider;
 	NormalButtonWithText* reset;
@@ -13,6 +18,8 @@ public:
 
 	Dialog_Image_Saturation(std::vector < Layer* > layers) : Dialog(L"saturation", sf::Vector2f(256,160), sf::Vector2f(8, 120)) {
 		
+		state = SaturationState::Idle;
+
 		saturation_text = sf::Text(L"saturation", basicFont, 13);
 
 		saturation_slider = new Slider(0,200);
@@ -26,11 +33,8 @@ public:
 
 		confirm = new NormalButtonWithText(L"confirm", sf::Vector2f(64, 32));
 		confirm->onclick_func = [this]() {
-			state = DialogState::ToClose;
-
-			for (auto& o : original_layers) {
-				delete o;
-			}
+			Dialog::state = DialogState::ToClose;
+			Dialog_Image_Saturation::state = SaturationState::Edited;
 
 			frames_dialog->getCurrentFrame()->layers.clear();
 			frames_dialog->getCurrentFrame()->layers = edited_layers;
@@ -47,7 +51,14 @@ public:
 	}
 
 	~Dialog_Image_Saturation() {
-		
+		if (Dialog_Image_Saturation::state == SaturationState::Idle) {
+			saturation_slider->setValue(100);
+			setTheFilter();
+
+			frames_dialog->getCurrentFrame()->layers.clear();
+			frames_dialog->getCurrentFrame()->layers = edited_layers;
+			layers_dialog->loadLayersFromCurrentFrame();
+		}
 	}
 
 	void setPosition(sf::Vector2f position) {

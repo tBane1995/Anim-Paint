@@ -4,8 +4,8 @@
 sf::Vector2i worldToTile(sf::Vector2f p, sf::Vector2f position, sf::Vector2i size, float zoom, float zoom_delta) {
 		float scale = zoom * zoom_delta;
 		sf::Vector2f local = p - position;
-		int tx = std::clamp(int(std::floor(local.x / scale)), 0, size.x);
-		int ty = std::clamp(int(std::floor(local.y / scale)), 0, size.y);
+		int tx = std::clamp(int(std::floor(local.x / scale)), 0, size.x-1);
+		int ty = std::clamp(int(std::floor(local.y / scale)), 0, size.y-1);
 
 		//std::cout << "tx = " << tx << ", ty = " << ty << "\n";
 		return sf::Vector2i(tx, ty);

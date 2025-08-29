@@ -35,6 +35,7 @@
 #include "MainMenu.hpp"
 
 #include "Selection.hpp"
+#include "Lasso.hpp"
 #include "Brush.hpp"
 #include "Tools.hpp"
 #include "Canvas.hpp"
@@ -64,6 +65,7 @@ int main() {
 	main_menu = new MainMenu();
 	createDialogs();
 	selection = new Selection();
+	lasso = new Lasso();
 	brush = new Brush(2);
 	tools = new Tools();
 	canvas = new Canvas(sf::Vector2i(frames_dialog->getCurrentFrame()->layers[0]->image.getSize()));
