@@ -137,7 +137,9 @@ public:
 
 		btn_paste = new NormalButton(getTexture(L"tex\\tools\\btn_paste.png"), getTexture(L"tex\\tools\\btn_paste_hover.png"));
 		btn_paste->onclick_func = [this]() {
+			toolType = ToolType::Selector;
 			selection->paste(&layers_dialog->getCurrentLayer()->image, selection->img);
+
 			};
 		btn_paste_2 = new ButtonWithTopTextAndList(L"paste", sf::Color::Transparent, tools_text_color, tools_text_hover_color);
 		btn_paste_2->onclick_func = [this]() {

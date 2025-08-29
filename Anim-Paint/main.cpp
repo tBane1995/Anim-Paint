@@ -35,6 +35,7 @@
 #include "MainMenu.hpp"
 
 #include "Selection.hpp"
+#include "Lasso.hpp"
 #include "Brush.hpp"
 #include "Tools.hpp"
 #include "Canvas.hpp"
@@ -64,6 +65,7 @@ int main() {
 	main_menu = new MainMenu();
 	createDialogs();
 	selection = new Selection();
+	lasso = new Lasso();
 	brush = new Brush(2);
 	tools = new Tools();
 	canvas = new Canvas(sf::Vector2i(frames_dialog->getCurrentFrame()->layers[0]->image.getSize()));
@@ -83,7 +85,8 @@ int main() {
 
 		mousePosition = sf::Mouse::getPosition(*window); // get the mouse position about window
 		worldMousePosition = window->mapPixelToCoords(mousePosition); // get global mouse position
-		
+		 
+
 		// delete old dialogs
 		for (int i = 0; i < dialogs.size(); ) {
 			if (dialogs[i]->state == DialogState::ToClose) {

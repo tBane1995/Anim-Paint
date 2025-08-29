@@ -25,6 +25,7 @@ public:
 	
 	Texture* texture;
 	Texture* hoverTexture;
+	sf::RectangleShape rect;
 	sf::Sprite sprite;
 
 	sf::Vector2f position;
@@ -39,6 +40,8 @@ public:
 
 		this->texture = texture;
 		this->hoverTexture = hoverTexture;
+		rect = sf::RectangleShape(sf::Vector2f(texture->texture->getSize()));
+		rect.setFillColor(sf::Color::Transparent);
 		sprite = sf::Sprite(*texture->texture);
 
 		setPosition(position);
@@ -54,12 +57,13 @@ public:
 	~NormalButton() { }
 
 	sf::Vector2f getSize() {
-		return sprite.getGlobalBounds().getSize();
+		return rect.getGlobalBounds().getSize();
 	}
 
 	void setPosition(sf::Vector2f position) {
 		this->position = position;
 		sprite.setPosition(position);
+		rect.setPosition(position);
 	}
 
 	void unclick() {
@@ -122,7 +126,9 @@ public:
 	}
 
 	void draw() {
+		window->draw(rect);
 		window->draw(sprite);
+
 	}
 
 };

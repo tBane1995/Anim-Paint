@@ -1,0 +1,258 @@
+﻿#ifndef Lasso_hpp
+#define Lasso_hpp
+
+std::string shader_source = R"(
+    uniform sampler2D texture;
+    uniform sampler2D mask;
+
+    void main() {
+        vec2 uv = gl_TexCoord[0].xy;
+        vec2 muv = uv;
+
+		muv.y = 1.0 - muv.y;	// flip Y dla renderTexture
+        
+		vec4 c = texture2D(texture, uv);
+        float a = texture2D(mask, muv).a;
+        gl_FragColor = vec4(c.rgb, c.a * a);
+    }
+)";
+
+enum class LassoState { None, Selecting, Selected, Moving };
+
+class Lasso {
+public:
+	LassoState state;
+
+	std::vector<sf::Vector2i> points;
+	
+	// offset
+	sf::Vector2i offset;	// to move
+
+	// image
+	sf::Image* image;
+	sf::Texture texture;
+	sf::Sprite sprite;
+
+	// outline
+	sf::RenderTexture outlineRenderTexture;
+	sf::Vector2i outlineOffset;
+	sf::Sprite outlineSprite;
+	
+	// outside rect
+	sf::IntRect rect;
+
+	// shader
+	sf::Shader shader;
+
+	Lasso() {
+		state = LassoState::None;
+
+		points.clear();
+		
+		offset = sf::Vector2i(0, 0);
+
+		image = nullptr;
+		rect = sf::IntRect(0, 0, 0, 0);
+		outlineOffset = sf::Vector2i(0, 0);
+
+		shader.loadFromMemory(shader_source, sf::Shader::Fragment);
+
+	}
+
+	~Lasso() { }
+
+	void shiftOriginIfNeeded(sf::Vector2i& point)
+	{
+		sf::Vector2i shift(0, 0);
+		if (point.x < 0) { shift.x = point.x; point.x = 0; }
+		if (point.y < 0) { shift.y = point.y; point.y = 0; }
+
+		if (shift.x != 0 || shift.y != 0) {
+			
+			outlineOffset += shift;
+
+			for (auto& p : points) 
+				p -= shift;
+		}
+	}
+
+	void addPoint(sf::Vector2i point)   // tile = globalny punkt w kafelkach
+	{
+		point = point - outlineOffset;
+
+		shiftOriginIfNeeded(point);
+
+		if (points.empty() || std::hypot(float(points.back().x - point.x), float(points.back().y - point.y)) > 0.0f)
+		{
+			points.push_back(point);
+			// std::cout << "add point local: " << point.x << ", " << point.y << "\n";
+		}
+	}
+
+	void unselect() {
+		points.clear();
+		generateRect();
+		//image = nullptr;
+	}
+
+	void generateRect() {
+		if (points.size() < 3) {
+			rect = sf::IntRect(0, 0, 0, 0);
+			return;
+		}
+
+		int maxX = std::numeric_limits<int>::lowest();
+		int maxY = std::numeric_limits<int>::lowest();
+
+		for (auto& p : points) {
+			maxX = std::max(maxX, p.x);
+			maxY = std::max(maxY, p.y);
+		}
+
+		int width = maxX + 1;
+		int height = maxY + 1;
+
+		rect = sf::IntRect(outlineOffset.x, outlineOffset.y, width, height);
+	}
+
+	bool clickOnSelection(sf::Vector2i point) {
+
+		return rect.contains(point);
+	}
+
+	
+
+	void generateOutline(bool selectionComplete = false) {
+		if (points.size() < 3) return;
+
+		if (rect.width <= 0 || rect.height <= 0)
+			return;
+
+		if (outlineRenderTexture.getSize() != sf::Vector2u(rect.width, rect.height))
+			outlineRenderTexture.create(rect.width, rect.height);
+
+		outlineRenderTexture.clear(sf::Color(0, 0, 0, 0));
+
+		sf::Color lassoColor = sf::Color(47, 127, 127, 255);
+
+		sf::VertexArray lines(sf::LineStrip);
+		for (auto& point : points)
+			lines.append(sf::Vertex(sf::Vector2f(point), lassoColor));
+
+		// first and last point
+		sf::VertexArray p(sf::Points);
+		p.append(sf::Vertex(sf::Vector2f(points.front()), lassoColor));
+		p.append(sf::Vertex(sf::Vector2f(points.back()), lassoColor));
+
+		if (selectionComplete)
+			lines.append(sf::Vertex(sf::Vector2f(points.front()), lassoColor));
+
+		sf::RenderStates rs;
+		rs.blendMode = sf::BlendAlpha;
+		rs.transform.translate(0.5f, 0.5f);
+		outlineRenderTexture.draw(lines, rs);
+		outlineRenderTexture.draw(p, rs);
+		outlineRenderTexture.display();
+	}
+
+	sf::RenderTexture* generateMask() {
+		sf::RenderTexture* mask = new sf::RenderTexture();
+		mask->create(image->getSize().x, image->getSize().y);
+
+		std::cout << image->getSize().x << ", " << image->getSize().y << "\n";
+
+		if (points.size() >= 3) {
+			mask->clear(sf::Color::Transparent);
+
+			sf::ConvexShape poly;
+			poly.setPointCount(points.size());
+			for (std::size_t i = 0; i < points.size(); ++i)
+				poly.setPoint(i, sf::Vector2f(points[i]));
+
+			poly.setFillColor(sf::Color::White);
+			poly.setOutlineThickness(0.5f);
+			poly.setOutlineColor(sf::Color::White);
+
+			sf::RenderStates st;
+			st.blendMode = sf::BlendNone;
+			st.transform.translate(0.5f, 0.5f);
+			mask->draw(poly, st);
+		}
+		else {
+			mask->clear(sf::Color::White);
+		}
+
+		mask->display();
+		mask->setSmooth(false);
+
+		return mask;
+	}
+
+	void drawImage(sf::Vector2f canvasPosition, float scale, bool useMask = false) {
+		if (!image) return;
+
+		if (image->getSize().x < 1 || image->getSize().y < 1)
+			return;
+
+		texture = sf::Texture();
+		texture.loadFromImage(*image);
+		texture.setSmooth(false);
+
+		sf::RenderTexture* mask = generateMask();
+
+		shader.setUniform("texture", texture);
+		shader.setUniform("mask", mask->getTexture());
+		
+
+		sprite = sf::Sprite(texture);
+		sprite.setScale(scale, scale);
+		sprite.setPosition(canvasPosition + sf::Vector2f(outlineOffset) * scale);
+
+		sf::RenderStates rs;
+		rs.shader = &shader;
+		window->draw(sprite, rs);
+		delete mask;
+	}
+
+	void drawOutline(sf::Vector2f canvasPosition, float scale) {
+		outlineSprite = sf::Sprite(outlineRenderTexture.getTexture());
+		outlineSprite.setScale(scale, scale);
+		outlineSprite.setPosition(canvasPosition + sf::Vector2f(outlineOffset) * scale);
+		window->draw(outlineSprite);
+
+	}
+
+	void drawRect(sf::Vector2f canvasPosition, float scale) {
+		sf::RectangleShape r(sf::Vector2f(float(rect.width) * scale, float(rect.height) * scale));
+		r.setPosition(canvasPosition + sf::Vector2f(rect.left * scale, rect.top * scale));
+		r.setFillColor(sf::Color(127,47,47,127));
+		r.setOutlineColor(sf::Color(47, 127, 127, 255));
+		r.setOutlineThickness(4.0f);
+		window->draw(r);
+	}
+
+
+	void draw(sf::Vector2f canvasPosition, float scale) {
+
+		if (points.size() >= 3) {
+			if (state == LassoState::Selecting) {
+				drawImage(canvasPosition, scale, false);
+				generateOutline(false);
+				drawOutline(canvasPosition, scale);
+				
+			}
+
+			if (state == LassoState::Selected || state == LassoState::Moving) {
+				drawImage(canvasPosition, scale, true);
+				drawRect(canvasPosition, scale);
+				//generateOutline(true);
+				//drawOutline(canvasPosition, scale);
+				
+			}
+		}
+
+	}
+};
+
+Lasso* lasso = nullptr;
+#endif

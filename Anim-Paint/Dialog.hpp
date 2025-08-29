@@ -50,7 +50,7 @@ public:
 		offset = sf::Vector2f(0, 0);
 	}
 
-	~Dialog() {}
+	virtual ~Dialog() {}
 
 	sf::Vector2f getPosition() {
 		return dialog_rect.getPosition();

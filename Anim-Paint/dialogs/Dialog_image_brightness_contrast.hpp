@@ -1,8 +1,12 @@
 #ifndef dialog_Image_Brightness_Contrast_hpp
 #define dialog_Image_Brightness_Contrast_hpp
 
+enum class BrightnessContrastState { Idle, Edited };
+
 class Dialog_Image_Brightness_Contrast : public Dialog {
 public:
+	BrightnessContrastState state;
+
 	sf::Text brightness_text;
 	sf::Text contrast_text;
 	
@@ -15,9 +19,12 @@ public:
 	std::vector < Layer* > original_layers;
 	std::vector < Layer* > edited_layers;
 
+	
+
 	Dialog_Image_Brightness_Contrast(std::vector < Layer* > layers) : Dialog(L"brightness-contrast", sf::Vector2f(256,160), sf::Vector2f(8, 120)) {
 		
-		
+		state = BrightnessContrastState::Idle;
+
 		brightness_text = sf::Text(L"brightness", basicFont, 13);
 		contrast_text = sf::Text(L"contrast", basicFont, 13);
 
@@ -36,11 +43,8 @@ public:
 
 		confirm = new NormalButtonWithText(L"confirm", sf::Vector2f(64, 32));
 		confirm->onclick_func = [this]() {
-			state = DialogState::ToClose;
-
-			for (auto& o : original_layers) {
-				delete o;
-			}
+			Dialog_Image_Brightness_Contrast::state = BrightnessContrastState::Edited;
+			Dialog::state = DialogState::ToClose;
 
 			frames_dialog->getCurrentFrame()->layers.clear();
 			frames_dialog->getCurrentFrame()->layers = edited_layers;
@@ -49,6 +53,7 @@ public:
 
 
 		original_layers.clear();
+		edited_layers.clear();
 		for (auto& l : layers) {
 			original_layers.push_back(new Layer(l));
 			edited_layers.push_back(new Layer(l));
@@ -58,7 +63,16 @@ public:
 	}
 
 	~Dialog_Image_Brightness_Contrast() {
-		
+
+		if (Dialog_Image_Brightness_Contrast::state == BrightnessContrastState::Idle) {
+			brightness_slider->setValue(0);
+			contrast_slider->setValue(0);
+			setTheFilter();
+
+			frames_dialog->getCurrentFrame()->layers.clear();
+			frames_dialog->getCurrentFrame()->layers = edited_layers;
+			layers_dialog->loadLayersFromCurrentFrame();
+		}
 	}
 
 	void setPosition(sf::Vector2f position) {
