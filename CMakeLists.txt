@@ -34,6 +34,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     Anim-Paint/MainMenu.hpp
 
     Anim-Paint/Selection.hpp
+    Anim-Paint/Lasso.hpp
     Anim-Paint/Brush.hpp
     Anim-Paint/Tools.hpp
     Anim-Paint/Canvas.hpp
@@ -51,7 +52,7 @@ set(SFML_DIR "C:/SFML-2.6.2/lib/cmake/SFML")
 
 # set the packages SFML
 find_package(SFML 2.6.2 COMPONENTS graphics window system REQUIRED)
-target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system)
+target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system sfml-network)
 
 # set the working directory (assets)
 set_target_properties(${PROJECT_NAME} PROPERTIES

@@ -10,7 +10,7 @@ public:
 		this->name = name;
 
 		image = sf::Image();
-		image.create(size.x, size.y, sf::Color::Transparent);
+		image.create(size.x, size.y, sf::Color::White);
 	}
 
 	Layer(Layer* layer) {

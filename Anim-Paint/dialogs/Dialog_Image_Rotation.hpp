@@ -1,8 +1,13 @@
 #ifndef Dialog_Image_Rotation_hpp
 #define Dialog_Image_Rotation_hpp
 
+enum class RotationState { Idle, Edited };
+
 class Dialog_Image_Rotation : public Dialog {
 public:
+
+	RotationState state;
+
 	sf::Text rotation_text;
 	Slider* rotation_slider;
 	NormalButtonWithText* reset;
@@ -13,6 +18,7 @@ public:
 
 	Dialog_Image_Rotation(std::vector < Layer* > layers) : Dialog(L"rotation", sf::Vector2f(256,160), sf::Vector2f(8, 120)) {
 		
+		state = RotationState::Idle;
 		rotation_text = sf::Text(L"rotation", basicFont, 13);
 
 		rotation_slider = new Slider(0,359);
@@ -26,11 +32,8 @@ public:
 
 		confirm = new NormalButtonWithText(L"confirm", sf::Vector2f(64, 32));
 		confirm->onclick_func = [this]() {
-			state = DialogState::ToClose;
-
-			for (auto& o : original_layers) {
-				delete o;
-			}
+			Dialog::state = DialogState::ToClose;
+			Dialog_Image_Rotation::state = RotationState::Edited;
 
 			frames_dialog->getCurrentFrame()->layers.clear();
 			frames_dialog->getCurrentFrame()->layers = edited_layers;
@@ -47,6 +50,14 @@ public:
 	}
 
 	~Dialog_Image_Rotation() {
+		if (Dialog_Image_Rotation::state == RotationState::Idle) {
+			rotation_slider->setValue(0);
+			setTheFilter();
+
+			frames_dialog->getCurrentFrame()->layers.clear();
+			frames_dialog->getCurrentFrame()->layers = edited_layers;
+			layers_dialog->loadLayersFromCurrentFrame();
+		}
 		
 	}
 
@@ -79,7 +90,7 @@ public:
 
 		for (auto& org : original_layers) {
 			edited_layers.push_back(new Layer(org));
-			set_rotation(edited_layers.back()->image, rotation_slider->getValue());
+			set_rotation(edited_layers.back()->image, rotation_slider->getValue(), true);
 		}
 
 		frames_dialog->getCurrentFrame()->layers.clear();

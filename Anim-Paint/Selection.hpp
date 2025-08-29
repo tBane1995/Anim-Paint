@@ -1,43 +1,76 @@
 ﻿#ifndef Selection_hpp
 #define Selection_hpp
 
-void remove(sf::Image& image, sf::IntRect rect)
+void remove(sf::Image& image, sf::IntRect rect, sf::Color alphaColor = sf::Color::Transparent)
 {
-	sf::Image src;
-	src.create(rect.width, rect.height, sf::Color::Transparent);
+	if (rect.width <= 0 || rect.height <= 0)
+		return;
 
-	if (rect.width <= 0 || rect.height <= 0) {
-		rect.width = int(src.getSize().x);
-		rect.height = int(src.getSize().y);
-	}
-
-	const sf::IntRect canvas(0, 0, int(image.getSize().x), int(image.getSize().y));
+	sf::Image backgroundImage;
+	backgroundImage.create(rect.width, rect.height, alphaColor);
 
 	sf::IntRect clipped;
-	if (!rect.intersects(canvas, clipped)) {
+	if (!rect.intersects(rect, clipped)) {
 		return;
 	}
 
-	const sf::IntRect srcRect(clipped.left - rect.left, clipped.top - rect.top, clipped.width, clipped.height);
+	sf::IntRect r(clipped.left - rect.left, clipped.top - rect.top, clipped.width, clipped.height);
 
-	image.copy(src,unsigned(clipped.left), unsigned(clipped.top), srcRect, false);
+	image.copy(backgroundImage, clipped.left, clipped.top, r, false);
 }
 
-// 1) Zrzut fragmentu z warstwy do bufora selection->img (na (0,0))
+void remove(sf::Image& image, sf::IntRect rect, sf::RenderTexture* mask, sf::Color alphaColor = sf::Color::Transparent)
+{
+	if (rect.width <= 0 || rect.height <= 0)
+		return;
+
+	sf::Image backgroundImage;
+	backgroundImage.create(rect.width, rect.height, alphaColor);
+
+	sf::IntRect clipped;
+	if (!rect.intersects(rect, clipped)) {
+		return;
+	}
+
+	sf::IntRect r(clipped.left - rect.left, clipped.top - rect.top, clipped.width, clipped.height);
+
+	sf::Image m = sf::Image();
+	m = mask->getTexture().copyToImage();
+
+	for (int y = 0; y < backgroundImage.getSize().y; y++) {
+		for (int x = 0; x < backgroundImage.getSize().x; x++) {
+			if (m.getPixel(x, y) == sf::Color::White) {
+				backgroundImage.setPixel(x, y, alphaColor);
+			}
+			else {
+				backgroundImage.setPixel(x, y, image.getPixel(clipped.left + (x - r.left), clipped.top + (y - r.top)));
+			}
+		}
+	}
+	image.copy(backgroundImage, clipped.left, clipped.top, r, false);
+}
+
 void copy(sf::Image* dst, const sf::Image* src, sf::IntRect srcRect) {
-	const sf::IntRect srcB(0, 0, int(src->getSize().x), int(src->getSize().y));
+	
+	sf::IntRect srcB(0, 0, src->getSize().x, src->getSize().y);
+	
 	sf::IntRect s;
-	if (!srcRect.intersects(srcB, s)) return;
+	if (!srcRect.intersects(srcB, s)) 
+		return;
 
-	int dw = int(dst->getSize().x), dh = int(dst->getSize().y);
-	if (s.width > dw) s.width = dw;
-	if (s.height > dh) s.height = dh;
-	if (s.width <= 0 || s.height <= 0) return;
+	if (s.width > dst->getSize().x)
+		s.width = dst->getSize().x;
 
-	dst->copy(*src, 0u, 0u, s, false);
+	if (s.height > dst->getSize().y)
+		s.height = dst->getSize().y;
+
+	if (s.width <= 0 || s.height <= 0) 
+		return;
+
+	dst->copy(*src, 0, 0, s, false); // how not copy sf::Color transparentColor
 }
 
-void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY) {
+void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::Color alphaColor = sf::Color::Transparent) {
 	sf::IntRect s(0, 0, int(src->getSize().x), int(src->getSize().y));
 
 	if (dstX < 0) { s.left -= dstX; s.width += dstX; dstX = 0; }
@@ -49,7 +82,57 @@ void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY) {
 	if (dstY + s.height > dh) s.height = dh - dstY;
 	if (s.width <= 0 || s.height <= 0) return;
 
-	dst->copy(*src, unsigned(dstX), unsigned(dstY), s, true);
+	sf::Image newImage = sf::Image();
+	newImage.create(s.width, s.height, sf::Color::Transparent);
+	newImage.copy(*src, 0, 0, s, true);
+	newImage.createMaskFromColor(alphaColor);
+
+	dst->copy(newImage, unsigned(dstX), unsigned(dstY), s, true);
+}
+
+void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY,
+	sf::RenderTexture* mask, sf::Color alphaColor = sf::Color::Transparent)
+{
+	if (!dst || !src) return;
+
+	int dw = dst->getSize().x;
+	int dh = dst->getSize().y;
+	int sw = src->getSize().x;
+	int sh = src->getSize().y;
+
+	if (dw <= 0 || dh <= 0 || sw <= 0 || sh <= 0) 
+		return;
+
+	sf::IntRect place(dstX, dstY, sw, sh);
+	sf::IntRect canvas(0, 0, dw, dh);
+	sf::IntRect clip;
+
+	if (!place.intersects(canvas, clip)) 
+		return;
+
+	sf::Image m;
+	bool useMask = (mask != nullptr);
+	if (useMask) 
+		m = mask->getTexture().copyToImage();
+
+	for (int y = clip.top; y < clip.top + clip.height; ++y) {
+		for (int x = clip.left; x < clip.left + clip.width; ++x) {
+
+			int sx = x - dstX;
+			int sy = y - dstY;
+
+			if (useMask) {
+				if (m.getPixel(sx, sy) != sf::Color::White) 
+					continue;
+			}
+
+			sf::Color c = src->getPixel(sx, sy);
+			if (c == alphaColor || c.a == 0) 
+				continue;
+
+			dst->setPixel(x, y, c);
+		}
+	}
 }
 
 enum class SelectionState { None, Selecting, Selected, Moving };
@@ -59,11 +142,12 @@ public:
 	SelectionState state;
 	sf::IntRect rect;
 	sf::Vector2i offset;
-	sf::Image* img = nullptr;
+	sf::Image* img;
 
 	Selection() {
 		state = SelectionState::None;
 		rect = sf::IntRect(0, 0, 0, 0);
+		img = nullptr;
 	}
 
 	sf::IntRect normalizeRect() {

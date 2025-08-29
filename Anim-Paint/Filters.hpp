@@ -72,7 +72,7 @@ void main() {
 }
 )";
 
-void set_rotation(sf::Image& image, float angle) {
+void set_rotation(sf::Image& image, float angle, bool set_smooth) {
 
     angle = angle * 3.14159265f / 180.f;
 
@@ -85,6 +85,8 @@ void set_rotation(sf::Image& image, float angle) {
     sf::Shader sh;
     sh.loadFromMemory(rotation_shader_source, sf::Shader::Fragment);
     sh.setUniform("angle", angle);
+
+    tex.setSmooth(set_smooth);
 
     sf::Sprite spr(tex);
     rtex.clear(sf::Color::Transparent);
