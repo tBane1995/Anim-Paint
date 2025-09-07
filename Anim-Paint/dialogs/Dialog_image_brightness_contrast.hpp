@@ -46,8 +46,8 @@ public:
 			Dialog_Image_Brightness_Contrast::state = BrightnessContrastState::Edited;
 			Dialog::state = DialogState::ToClose;
 
-			frames_dialog->getCurrentFrame()->layers.clear();
-			frames_dialog->getCurrentFrame()->layers = edited_layers;
+			animation->getCurrentFrame()->layers.clear();
+			animation->getCurrentFrame()->layers = edited_layers;
 			layers_dialog->loadLayersFromCurrentFrame();
 			};
 
@@ -69,8 +69,8 @@ public:
 			contrast_slider->setValue(0);
 			setTheFilter();
 
-			frames_dialog->getCurrentFrame()->layers.clear();
-			frames_dialog->getCurrentFrame()->layers = edited_layers;
+			animation->getCurrentFrame()->layers.clear();
+			animation->getCurrentFrame()->layers = edited_layers;
 			layers_dialog->loadLayersFromCurrentFrame();
 		}
 	}
@@ -111,9 +111,11 @@ public:
 			set_contrast(edited_layers.back()->image, float(contrast_slider->getValue()) / 100.0f);
 		}
 
-		frames_dialog->getCurrentFrame()->layers.clear();
-		frames_dialog->getCurrentFrame()->layers = edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		// TO-DO
+		animation->getCurrentFrame()->layers.clear();
+		animation->getCurrentFrame()->layers = edited_layers;
+		//layers_dialog->loadLayersFromCurrentFrame();
+
 	}
 
 	void cursorHover() {

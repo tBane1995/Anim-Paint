@@ -24,6 +24,7 @@
 
 #include "Layer.hpp"
 #include "Frame.hpp"
+#include "Animation.hpp"
 
 #include "FramesDialog.hpp"
 #include "LayersDialog.hpp"
@@ -63,19 +64,17 @@ int main() {
 	loadTextures();
 	loadTheme();
 	main_menu = new MainMenu();
+	animation = new Animation();
 	createDialogs();
 	selection = new Selection();
 	lasso = new Lasso();
 	brush = new Brush(2);
 	tools = new Tools();
-	canvas = new Canvas(sf::Vector2i(frames_dialog->getCurrentFrame()->layers[0]->image.getSize()));
-
-	// TO-DO - for development
-	main_menu->menu_boxes[2]->options[2]->click();
+	canvas = new Canvas(sf::Vector2i(animation->getLayer(0)->image.getSize()));
 
 	for (int y = 0; y < 32; y++) {
 		for (int x = 0; x < 4; x++) {
-			layers_dialog->getCurrentLayer()->image.setPixel(x+6, y+6, sf::Color::Black);
+			animation->getCurrentLayer()->image.setPixel(x+6, y+6, sf::Color::Black);
 		}
 	}
 

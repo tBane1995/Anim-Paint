@@ -35,8 +35,8 @@ public:
 			Dialog::state = DialogState::ToClose;
 			Dialog_Image_Rotation::state = RotationState::Edited;
 
-			frames_dialog->getCurrentFrame()->layers.clear();
-			frames_dialog->getCurrentFrame()->layers = edited_layers;
+			animation->getCurrentFrame()->layers.clear();
+			animation->getCurrentFrame()->layers = edited_layers;
 			layers_dialog->loadLayersFromCurrentFrame();
 			};
 
@@ -54,9 +54,10 @@ public:
 			rotation_slider->setValue(0);
 			setTheFilter();
 
-			frames_dialog->getCurrentFrame()->layers.clear();
-			frames_dialog->getCurrentFrame()->layers = edited_layers;
-			layers_dialog->loadLayersFromCurrentFrame();
+			// TO-DO
+			animation->getCurrentFrame()->layers.clear();
+			animation->getCurrentFrame()->layers = edited_layers;
+			//layers_dialog->loadLayersFromCurrentFrame();
 		}
 		
 	}
@@ -93,8 +94,8 @@ public:
 			set_rotation(edited_layers.back()->image, rotation_slider->getValue(), true);
 		}
 
-		frames_dialog->getCurrentFrame()->layers.clear();
-		frames_dialog->getCurrentFrame()->layers = edited_layers;
+		animation->getCurrentFrame()->layers.clear();
+		animation->getCurrentFrame()->layers = edited_layers;
 		layers_dialog->loadLayersFromCurrentFrame();
 	}
 

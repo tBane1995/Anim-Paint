@@ -116,7 +116,7 @@ public:
 	void setPixel(sf::Vector2f worldMousePosition, sf::Color color) {
 
 		sf::Vector2i s = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
-		layers_dialog->getCurrentLayer()->image.setPixel(s.x, s.y, color);
+		animation->getCurrentLayer()->image.setPixel(s.x, s.y, color);
 
 	}
 
@@ -134,7 +134,7 @@ public:
 					if (tx < 0 || ty < 0 || tx >= size.x || ty >= size.y)
 						continue;
 
-					layers_dialog->getCurrentLayer()->image.setPixel(tx, ty, color);
+					animation->getCurrentLayer()->image.setPixel(tx, ty, color);
 				}
 			}
 		}
@@ -164,7 +164,7 @@ public:
 							drawPixels(tools->first_color->color);
 						}
 						else if (tools->toolType == ToolType::Eraser) {
-							drawPixels(sf::Color::Transparent);
+							drawPixels(tools->second_color->color);
 						}
 						else if (tools->toolType == ToolType::Selector) {
 
@@ -198,7 +198,7 @@ public:
 							drawPixels(tools->first_color->color);
 						}
 						else if (tools->toolType == ToolType::Eraser) {
-							drawPixels(sf::Color::Transparent);
+							drawPixels(tools->second_color->color);
 						}
 					}
 				}
@@ -273,7 +273,7 @@ public:
 				
 					if (lasso->image!= nullptr) {
 						lasso->generateRect();
-						paste(&layers_dialog->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, tools->second_color->color);
+						paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, tools->second_color->color);
 						lasso->image = nullptr;
 					}
 
@@ -282,8 +282,8 @@ public:
 
 					lasso->image = new sf::Image();
 					lasso->image->create(lasso->rect.width, lasso->rect.height, sf::Color::Transparent);
-					copy(lasso->image, &layers_dialog->getCurrentLayer()->image, lasso->rect);
-					remove(layers_dialog->getCurrentLayer()->image, lasso->rect, lasso->generateMask(), tools->second_color->color);
+					copy(lasso->image, &animation->getCurrentLayer()->image, lasso->rect);
+					remove(animation->getCurrentLayer()->image, lasso->rect, lasso->generateMask(), tools->second_color->color);
 				}
 			}
 		}
@@ -329,13 +329,13 @@ public:
 					if (selection->img == nullptr) {
 						selection->img = new sf::Image();
 						selection->img->create(norm.width, norm.height, sf::Color::Transparent);
-						copy(selection->img, &layers_dialog->getCurrentLayer()->image, norm);
-						remove(layers_dialog->getCurrentLayer()->image, norm, tools->second_color->color);
+						copy(selection->img, &animation->getCurrentLayer()->image, norm);
+						remove(animation->getCurrentLayer()->image, norm, tools->second_color->color);
 					}
 				}
 				else if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 					if (selection->img != nullptr) {
-						paste(&layers_dialog->getCurrentLayer()->image, selection->img, norm.left, norm.top, tools->second_color->color);
+						paste(&animation->getCurrentLayer()->image, selection->img, norm.left, norm.top, tools->second_color->color);
 						selection->img = nullptr;
 					}
 
@@ -344,7 +344,7 @@ public:
 				}
 				else {
 					if (selection->img != nullptr) {
-						paste(&layers_dialog->getCurrentLayer()->image, selection->img, norm.left, norm.top, tools->second_color->color);
+						paste(&animation->getCurrentLayer()->image, selection->img, norm.left, norm.top, tools->second_color->color);
 						selection->img = nullptr;
 					}
 
@@ -365,14 +365,14 @@ public:
 						lasso->image = new sf::Image();
 						lasso->generateRect();
 						lasso->image->create(lasso->rect.width, lasso->rect.height, sf::Color::Transparent);
-						copy(lasso->image, &layers_dialog->getCurrentLayer()->image, lasso->rect);
-						remove(layers_dialog->getCurrentLayer()->image, lasso->rect, tools->second_color->color);
+						copy(lasso->image, &animation->getCurrentLayer()->image, lasso->rect);
+						remove(animation->getCurrentLayer()->image, lasso->rect, tools->second_color->color);
 					}
 				}
 				else if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 					if (lasso->image != nullptr) {
 						lasso->generateRect();
-						paste(&layers_dialog->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, lasso->generateMask(), tools->second_color->color);
+						paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, lasso->generateMask(), tools->second_color->color);
 						lasso->image = nullptr;
 						
 					}
@@ -387,7 +387,7 @@ public:
 				else {
 					if (lasso->image != nullptr) {
 						lasso->generateRect();
-						paste(&layers_dialog->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, lasso->generateMask(), tools->second_color->color);
+						paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, lasso->generateMask(), tools->second_color->color);
 						lasso->image = nullptr;
 					}
 
@@ -411,9 +411,10 @@ public:
 
 	void update() {
 
+		
 		// TO-DO - nieoptymalne
-		if (size != sf::Vector2i(layers_dialog->getCurrentLayer()->image.getSize()))
-			generateBackground(sf::Vector2i(layers_dialog->getCurrentLayer()->image.getSize()));
+		if (size != sf::Vector2i(animation->getCurrentLayer()->image.getSize()))
+			generateBackground(sf::Vector2i(animation->getCurrentLayer()->image.getSize()));
 		//
 
 		if (isMoved) {
@@ -429,11 +430,11 @@ public:
 		window->draw(bg_sprite);
 
 
-		for (auto& layer : layers_dialog->layersBoxes) {
+		for (int i = 0; i < animation->getLayersSize(); i++) {
 
-			if (layer->visibling->value == 0) {
+			if (layers_dialog->layersBoxes[i]->visibling->value == 0) {
 				sf::Texture tex;
-				tex.loadFromImage(layer->layer->image);
+				tex.loadFromImage(animation->getLayer(i)->image);
 
 				sf::Sprite spr(tex);
 				spr.setPosition(bg_sprite.getPosition());

@@ -107,7 +107,6 @@ class LayersDialog : public Dialog {
 public:
 
 	std::vector < LayerBox* > layersBoxes;
-	int currentLayerId = 3;
 
 	LayersDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0)) : Dialog(title, size, position) {
 
@@ -115,10 +114,6 @@ public:
 	}
 
 	~LayersDialog() { }
-
-	Layer* getCurrentLayer() {
-		return layersBoxes[currentLayerId]->layer;
-	}
 
 	void loadLayersFromCurrentFrame() {
 
@@ -128,18 +123,18 @@ public:
 
 		layersBoxes.clear();
 
-		int current_frame = frames_dialog->currentFrameId;
-		int count_layers = frames_dialog->getCurrentFrame()->layers.size();
+		int current_frame = animation->getCurrentFrameID();
+		int count_layers = animation->getLayersSize();
 		for (int i = 0; i < count_layers; i++) {
-			layersBoxes.push_back(new LayerBox(frames_dialog->getCurrentFrame()->layers[i]));
+			layersBoxes.push_back(new LayerBox(animation->getLayer(i)));
 			layersBoxes.back()->onclick_func = [this, i]() {
-				layersBoxes[currentLayerId]->isActive = false;
-				currentLayerId = i;
-				layersBoxes[currentLayerId]->isActive = true;
+				layersBoxes[animation->getCurrentLayerID()]->isActive = false;
+				animation->setCurrentLayerID(i);
+				layersBoxes[i]->isActive = true;
 				};
 		}
 
-		layersBoxes[currentLayerId]->isActive = true;
+		layersBoxes[animation->getCurrentLayerID()]->isActive = true;
 
 		for (auto& l : layersBoxes)
 			l->rect_coloring();

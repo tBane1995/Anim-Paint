@@ -23,6 +23,7 @@ target_sources(${PROJECT_NAME} PRIVATE
 
     Anim-Paint/Layer.hpp
     Anim-Paint/Frame.hpp
+    Anim-Paint/Animation.hpp
     
     Anim-Paint/FramesDialog.hpp
     Anim-Paint/LayersDialog.hpp

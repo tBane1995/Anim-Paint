@@ -36,8 +36,8 @@ public:
 			Dialog::state = DialogState::ToClose;
 			Dialog_Image_Saturation::state = SaturationState::Edited;
 
-			frames_dialog->getCurrentFrame()->layers.clear();
-			frames_dialog->getCurrentFrame()->layers = edited_layers;
+			animation->getCurrentFrame()->layers.clear();
+			animation->getCurrentFrame()->layers = edited_layers;
 			layers_dialog->loadLayersFromCurrentFrame();
 			};
 
@@ -55,8 +55,8 @@ public:
 			saturation_slider->setValue(100);
 			setTheFilter();
 
-			frames_dialog->getCurrentFrame()->layers.clear();
-			frames_dialog->getCurrentFrame()->layers = edited_layers;
+			animation->getCurrentFrame()->layers.clear();
+			animation->getCurrentFrame()->layers = edited_layers;
 			layers_dialog->loadLayersFromCurrentFrame();
 		}
 	}
@@ -93,9 +93,10 @@ public:
 			set_saturation(edited_layers.back()->image, float(saturation_slider->getValue()) / 100.0f);
 		}
 
-		frames_dialog->getCurrentFrame()->layers.clear();
-		frames_dialog->getCurrentFrame()->layers = edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		// TO-DO
+		animation->getCurrentFrame()->layers.clear();
+		animation->getCurrentFrame()->layers = edited_layers;
+		//layers_dialog->loadLayersFromCurrentFrame();
 	}
 
 	void cursorHover() {

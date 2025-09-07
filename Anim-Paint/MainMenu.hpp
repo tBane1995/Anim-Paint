@@ -296,7 +296,7 @@ public:
 		OptionBox* image_trim = new OptionBox(L"trim");
 		OptionBox* image_rotation = new OptionBox(L"rotation");
 		image_rotation->onclick_func = [this]() {
-			dialogs.push_back(new Dialog_Image_Rotation(frames_dialog->getCurrentFrame()->layers));
+			dialogs.push_back(new Dialog_Image_Rotation(animation->getLayers()));
 
 			if (open_menu_box != nullptr)
 				open_menu_box->isOpen = false;
@@ -304,7 +304,7 @@ public:
 			};
 		OptionBox* image_brightness_contrast = new OptionBox(L"brightness-contrast");
 		image_brightness_contrast->onclick_func = [this]() {
-			dialogs.push_back(new Dialog_Image_Brightness_Contrast(frames_dialog->getCurrentFrame()->layers));
+			dialogs.push_back(new Dialog_Image_Brightness_Contrast(animation->getLayers()));
 
 			if(open_menu_box!=nullptr)
 				open_menu_box->isOpen = false;
@@ -312,7 +312,7 @@ public:
 			};
 		OptionBox* image_saturation = new OptionBox(L"saturation");
 		image_saturation->onclick_func = [this]() {
-			dialogs.push_back(new Dialog_Image_Saturation(frames_dialog->getCurrentFrame()->layers));
+			dialogs.push_back(new Dialog_Image_Saturation(animation->getLayers()));
 
 			if (open_menu_box != nullptr)
 				open_menu_box->isOpen = false;
