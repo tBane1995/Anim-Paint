@@ -161,9 +161,22 @@ int main() {
 				canvas->handleEvent(event);
 			}
 			else if (event.type == sf::Event::KeyPressed) {
-				for (auto& dialog : dialogs) {
-					dialog->handleEvent(event);
+				
+				if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::X) {
+					tools->btn_cut->click();
 				}
+				else if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::C) {
+					tools->btn_copy->click();
+				}
+				else if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::V) {
+					tools->btn_paste->click();
+				}
+				else {
+					for (auto& dialog : dialogs) {
+						dialog->handleEvent(event);
+					}
+				}
+				
 			}
 
 				
