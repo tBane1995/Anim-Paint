@@ -318,8 +318,20 @@ public:
 				open_menu_box->isOpen = false;
 			open_menu_box = nullptr;
 			};
+
+
 		OptionBox* image_hue = new OptionBox(L"hue");
 		OptionBox* image_gray = new OptionBox(L"grayscale mode");
+
+		OptionBox* image_sepia = new OptionBox(L"sepia");
+		image_sepia->onclick_func = [this]() {
+			dialogs.push_back(new Dialog_Image_Sepia(animation->getLayers()));
+
+			if (open_menu_box != nullptr)
+				open_menu_box->isOpen = false;
+			open_menu_box = nullptr;
+			};
+
 		OptionBox* image_invert = new OptionBox(L"invert colors");
 		
 		image->addOption(image_resize_scale);
@@ -329,6 +341,7 @@ public:
 		image->addOption(image_saturation);
 		image->addOption(image_hue);
 		image->addOption(image_gray);
+		image->addOption(image_sepia);
 		image->addOption(image_invert);
 
 		// SELECT

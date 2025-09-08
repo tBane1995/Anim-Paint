@@ -31,6 +31,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     Anim-Paint/dialogs/Dialog_Image_Rotation.hpp
     Anim-Paint/dialogs/Dialog_Image_Brightness_Contrast.hpp
     Anim-Paint/dialogs/Dialog_Image_Saturation.hpp
+    Anim-Paint/dialogs/Dialog_Image_Sepia.hpp
 
     Anim-Paint/MainMenu.hpp
 

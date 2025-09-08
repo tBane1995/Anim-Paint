@@ -72,6 +72,34 @@ void main() {
 }
 )";
 
+
+std::string sepia_shader_source = R"(
+    uniform sampler2D texture;
+    uniform float sepia; // 0 - brak efektu, 100 - pełna sepia
+
+    void main() {
+        vec2 uv = gl_TexCoord[0].xy;
+        vec4 color = texture2D(texture, uv);
+        float power = 2.0;
+
+        // wyliczenie sepii
+        float red   = dot(color.rgb, vec3(0.393, 0.769, 0.189));
+        float green = dot(color.rgb, vec3(0.349, 0.686, 0.168));
+        float blue  = dot(color.rgb, vec3(0.272, 0.534, 0.131));
+
+        vec3 sepiaColor = vec3(red, green, blue);
+
+        // interpolacja między oryginalnym a sepią
+        vec3 finalColor = mix(color.rgb, sepiaColor, sepia);
+        
+        // mocniejszy czerwony odcień
+        sepiaColor.r *= 1.2;   // np. +20% czerwieni
+        sepiaColor.b *= 0.9;   // trochę mniej niebieskiego
+
+        gl_FragColor = vec4(finalColor, color.a);
+    }
+)";
+
 void set_rotation(sf::Image& image, float angle, bool set_smooth) {
 
     angle = angle * 3.14159265f / 180.f;
@@ -150,6 +178,27 @@ void set_saturation(sf::Image& image, float value) {
     sf::Shader sh;
     sh.loadFromMemory(saturation_shader_source, sf::Shader::Fragment);
     sh.setUniform("saturation", value);
+
+    sf::Sprite spr(tex);
+    rtex.clear(sf::Color::Transparent);
+    rtex.draw(spr, &sh);
+    rtex.display();
+
+    image = rtex.getTexture().copyToImage();
+}
+
+void set_sepia(sf::Image& image, float value) {
+
+
+    sf::Texture tex;
+    tex.loadFromImage(image);
+
+    sf::RenderTexture rtex;
+    rtex.create(tex.getSize().x, tex.getSize().y);
+
+    sf::Shader sh;
+    sh.loadFromMemory(sepia_shader_source, sf::Shader::Fragment);
+    sh.setUniform("sepia", value);
 
     sf::Sprite spr(tex);
     rtex.clear(sf::Color::Transparent);

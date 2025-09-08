@@ -17,6 +17,7 @@
 ![Zrzut ekranu](screenshots/04.png)
 ![Zrzut ekranu](screenshots/05.png)
 ![Zrzut ekranu](screenshots/06.png)
+![Zrzut ekranu](screenshots/07.png)
 
 ## Instalacja
 1. Pobierz i zainstaluj Visual Studio 2022

@@ -32,6 +32,7 @@
 #include "dialogs/Dialog_Image_Rotation.hpp"
 #include "dialogs/Dialog_Image_Brightness_Contrast.hpp"
 #include "dialogs/Dialog_Image_Saturation.hpp"
+#include "dialogs/Dialog_Image_Sepia.hpp"
 
 #include "MainMenu.hpp"
 
