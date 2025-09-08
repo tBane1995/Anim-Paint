@@ -164,7 +164,7 @@ public:
 		sf::RenderTexture* mask = new sf::RenderTexture();
 		mask->create(image->getSize().x, image->getSize().y);
 
-		std::cout << image->getSize().x << ", " << image->getSize().y << "\n";
+		//std::cout << image->getSize().x << ", " << image->getSize().y << "\n";
 
 		if (points.size() >= 3) {
 			mask->clear(sf::Color::Transparent);

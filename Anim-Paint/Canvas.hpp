@@ -318,85 +318,87 @@ public:
 
 		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 
-			if (tools->toolType == ToolType::Selector) {
-				sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
-				sf::IntRect norm = selection->normalizeRect();
+			if (ElementGUI_pressed == nullptr) {
+				if (tools->toolType == ToolType::Selector) {
+					sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
+					sf::IntRect norm = selection->normalizeRect();
 
-				if (selection->clickOnSelection(tile)) {
-					selection->offset = tile - sf::Vector2i(norm.left, norm.top);
-					selection->state = SelectionState::Moving;
+					if (selection->clickOnSelection(tile)) {
+						selection->offset = tile - sf::Vector2i(norm.left, norm.top);
+						selection->state = SelectionState::Moving;
 
-					if (selection->img == nullptr) {
-						selection->img = new sf::Image();
-						selection->img->create(norm.width, norm.height, sf::Color::Transparent);
-						copy(selection->img, &animation->getCurrentLayer()->image, norm);
-						remove(animation->getCurrentLayer()->image, norm, tools->second_color->color);
+						if (selection->img == nullptr) {
+							selection->img = new sf::Image();
+							selection->img->create(norm.width, norm.height, sf::Color::Transparent);
+							copy(selection->img, &animation->getCurrentLayer()->image, norm);
+							remove(animation->getCurrentLayer()->image, norm, tools->second_color->color);
+						}
+					}
+					else if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
+						if (selection->img != nullptr) {
+							paste(&animation->getCurrentLayer()->image, selection->img, norm.left, norm.top, tools->second_color->color);
+							selection->img = nullptr;
+						}
+
+						selection->state = SelectionState::Selecting;
+						selection->rect = sf::IntRect(tile.x, tile.y, 0, 0);
+					}
+					else {
+						if (selection->img != nullptr) {
+							paste(&animation->getCurrentLayer()->image, selection->img, norm.left, norm.top, tools->second_color->color);
+							selection->img = nullptr;
+						}
+
+						selection->state = SelectionState::None;
+						selection->rect = sf::IntRect(0, 0, 0, 0);
 					}
 				}
-				else if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
-					if (selection->img != nullptr) {
-						paste(&animation->getCurrentLayer()->image, selection->img, norm.left, norm.top, tools->second_color->color);
-						selection->img = nullptr;
+				else if (tools->toolType == ToolType::Lasso) {
+
+					sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
+
+					if (lasso->clickOnSelection(tile)) {
+
+						lasso->state = LassoState::Moving;
+						lasso->offset = tile - lasso->outlineOffset;
+
+						if (lasso->image == nullptr) {
+							lasso->image = new sf::Image();
+							lasso->generateRect();
+							lasso->image->create(lasso->rect.width, lasso->rect.height, sf::Color::Transparent);
+							copy(lasso->image, &animation->getCurrentLayer()->image, lasso->rect);
+							remove(animation->getCurrentLayer()->image, lasso->rect, tools->second_color->color);
+						}
 					}
+					else if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
+						if (lasso->image != nullptr) {
+							lasso->generateRect();
+							paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, lasso->generateMask(), tools->second_color->color);
+							lasso->image = nullptr;
 
-					selection->state = SelectionState::Selecting;
-					selection->rect = sf::IntRect(tile.x, tile.y, 0, 0);
-				}
-				else {
-					if (selection->img != nullptr) {
-						paste(&animation->getCurrentLayer()->image, selection->img, norm.left, norm.top, tools->second_color->color);
-						selection->img = nullptr;
-					}
+						}
 
-					selection->state = SelectionState::None;
-					selection->rect = sf::IntRect(0, 0, 0, 0);
-				}
-			}
-			else if (tools->toolType == ToolType::Lasso) {
-				
-				sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
 
-				if (lasso->clickOnSelection(tile)) {
-					
-					lasso->state = LassoState::Moving;
-					lasso->offset = tile - lasso->outlineOffset;
-
-					if (lasso->image == nullptr) {
-						lasso->image = new sf::Image();
+						lasso->state = LassoState::Selecting;
+						lasso->unselect();
+						lasso->outlineOffset = tile;
+						lasso->addPoint(tile);
 						lasso->generateRect();
-						lasso->image->create(lasso->rect.width, lasso->rect.height, sf::Color::Transparent);
-						copy(lasso->image, &animation->getCurrentLayer()->image, lasso->rect);
-						remove(animation->getCurrentLayer()->image, lasso->rect, tools->second_color->color);
 					}
-				}
-				else if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
-					if (lasso->image != nullptr) {
+					else {
+						if (lasso->image != nullptr) {
+							lasso->generateRect();
+							paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, lasso->generateMask(), tools->second_color->color);
+							lasso->image = nullptr;
+						}
+
+						lasso->state = LassoState::None;
+						lasso->unselect();
+						lasso->addPoint(tile);
 						lasso->generateRect();
-						paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, lasso->generateMask(), tools->second_color->color);
-						lasso->image = nullptr;
-						
 					}
 
-					
-					lasso->state = LassoState::Selecting;
-					lasso->unselect();
-					lasso->outlineOffset = tile;
-					lasso->addPoint(tile);
-					lasso->generateRect();
 				}
-				else {
-					if (lasso->image != nullptr) {
-						lasso->generateRect();
-						paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, lasso->generateMask(), tools->second_color->color);
-						lasso->image = nullptr;
-					}
-
-					lasso->state = LassoState::None;
-					lasso->unselect();
-					lasso->addPoint(tile);
-					lasso->generateRect();
-				}
-
 			}
 			
 		}

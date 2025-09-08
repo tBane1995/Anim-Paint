@@ -152,6 +152,7 @@ public:
 		btn_copy = new ButtonWithRightText(L"copy", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));
 		btn_copy->onclick_func = [this](){
 			selection->copy(&animation->getCurrentLayer()->image, selection->img);
+			std::cout << "copy\n";
 			};
 		btn_select = new ButtonWithBottomText(L"select", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_select.png"), getTexture(L"tex\\tools\\btn_select_hover.png"));
 		btn_select->onclick_func = [this]() {

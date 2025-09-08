@@ -223,19 +223,18 @@ public:
 				bufferSelection->create(rect.width, rect.height, sf::Color::Transparent);
 				bufferSelection->copy(*editorImage, 0, 0, rect, false);
 				copyImageToClipboard(bufferSelection, sf::IntRect(0,0,bufferSelection->getSize().x, bufferSelection->getSize().y));
-
-				sf::Image empty_rect = sf::Image();
-				empty_rect.create(rect.width, rect.height, emptyColor);
-				editorImage->copy(empty_rect, rect.left, rect.top);
-	
 			}
 			else {
 				copyImageToClipboard(bufferSelection, rect);
-				delete bufferSelection;
-				bufferSelection = nullptr;
-				state == SelectionState::None;
-				rect = sf::IntRect(-1, -1, -1, -1);
 			}
+
+			sf::Image empty_rect = sf::Image();
+			empty_rect.create(rect.width, rect.height, emptyColor);
+			editorImage->copy(empty_rect, rect.left, rect.top);
+			delete bufferSelection;
+			bufferSelection = nullptr;
+			state = SelectionState::None;
+			rect = sf::IntRect(-1, -1, -1, -1);
 		}
 	}
 
