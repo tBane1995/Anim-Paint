@@ -106,8 +106,8 @@ public:
 			return;
 		}
 
-		int maxX = std::numeric_limits<int>::lowest();
-		int maxY = std::numeric_limits<int>::lowest();
+		int maxX = std::numeric_limits<int>::min();
+		int maxY = std::numeric_limits<int>::min();
 
 		for (auto& p : points) {
 			maxX = std::max(maxX, p.x);
