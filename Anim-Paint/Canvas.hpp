@@ -394,9 +394,11 @@ public:
 					lasso->generateRect();
 
 					lasso->image = new sf::Image();
-					lasso->image->create(lasso->rect.width, lasso->rect.height, sf::Color::Transparent);
-					copy(lasso->image, &animation->getCurrentLayer()->image, lasso->rect);
-					remove(animation->getCurrentLayer()->image, lasso->rect, lasso->generateMask(), tools->second_color->color);
+					if (lasso->rect.width > 0 && lasso->rect.height > 0) {
+						lasso->image->create(lasso->rect.width, lasso->rect.height, sf::Color::Transparent);
+						copy(lasso->image, &animation->getCurrentLayer()->image, lasso->rect);
+						remove(animation->getCurrentLayer()->image, lasso->rect, lasso->generateMask(), tools->second_color->color);
+					}
 				}
 			}
 		}
