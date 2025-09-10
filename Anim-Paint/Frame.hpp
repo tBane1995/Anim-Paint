@@ -2,8 +2,10 @@
 #define Frame_hpp
 
 class Frame {
-public:
 
+	
+
+public:
 	std::vector < Layer* > layers;
 
 	Frame() {
@@ -14,7 +16,12 @@ public:
 		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(i, i)));
 		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(i, i)));
 	}
+
 	~Frame() { }
+
+	std::vector < Layer* > getLayers() {
+		return layers;
+	}
 };
 
 #endif

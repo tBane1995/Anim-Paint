@@ -35,8 +35,8 @@ public:
 			Dialog::state = DialogState::ToClose;
 			Dialog_Image_Rotation::state = RotationState::Edited;
 
-			animation->getCurrentFrame()->layers.clear();
-			animation->getCurrentFrame()->layers = edited_layers;
+			animation->getCurrentFrame()->getLayers().clear();
+			animation->getCurrentFrame()->getLayers() = edited_layers;
 			layers_dialog->loadLayersFromCurrentFrame();
 			};
 

@@ -595,6 +595,12 @@ public:
 				else             maxY = minY + minHpx;   // w innym wypadku trzymaj dolną
 			}
 
+			sf::Vector2i dst;
+			dst.x = (point_left_top->getPosition().x - minX) / (zoom * zoom_delta);
+			dst.y = (point_left_top->getPosition().y - minY) / (zoom * zoom_delta); 
+
+			this->position = sf::Vector2f(minX, minY);
+
 			point_left_top->setPosition(minX, minY);
 			point_top->setPosition((minX + maxX) / 2, minY);
 			point_right_top->setPosition(maxX, minY);
@@ -608,13 +614,14 @@ public:
 
 			////////////////////
 			
+			sf::Vector2i oldSize = size;
+
 			sf::Vector2i newSize;
 			newSize.x = (maxX - minX) / (zoom * zoom_delta);
 			newSize.y = (maxY - minY) / (zoom * zoom_delta);
-
-			std::cout << newSize.x << ", " << newSize.y << "\n";
 			size = newSize;
-			generateBackground(newSize);
+
+			generateBackground(size);
 			bg_sprite.setPosition(point_left_top->getPosition());
 
 			if (p.x < 0)
@@ -622,6 +629,16 @@ public:
 
 			if(p.y < 0)
 				offset.y = offset.y - float(p.y) * zoom * zoom_delta;
+
+			for (auto& frame : animation->getFrames()) {
+				for (auto& layer : frame->getLayers()) {
+					sf::Image newImage;
+					newImage.create(size.x, size.y, tools->second_color->color);
+					paste(&newImage, &layer->image, dst.x, dst.y);
+					layer->image = newImage;
+				}
+
+			}
 		}
 		else if (state == CanvasState::Moving) {
 			sf::Vector2f target = worldMousePosition + offset;

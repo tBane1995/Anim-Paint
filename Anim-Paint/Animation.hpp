@@ -37,7 +37,7 @@ public:
 		if (frames.empty())
 			return std::vector < Layer* >();
 
-		return getCurrentFrame()->layers;
+		return getCurrentFrame()->getLayers();
 	}
 
 	Layer* getCurrentLayer() {
@@ -45,7 +45,11 @@ public:
 		if (frames.empty())
 			return nullptr;
 
-		return getCurrentFrame()->layers[currentLayer];
+		return getCurrentFrame()->getLayers()[currentLayer];
+	}
+
+	std::vector < Frame* > getFrames() {
+		return frames;
 	}
 
 	Layer* getLayer(int id) {
@@ -53,11 +57,11 @@ public:
 		if (id < 0) 
 			return nullptr;
 
-		else if (id >= getCurrentFrame()->layers.size()) 
+		else if (id >= getCurrentFrame()->getLayers().size())
 			return nullptr;
 
 		else 
-			return getCurrentFrame()->layers[id];
+			return getCurrentFrame()->getLayers()[id];
 	}
 
 	int getCurrentFrameID() {
