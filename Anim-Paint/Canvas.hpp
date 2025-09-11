@@ -194,17 +194,11 @@ public:
 		setPosition(position);
 	}
 
-	void setPixel(sf::Vector2f worldMousePosition, sf::Color color) {
-
-		sf::Vector2i s = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
-		animation->getCurrentLayer()->image.setPixel(s.x, s.y, color);
-
-	}
 
 	void drawPixels(sf::Color color) {
 
 		std::vector<std::vector<bool>> b = brush->getBrush();
-
+		sf::Image& image = animation->getCurrentLayer()->image;
 		for (int y = 0; y < b.size(); y++) {
 			for (int x = 0; x < b[y].size(); x++) {
 				if (b[y][x]) {
@@ -215,10 +209,48 @@ public:
 					if (tx < 0 || ty < 0 || tx >= size.x || ty >= size.y)
 						continue;
 
-					animation->getCurrentLayer()->image.setPixel(tx, ty, color);
+					image.setPixel(tx, ty, color);
 				}
 			}
 		}
+	}
+
+	void fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords) {
+
+		if (colorToEdit == newColor)
+			return;
+
+		sf::IntRect imageRect = sf::IntRect(0, 0, animation->getCurrentLayer()->image.getSize().x, animation->getCurrentLayer()->image.getSize().y);
+		sf::Image& image = animation->getCurrentLayer()->image;
+
+		std::vector < sf::Vector2i > pixels;
+		pixels.push_back(pixelCoords);
+		
+		while (!pixels.empty()) {
+
+			sf::Vector2i t = pixels.back();
+			pixels.pop_back();
+
+			if (!imageRect.contains(t))
+				continue;
+
+			if (image.getPixel(t.x, t.y) == colorToEdit) {
+				image.setPixel(t.x, t.y, newColor);
+
+				pixels.push_back(sf::Vector2i(t.x - 1, t.y));
+				pixels.push_back(sf::Vector2i(t.x + 1, t.y));;
+				pixels.push_back(sf::Vector2i(t.x, t.y - 1));;
+				pixels.push_back(sf::Vector2i(t.x, t.y + 1));;
+			}
+
+		}
+
+	}
+
+	void fillPixels(sf::Color color) {
+		sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
+		sf::Color colorToEdit = animation->getCurrentLayer()->image.getPixel(tile.x, tile.y);
+		fill(colorToEdit, color, tile);
 	}
 
 	void cursorHover() {
@@ -315,6 +347,9 @@ public:
 						else if (tools->toolType == ToolType::Eraser) {
 							drawPixels(tools->second_color->color);
 						}
+						else if (tools->toolType == ToolType::Fill) {
+							fillPixels(tools->active_color->color);
+						}
 						else if (tools->toolType == ToolType::Selector) {
 
 							if (selection->state == SelectionState::None) {
@@ -355,9 +390,7 @@ public:
 				}
 				else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right) {
 					if (state == CanvasState::Idle) {
-						if (tools->toolType == ToolType::Brush) {
-							drawPixels(tools->second_color->color);
-						}
+						
 					}
 				}
 				else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Middle) {
@@ -368,9 +401,7 @@ public:
 				else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
 
 					if (state == CanvasState::Idle) {
-						if (tools->toolType == ToolType::Brush) {
-							drawPixels(tools->second_color->color);
-						}
+						
 					}
 				}
 				else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Middle) {
