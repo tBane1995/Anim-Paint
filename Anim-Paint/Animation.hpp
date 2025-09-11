@@ -12,9 +12,20 @@ public:
 		currentFrame = 0;
 		currentLayer = 0;
 
+		int size = 64;
+
 		frames.clear();
 		frames.push_back(new Frame());
+		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
+		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
+		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
+		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
+
 		frames.push_back(new Frame());
+		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
+		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
+		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
+		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
 		
 		lastLayer();
 		

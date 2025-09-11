@@ -36,6 +36,8 @@ public:
 	sf::RectangleShape* point_right_bottom;
 	sf::RectangleShape* hoveredEdgePoint;
 	sf::RectangleShape* clickedEdgePoint;
+	sf::Vector2f orginalEdgePointPosition;
+	std::vector < Frame* > backupFrames;
 
 	CanvasState state;
 	sf::Vector2f offset;	// to movements of canvas
@@ -44,16 +46,15 @@ public:
 
 	Canvas(sf::Vector2i size) : ElementGUI() {
 		this->size = size;
-
 		this->pixelSize = 8.0f;
 
 
 		int targetSize = 64;
 		float sides = std::max(size.x, size.y);
 		this->zoom_delta = 16.0f;
-		this->min_zoom = 0.25f;
+		this->min_zoom = 0.125f;
 		this->max_zoom = 0.5f;
-		this->zoom = targetSize / (min_zoom * this->zoom_delta * sides);
+		this->zoom = targetSize / (sides*4.0f);
 		
 
 		this->size = sf::Vector2i(targetSize, targetSize);
@@ -246,7 +247,29 @@ public:
 		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 			if (hoveredEdgePoint != nullptr) {
 				clickedEdgePoint = hoveredEdgePoint;
+				orginalEdgePointPosition = point_left_top->getPosition();
+
 				state = CanvasState::Resizing;
+
+				for (auto* f : backupFrames) {
+					for (auto* l : f->getLayers()) 
+						delete l;
+					delete f;
+				}
+
+				backupFrames.clear();
+				for (auto* frame : animation->getFrames()) {
+					Frame* newFrame = new Frame();
+					newFrame->layers.reserve(frame->getLayers().size());
+
+					for (auto* layer : frame->getLayers()) {
+						Layer* newLayer = new Layer(layer->name, sf::Vector2i(layer->image.getSize()));
+						newLayer->image = layer->image;
+						newFrame->layers.push_back(newLayer);
+					}
+					backupFrames.push_back(newFrame);
+				}
+
 				return;
 			}
 			
@@ -256,6 +279,14 @@ public:
 			if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
 				clickedEdgePoint = nullptr;
 				state = CanvasState::Idle;
+
+				for (auto* f : backupFrames) {
+					for (auto* l : f->getLayers())
+						delete l;
+					delete f;
+				}
+
+				backupFrames.clear();
 			}
 			else if (event.type == sf::Event::MouseMoved) {
 				
@@ -580,6 +611,9 @@ public:
 
 			float minWpx = 16.0f * zoom * zoom_delta;
 			float minHpx = 16.0f * zoom * zoom_delta;
+			
+			float maxWpx = 128.0f * zoom * zoom_delta;
+			float maxHpx = 128.0f * zoom * zoom_delta;
 
 			// Który bok/narożnik jest przeciągany?
 			const bool movingLeft = (clickedEdgePoint == point_left || clickedEdgePoint == point_left_top || clickedEdgePoint == point_left_bottom);
@@ -597,9 +631,21 @@ public:
 				else             maxY = minY + minHpx;   // w innym wypadku trzymaj dolną
 			}
 
+			if ((maxX - minX) > maxWpx) {
+				if (movingLeft)  minX = maxX - maxWpx;   // ciągniesz lewą krawędź → przytnij ją
+				else             maxX = minX + maxWpx;   // w innym wypadku trzymaj prawą
+			}
+
+			if ((maxY - minY) > maxHpx) {
+				if (movingTop)   minY = maxY - maxHpx;   // ciągniesz górną krawędź → przytnij ją
+				else             maxY = minY + maxHpx;   // w innym wypadku trzymaj dolną
+			}
+
 			sf::Vector2i dst;
-			dst.x = (point_left_top->getPosition().x - minX) / (zoom * zoom_delta);
-			dst.y = (point_left_top->getPosition().y - minY) / (zoom * zoom_delta); 
+			dst.x = (orginalEdgePointPosition.x - minX) / (zoom * zoom_delta);
+			dst.y = (orginalEdgePointPosition.y - minY) / (zoom * zoom_delta);
+
+			
 
 			this->position = sf::Vector2f(minX, minY);
 
@@ -632,12 +678,20 @@ public:
 			if(p.y < 0)
 				offset.y = offset.y - float(p.y) * zoom * zoom_delta;
 
-			for (auto& frame : animation->getFrames()) {
-				for (auto& layer : frame->getLayers()) {
+			const size_t framesCount = std::min(backupFrames.size(), animation->getFrames().size());
+			for (size_t f = 0; f < framesCount; ++f) {
+				Frame* src = backupFrames[f];
+				Frame* org = animation->getFrames()[f];
+
+				const size_t layersCount = std::min(src->getLayers().size(), org->getLayers().size());
+				for (size_t l = 0; l < layersCount; ++l) {
+					Layer* srcLayer = src->getLayers()[l];
+					Layer* orgLayer = org->getLayers()[l];
+
 					sf::Image newImage;
 					newImage.create(size.x, size.y, tools->second_color->color);
-					paste(&newImage, &layer->image, dst.x, dst.y);
-					layer->image = newImage;
+					paste(&newImage, &srcLayer->image, dst.x, dst.y);
+					orgLayer->image = newImage;
 				}
 
 			}
