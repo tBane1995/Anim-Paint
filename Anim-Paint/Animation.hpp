@@ -14,19 +14,28 @@ public:
 
 		int size = 64;
 
-		frames.clear();
-		frames.push_back(new Frame());
-		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
-		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
-		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
-		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
-
-		frames.push_back(new Frame());
-		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
-		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
-		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
-		frames.back()->layers.push_back(new Layer(L"Layer " + std::to_wstring(frames.back()->layers.size()), sf::Vector2i(size, size)));
+		Frame* frame;
 		
+		{
+			frame = new Frame();
+			std::vector < Layer* >& layers = frame->getLayers();
+			layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+			layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+			layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+			layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+			frames.push_back(frame);
+		}
+
+		{
+			frame = new Frame();
+			std::vector < Layer* >& layers = frame->getLayers();
+			layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+			layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+			layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+			layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+			frames.push_back(frame);
+		}
+
 		lastLayer();
 		
 	}

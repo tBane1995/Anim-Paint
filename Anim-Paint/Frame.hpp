@@ -3,8 +3,6 @@
 
 class Frame {
 
-	
-
 public:
 	std::vector < Layer* > layers;
 
@@ -15,7 +13,7 @@ public:
 
 	~Frame() { }
 
-	std::vector < Layer* > getLayers() {
+	std::vector < Layer* >& getLayers() {
 		return layers;
 	}
 };
