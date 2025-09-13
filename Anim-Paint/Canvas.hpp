@@ -348,7 +348,7 @@ public:
 							drawPixels(tools->second_color->color);
 						}
 						else if (tools->toolType == ToolType::Fill) {
-							fillPixels(tools->active_color->color);
+							fillPixels(tools->first_color->color);
 						}
 						else if (tools->toolType == ToolType::Selector) {
 
@@ -589,14 +589,6 @@ public:
 	}
 
 	void update() {
-
-		
-		// TO-DO - nieoptymalne
-		if (size != sf::Vector2i(animation->getCurrentLayer()->image.getSize())) {
-			//generateBackground(sf::Vector2i(animation->getCurrentLayer()->image.getSize()));
-		}
-			
-		//
 
 		if (state == CanvasState::Resizing) {
 			sf::Vector2f p;

@@ -200,7 +200,7 @@ public:
             sf::Vector2f((pos_px.x - halfX) * scale, (pos_px.y - halfY) * scale);
 
         sf::RectangleShape rect({ scale, scale });
-        rect.setFillColor(sf::Color::Red);
+        rect.setFillColor(sf::Color::Black);
 
         for (int y = 0; y < h; ++y) {
             for (int x = 0; x < w; ++x) {

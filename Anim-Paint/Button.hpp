@@ -5,6 +5,9 @@ enum class ButtonState { Idle, Hover, Pressed };
 
 class Button : public ElementGUI {
 public:
+	sf::RectangleShape rect;
+	
+
 	Button() : ElementGUI() {
 
 	}
@@ -25,7 +28,6 @@ public:
 	
 	Texture* texture;
 	Texture* hoverTexture;
-	sf::RectangleShape rect;
 	sf::Sprite sprite;
 
 	sf::Vector2f position;
@@ -40,8 +42,10 @@ public:
 
 		this->texture = texture;
 		this->hoverTexture = hoverTexture;
-		rect = sf::RectangleShape(sf::Vector2f(texture->texture->getSize()));
+		rect = sf::RectangleShape(sf::Vector2f(texture->texture->getSize()) - sf::Vector2f(2* tools_border_width,2* tools_border_width));
+		rect.setOutlineThickness(1.0f);
 		rect.setFillColor(sf::Color::Transparent);
+		rect.setOutlineColor(sf::Color::Transparent);
 		sprite = sf::Sprite(*texture->texture);
 
 		setPosition(position);
@@ -63,17 +67,21 @@ public:
 	void setPosition(sf::Vector2f position) {
 		this->position = position;
 		sprite.setPosition(position);
-		rect.setPosition(position);
+		rect.setPosition(position + sf::Vector2f(tools_border_width, tools_border_width));
 	}
 
 	void unclick() {
 		state = ButtonState::Idle;
 		sprite.setTexture(*texture->texture);
+		rect.setFillColor(tools_button_idle_color);
+		rect.setOutlineColor(tools_button_idle_border_color);
 	}
 
 	void hover() {
 		state = ButtonState::Hover;
 		sprite.setTexture(*hoverTexture->texture);
+		rect.setFillColor(tools_button_hover_color);
+		rect.setOutlineColor(tools_button_hover_border_color);
 		
 	}
 
@@ -81,6 +89,8 @@ public:
 		state = ButtonState::Pressed;
 		sprite.setTexture(*hoverTexture->texture);
 		clickTime = currentTime;
+		rect.setFillColor(tools_button_press_color);
+		rect.setOutlineColor(tools_button_press_border_color);
 	}
 
 
@@ -264,7 +274,6 @@ public:
 	Texture* hoverTexture;
 	sf::Sprite sprite;
 	sf::Text text;
-	sf::RectangleShape rect;
 
 	sf::Vector2f position;
 
@@ -286,8 +295,10 @@ public:
 		this->hoverTexture = hoverTexture;
 		sprite = sf::Sprite(*texture->texture);
 
-		rect = sf::RectangleShape(sf::Vector2f(48, 64));
+		rect = sf::RectangleShape(sf::Vector2f(48-2* tools_border_width, 64-2* tools_border_width));
 		rect.setFillColor(rectColor);
+		rect.setOutlineThickness(tools_border_width);
+		rect.setOutlineColor(sf::Color::Transparent);
 		setPosition(position);
 
 		state = ButtonState::Idle;
@@ -306,7 +317,7 @@ public:
 
 	void setPosition(sf::Vector2f position) {
 		this->position = position;
-		rect.setPosition(position);
+		rect.setPosition(position + sf::Vector2f(tools_border_width, tools_border_width));
 		sprite.setPosition(position);
 		text.setPosition(position + sf::Vector2f(48/2 - text.getGlobalBounds().width/2.0f, rect.getSize().y - basicFont.getLineSpacing(13) - 4));
 	}
@@ -315,12 +326,16 @@ public:
 		state = ButtonState::Idle;
 		sprite.setTexture(*texture->texture);
 		text.setFillColor(textColor);
+		rect.setFillColor(tools_button_idle_color);
+		rect.setOutlineColor(tools_button_idle_border_color);
 	}
 
 	void hover() {
 		state = ButtonState::Hover;
 		sprite.setTexture(*hoverTexture->texture);
 		text.setFillColor(hoverTextColor);
+		rect.setFillColor(tools_button_hover_color);
+		rect.setOutlineColor(tools_button_hover_border_color);
 
 	}
 
@@ -329,6 +344,8 @@ public:
 		sprite.setTexture(*hoverTexture->texture);
 		text.setFillColor(hoverTextColor);
 		clickTime = currentTime;
+		rect.setFillColor(tools_button_press_color);
+		rect.setOutlineColor(tools_button_press_border_color);
 	}
 
 
@@ -412,8 +429,10 @@ public:
 		this->hoverTexture = hoverTexture;
 		sprite = sf::Sprite(*texture->texture);
 
-		rect = sf::RectangleShape(sf::Vector2f(64, 32));
+		rect = sf::RectangleShape(sf::Vector2f(64-2*tools_border_width, 32-2*tools_border_width));
 		rect.setFillColor(rectColor);
+		rect.setOutlineThickness(tools_border_width);
+		rect.setOutlineColor(sf::Color::Transparent);
 		setPosition(position);
 
 		state = ButtonState::Idle;
@@ -441,12 +460,18 @@ public:
 		state = ButtonState::Idle;
 		sprite.setTexture(*texture->texture);
 		text.setFillColor(textColor);
+
+		rect.setFillColor(tools_button_idle_color);
+		rect.setOutlineColor(tools_button_idle_border_color);
 	}
 
 	void hover() {
 		state = ButtonState::Hover;
 		sprite.setTexture(*hoverTexture->texture);
 		text.setFillColor(hoverTextColor);
+
+		rect.setFillColor(tools_button_hover_color);
+		rect.setOutlineColor(tools_button_hover_border_color);
 
 	}
 
@@ -455,6 +480,9 @@ public:
 		sprite.setTexture(*hoverTexture->texture);
 		text.setFillColor(hoverTextColor);
 		clickTime = currentTime;
+
+		rect.setFillColor(tools_button_press_color);
+		rect.setOutlineColor(tools_button_press_border_color);
 	}
 
 
@@ -667,8 +695,10 @@ public:
 		this->hoverTexture = getTexture(L"tex\\tools\\bottom_arrow_hover.png");
 		sprite = sf::Sprite(*texture->texture);
 
-		rect = sf::RectangleShape(sf::Vector2f(48, 32));
+		rect = sf::RectangleShape(sf::Vector2f(48-2*tools_border_width, 32-2*tools_border_width));
 		rect.setFillColor(rectColor);
+		rect.setOutlineThickness(tools_border_width);
+		rect.setOutlineColor(sf::Color::Transparent);
 		setPosition(position);
 
 		list_rect = sf::RectangleShape();
@@ -716,7 +746,7 @@ public:
 
 	void setPosition(sf::Vector2f position) {
 		this->position = position;
-		rect.setPosition(position);
+		rect.setPosition(position + sf::Vector2f(tools_border_width, tools_border_width));
 		sprite.setPosition(position+sf::Vector2f(0,16));
 		text.setPosition(position + sf::Vector2f(48 / 2 - text.getGlobalBounds().width / 2.0f, 0));
 
@@ -734,13 +764,16 @@ public:
 		state = ButtonState::Idle;
 		sprite.setTexture(*texture->texture);
 		text.setFillColor(textColor);
+		rect.setFillColor(tools_button_idle_color);
+		rect.setOutlineColor(tools_button_idle_border_color);
 	}
 
 	void hover() {
 		state = ButtonState::Hover;
 		sprite.setTexture(*hoverTexture->texture);
 		text.setFillColor(hoverTextColor);
-
+		rect.setFillColor(tools_button_hover_color);
+		rect.setOutlineColor(tools_button_hover_border_color);
 	}
 
 	void click() {
@@ -748,6 +781,8 @@ public:
 		sprite.setTexture(*hoverTexture->texture);
 		text.setFillColor(hoverTextColor);
 		clickTime = currentTime;
+		rect.setFillColor(tools_button_press_color);
+		rect.setOutlineColor(tools_button_press_border_color);
 	}
 
 
@@ -766,9 +801,6 @@ public:
 	}
 
 	void handleEvent(sf::Event& event) {
-
-
-		
 
 		if (rect.getGlobalBounds().contains(worldMousePosition)) {
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
@@ -817,6 +849,11 @@ public:
 		}
 		else
 			unclick();
+
+		if (isOpen) {
+			rect.setFillColor(tools_button_press_color);
+			rect.setOutlineColor(tools_button_press_border_color);
+		}
 
 		for (auto& option : options)
 			option->update();

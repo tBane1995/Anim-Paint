@@ -56,29 +56,34 @@ class LargeColorButton : public NormalButton {
 public:
 
 	sf::Color color;
-	sf::RectangleShape rect;
+	sf::RectangleShape color_rect;
 
 	LargeColorButton(sf::Color color) : NormalButton(getTexture(L"tex\\tools\\frame_large.png"), getTexture(L"tex\\tools\\frame_large_hover.png")) {
 		this->color = color;
 
-		rect = sf::RectangleShape(sf::Vector2f(40, 40));
-		rect.setFillColor(this->color);
+		rect = sf::RectangleShape(sf::Vector2f(50 - 2* tools_border_width,50 - 2* tools_border_width));
+		rect.setFillColor(sf::Color::Transparent);
+		rect.setOutlineThickness(tools_border_width);
+		rect.setOutlineColor(sf::Color::Transparent);
+
+		color_rect = sf::RectangleShape(sf::Vector2f(40, 40));
+		color_rect.setFillColor(this->color);
 	}
 
 	void setPosition(sf::Vector2f position) {
 		NormalButton::setPosition(position);
-		rect.setPosition(position + sf::Vector2f(4, 4));
-
+		color_rect.setPosition(position + sf::Vector2f(4, 4));
+		rect.setPosition(position);
 	}
 
 	void setColor(sf::Color color) {
 		this->color = color;
-		rect.setFillColor(this->color);
+		color_rect.setFillColor(this->color);
 	}
 
 	void draw() {
 		NormalButton::draw();
-		window->draw(rect);
+		window->draw(color_rect);
 
 	}
 };
@@ -116,7 +121,6 @@ public:
 
 	LargeColorButton* first_color;
 	LargeColorButton* second_color;
-	LargeColorButton* active_color;
 	sf::Text first_color_text_col;
 	sf::Text first_color_text_val;
 	sf::Text second_color_text_col;
@@ -125,12 +129,18 @@ public:
 	std::vector < ColorButton* > colors;
 
 	ToolType toolType;
+	Button* selectedClipboardButton;
+	Button* selectedToolButton;
+	LargeColorButton* selectedColorButton;
+
 
 	Tools() : ElementGUI() {
 
 		rect = sf::RectangleShape(sf::Vector2f(window->getSize().x, tools_height));
 		rect.setFillColor(tools_bar_color);
 		
+		
+
 		// clipboard
 		clipboard_text = sf::Text(L"clipboard", basicFont, 13);
 		clipboard_text.setFillColor(tools_text_color);
@@ -157,10 +167,12 @@ public:
 		btn_select = new ButtonWithBottomText(L"select", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_select.png"), getTexture(L"tex\\tools\\btn_select_hover.png"));
 		btn_select->onclick_func = [this]() {
 			toolType = ToolType::Selector;
+			selectToolButton(btn_select);
 			};
 		btn_lasso = new ButtonWithBottomText(L"lasso", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_lasso.png"), getTexture(L"tex\\tools\\btn_lasso_hover.png"));
 		btn_lasso->onclick_func = [this]() {
 			toolType = ToolType::Lasso;
+			selectToolButton(btn_lasso);
 			};
 
 		clipboard.clear();
@@ -181,23 +193,27 @@ public:
 			toolType = ToolType::Brush;
 			brush->setBrushType(BrushType::Circle);
 			selection->state = SelectionState::None;
+			selectToolButton(btn_brush);
 			};
 		btn_picker = new NormalButton(getTexture(L"tex\\tools\\btn_picker.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"));
 		btn_picker->onclick_func = [this]() {
 			toolType = ToolType::Picker;
 			brush->setBrushType(BrushType::Circle);
 			selection->state = SelectionState::None;
+			selectToolButton(btn_picker);
 			};
 		btn_fill = new NormalButton(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"));
 		btn_fill->onclick_func = [this]() {
 			toolType = ToolType::Fill;
 			selection->state = SelectionState::None;
+			selectToolButton(btn_fill);
 			};
 		btn_eraser= new NormalButton(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"));
 		btn_eraser->onclick_func = [this]() {
 			toolType = ToolType::Eraser;
 			brush->setBrushType(BrushType::Square);
 			selection->state = SelectionState::None;
+			selectToolButton(btn_eraser);
 			};
 
 		tools.clear();
@@ -233,7 +249,7 @@ public:
 		// main colors
 		first_color = new LargeColorButton(sf::Color::Black);
 		second_color = new LargeColorButton(sf::Color::White);
-		active_color = first_color;
+		selectedColorButton = first_color;
 
 		first_color_text_col = sf::Text(L"color", basicFont, 13);
 		first_color_text_val = sf::Text(L"1", basicFont, 13);
@@ -247,11 +263,11 @@ public:
 		second_color_text_val.setFillColor(tools_text_color);
 
 		first_color->onclick_func = [this]() {
-			this->active_color = first_color;
+			selectColorButton(first_color);
 			};
 
 		second_color->onclick_func = [this]() {
-			this->active_color = second_color;
+			selectColorButton(second_color);
 			};
 
 		separators.push_back(new Separator());
@@ -298,9 +314,15 @@ public:
 
 		for (auto& c : colors) {
 			c->onclick_func = [this, c]() {
-				this->active_color->setColor(c->color);
+				selectedColorButton->setColor(c->color);
 				};
 		}
+
+		selectedToolButton = nullptr;
+		selectToolButton(btn_brush);
+
+		selectedColorButton = nullptr;
+		selectColorButton(this->first_color);
 
 		setPosition(sf::Vector2f(0, 0));
 	}
@@ -327,6 +349,8 @@ public:
 		clipboard[5]->setPosition(position + sf::Vector2f(x, menu_height));
 		x += clipboard[5]->getSize().x;
 
+		x += 4;
+
 		clipboard_text.setPosition(x / 2 - clipboard_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
 		
 		separators[0]->setPosition(sf::Vector2f(x, menu_height));
@@ -335,25 +359,28 @@ public:
 		// tools
 		int old_x = x;
 		int y = menu_height + 4;
+		x += 2;
 		for (int i = 0; i < tools.size(); i+=2) {
 			tools[i]->setPosition(sf::Vector2f(x, y));
 			tools[i + 1]->setPosition(sf::Vector2f(x, y + 32));
 			x += 32;
 		}
 
+		x += 2;
+
 		tools_text.setPosition((x+old_x) / 2 - tools_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
 
 		separators[1]->setPosition(sf::Vector2f(x, menu_height));
 		x += separators[1]->getSize().x;
-
+		
 		// sizes
 		old_x = x;
 
-		x += 4;
-		sizes[0]->setPosition(sf::Vector2f(x, menu_height));
-		sizes[1]->setPosition(sf::Vector2f(x, menu_height + 32));
+		x += 2;
+		sizes[0]->setPosition(sf::Vector2f(x, menu_height + 4));
+		sizes[1]->setPosition(sf::Vector2f(x, menu_height + 32 + 4));
 		x += 32;
-		x += 4;
+		x += 2;
 
 		sizes_text.setPosition((x+old_x) / 2 - sizes_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
 
@@ -391,6 +418,34 @@ public:
 
 		colors_text.setPosition((x+old_x) / 2 - colors_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
 
+	}
+
+	void selectToolButton(Button* toolButton) {
+		if (selectedToolButton != nullptr) {
+			selectedToolButton->rect.setFillColor(sf::Color::Transparent);
+			selectedToolButton->rect.setOutlineColor(sf::Color::Transparent);
+		}
+
+		selectedToolButton = toolButton;
+
+		if (selectedToolButton != nullptr) {
+			selectedToolButton->rect.setFillColor(sf::Color(95, 47, 47));
+			selectedToolButton->rect.setOutlineColor(sf::Color(127, 47, 47));
+		}
+	}
+
+	void selectColorButton(LargeColorButton* colorButton) {
+		if (selectedColorButton != nullptr) {
+			selectedColorButton->rect.setFillColor(sf::Color::Transparent);
+			selectedColorButton->rect.setOutlineColor(sf::Color::Transparent);
+		}
+
+		selectedColorButton = colorButton;
+
+		if (selectedColorButton != nullptr) {
+			selectedColorButton->rect.setFillColor(sf::Color(95, 47, 47));
+			selectedColorButton->rect.setOutlineColor(sf::Color(127, 47, 47));
+		}
 	}
 
 	void cursorHover() {
@@ -453,6 +508,17 @@ public:
 
 		for (auto& color : colors)
 			color->update();
+
+		if (selectedToolButton != nullptr) {
+			selectedToolButton->rect.setFillColor(tools_button_press_color);
+			selectedToolButton->rect.setOutlineColor(tools_button_press_border_color);
+		}
+
+		if (selectedColorButton != nullptr) {
+			selectedColorButton->rect.setFillColor(tools_button_press_color);
+			selectedColorButton->rect.setOutlineColor(tools_button_press_border_color);
+		}
+
 	}
 
 	void draw() {
