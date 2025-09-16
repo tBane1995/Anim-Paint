@@ -147,9 +147,9 @@ public:
 
 		btn_paste = new NormalButton(getTexture(L"tex\\tools\\btn_paste.png"), getTexture(L"tex\\tools\\btn_paste_hover.png"));
 		btn_paste->onclick_func = [this]() {
-			toolType = ToolType::Selector;
-			selection->paste(&animation->getCurrentLayer()->image, selection->img);
-
+			toolType = ToolType::Lasso;
+			//selection->paste(&animation->getCurrentLayer()->image, selection->img);
+			lasso->paste(&animation->getCurrentLayer()->image, sf::Color::Transparent);
 			};
 		btn_paste_2 = new ButtonWithTopTextAndList(L"paste", sf::Color::Transparent, tools_text_color, tools_text_hover_color);
 		btn_paste_2->onclick_func = [this]() {
@@ -157,12 +157,14 @@ public:
 			};
 		btn_cut = new ButtonWithRightText(L"cut", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_cut.png"), getTexture(L"tex\\tools\\btn_cut_hover.png"));
 		btn_cut->onclick_func = [this]() {
-			selection->cut(&animation->getCurrentLayer()->image, selection->img, second_color->color);
+			//selection->cut(&animation->getCurrentLayer()->image, selection->img, second_color->color);
+			lasso->cut(&animation->getCurrentLayer()->image, second_color->color);
 			};
 		btn_copy = new ButtonWithRightText(L"copy", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));
 		btn_copy->onclick_func = [this](){
-			selection->copy(&animation->getCurrentLayer()->image, selection->img);
-			std::cout << "copy\n";
+			//selection->copy(&animation->getCurrentLayer()->image, selection->img);
+			lasso->copy(&animation->getCurrentLayer()->image, second_color->color);
+			
 			};
 		btn_select = new ButtonWithBottomText(L"select", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_select.png"), getTexture(L"tex\\tools\\btn_select_hover.png"));
 		btn_select->onclick_func = [this]() {

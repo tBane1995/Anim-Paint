@@ -125,7 +125,102 @@ public:
 		return rect.contains(point);
 	}
 
-	
+	void copy(sf::Image* canvas, sf::Color emptyColor)
+	{
+
+		if (state != LassoState::Selected)
+			return;
+
+		this->generateRect();
+
+		sf::IntRect r = rect;
+		if (r.width < 0) { r.left += r.width; r.width = -r.width; }
+		if (r.height < 0) { r.top += r.height; r.height = -r.height; }
+
+		sf::IntRect imgRect(0, 0, canvas->getSize().x, canvas->getSize().y);
+		sf::IntRect s;
+		if (!r.intersects(imgRect, s))
+			return;
+
+		if(s.width <= 0 || s.height <= 0)
+			return;
+
+		sf::RenderTexture* mask = generateMask();
+		sf::Image maskImg = mask->getTexture().copyToImage();
+		delete mask;
+
+		for (int y = 0; y < s.height; ++y)
+			for (int x = 0; x < s.width; ++x)
+				if (maskImg.getPixel(x, y) != sf::Color::White || image->getPixel(x,y) == emptyColor)
+					image->setPixel(x, y, sf::Color::Transparent);
+
+		copyImageToClipboard(image, sf::IntRect(0, 0, s.width, s.height));
+		
+	}
+
+	void paste(sf::Image* canvas, sf::Color emptyColor)
+	{
+
+		if (image != nullptr) {
+			generateRect();
+
+			int dstW = static_cast<int>(canvas->getSize().x);
+			int dstH = static_cast<int>(canvas->getSize().y);
+			int srcW = static_cast<int>(image->getSize().x);
+			int srcH = static_cast<int>(image->getSize().y);
+
+			int x0 = std::max(0, rect.left);
+			int y0 = std::max(0, rect.top);
+			int x1 = std::min(dstW, rect.left + rect.width);
+			int y1 = std::min(dstH, rect.top + rect.height);
+
+			for (int y = y0; y < y1; ++y) {
+				int sy = y - rect.top;
+				if (sy < 0 || sy >= srcH) continue;
+
+				for (int x = x0; x < x1; ++x) {
+					int sx = x - rect.left;
+					if (sx < 0 || sx >= srcW) continue;
+
+					if (image->getPixel(sx, sy) != emptyColor && image->getPixel(sx,sy) != sf::Color::Transparent)
+						canvas->setPixel(x, y, image->getPixel(sx, sy));
+				}
+			}
+		}
+		else {
+			image = new sf::Image();
+		}
+		loadImageFromClipboard(*image);
+		state = LassoState::Selected;
+		this->unselect();
+		addPoint(sf::Vector2i(0, 0));
+		addPoint(sf::Vector2i(0, image->getSize().y-1));
+		addPoint(sf::Vector2i(image->getSize().x-1, image->getSize().y-1));
+		addPoint(sf::Vector2i(image->getSize().x-1, 0));
+	}
+
+	void cut(sf::Image* canvas, sf::Color emptyColor) {
+		if (state == LassoState::Selected) {
+
+			if (image == nullptr) {
+				image = new sf::Image();
+				image->create(rect.width, rect.height, sf::Color::Transparent);
+				image->copy(*canvas, 0, 0, rect, false);
+				copyImageToClipboard(image, sf::IntRect(0, 0, image->getSize().x, image->getSize().y));
+			}
+			else {
+				std::cout << "add the mask\n";
+				generateRect();
+				copyImageToClipboard(image, sf::IntRect(0, 0, image->getSize().x, image->getSize().y));
+				//copyImageToClipboard(image, sf::IntRect(0, 0, image->getSize().x, image->getSize().y), mask);
+			}
+
+			delete image;
+			image = nullptr;
+			state = LassoState::None;
+			rect = sf::IntRect(-1, -1, -1, -1);
+		}
+	}
 
 	void generateOutline(bool selectionComplete = false) {
 		if (points.size() < 3) return;

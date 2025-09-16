@@ -540,17 +540,14 @@ public:
 						lasso->offset = tile - lasso->outlineOffset;
 
 						if (lasso->image == nullptr) {
-							lasso->image = new sf::Image();
-							lasso->generateRect();
-							lasso->image->create(lasso->rect.width, lasso->rect.height, sf::Color::Transparent);
-							copy(lasso->image, &animation->getCurrentLayer()->image, lasso->rect);
+							lasso->copy(&animation->getCurrentLayer()->image, tools->second_color->color);
 							remove(animation->getCurrentLayer()->image, lasso->rect, tools->second_color->color);
 						}
 					}
 					else if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 						if (lasso->image != nullptr) {
 							lasso->generateRect();
-							paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, lasso->generateMask(), tools->second_color->color);
+							lasso->paste(&animation->getCurrentLayer()->image, tools->second_color->color);
 							lasso->image = nullptr;
 
 						}
@@ -565,7 +562,7 @@ public:
 					else {
 						if (lasso->image != nullptr) {
 							lasso->generateRect();
-							paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, lasso->generateMask(), tools->second_color->color);
+							lasso->paste(&animation->getCurrentLayer()->image, tools->second_color->color);
 							lasso->image = nullptr;
 						}
 

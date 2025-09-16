@@ -89,7 +89,6 @@ void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY,
 	tmp.copy(*src, 0, 0, s, true);
 	tmp.createMaskFromColor(alphaColor);
 
-	// KLUCZ: kopiujemy z tmp całe (0,0, w, h), nie stary prostokąt 's'
 	const sf::IntRect all(0, 0, int(tmp.getSize().x), int(tmp.getSize().y));
 	dst->copy(tmp, unsigned(dstX), unsigned(dstY), all, true);
 }
