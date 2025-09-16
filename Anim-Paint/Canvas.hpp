@@ -363,9 +363,9 @@ public:
 							if (lasso->state == LassoState::None) {
 								sf::Vector2i tile = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
 								lasso->state = LassoState::Selecting;
+								lasso->image = new sf::Image();
 								lasso->outlineOffset = tile;
 								lasso->addPoint(tile);
-								lasso->generateRect();
 							}
 						}
 					}
@@ -458,7 +458,7 @@ public:
 					lasso->image = new sf::Image();
 					if (lasso->rect.width > 0 && lasso->rect.height > 0) {
 						lasso->image->create(lasso->rect.width, lasso->rect.height, sf::Color::Transparent);
-						copy(lasso->image, &animation->getCurrentLayer()->image, lasso->rect);
+						copy(lasso->image, &animation->getCurrentLayer()->image, lasso->rect, tools->second_color->color);
 						remove(animation->getCurrentLayer()->image, lasso->rect, lasso->generateMask(), tools->second_color->color);
 					}
 				}
@@ -507,7 +507,7 @@ public:
 						if (selection->img == nullptr) {
 							selection->img = new sf::Image();
 							selection->img->create(norm.width, norm.height, sf::Color::Transparent);
-							copy(selection->img, &animation->getCurrentLayer()->image, norm);
+							copy(selection->img, &animation->getCurrentLayer()->image, lasso->rect, tools->second_color->color);
 							remove(animation->getCurrentLayer()->image, norm, tools->second_color->color);
 						}
 					}
@@ -540,17 +540,13 @@ public:
 						lasso->offset = tile - lasso->outlineOffset;
 
 						if (lasso->image == nullptr) {
-							lasso->image = new sf::Image();
-							lasso->generateRect();
-							lasso->image->create(lasso->rect.width, lasso->rect.height, sf::Color::Transparent);
-							copy(lasso->image, &animation->getCurrentLayer()->image, lasso->rect);
+							copy(&animation->getCurrentLayer()->image, lasso->image, lasso->rect, tools->second_color->color);
 							remove(animation->getCurrentLayer()->image, lasso->rect, tools->second_color->color);
 						}
 					}
 					else if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 						if (lasso->image != nullptr) {
-							lasso->generateRect();
-							paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, lasso->generateMask(), tools->second_color->color);
+							paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, tools->second_color->color);
 							lasso->image = nullptr;
 
 						}
@@ -560,19 +556,17 @@ public:
 						lasso->unselect();
 						lasso->outlineOffset = tile;
 						lasso->addPoint(tile);
-						lasso->generateRect();
 					}
 					else {
 						if (lasso->image != nullptr) {
 							lasso->generateRect();
-							paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, lasso->generateMask(), tools->second_color->color);
+							paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, tools->second_color->color);
 							lasso->image = nullptr;
 						}
 
 						lasso->state = LassoState::None;
 						lasso->unselect();
 						lasso->addPoint(tile);
-						lasso->generateRect();
 					}
 
 				}

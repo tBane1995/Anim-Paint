@@ -54,7 +54,7 @@ set(SFML_DIR "C:/SFML-2.6.2/lib/cmake/SFML")
 
 # set the packages SFML
 find_package(SFML 2.6.2 COMPONENTS graphics window system REQUIRED)
-target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system sfml-network)
+target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system)
 
 # set the working directory (assets)
 set_target_properties(${PROJECT_NAME} PROPERTIES

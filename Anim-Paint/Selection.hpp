@@ -50,7 +50,7 @@ void remove(sf::Image& image, sf::IntRect rect, sf::RenderTexture* mask, sf::Col
 	image.copy(backgroundImage, clipped.left, clipped.top, r, false);
 }
 
-void copy(sf::Image* dst, const sf::Image* src, sf::IntRect srcRect) {
+void copy(sf::Image* dst, sf::Image* src, sf::IntRect srcRect) {
 	
 	sf::IntRect srcB(0, 0, src->getSize().x, src->getSize().y);
 	
@@ -68,6 +68,38 @@ void copy(sf::Image* dst, const sf::Image* src, sf::IntRect srcRect) {
 		return;
 
 	dst->copy(*src, 0, 0, s, false); // how not copy sf::Color transparentColor
+}
+
+void copy(sf::Image* dst, sf::Image* src, sf::IntRect srcRect, sf::Color emptyColor = sf::Color::Transparent) {
+
+	sf::IntRect srcB(0, 0, src->getSize().x, src->getSize().y);
+
+	sf::IntRect s;
+	if (!srcRect.intersects(srcB, s))
+		return;
+
+	if (s.width > dst->getSize().x)
+		s.width = dst->getSize().x;
+
+	if (s.height > dst->getSize().y)
+		s.height = dst->getSize().y;
+
+	if (s.width <= 0 || s.height <= 0)
+		return;
+
+	sf::Image img;
+	img.create(src->getSize().x, src->getSize().y, sf::Color::Transparent);
+
+	for (int y = 0; y < img.getSize().y; y++) {
+		for (int x = 0; x < img.getSize().x; x++) {
+			if (!(src->getPixel(x, y) == sf::Color::Transparent || src->getPixel(x, y) == emptyColor)) {
+				img.setPixel(x, y, src->getPixel(x, y));
+			}
+		}
+	}
+
+	dst->copy(img, 0, 0, s, false); // how not copy sf::Color transparentColor
+
 }
 
 void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY,
@@ -89,7 +121,6 @@ void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY,
 	tmp.copy(*src, 0, 0, s, true);
 	tmp.createMaskFromColor(alphaColor);
 
-	// KLUCZ: kopiujemy z tmp całe (0,0, w, h), nie stary prostokąt 's'
 	const sf::IntRect all(0, 0, int(tmp.getSize().x), int(tmp.getSize().y));
 	dst->copy(tmp, unsigned(dstX), unsigned(dstY), all, true);
 }
