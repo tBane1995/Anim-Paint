@@ -14,6 +14,7 @@ set(SOURCES
     Anim-Paint/src/Button.cpp
     Anim-Paint/src/Checkbox.cpp
     Anim-Paint/src/Slider.cpp
+    Anim-Paint/src/Dialog.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
