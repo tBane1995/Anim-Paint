@@ -3,8 +3,10 @@ project(Anim-Paint VERSION 1.0)
 
 add_executable(${PROJECT_NAME} Anim-Paint/src/main.cpp)
 
+# SOURCES FILES
 set(SOURCES
     Anim-Paint/src/Window.cpp
+    Anim-Paint/src/Textures.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
@@ -13,6 +15,7 @@ source_group(TREE ${CMAKE_SOURCE_DIR}/Anim-Paint/src
              PREFIX "Source Files"
              FILES ${SOURCES})
 
+# HEADERS FILES
 set(HEADERS
     Anim-Paint/include/Window.hpp
     Anim-Paint/include/Textures.hpp
