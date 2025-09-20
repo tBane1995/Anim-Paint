@@ -1,45 +1,57 @@
 cmake_minimum_required(VERSION 3.10)
 project(Anim-Paint VERSION 1.0)
 
-add_executable(${PROJECT_NAME} Anim-Paint/main.cpp)
+add_executable(${PROJECT_NAME} Anim-Paint/src/main.cpp)
 
-target_sources(${PROJECT_NAME} PRIVATE
-    Anim-Paint/Window.hpp
-    Anim-Paint/Textures.hpp
-    Anim-Paint/Theme.hpp
-    Anim-Paint/Mouse.hpp
-    Anim-Paint/Time.hpp
+set(SOURCES
+    Anim-Paint/src/Window.cpp
+)
 
-    Anim-Paint/ElementGUI.hpp
-    Anim-Paint/Button.hpp
-    Anim-Paint/Checkbox.hpp
-    Anim-Paint/Slider.hpp
+target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 
-    Anim-Paint/Dialog.hpp
-    
-    Anim-Paint/WorldToTileConverter.hpp
-    Anim-Paint/Clipboard.hpp
-    Anim-Paint/Filters.hpp
+source_group(TREE ${CMAKE_SOURCE_DIR}/Anim-Paint/src
+             PREFIX "Source Files"
+             FILES ${SOURCES})
 
-    Anim-Paint/Layer.hpp
-    Anim-Paint/Frame.hpp
-    Anim-Paint/Animation.hpp
-    
-    Anim-Paint/FramesDialog.hpp
-    Anim-Paint/LayersDialog.hpp
+set(HEADERS
+    Anim-Paint/include/Window.hpp
+    Anim-Paint/include/Textures.hpp
+    Anim-Paint/include/Theme.hpp
+    Anim-Paint/include/Mouse.hpp
+    Anim-Paint/include/Time.hpp
+    Anim-Paint/include/ElementGUI.hpp
+    Anim-Paint/include/Button.hpp
+    Anim-Paint/include/Checkbox.hpp
+    Anim-Paint/include/Slider.hpp
+    Anim-Paint/include/Dialog.hpp
+    Anim-Paint/include/WorldToTileConverter.hpp
+    Anim-Paint/include/Clipboard.hpp
+    Anim-Paint/include/Filters.hpp
+    Anim-Paint/include/Layer.hpp
+    Anim-Paint/include/Frame.hpp
+    Anim-Paint/include/Animation.hpp
+    Anim-Paint/include/FramesDialog.hpp
+    Anim-Paint/include/LayersDialog.hpp
+    Anim-Paint/include/dialogs/Dialog_Image_Rotation.hpp
+    Anim-Paint/include/dialogs/Dialog_Image_Brightness_Contrast.hpp
+    Anim-Paint/include/dialogs/Dialog_Image_Saturation.hpp
+    Anim-Paint/include/dialogs/Dialog_Image_Sepia.hpp
+    Anim-Paint/include/MainMenu.hpp
+    Anim-Paint/include/Selection.hpp
+    Anim-Paint/include/Lasso.hpp
+    Anim-Paint/include/Brush.hpp
+    Anim-Paint/include/Tools.hpp
+    Anim-Paint/include/Canvas.hpp
+)
 
-    Anim-Paint/dialogs/Dialog_Image_Rotation.hpp
-    Anim-Paint/dialogs/Dialog_Image_Brightness_Contrast.hpp
-    Anim-Paint/dialogs/Dialog_Image_Saturation.hpp
-    Anim-Paint/dialogs/Dialog_Image_Sepia.hpp
+target_sources(${PROJECT_NAME} PRIVATE ${HEADERS})
 
-    Anim-Paint/MainMenu.hpp
+source_group(TREE ${CMAKE_SOURCE_DIR}/Anim-Paint/include
+             PREFIX "Header Files"
+             FILES ${HEADERS})
 
-    Anim-Paint/Selection.hpp
-    Anim-Paint/Lasso.hpp
-    Anim-Paint/Brush.hpp
-    Anim-Paint/Tools.hpp
-    Anim-Paint/Canvas.hpp
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_SOURCE_DIR}/Anim-Paint/include
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
