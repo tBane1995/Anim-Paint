@@ -9,6 +9,7 @@ set(SOURCES
     Anim-Paint/src/Textures.cpp
     Anim-Paint/src/Theme.cpp
     Anim-Paint/src/Mouse.cpp
+    Anim-Paint/src/Time.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})

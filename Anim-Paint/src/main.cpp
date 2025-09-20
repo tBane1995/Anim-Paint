@@ -3,7 +3,7 @@
 #include <functional>
 #define NOMINMAX
 #include <Windows.h>
-#include <SFML/Graphics.hpp>
+#include "SFML/Graphics.hpp"
 
 #include "Window.hpp"
 #include "Textures.hpp"
@@ -81,7 +81,7 @@ int main() {
 
 	while (window->isOpen()) {
 		prevTime = currentTime;
-		currentTime = timeClock.getElapsedTime();
+		currentTime = mainClock.getElapsedTime();
 
 		mousePosition = sf::Mouse::getPosition(*window); // get the mouse position about window
 		worldMousePosition = window->mapPixelToCoords(mousePosition); // get global mouse position

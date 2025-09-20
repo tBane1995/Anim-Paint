@@ -1,9 +1,7 @@
-#ifndef Time_hpp
-#define Time_hpp
+#pragma once
+#include "SFML/Graphics.hpp"
 
-sf::Clock timeClock;	// main clock for GameObjects
+extern sf::Clock mainClock;	// main clock
 
-sf::Time prevTime;
-sf::Time currentTime;
-
-#endif
+extern sf::Time prevTime;
+extern sf::Time currentTime;
