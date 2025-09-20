@@ -15,6 +15,7 @@ set(SOURCES
     Anim-Paint/src/Checkbox.cpp
     Anim-Paint/src/Slider.cpp
     Anim-Paint/src/Dialog.cpp
+    Anim-Paint/src/WorldToTileConverter.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
