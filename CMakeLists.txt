@@ -7,6 +7,7 @@ add_executable(${PROJECT_NAME} Anim-Paint/src/main.cpp)
 set(SOURCES
     Anim-Paint/src/Window.cpp
     Anim-Paint/src/Textures.cpp
+    Anim-Paint/src/Theme.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
