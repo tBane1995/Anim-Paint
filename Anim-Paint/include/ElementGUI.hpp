@@ -1,11 +1,11 @@
-#ifndef ElementGUI_hpp
-#define ElementGUI_hpp
+#pragma once
+#include "SFML/Graphics.hpp"
 
 class ElementGUI {
 public:
 
-	ElementGUI() { }
-	~ElementGUI() { }
+	ElementGUI();
+	~ElementGUI();
 
 	void cursorHover();
 	void handleEvent(sf::Event& event);
@@ -13,7 +13,5 @@ public:
 	void draw();
 };
 
-ElementGUI* ElementGUI_hovered = nullptr;
-ElementGUI* ElementGUI_pressed = nullptr;
-
-#endif
+extern ElementGUI* ElementGUI_hovered;
+extern ElementGUI* ElementGUI_pressed;
