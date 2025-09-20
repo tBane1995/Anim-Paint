@@ -1,7 +1,5 @@
-#ifndef Mouse_hpp
-#define Mouse_hpp
+#pragma once
+#include <SFML/Graphics.hpp>
 
-sf::Vector2i mousePosition;
-sf::Vector2f worldMousePosition;
-
-#endif
+extern sf::Vector2i mousePosition;
+extern sf::Vector2f worldMousePosition;
