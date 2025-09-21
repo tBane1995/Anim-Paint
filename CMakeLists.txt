@@ -31,6 +31,7 @@ set(SOURCES
     Anim-Paint/src/Selection.cpp
     Anim-Paint/src/Lasso.cpp
     Anim-Paint/src/Brush.cpp
+    Anim-Paint/src/Tools.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
