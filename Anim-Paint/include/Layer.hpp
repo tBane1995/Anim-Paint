@@ -1,24 +1,12 @@
-#ifndef Layer_hpp
-#define Layer_hpp
+#pragma once
+#include <SFML/Graphics.hpp>
 
 class Layer {
 public:
 	std::wstring name;
 	sf::Image image;
 
-	Layer(std::wstring name, sf::Vector2i size) {
-		this->name = name;
-
-		image = sf::Image();
-		image.create(size.x, size.y, sf::Color::White);
-	}
-
-	Layer(Layer* layer) {
-		this->name = layer->name;
-		this->image = layer->image;
-	}
-
-	~Layer() { }
+	Layer(std::wstring name, sf::Vector2i size);
+	Layer(Layer* layer);
+	~Layer();
 };
-
-#endif
