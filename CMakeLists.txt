@@ -22,6 +22,7 @@ set(SOURCES
     Anim-Paint/src/Frame.cpp
     Anim-Paint/src/Animation.cpp
     Anim-Paint/src/FramesDialog.cpp
+    Anim-Paint/src/LayersDialog.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
