@@ -1,4 +1,4 @@
-#include "Dialog.hpp"
+#include "Dialogs/Dialog.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
 #include "Mouse.hpp"

@@ -1,4 +1,4 @@
-#include "Frame.hpp"
+#include "Animation/Frame.hpp"
 
 Frame::Frame() {
 	layers.clear();

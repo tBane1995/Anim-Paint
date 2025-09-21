@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "ElementGUI.hpp"
-#include "Button.hpp"
+#include "ElementGUI/ElementGUI.hpp"
+#include "ElementGUI/Button.hpp"
 
 class OptionBox : public ElementGUI {
 public:

@@ -2,13 +2,13 @@
 #include "Window.hpp"
 #include "Theme.hpp"
 #include "Mouse.hpp"
-#include "Brush.hpp"
-#include"Animation.hpp"
+#include "Tools/Brush.hpp"
+#include "Animation/Animation.hpp"
 #include "WorldToTileConverter.hpp"
-#include "Tools.hpp"
-#include "Selection.hpp"
-#include "Lasso.hpp"
-#include "LayersDialog.hpp"
+#include "Tools/Tools.hpp"
+#include "Tools/Selection.hpp"
+#include "Tools/Lasso.hpp"
+#include "Dialogs/LayersDialog.hpp"
 
 Canvas::Canvas(sf::Vector2i size) : ElementGUI() {
 	this->size = size;

@@ -1,7 +1,7 @@
 #pragma once
 #include "Dialog.hpp"
-#include "../Slider.hpp"
-#include "../Layer.hpp"
+#include "../ElementGUI/Slider.hpp"
+#include "Animation/Layer.hpp"
 
 enum class RotationState { Idle, Edited };
 

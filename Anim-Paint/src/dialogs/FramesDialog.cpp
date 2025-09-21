@@ -1,5 +1,5 @@
-#include "FramesDialog.hpp"
-#include "Animation.hpp"
+#include "Dialogs/FramesDialog.hpp"
+#include "Animation/Animation.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
 

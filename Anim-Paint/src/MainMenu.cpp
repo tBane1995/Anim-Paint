@@ -3,12 +3,12 @@
 #include "Time.hpp"
 #include "Mouse.hpp"
 #include "Window.hpp"
-#include "Dialog.hpp"
-#include "dialogs/Dialog_Image_Rotation.hpp"
-#include "dialogs/Dialog_Image_Brightness_Contrast.hpp"
-#include "dialogs/Dialog_Image_Saturation.hpp"
-#include "dialogs/Dialog_Image_Sepia.hpp"
-#include "Animation.hpp"
+#include "Dialogs/Dialog.hpp"
+#include "Dialogs/Dialog_Image_Rotation.hpp"
+#include "Dialogs/Dialog_Image_Brightness_Contrast.hpp"
+#include "Dialogs/Dialog_Image_Saturation.hpp"
+#include "Dialogs/Dialog_Image_Sepia.hpp"
+#include "Animation/Animation.hpp"
 
 OptionBox::OptionBox(std::wstring text) {
 	this->text = sf::Text(text, basicFont, menu_font_size);

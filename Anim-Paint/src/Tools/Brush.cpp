@@ -1,4 +1,4 @@
-﻿#include "Brush.hpp"
+﻿#include "Tools/Brush.hpp"
 #include "Window.hpp"
 
 std::vector<std::vector<std::vector<bool>>> circle_brushes = {

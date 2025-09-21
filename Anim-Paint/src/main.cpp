@@ -11,35 +11,35 @@
 #include "Mouse.hpp"
 #include "Time.hpp"
 
-#include "ElementGUI.hpp"
-#include "Button.hpp"
-#include "Checkbox.hpp"
-#include "Slider.hpp"
+#include "ElementGUI/ElementGUI.hpp"
+#include "ElementGUI/Button.hpp"
+#include "ElementGUI/Checkbox.hpp"
+#include "ElementGUI/Slider.hpp"
 
-#include "Dialog.hpp"
+
 
 #include "WorldToTileConverter.hpp"
 #include "ClipBoard.hpp"
 #include "Filters.hpp"
 
-#include "Layer.hpp"
-#include "Frame.hpp"
-#include "Animation.hpp"
+#include "Animation/Layer.hpp"
+#include "Animation/Frame.hpp"
+#include "Animation/Animation.hpp"
 
-#include "FramesDialog.hpp"
-#include "LayersDialog.hpp"
-
-#include "dialogs/Dialog_Image_Rotation.hpp"
-#include "dialogs/Dialog_Image_Brightness_Contrast.hpp"
-#include "dialogs/Dialog_Image_Saturation.hpp"
-#include "dialogs/Dialog_Image_Sepia.hpp"
+#include "Dialogs/Dialog.hpp"
+#include "Dialogs/FramesDialog.hpp"
+#include "Dialogs/LayersDialog.hpp"
+#include "Dialogs/Dialog_Image_Rotation.hpp"
+#include "Dialogs/Dialog_Image_Brightness_Contrast.hpp"
+#include "Dialogs/Dialog_Image_Saturation.hpp"
+#include "Dialogs/Dialog_Image_Sepia.hpp"
 
 #include "MainMenu.hpp"
 
-#include "Selection.hpp"
-#include "Lasso.hpp"
-#include "Brush.hpp"
-#include "Tools.hpp"
+#include "Tools/Selection.hpp"
+#include "Tools/Lasso.hpp"
+#include "Tools/Brush.hpp"
+#include "Tools/Tools.hpp"
 #include "Canvas.hpp"
 
 void createDialogs() {

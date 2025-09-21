@@ -1,4 +1,4 @@
-#include "ElementGUI.hpp"
+#include "ElementGUI/ElementGUI.hpp"
 #include "SFML/Graphics.hpp"
 
 ElementGUI::ElementGUI() {

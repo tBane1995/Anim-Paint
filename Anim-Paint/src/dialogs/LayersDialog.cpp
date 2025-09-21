@@ -1,6 +1,6 @@
-#include "LayersDialog.hpp"
+#include "Dialogs/LayersDialog.hpp"
 #include "Theme.hpp"
-#include "Animation.hpp"
+#include "Animation/Animation.hpp"
 #include "Mouse.hpp"
 #include "Window.hpp"
 

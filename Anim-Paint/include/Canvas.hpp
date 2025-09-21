@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "ElementGUI.hpp"
-#include "Frame.hpp"
+#include "ElementGUI/ElementGUI.hpp"
+#include "Animation/Frame.hpp"
 
 enum class CanvasState { Idle, Moving, Resizing };
 

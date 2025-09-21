@@ -1,5 +1,5 @@
-﻿#include "Slider.hpp"
-#include "ElementGUI.hpp"
+﻿#include "ElementGUI/Slider.hpp"
+#include "ElementGUI/ElementGUI.hpp"
 #include "Textures.hpp"
 #include "SFML/Graphics.hpp"
 #include "Mouse.hpp"

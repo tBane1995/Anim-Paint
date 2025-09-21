@@ -1,7 +1,7 @@
-#include "dialogs/Dialog_Image_Sepia.hpp"
+#include "Dialogs/Dialog_Image_Sepia.hpp"
 #include "Theme.hpp"
-#include "Animation.hpp"
-#include "LayersDialog.hpp"
+#include "Animation/Animation.hpp"
+#include "Dialogs/LayersDialog.hpp"
 #include "Filters.hpp"
 #include "Window.hpp"
 

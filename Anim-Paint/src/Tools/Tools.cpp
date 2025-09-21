@@ -1,10 +1,10 @@
-﻿#include "Tools.hpp"
+﻿#include "Tools/Tools.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
-#include "Lasso.hpp"
-#include "Animation.hpp"
-#include "Selection.hpp"
-#include "Brush.hpp"
+#include "Tools/Lasso.hpp"
+#include "Animation/Animation.hpp"
+#include "Tools/Selection.hpp"
+#include "Tools/Brush.hpp"
 #include "Mouse.hpp"
 
 Separator::Separator() {

@@ -10,28 +10,28 @@ set(SOURCES
     Anim-Paint/src/Theme.cpp
     Anim-Paint/src/Mouse.cpp
     Anim-Paint/src/Time.cpp
-    Anim-Paint/src/ElementGUI.cpp
-    Anim-Paint/src/Button.cpp
-    Anim-Paint/src/Checkbox.cpp
-    Anim-Paint/src/Slider.cpp
-    Anim-Paint/src/Dialog.cpp
+    Anim-Paint/src/ElementGUI/ElementGUI.cpp
+    Anim-Paint/src/ElementGUI/Button.cpp
+    Anim-Paint/src/ElementGUI/Checkbox.cpp
+    Anim-Paint/src/ElementGUI/Slider.cpp
     Anim-Paint/src/WorldToTileConverter.cpp
     Anim-Paint/src/Clipboard.cpp
     Anim-Paint/src/Filters.cpp
-    Anim-Paint/src/Layer.cpp
-    Anim-Paint/src/Frame.cpp
-    Anim-Paint/src/Animation.cpp
-    Anim-Paint/src/FramesDialog.cpp
-    Anim-Paint/src/LayersDialog.cpp
-    Anim-Paint/src/dialogs/Dialog_Image_Rotation.cpp
-    Anim-Paint/src/dialogs/Dialog_Image_Brightness_Contrast.cpp
-    Anim-Paint/src/dialogs/Dialog_Image_Saturation.cpp
-    Anim-Paint/src/dialogs/Dialog_Image_Sepia.cpp
+    Anim-Paint/src/Animation/Layer.cpp
+    Anim-Paint/src/Animation/Frame.cpp
+    Anim-Paint/src/Animation/Animation.cpp
+    Anim-Paint/src/Dialogs/Dialog.cpp
+    Anim-Paint/src/Dialogs/FramesDialog.cpp
+    Anim-Paint/src/Dialogs/LayersDialog.cpp
+    Anim-Paint/src/Dialogs/Dialog_Image_Rotation.cpp
+    Anim-Paint/src/Dialogs/Dialog_Image_Brightness_Contrast.cpp
+    Anim-Paint/src/Dialogs/Dialog_Image_Saturation.cpp
+    Anim-Paint/src/Dialogs/Dialog_Image_Sepia.cpp
     Anim-Paint/src/MainMenu.cpp
-    Anim-Paint/src/Selection.cpp
-    Anim-Paint/src/Lasso.cpp
-    Anim-Paint/src/Brush.cpp
-    Anim-Paint/src/Tools.cpp
+    Anim-Paint/src/Tools/Selection.cpp
+    Anim-Paint/src/Tools/Lasso.cpp
+    Anim-Paint/src/Tools/Brush.cpp
+    Anim-Paint/src/Tools/Tools.cpp
     Anim-Paint/src/Canvas.cpp
 )
 
@@ -48,28 +48,28 @@ set(HEADERS
     Anim-Paint/include/Theme.hpp
     Anim-Paint/include/Mouse.hpp
     Anim-Paint/include/Time.hpp
-    Anim-Paint/include/ElementGUI.hpp
-    Anim-Paint/include/Button.hpp
-    Anim-Paint/include/Checkbox.hpp
-    Anim-Paint/include/Slider.hpp
-    Anim-Paint/include/Dialog.hpp
+    Anim-Paint/include/ElementGUI/ElementGUI.hpp
+    Anim-Paint/include/ElementGUI/Button.hpp
+    Anim-Paint/include/ElementGUI/Checkbox.hpp
+    Anim-Paint/include/ElementGUI/Slider.hpp
     Anim-Paint/include/WorldToTileConverter.hpp
     Anim-Paint/include/Clipboard.hpp
     Anim-Paint/include/Filters.hpp
-    Anim-Paint/include/Layer.hpp
-    Anim-Paint/include/Frame.hpp
-    Anim-Paint/include/Animation.hpp
-    Anim-Paint/include/FramesDialog.hpp
-    Anim-Paint/include/LayersDialog.hpp
-    Anim-Paint/include/dialogs/Dialog_Image_Rotation.hpp
-    Anim-Paint/include/dialogs/Dialog_Image_Brightness_Contrast.hpp
-    Anim-Paint/include/dialogs/Dialog_Image_Saturation.hpp
-    Anim-Paint/include/dialogs/Dialog_Image_Sepia.hpp
+    Anim-Paint/include/Animation/Layer.hpp
+    Anim-Paint/include/Animation/Frame.hpp
+    Anim-Paint/include/Animation/Animation.hpp
+    Anim-Paint/include/Dialogs/Dialog.hpp
+    Anim-Paint/include/Dialogs/FramesDialog.hpp
+    Anim-Paint/include/Dialogs/LayersDialog.hpp
+    Anim-Paint/include/Dialogs/Dialog_Image_Rotation.hpp
+    Anim-Paint/include/Dialogs/Dialog_Image_Brightness_Contrast.hpp
+    Anim-Paint/include/Dialogs/Dialog_Image_Saturation.hpp
+    Anim-Paint/include/Dialogs/Dialog_Image_Sepia.hpp
     Anim-Paint/include/MainMenu.hpp
-    Anim-Paint/include/Selection.hpp
-    Anim-Paint/include/Lasso.hpp
-    Anim-Paint/include/Brush.hpp
-    Anim-Paint/include/Tools.hpp
+    Anim-Paint/include/Tools/Selection.hpp
+    Anim-Paint/include/Tools/Lasso.hpp
+    Anim-Paint/include/Tools/Brush.hpp
+    Anim-Paint/include/Tools/Tools.hpp
     Anim-Paint/include/Canvas.hpp
 )
 

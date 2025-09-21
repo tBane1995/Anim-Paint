@@ -1,7 +1,7 @@
-#include "dialogs/Dialog_Image_Rotation.hpp"
+#include "Dialogs/Dialog_Image_Rotation.hpp"
 #include "Theme.hpp"
-#include "Animation.hpp"
-#include "LayersDialog.hpp"
+#include "Animation/Animation.hpp"
+#include "Dialogs/LayersDialog.hpp"
 #include "Window.hpp"
 #include "Filters.hpp"
 
