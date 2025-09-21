@@ -26,6 +26,7 @@ set(SOURCES
     Anim-Paint/src/dialogs/Dialog_Image_Rotation.cpp
     Anim-Paint/src/dialogs/Dialog_Image_Brightness_Contrast.cpp
     Anim-Paint/src/dialogs/Dialog_Image_Saturation.cpp
+    Anim-Paint/src/dialogs/Dialog_Image_Sepia.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
