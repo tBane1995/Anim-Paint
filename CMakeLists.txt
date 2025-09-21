@@ -23,6 +23,7 @@ set(SOURCES
     Anim-Paint/src/Animation.cpp
     Anim-Paint/src/FramesDialog.cpp
     Anim-Paint/src/LayersDialog.cpp
+    Anim-Paint/src/dialogs/Dialog_Image_Rotation.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
