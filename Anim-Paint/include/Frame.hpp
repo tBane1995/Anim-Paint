@@ -1,21 +1,13 @@
-#ifndef Frame_hpp
-#define Frame_hpp
+#pragma once
+#include "Layer.hpp"
 
 class Frame {
 
 public:
 	std::vector < Layer* > layers;
 
-	Frame() {
-		layers.clear();
-		
-	}
+	Frame();
+	~Frame();
 
-	~Frame() { }
-
-	std::vector < Layer* >& getLayers() {
-		return layers;
-	}
+	std::vector < Layer* >& getLayers();
 };
-
-#endif
