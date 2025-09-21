@@ -17,6 +17,7 @@ set(SOURCES
     Anim-Paint/src/Dialog.cpp
     Anim-Paint/src/WorldToTileConverter.cpp
     Anim-Paint/src/Clipboard.cpp
+    Anim-Paint/src/Filters.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
