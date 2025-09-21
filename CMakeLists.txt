@@ -20,6 +20,7 @@ set(SOURCES
     Anim-Paint/src/Filters.cpp
     Anim-Paint/src/Layer.cpp
     Anim-Paint/src/Frame.cpp
+    Anim-Paint/src/Animation.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
