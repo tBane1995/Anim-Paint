@@ -5,7 +5,7 @@
 #include "Tools/Brush.hpp"
 #include "Animation/Animation.hpp"
 #include "WorldToTileConverter.hpp"
-#include "Tools/Tools.hpp"
+#include "Tools/Toolbar.hpp"
 #include "Tools/Selection.hpp"
 #include "Tools/Lasso.hpp"
 #include "Dialogs/LayersDialog.hpp"
@@ -299,7 +299,7 @@ void Canvas::handleEvent(sf::Event& event) {
 		if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 
 			if (state == CanvasState::Idle && hoveredEdgePoint == nullptr) {
-				if (tools->toolType == ToolType::Brush || tools->toolType == ToolType::Eraser) {
+				if (toolbar->toolType == ToolType::Brush || toolbar->toolType == ToolType::Eraser) {
 					brush_is_visible = true;
 					brush->setPosition(worldToTile(worldMousePosition, position, size, zoom, zoom_delta));
 				}
@@ -309,16 +309,16 @@ void Canvas::handleEvent(sf::Event& event) {
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 
 				if (ElementGUI_pressed == this || ElementGUI_pressed == nullptr) {
-					if (tools->toolType == ToolType::Brush) {
-						drawPixels(tools->first_color->color);
+					if (toolbar->toolType == ToolType::Brush) {
+						drawPixels(toolbar->first_color->color);
 					}
-					else if (tools->toolType == ToolType::Eraser) {
-						drawPixels(tools->second_color->color);
+					else if (toolbar->toolType == ToolType::Eraser) {
+						drawPixels(toolbar->second_color->color);
 					}
-					else if (tools->toolType == ToolType::Fill) {
-						fillPixels(tools->first_color->color);
+					else if (toolbar->toolType == ToolType::Fill) {
+						fillPixels(toolbar->first_color->color);
 					}
-					else if (tools->toolType == ToolType::Selector) {
+					else if (toolbar->toolType == ToolType::Selector) {
 
 						if (selection->state == SelectionState::None) {
 							sf::Vector2i tile = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
@@ -326,7 +326,7 @@ void Canvas::handleEvent(sf::Event& event) {
 							selection->rect = sf::IntRect(tile.x, tile.y, 0, 0);
 						}
 					}
-					else if (tools->toolType == ToolType::Lasso) {
+					else if (toolbar->toolType == ToolType::Lasso) {
 
 						if (lasso->state == LassoState::None) {
 							sf::Vector2i tile = worldToTile(worldMousePosition, position, size, zoom, zoom_delta);
@@ -347,11 +347,11 @@ void Canvas::handleEvent(sf::Event& event) {
 
 				if (state == CanvasState::Idle) {
 					if (ElementGUI_pressed == this || ElementGUI_pressed == nullptr) {
-						if (tools->toolType == ToolType::Brush) {
-							drawPixels(tools->first_color->color);
+						if (toolbar->toolType == ToolType::Brush) {
+							drawPixels(toolbar->first_color->color);
 						}
-						else if (tools->toolType == ToolType::Eraser) {
-							drawPixels(tools->second_color->color);
+						else if (toolbar->toolType == ToolType::Eraser) {
+							drawPixels(toolbar->second_color->color);
 						}
 					}
 				}
@@ -389,7 +389,7 @@ void Canvas::handleEvent(sf::Event& event) {
 	}
 
 	if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		if (tools->toolType == ToolType::Selector) {
+		if (toolbar->toolType == ToolType::Selector) {
 			if (selection->state == SelectionState::Moving) {
 				sf::Vector2i tile = selectionToTile(worldMousePosition, position, size, selection->rect.getSize(), selection->offset, zoom, zoom_delta);
 				sf::Vector2i dst = tile - selection->offset;
@@ -403,7 +403,7 @@ void Canvas::handleEvent(sf::Event& event) {
 			}
 
 		}
-		else if (tools->toolType == ToolType::Lasso) {
+		else if (toolbar->toolType == ToolType::Lasso) {
 			if (lasso->state == LassoState::Moving) {
 				sf::Vector2i tile = selectionToTile(worldMousePosition, position, size, lasso->rect.getSize(), lasso->offset, zoom, zoom_delta);
 				sf::Vector2i dst = tile - lasso->offset;
@@ -416,7 +416,7 @@ void Canvas::handleEvent(sf::Event& event) {
 
 				if (lasso->image != nullptr) {
 					lasso->generateRect();
-					paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, tools->second_color->color);
+					paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, toolbar->second_color->color);
 					lasso->image = nullptr;
 				}
 
@@ -426,15 +426,15 @@ void Canvas::handleEvent(sf::Event& event) {
 				lasso->image = new sf::Image();
 				if (lasso->rect.width > 0 && lasso->rect.height > 0) {
 					lasso->image->create(lasso->rect.width, lasso->rect.height, sf::Color::Transparent);
-					copy(lasso->image, &animation->getCurrentLayer()->image, lasso->rect, tools->second_color->color);
-					remove(animation->getCurrentLayer()->image, lasso->rect, lasso->generateMask(), tools->second_color->color);
+					copy(lasso->image, &animation->getCurrentLayer()->image, lasso->rect, toolbar->second_color->color);
+					remove(animation->getCurrentLayer()->image, lasso->rect, lasso->generateMask(), toolbar->second_color->color);
 				}
 			}
 		}
 	}
 
 	if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
-		if (tools->toolType == ToolType::Selector) {
+		if (toolbar->toolType == ToolType::Selector) {
 			if (selection->state == SelectionState::Selecting) {
 				sf::IntRect norm = selection->normalizeRect();
 				if (norm.width <= 0 || norm.height <= 0) {
@@ -450,7 +450,7 @@ void Canvas::handleEvent(sf::Event& event) {
 				selection->state = SelectionState::Selected;
 			}
 		}
-		else if (tools->toolType == ToolType::Lasso) {
+		else if (toolbar->toolType == ToolType::Lasso) {
 			if (lasso->state == LassoState::Selecting) {
 
 				lasso->state = LassoState::Selected;
@@ -464,7 +464,7 @@ void Canvas::handleEvent(sf::Event& event) {
 	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 
 		if (ElementGUI_pressed == nullptr) {
-			if (tools->toolType == ToolType::Selector) {
+			if (toolbar->toolType == ToolType::Selector) {
 				sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
 				sf::IntRect norm = selection->normalizeRect();
 
@@ -475,13 +475,13 @@ void Canvas::handleEvent(sf::Event& event) {
 					if (selection->img == nullptr) {
 						selection->img = new sf::Image();
 						selection->img->create(norm.width, norm.height, sf::Color::Transparent);
-						copy(selection->img, &animation->getCurrentLayer()->image, lasso->rect, tools->second_color->color);
-						remove(animation->getCurrentLayer()->image, norm, tools->second_color->color);
+						copy(selection->img, &animation->getCurrentLayer()->image, lasso->rect, toolbar->second_color->color);
+						remove(animation->getCurrentLayer()->image, norm, toolbar->second_color->color);
 					}
 				}
 				else if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 					if (selection->img != nullptr) {
-						paste(&animation->getCurrentLayer()->image, selection->img, norm.left, norm.top, tools->second_color->color);
+						paste(&animation->getCurrentLayer()->image, selection->img, norm.left, norm.top, toolbar->second_color->color);
 						selection->img = nullptr;
 					}
 
@@ -490,7 +490,7 @@ void Canvas::handleEvent(sf::Event& event) {
 				}
 				else {
 					if (selection->img != nullptr) {
-						paste(&animation->getCurrentLayer()->image, selection->img, norm.left, norm.top, tools->second_color->color);
+						paste(&animation->getCurrentLayer()->image, selection->img, norm.left, norm.top, toolbar->second_color->color);
 						selection->img = nullptr;
 					}
 
@@ -498,7 +498,7 @@ void Canvas::handleEvent(sf::Event& event) {
 					selection->rect = sf::IntRect(0, 0, 0, 0);
 				}
 			}
-			else if (tools->toolType == ToolType::Lasso) {
+			else if (toolbar->toolType == ToolType::Lasso) {
 
 				sf::Vector2i tile = worldToTile(worldMousePosition, position, zoom, zoom_delta);
 
@@ -508,13 +508,13 @@ void Canvas::handleEvent(sf::Event& event) {
 					lasso->offset = tile - lasso->outlineOffset;
 
 					if (lasso->image == nullptr) {
-						copy(&animation->getCurrentLayer()->image, lasso->image, lasso->rect, tools->second_color->color);
-						remove(animation->getCurrentLayer()->image, lasso->rect, tools->second_color->color);
+						copy(&animation->getCurrentLayer()->image, lasso->image, lasso->rect, toolbar->second_color->color);
+						remove(animation->getCurrentLayer()->image, lasso->rect, toolbar->second_color->color);
 					}
 				}
 				else if (bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 					if (lasso->image != nullptr) {
-						paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, tools->second_color->color);
+						paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, toolbar->second_color->color);
 						lasso->image = nullptr;
 
 					}
@@ -528,7 +528,7 @@ void Canvas::handleEvent(sf::Event& event) {
 				else {
 					if (lasso->image != nullptr) {
 						lasso->generateRect();
-						paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, tools->second_color->color);
+						paste(&animation->getCurrentLayer()->image, lasso->image, lasso->rect.left, lasso->rect.top, toolbar->second_color->color);
 						lasso->image = nullptr;
 					}
 
@@ -674,7 +674,7 @@ void Canvas::update() {
 				Layer* orgLayer = org->getLayers()[l];
 
 				sf::Image newImage;
-				newImage.create(size.x, size.y, tools->second_color->color);
+				newImage.create(size.x, size.y, toolbar->second_color->color);
 				paste(&newImage, &srcLayer->image, dst.x, dst.y);
 				orgLayer->image = newImage;
 			}
@@ -712,7 +712,7 @@ void Canvas::draw() {
 	}
 
 	selection->draw(bg_sprite.getPosition(), size, zoom * zoom_delta);
-	lasso->draw(bg_sprite.getPosition(), size, zoom * zoom_delta, tools->second_color->color);
+	lasso->draw(bg_sprite.getPosition(), size, zoom * zoom_delta, toolbar->second_color->color);
 
 	if (brush_is_visible == true) {
 		brush->draw(position, size, zoom, zoom_delta);

@@ -1,4 +1,4 @@
-﻿#include "Tools/Tools.hpp"
+﻿#include "Tools/Toolbar.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
 #include "Tools/Lasso.hpp"
@@ -89,7 +89,7 @@ void LargeColorButton::draw() {
 
 /////////////////////////////////////////////////////////////////////////////
 
-Tools::Tools() : ElementGUI() {
+Toolbar::Toolbar() : ElementGUI() {
 
 	rect = sf::RectangleShape(sf::Vector2f(window->getSize().x, tools_height));
 	rect.setFillColor(tools_bar_color);
@@ -284,7 +284,7 @@ Tools::Tools() : ElementGUI() {
 	setPosition(sf::Vector2f(0, 0));
 }
 
-Tools::~Tools() {
+Toolbar::~Toolbar() {
 	for (auto& sep : separators)
 		delete sep;
 
@@ -304,7 +304,7 @@ Tools::~Tools() {
 	delete second_color;
 }
 
-void Tools::setPosition(sf::Vector2f position) {
+void Toolbar::setPosition(sf::Vector2f position) {
 	rect.setPosition(position + sf::Vector2f(0, menu_height));
 
 	position += sf::Vector2f(menuoptions_border_width, 0);
@@ -397,7 +397,7 @@ void Tools::setPosition(sf::Vector2f position) {
 
 }
 
-void Tools::selectToolButton(Button* toolButton) {
+void Toolbar::selectToolButton(Button* toolButton) {
 	if (selectedToolButton != nullptr) {
 		selectedToolButton->rect.setFillColor(sf::Color::Transparent);
 		selectedToolButton->rect.setOutlineColor(sf::Color::Transparent);
@@ -411,7 +411,7 @@ void Tools::selectToolButton(Button* toolButton) {
 	}
 }
 
-void Tools::selectColorButton(LargeColorButton* colorButton) {
+void Toolbar::selectColorButton(LargeColorButton* colorButton) {
 	if (selectedColorButton != nullptr) {
 		selectedColorButton->rect.setFillColor(sf::Color::Transparent);
 		selectedColorButton->rect.setOutlineColor(sf::Color::Transparent);
@@ -425,7 +425,7 @@ void Tools::selectColorButton(LargeColorButton* colorButton) {
 	}
 }
 
-void Tools::cursorHover() {
+void Toolbar::cursorHover() {
 	if (rect.getGlobalBounds().contains(worldMousePosition)) {
 		ElementGUI_hovered = this;
 	}
@@ -447,7 +447,7 @@ void Tools::cursorHover() {
 
 }
 
-void Tools::handleEvent(sf::Event& event) {
+void Toolbar::handleEvent(sf::Event& event) {
 	if (rect.getGlobalBounds().contains(worldMousePosition)) {
 		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 			ElementGUI_pressed = this;
@@ -470,7 +470,7 @@ void Tools::handleEvent(sf::Event& event) {
 		color->handleEvent(event);
 }
 
-void Tools::update() {
+void Toolbar::update() {
 	for (auto& tool : clipboard)
 		tool->update();
 
@@ -498,7 +498,7 @@ void Tools::update() {
 
 }
 
-void Tools::draw() {
+void Toolbar::draw() {
 	window->draw(rect);
 
 	for (auto& separator : separators) {
@@ -533,4 +533,4 @@ void Tools::draw() {
 
 }
 
-Tools* tools = nullptr;
+Toolbar* toolbar = nullptr;

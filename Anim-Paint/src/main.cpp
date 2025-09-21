@@ -39,7 +39,7 @@
 #include "Tools/Selection.hpp"
 #include "Tools/Lasso.hpp"
 #include "Tools/Brush.hpp"
-#include "Tools/Tools.hpp"
+#include "Tools/Toolbar.hpp"
 #include "Canvas.hpp"
 
 void createDialogs() {
@@ -70,7 +70,7 @@ int main() {
 	selection = new Selection();
 	lasso = new Lasso();
 	brush = new Brush(2);
-	tools = new Tools();
+	toolbar = new Toolbar();
 	canvas = new Canvas(sf::Vector2i(animation->getLayer(0)->image.getSize()));
 
 	for (int y = 0; y < 32; y++) {
@@ -101,7 +101,7 @@ int main() {
 		// cursor hovering
 		ElementGUI_hovered = nullptr;
 
-		tools->cursorHover();
+		toolbar->cursorHover();
 		main_menu->cursorHover();
 		canvas->cursorHover();
 		
@@ -113,7 +113,7 @@ int main() {
 		
 		for (auto& dialog : dialogs)
 			dialog->update();
-		tools->update();
+		toolbar->update();
 		
 		main_menu->update();
 		canvas->update();
@@ -128,7 +128,7 @@ int main() {
 
 			if (event.type == sf::Event::MouseButtonPressed) {
 
-				tools->handleEvent(event);
+				toolbar->handleEvent(event);
 				main_menu->handleEvent(event);
 				
 				
@@ -140,7 +140,7 @@ int main() {
 			}
 			else if (event.type == sf::Event::MouseButtonReleased) {
 				
-				tools->handleEvent(event);
+				toolbar->handleEvent(event);
 				main_menu->handleEvent(event);
 				
 				
@@ -149,7 +149,7 @@ int main() {
 				canvas->handleEvent(event);
 			}
 			else if (event.type == sf::Event::MouseMoved) {
-				tools->handleEvent(event);
+				toolbar->handleEvent(event);
 				main_menu->handleEvent(event);
 				
 				
@@ -163,13 +163,13 @@ int main() {
 			else if (event.type == sf::Event::KeyPressed) {
 				
 				if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::X) {
-					tools->btn_cut->click();
+					toolbar->btn_cut->click();
 				}
 				else if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::C) {
-					tools->btn_copy->click();
+					toolbar->btn_copy->click();
 				}
 				else if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::V) {
-					tools->btn_paste->click();
+					toolbar->btn_paste->click();
 				}
 				else {
 					for (auto& dialog : dialogs) {
@@ -190,7 +190,7 @@ int main() {
 		canvas->draw();
 		
 		
-		tools->draw();
+		toolbar->draw();
 		main_menu->draw();
 
 		for (auto& dialog : dialogs)

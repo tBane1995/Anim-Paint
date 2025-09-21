@@ -31,7 +31,7 @@ set(SOURCES
     Anim-Paint/src/Tools/Selection.cpp
     Anim-Paint/src/Tools/Lasso.cpp
     Anim-Paint/src/Tools/Brush.cpp
-    Anim-Paint/src/Tools/Tools.cpp
+    Anim-Paint/src/Tools/Toolbar.cpp
     Anim-Paint/src/Canvas.cpp
 )
 
@@ -69,7 +69,7 @@ set(HEADERS
     Anim-Paint/include/Tools/Selection.hpp
     Anim-Paint/include/Tools/Lasso.hpp
     Anim-Paint/include/Tools/Brush.hpp
-    Anim-Paint/include/Tools/Tools.hpp
+    Anim-Paint/include/Tools/Toolbar.hpp
     Anim-Paint/include/Canvas.hpp
 )
 

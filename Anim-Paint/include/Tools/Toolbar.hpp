@@ -44,7 +44,7 @@ public:
 
 enum class ToolType { Brush, Eraser, Selector, Lasso, Fill, Picker };
 
-class Tools : public ElementGUI {
+class Toolbar : public ElementGUI {
 public:
 
 	sf::RectangleShape rect;
@@ -87,8 +87,8 @@ public:
 	LargeColorButton* selectedColorButton;
 
 
-	Tools();
-	~Tools();
+	Toolbar();
+	~Toolbar();
 
 	void setPosition(sf::Vector2f position);
 	void selectToolButton(Button* toolButton);
@@ -100,6 +100,6 @@ public:
 	void draw();
 };
 
-extern Tools* tools;
+extern Toolbar* toolbar;
 
 
