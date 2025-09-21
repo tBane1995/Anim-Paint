@@ -24,6 +24,7 @@ set(SOURCES
     Anim-Paint/src/FramesDialog.cpp
     Anim-Paint/src/LayersDialog.cpp
     Anim-Paint/src/dialogs/Dialog_Image_Rotation.cpp
+    Anim-Paint/src/dialogs/Dialog_Image_Brightness_Contrast.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
