@@ -29,6 +29,7 @@ set(SOURCES
     Anim-Paint/src/dialogs/Dialog_Image_Sepia.cpp
     Anim-Paint/src/MainMenu.cpp
     Anim-Paint/src/Selection.cpp
+    Anim-Paint/src/Lasso.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
