@@ -6,17 +6,17 @@ enum class DialogState { Idle, ToClose };
 
 class Dialog : public ElementGUI {
 public:
-	sf::Vector2f position;
-	sf::RectangleShape dialog_rect;
-	sf::RectangleShape title_rect;
-	sf::Text title_text;
-	sf::RectangleShape content_rect;
-	NormalButton* close_btn;
+	sf::Vector2f _position;
+	sf::RectangleShape _dialog_rect;
+	sf::RectangleShape _title_rect;
+	sf::Text _title_text;
+	sf::RectangleShape _content_rect;
+	NormalButton* _close_btn;
 
-	DialogState state;
+	DialogState _state;
 
-	bool is_moved;
-	sf::Vector2f offset;
+	bool _is_moved;
+	sf::Vector2f _offset;
 
 	Dialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(-1, -1));
 	virtual ~Dialog();

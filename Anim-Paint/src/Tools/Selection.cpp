@@ -172,9 +172,9 @@ void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::RenderTexture
 //////////////////////////////////////////////////////////
 
 Selection::Selection() {
-	state = SelectionState::None;
-	rect = sf::IntRect(0, 0, 0, 0);
-	img = nullptr;
+	_state = SelectionState::None;
+	_rect = sf::IntRect(0, 0, 0, 0);
+	_img = nullptr;
 }
 
 Selection::~Selection() {
@@ -182,7 +182,7 @@ Selection::~Selection() {
 }
 
 sf::IntRect Selection::normalizeRect() {
-	sf::IntRect r = rect;
+	sf::IntRect r = _rect;
 	if (r.width < 0) { r.left += r.width; r.width = -r.width; }
 	if (r.height < 0) { r.top += r.height; r.height = -r.height; }
 	return r;
@@ -220,17 +220,17 @@ void Selection::paste(sf::Image* editorImage, sf::Image*& bufferSelection)
 		bufferSelection = new sf::Image();
 	}
 	loadImageFromClipboard(*bufferSelection);
-	state = SelectionState::Selected;
-	rect = sf::IntRect(0, 0, bufferSelection->getSize().x, bufferSelection->getSize().y);
+	_state = SelectionState::Selected;
+	_rect = sf::IntRect(0, 0, bufferSelection->getSize().x, bufferSelection->getSize().y);
 }
 
 
 void Selection::copy(sf::Image* editorImage, sf::Image* bufferSelection)
 {
-	if (state != SelectionState::Selected)
+	if (_state != SelectionState::Selected)
 		return;
 
-	sf::IntRect r = rect;
+	sf::IntRect r = _rect;
 	if (r.width < 0) { r.left += r.width; r.width = -r.width; }
 	if (r.height < 0) { r.top += r.height; r.height = -r.height; }
 
@@ -248,24 +248,24 @@ void Selection::copy(sf::Image* editorImage, sf::Image* bufferSelection)
 
 
 void Selection::cut(sf::Image* editorImage, sf::Image* bufferSelection, sf::Color emptyColor) {
-	if (state == SelectionState::Selected) {
-		if (img == nullptr) {
+	if (_state == SelectionState::Selected) {
+		if (_img == nullptr) {
 			bufferSelection = new sf::Image();
-			bufferSelection->create(rect.width, rect.height, sf::Color::Transparent);
-			bufferSelection->copy(*editorImage, 0, 0, rect, false);
+			bufferSelection->create(_rect.width, _rect.height, sf::Color::Transparent);
+			bufferSelection->copy(*editorImage, 0, 0, _rect, false);
 			copyImageToClipboard(bufferSelection, sf::IntRect(0, 0, bufferSelection->getSize().x, bufferSelection->getSize().y));
 		}
 		else {
-			copyImageToClipboard(bufferSelection, rect);
+			copyImageToClipboard(bufferSelection, _rect);
 		}
 
 		sf::Image empty_rect = sf::Image();
-		empty_rect.create(rect.width, rect.height, emptyColor);
-		editorImage->copy(empty_rect, rect.left, rect.top);
+		empty_rect.create(_rect.width, _rect.height, emptyColor);
+		editorImage->copy(empty_rect, _rect.left, _rect.top);
 		delete bufferSelection;
 		bufferSelection = nullptr;
-		state = SelectionState::None;
-		rect = sf::IntRect(-1, -1, -1, -1);
+		_state = SelectionState::None;
+		_rect = sf::IntRect(-1, -1, -1, -1);
 	}
 }
 
@@ -279,14 +279,14 @@ void Selection::draw(const sf::Vector2f& canvasPos, sf::Vector2i canvasSize, flo
 
 	sf::IntRect normRect = normalizeRect();
 
-	if (state != SelectionState::None && normRect.width > 0 && normRect.height > 0) {
+	if (_state != SelectionState::None && normRect.width > 0 && normRect.height > 0) {
 
 
 
-		if (img != nullptr) {
+		if (_img != nullptr) {
 			sf::Texture tex;
-			tex.create(img->getSize().x, img->getSize().y);
-			tex.loadFromImage(*img);
+			tex.create(_img->getSize().x, _img->getSize().y);
+			tex.loadFromImage(*_img);
 
 			sf::IntRect canvasRect(0, 0, canvasSize.x, canvasSize.y);
 			sf::IntRect visibleRect;

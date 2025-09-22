@@ -14,10 +14,10 @@ enum class SelectionState { None, Selecting, Selected, Moving };
 
 class Selection {
 public:	
-	SelectionState state;
-	sf::IntRect rect;
-	sf::Vector2i offset;
-	sf::Image* img;
+	SelectionState _state;
+	sf::IntRect _rect;
+	sf::Vector2i _offset;
+	sf::Image* _img;
 
 	Selection();
 	~Selection();

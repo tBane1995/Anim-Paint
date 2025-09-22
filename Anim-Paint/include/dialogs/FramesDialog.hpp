@@ -4,11 +4,11 @@
 class FramesDialog : public Dialog {
 public:
 
-	NormalButton* first_btn;
-	NormalButton* prev_btn;
-	NormalButton* next_btn;
-	NormalButton* last_btn;
-	sf::Text text;
+	NormalButton* _first_btn;
+	NormalButton* _prev_btn;
+	NormalButton* _next_btn;
+	NormalButton* _last_btn;
+	sf::Text _text;
 
 
 	FramesDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0));

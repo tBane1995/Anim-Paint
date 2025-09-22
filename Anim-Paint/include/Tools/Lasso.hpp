@@ -5,28 +5,28 @@ enum class LassoState { None, Selecting, Selected, Moving };
 
 class Lasso {
 public:
-	LassoState state;
+	LassoState _state;
 
-	std::vector<sf::Vector2i> points;
+	std::vector<sf::Vector2i> _points;
 	
 	// offset
-	sf::Vector2i offset;	// to move
+	sf::Vector2i _offset;	// to move
 
 	// image
-	sf::Image* image;
-	sf::Texture texture;
-	sf::Sprite sprite;
+	sf::Image* _image;
+	sf::Texture _texture;
+	sf::Sprite _sprite;
 
 	// outline
-	sf::RenderTexture outlineRenderTexture;
-	sf::Vector2i outlineOffset;
-	sf::Sprite outlineSprite;
+	sf::RenderTexture _outlineRenderTexture;
+	sf::Vector2i _outlineOffset;
+	sf::Sprite _outlineSprite;
 	
 	// outside rect
-	sf::IntRect rect;
+	sf::IntRect _rect;
 
 	// shader
-	sf::Shader shader;
+	sf::Shader _shader;
 
 	Lasso();
 	~Lasso();

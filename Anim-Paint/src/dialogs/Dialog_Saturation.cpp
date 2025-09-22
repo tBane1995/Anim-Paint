@@ -7,45 +7,45 @@
 
 Dialog_Saturation::Dialog_Saturation(std::vector < Layer* > layers) : Dialog(L"saturation", sf::Vector2f(256, 160), sf::Vector2f(8, 120)) {
 
-	state = SaturationState::Idle;
+	_state = SaturationState::Idle;
 
-	saturation_text = sf::Text(L"saturation", basicFont, 13);
+	_saturation_text = sf::Text(L"saturation", basicFont, 13);
 
-	saturation_slider = new Slider(0, 200);
-	saturation_slider->setValue(100);
+	_saturation_slider = new Slider(0, 200);
+	_saturation_slider->setValue(100);
 
-	reset = new NormalButtonWithText(L"reset", sf::Vector2f(64, 32));
-	reset->onclick_func = [this]() {
-		saturation_slider->setValue(100);
+	_reset = new NormalButtonWithText(L"reset", sf::Vector2f(64, 32));
+	_reset->_onclick_func = [this]() {
+		_saturation_slider->setValue(100);
 		setTheFilter();
 		};
 
-	confirm = new NormalButtonWithText(L"confirm", sf::Vector2f(64, 32));
-	confirm->onclick_func = [this]() {
-		Dialog::state = DialogState::ToClose;
-		Dialog_Saturation::state = SaturationState::Edited;
+	_confirm = new NormalButtonWithText(L"confirm", sf::Vector2f(64, 32));
+	_confirm->_onclick_func = [this]() {
+		Dialog::_state = DialogState::ToClose;
+		Dialog_Saturation::_state = SaturationState::Edited;
 
-		animation->getCurrentFrame()->layers.clear();
-		animation->getCurrentFrame()->layers = edited_layers;
+		animation->getCurrentFrame()->_layers.clear();
+		animation->getCurrentFrame()->_layers = _edited_layers;
 		layers_dialog->loadLayersFromCurrentFrame();
 		};
 
-	original_layers.clear();
+	_original_layers.clear();
 	for (auto& l : layers) {
-		original_layers.push_back(new Layer(l));
-		edited_layers.push_back(new Layer(l));
+		_original_layers.push_back(new Layer(l));
+		_edited_layers.push_back(new Layer(l));
 	}
 
-	setPosition(position);
+	setPosition(_position);
 }
 
 Dialog_Saturation::~Dialog_Saturation() {
-	if (Dialog_Saturation::state == SaturationState::Idle) {
-		saturation_slider->setValue(100);
+	if (Dialog_Saturation::_state == SaturationState::Idle) {
+		_saturation_slider->setValue(100);
 		setTheFilter();
 
-		animation->getCurrentFrame()->layers.clear();
-		animation->getCurrentFrame()->layers = edited_layers;
+		animation->getCurrentFrame()->_layers.clear();
+		animation->getCurrentFrame()->_layers = _edited_layers;
 		layers_dialog->loadLayersFromCurrentFrame();
 	}
 }
@@ -56,73 +56,73 @@ void Dialog_Saturation::setPosition(sf::Vector2f position) {
 	sf::Vector2f text_pos;
 	text_pos.x = int(position.x) / 8 * 8 + 24;
 	text_pos.y = int(position.y) / 8 * 8 + dialog_title_rect_height / 2 + (160) / 2 - 24;
-	saturation_text.setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
+	_saturation_text.setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
 
 	sf::Vector2f slider_pos;
 	slider_pos.x = int(position.x) / 8 * 8 + 256 / 2 - 64 / 2;
 	slider_pos.y = int(position.y) / 8 * 8 + dialog_title_rect_height / 2 + (160) / 2 - 24;
-	saturation_slider->setPosition(slider_pos);
+	_saturation_slider->setPosition(slider_pos);
 
 	sf::Vector2f button_pos;
 	button_pos.x = int(position.x) / 8 * 8 + 256 / 2 - 32;
-	button_pos.y = int(position.y) / 8 * 8 + 160 - confirm->getSize().y - 16;
-	reset->setPosition(button_pos - sf::Vector2f(48, 0));
-	confirm->setPosition(button_pos + sf::Vector2f(48, 0));
+	button_pos.y = int(position.y) / 8 * 8 + 160 - _confirm->getSize().y - 16;
+	_reset->setPosition(button_pos - sf::Vector2f(48, 0));
+	_confirm->setPosition(button_pos + sf::Vector2f(48, 0));
 }
 
 void Dialog_Saturation::setTheFilter() {
-	for (auto& lr : edited_layers) {
+	for (auto& lr : _edited_layers) {
 		delete lr;
 	}
 
-	edited_layers.clear();
+	_edited_layers.clear();
 
-	for (auto& org : original_layers) {
-		edited_layers.push_back(new Layer(org));
-		set_saturation(edited_layers.back()->image, float(saturation_slider->getValue()) / 100.0f);
+	for (auto& org : _original_layers) {
+		_edited_layers.push_back(new Layer(org));
+		set_saturation(_edited_layers.back()->_image, float(_saturation_slider->getValue()) / 100.0f);
 	}
 
 	// TO-DO
-	animation->getCurrentFrame()->layers.clear();
-	animation->getCurrentFrame()->layers = edited_layers;
+	animation->getCurrentFrame()->_layers.clear();
+	animation->getCurrentFrame()->_layers = _edited_layers;
 	//layers_dialog->loadLayersFromCurrentFrame();
 }
 
 void Dialog_Saturation::cursorHover() {
 	Dialog::cursorHover();
 
-	this->saturation_slider->cursorHover();
-	reset->cursorHover();
-	confirm->cursorHover();
+	_saturation_slider->cursorHover();
+	_reset->cursorHover();
+	_confirm->cursorHover();
 }
 
 void Dialog_Saturation::handleEvent(sf::Event& event) {
 	Dialog::handleEvent(event);
 
-	this->saturation_slider->handleEvent(event);
-	reset->handleEvent(event);
-	confirm->handleEvent(event);
+	_saturation_slider->handleEvent(event);
+	_reset->handleEvent(event);
+	_confirm->handleEvent(event);
 }
 
 void Dialog_Saturation::update() {
 	Dialog::update();
 
-	saturation_slider->update();
+	_saturation_slider->update();
 
-	if (saturation_slider->state == SliderState::Changed) {
+	if (_saturation_slider->_state == SliderState::Changed) {
 
 		setTheFilter();
 	}
 
-	reset->update();
-	confirm->update();
+	_reset->update();
+	_confirm->update();
 }
 
 void Dialog_Saturation::draw() {
 	Dialog::draw();
 
-	window->draw(saturation_text);
-	saturation_slider->draw();
-	reset->draw();
-	confirm->draw();
+	window->draw(_saturation_text);
+	_saturation_slider->draw();
+	_reset->draw();
+	_confirm->draw();
 }

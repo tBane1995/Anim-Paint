@@ -1,12 +1,12 @@
 #include "Animation/Frame.hpp"
 
 Frame::Frame() {
-	layers.clear();
+	_layers.clear();
 
 }
 
 Frame::~Frame() {}
 
 std::vector < Layer* >& Frame::getLayers() {
-	return layers;
+	return _layers;
 }

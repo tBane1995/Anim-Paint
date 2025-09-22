@@ -12,47 +12,47 @@
 #include "Animation/Animation.hpp"
 
 OptionBox::OptionBox(std::wstring text) {
-	this->text = sf::Text(text, basicFont, menu_font_size);
-	this->text.setFillColor(menu_text_color);
-	rect = sf::RectangleShape(sf::Vector2f(this->text.getGlobalBounds().width + 2 * menu_horizontal_margin, menu_height));
-	rect.setFillColor(optionbox_idle_color);
-	state = ButtonState::Idle;
-	onclick_func = { };
+	_text = sf::Text(text, basicFont, menu_font_size);
+	_text.setFillColor(menu_text_color);
+	_rect = sf::RectangleShape(sf::Vector2f(_text.getGlobalBounds().width + 2 * menu_horizontal_margin, menu_height));
+	_rect.setFillColor(optionbox_idle_color);
+	_state = ButtonState::Idle;
+	_onclick_func = { };
 }
 
 OptionBox::~OptionBox() {}
 
 void OptionBox::setPosition(sf::Vector2f position) {
-	this->rect.setPosition(position);
-	this->text.setPosition(position + sf::Vector2f(menu_horizontal_margin, (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
+	_rect.setPosition(position);
+	_text.setPosition(position + sf::Vector2f(menu_horizontal_margin, (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
 }
 
 void OptionBox::unclick() {
-	state = ButtonState::Idle;
-	rect.setFillColor(optionbox_idle_color);
+	_state = ButtonState::Idle;
+	_rect.setFillColor(optionbox_idle_color);
 }
 
 void OptionBox::hover() {
-	state = ButtonState::Hover;
-	rect.setFillColor(optionbox_hover_color);
+	_state = ButtonState::Hover;
+	_rect.setFillColor(optionbox_hover_color);
 
 }
 
 void OptionBox::click() {
-	state = ButtonState::Pressed;
-	rect.setFillColor(optionbox_press_color);
-	clickTime = currentTime;
+	_state = ButtonState::Pressed;
+	_rect.setFillColor(optionbox_press_color);
+	_clickTime = currentTime;
 }
 
 
 void OptionBox::cursorHover() {
-	if (rect.getGlobalBounds().contains(worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
 		ElementGUI_hovered = this;
 	}
 }
 
 void OptionBox::handleEvent(sf::Event& event) {
-	if (rect.getGlobalBounds().contains(worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
 		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 			ElementGUI_pressed = this;
 		}
@@ -67,10 +67,10 @@ void OptionBox::handleEvent(sf::Event& event) {
 
 void OptionBox::update() {
 
-	if (state == ButtonState::Pressed) {
-		if ((currentTime - clickTime).asSeconds() > 0.05f) {
-			if (onclick_func) {
-				onclick_func();
+	if (_state == ButtonState::Pressed) {
+		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
+			if (_onclick_func) {
+				_onclick_func();
 			}
 			ElementGUI_pressed = nullptr;
 			unclick();
@@ -84,18 +84,18 @@ void OptionBox::update() {
 }
 
 void OptionBox::draw() {
-	window->draw(rect);
-	window->draw(text);
+	window->draw(_rect);
+	window->draw(_text);
 }
 
 /////////////////////////////////////////////////////////////////////////
 MenuBox::MenuBox(std::wstring text) : ElementGUI() {
-	this->text = sf::Text(text, basicFont, menu_font_size);
-	this->text.setFillColor(menu_text_color);
-	rect = sf::RectangleShape(sf::Vector2f(this->text.getGlobalBounds().width + 2 * menu_horizontal_margin, menu_height));
+	_text = sf::Text(text, basicFont, menu_font_size);
+	_text.setFillColor(menu_text_color);
+	_rect = sf::RectangleShape(sf::Vector2f(_text.getGlobalBounds().width + 2 * menu_horizontal_margin, menu_height));
 
-	isOpen = false;
-	options.clear();
+	_isOpen = false;
+	_options.clear();
 }
 
 MenuBox::~MenuBox() {
@@ -103,61 +103,61 @@ MenuBox::~MenuBox() {
 }
 
 void MenuBox::addOption(OptionBox* option) {
-	options.push_back(option);
+	_options.push_back(option);
 
 	int max_wdt = 0;
-	for (auto& o : options) {
-		if (o->rect.getSize().x > max_wdt)
-			max_wdt = o->rect.getSize().x;
+	for (auto& o : _options) {
+		if (o->_rect.getSize().x > max_wdt)
+			max_wdt = o->_rect.getSize().x;
 	}
 
-	for (auto& o : options) {
-		o->rect.setSize(sf::Vector2f(max_wdt, menu_height));
+	for (auto& o : _options) {
+		o->_rect.setSize(sf::Vector2f(max_wdt, menu_height));
 	}
 
 
 }
 
 void MenuBox::setPosition(sf::Vector2f position) {
-	this->rect.setPosition(position);
-	this->text.setPosition(position + sf::Vector2f(menu_horizontal_margin, (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
+	_rect.setPosition(position);
+	_text.setPosition(position + sf::Vector2f(menu_horizontal_margin, (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
 
-	for (int i = 0; i < options.size(); i++) {
-		options[i]->setPosition(this->rect.getPosition() + sf::Vector2f(0, this->rect.getSize().y + i * menu_height));
+	for (int i = 0; i < _options.size(); i++) {
+		_options[i]->setPosition(_rect.getPosition() + sf::Vector2f(0, _rect.getSize().y + i * menu_height));
 	}
 }
 
 void MenuBox::unclick() {
-	state = ButtonState::Idle;
-	rect.setFillColor(menubox_idle_color);
+	_state = ButtonState::Idle;
+	_rect.setFillColor(menubox_idle_color);
 }
 
 void MenuBox::hover() {
-	state = ButtonState::Hover;
-	rect.setFillColor(menubox_hover_color);
+	_state = ButtonState::Hover;
+	_rect.setFillColor(menubox_hover_color);
 
 }
 
 void MenuBox::click() {
-	state = ButtonState::Pressed;
-	rect.setFillColor(menubox_press_color);
-	clickTime = currentTime;
+	_state = ButtonState::Pressed;
+	_rect.setFillColor(menubox_press_color);
+	_clickTime = currentTime;
 }
 
 
 void MenuBox::cursorHover() {
-	if (rect.getGlobalBounds().contains(worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
 		ElementGUI_hovered = this;
 	}
 
-	if (isOpen) {
-		for (auto& option : options)
+	if (_isOpen) {
+		for (auto& option : _options)
 			option->cursorHover();
 	}
 }
 
 void MenuBox::handleEvent(sf::Event& event) {
-	if (rect.getGlobalBounds().contains(worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
 		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 			ElementGUI_pressed = this;
 		}
@@ -169,18 +169,18 @@ void MenuBox::handleEvent(sf::Event& event) {
 
 	}
 
-	if (isOpen) {
-		for (auto& option : options)
+	if (_isOpen) {
+		for (auto& option : _options)
 			option->handleEvent(event);
 	}
 }
 
 void MenuBox::update() {
 
-	if (state == ButtonState::Pressed) {
-		if ((currentTime - clickTime).asSeconds() > 0.05f) {
-			if (onclick_func) {
-				onclick_func();
+	if (_state == ButtonState::Pressed) {
+		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
+			if (_onclick_func) {
+				_onclick_func();
 			}
 			ElementGUI_pressed = nullptr;
 			unclick();
@@ -193,16 +193,16 @@ void MenuBox::update() {
 		unclick();
 
 
-	for (auto& option : options)
+	for (auto& option : _options)
 		option->update();
 }
 
 void MenuBox::draw() {
-	window->draw(rect);
-	window->draw(text);
+	window->draw(_rect);
+	window->draw(_text);
 
-	if (isOpen) {
-		for (auto& option : options)
+	if (_isOpen) {
+		for (auto& option : _options)
 			option->draw();
 	}
 }
@@ -210,38 +210,38 @@ void MenuBox::draw() {
 /////////////////////////////////////////////////////////////////////////
 
 MainMenu::MainMenu() : ElementGUI() {
-	rect = sf::RectangleShape(sf::Vector2f(window->getSize().x, menu_height));
-	rect.setFillColor(menu_bar_color);
-	rect.setPosition(0, 0);
+	_rect = sf::RectangleShape(sf::Vector2f(window->getSize().x, menu_height));
+	_rect.setFillColor(menu_bar_color);
+	_rect.setPosition(0, 0);
 
-	logo = sf::Sprite(*getTexture(L"tex\\logo\\small_logo.png")->texture);
+	_logo = sf::Sprite(*getTexture(L"tex\\logo\\small_logo.png")->_texture);
 
 	// FILE
 	MenuBox* file = new MenuBox(L"file");
-	file->onclick_func = [this, file]() {
-		if (open_menu_box != nullptr)
-			open_menu_box->isOpen = false;
+	file->_onclick_func = [this, file]() {
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
 
-		open_menu_box = file;
-		open_menu_box->isOpen = true;
+		_open_menu_box = file;
+		_open_menu_box->_isOpen = true;
 		};
-	menu_boxes.push_back(file);
+	_menu_boxes.push_back(file);
 
 	OptionBox* file_new = new OptionBox(L"new file");
-	file_new->onclick_func = [this]() {
+	file_new->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog(L"new file", sf::Vector2f(200, 200)));
-		if (this->open_menu_box != nullptr)
-			open_menu_box->isOpen = false;
-		open_menu_box = nullptr;
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
 		};
 	OptionBox* file_save = new OptionBox(L"save");
 
 	OptionBox* file_saveAs = new OptionBox(L"save as");
-	file_saveAs->onclick_func = [this]() {
+	file_saveAs->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Save_As());
-		if (this->open_menu_box != nullptr)
-			open_menu_box->isOpen = false;
-		open_menu_box = nullptr;
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
 		};
 
 	OptionBox* file_open = new OptionBox(L"open");
@@ -257,14 +257,14 @@ MainMenu::MainMenu() : ElementGUI() {
 
 	// EDIT
 	MenuBox* edit = new MenuBox(L"edit");
-	edit->onclick_func = [this, edit]() {
-		if (open_menu_box != nullptr)
-			open_menu_box->isOpen = false;
+	edit->_onclick_func = [this, edit]() {
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
 
-		open_menu_box = edit;
-		open_menu_box->isOpen = true;
+		_open_menu_box = edit;
+		_open_menu_box->_isOpen = true;
 		};
-	menu_boxes.push_back(edit);
+	_menu_boxes.push_back(edit);
 
 	OptionBox* edit_undo = new OptionBox(L"undo");
 	OptionBox* edit_redo = new OptionBox(L"redo");
@@ -280,40 +280,40 @@ MainMenu::MainMenu() : ElementGUI() {
 
 	// IMAGE
 	MenuBox* image = new MenuBox(L"image");
-	image->onclick_func = [this, image]() {
-		if (open_menu_box != nullptr)
-			open_menu_box->isOpen = false;
+	image->_onclick_func = [this, image]() {
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
 
-		open_menu_box = image;
-		open_menu_box->isOpen = true;
+		_open_menu_box = image;
+		_open_menu_box->_isOpen = true;
 		};
-	menu_boxes.push_back(image);
+	_menu_boxes.push_back(image);
 
 	OptionBox* image_resize_scale = new OptionBox(L"resize/scale");
 	OptionBox* image_trim = new OptionBox(L"trim");
 	OptionBox* image_rotation = new OptionBox(L"rotation");
-	image_rotation->onclick_func = [this]() {
+	image_rotation->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Rotation(animation->getLayers()));
 
-		if (open_menu_box != nullptr)
-			open_menu_box->isOpen = false;
-		open_menu_box = nullptr;
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
 		};
 	OptionBox* image_brightness_contrast = new OptionBox(L"brightness-contrast");
-	image_brightness_contrast->onclick_func = [this]() {
+	image_brightness_contrast->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Brightness_Contrast(animation->getLayers()));
 
-		if (open_menu_box != nullptr)
-			open_menu_box->isOpen = false;
-		open_menu_box = nullptr;
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
 		};
 	OptionBox* image_saturation = new OptionBox(L"saturation");
-	image_saturation->onclick_func = [this]() {
+	image_saturation->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Saturation(animation->getLayers()));
 
-		if (open_menu_box != nullptr)
-			open_menu_box->isOpen = false;
-		open_menu_box = nullptr;
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
 		};
 
 
@@ -321,12 +321,12 @@ MainMenu::MainMenu() : ElementGUI() {
 	OptionBox* image_gray = new OptionBox(L"grayscale mode");
 
 	OptionBox* image_sepia = new OptionBox(L"sepia");
-	image_sepia->onclick_func = [this]() {
+	image_sepia->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Sepia(animation->getLayers()));
 
-		if (open_menu_box != nullptr)
-			open_menu_box->isOpen = false;
-		open_menu_box = nullptr;
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
 		};
 
 	OptionBox* image_invert = new OptionBox(L"invert colors");
@@ -343,14 +343,14 @@ MainMenu::MainMenu() : ElementGUI() {
 
 	// SELECT
 	MenuBox* select = new MenuBox(L"select");
-	select->onclick_func = [this, select]() {
-		if (open_menu_box != nullptr)
-			open_menu_box->isOpen = false;
+	select->_onclick_func = [this, select]() {
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
 
-		open_menu_box = select;
-		open_menu_box->isOpen = true;
+		_open_menu_box = select;
+		_open_menu_box->_isOpen = true;
 		};
-	menu_boxes.push_back(select);
+	_menu_boxes.push_back(select);
 
 	OptionBox* select_all = new OptionBox(L"select all");
 	OptionBox* select_none = new OptionBox(L"none");
@@ -376,18 +376,18 @@ MainMenu::MainMenu() : ElementGUI() {
 
 	// SETTINGS
 	MenuBox* settings = new MenuBox(L"settings");
-	settings->onclick_func = [this, settings]() {
-		if (open_menu_box != nullptr)
-			open_menu_box->isOpen = false;
+	settings->_onclick_func = [this, settings]() {
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
 
-		open_menu_box = settings;
-		open_menu_box->isOpen = true;
+		_open_menu_box = settings;
+		_open_menu_box->_isOpen = true;
 		};
-	menu_boxes.push_back(settings);
+	_menu_boxes.push_back(settings);
 
 
 	// POSITIONING
-	open_menu_box = nullptr;
+	_open_menu_box = nullptr;
 	setPosition(sf::Vector2f(0, 0));
 }
 
@@ -396,27 +396,27 @@ MainMenu::~MainMenu() {
 }
 
 sf::Vector2f MainMenu::getSize() {
-	return rect.getSize();
+	return _rect.getSize();
 }
 
 void MainMenu::setPosition(sf::Vector2f position) {
-	rect.setPosition(position);
-	logo.setPosition(sf::Vector2f(0, (menu_height - logo.getGlobalBounds().getSize().y) / 2.0f));
+	_rect.setPosition(position);
+	_logo.setPosition(sf::Vector2f(0, (menu_height - _logo.getGlobalBounds().getSize().y) / 2.0f));
 
 	int x = 24;
 	int y = position.y + menu_padding;
-	for (int i = 0; i < menu_boxes.size(); i++) {
-		menu_boxes[i]->setPosition(sf::Vector2f(position.x + x, y));
-		x = x + menu_boxes[i]->rect.getSize().x;
+	for (int i = 0; i < _menu_boxes.size(); i++) {
+		_menu_boxes[i]->setPosition(sf::Vector2f(position.x + x, y));
+		x = x + _menu_boxes[i]->_rect.getSize().x;
 	}
 }
 
 void MainMenu::cursorHover() {
-	if (rect.getGlobalBounds().contains(worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
 		ElementGUI_hovered = this;
 	}
 
-	for (auto& mb : menu_boxes)
+	for (auto& mb : _menu_boxes)
 		mb->cursorHover();
 
 }
@@ -424,14 +424,14 @@ void MainMenu::cursorHover() {
 void MainMenu::handleEvent(sf::Event& event) {
 	bool clicked_in_menu = false;
 
-	for (auto& mb : menu_boxes) {
+	for (auto& mb : _menu_boxes) {
 		mb->handleEvent(event);
 		if (ElementGUI_pressed == mb) {
 			clicked_in_menu = true;
 		}
 
-		if (mb->isOpen) {
-			for (auto& op : mb->options) {
+		if (mb->_isOpen) {
+			for (auto& op : mb->_options) {
 				op->handleEvent(event);
 				if (ElementGUI_pressed == op) {
 					clicked_in_menu = true;
@@ -443,33 +443,33 @@ void MainMenu::handleEvent(sf::Event& event) {
 	if (event.type == sf::Event::MouseButtonPressed &&
 		event.mouseButton.button == sf::Mouse::Left) {
 		if (!clicked_in_menu) {
-			if (open_menu_box != nullptr)
-				open_menu_box->isOpen = false;
-			open_menu_box = nullptr;
+			if (_open_menu_box != nullptr)
+				_open_menu_box->_isOpen = false;
+			_open_menu_box = nullptr;
 		}
 	}
 }
 
 void MainMenu::update() {
-	for (auto& mb : menu_boxes)
+	for (auto& mb : _menu_boxes)
 		mb->update();
 }
 
 void MainMenu::draw() {
-	window->draw(rect);
-	window->draw(logo);
+	window->draw(_rect);
+	window->draw(_logo);
 
-	if (open_menu_box != nullptr) {
-		if (open_menu_box->options.size() > 0) {
-			sf::RectangleShape rect(sf::Vector2f(open_menu_box->options.front()->rect.getSize().x, open_menu_box->options.size() * menu_height));
-			rect.setPosition(open_menu_box->options.front()->rect.getPosition());
+	if (_open_menu_box != nullptr) {
+		if (_open_menu_box->_options.size() > 0) {
+			sf::RectangleShape rect(sf::Vector2f(_open_menu_box->_options.front()->_rect.getSize().x, _open_menu_box->_options.size() * menu_height));
+			rect.setPosition(_open_menu_box->_options.front()->_rect.getPosition());
 			rect.setOutlineThickness(menuoptions_border_width);
 			rect.setOutlineColor(menuoptions_border_color);
 			window->draw(rect);
 		}
 	}
 
-	for (auto& mb : menu_boxes)
+	for (auto& mb : _menu_boxes)
 		mb->draw();
 }
 

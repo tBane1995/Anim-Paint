@@ -8,7 +8,7 @@ enum class ButtonState { Idle, Hover, Pressed };
 
 class Button : public ElementGUI {
 public:
-	sf::RectangleShape rect;
+	sf::RectangleShape _rect;
 	
 	Button();
 	~Button();
@@ -25,16 +25,16 @@ public:
 class NormalButton : public Button {
 public:
 	
-	Texture* texture;
-	Texture* hoverTexture;
-	sf::Sprite sprite;
+	Texture* _texture;
+	Texture* _hoverTexture;
+	sf::Sprite _sprite;
 
-	sf::Vector2f position;
+	sf::Vector2f _position;
 	
-	ButtonState state;
-	std::function<void()> hover_func;
-	std::function<void()> onclick_func;
-	sf::Time clickTime;
+	ButtonState _state;
+	std::function<void()> _hover_func;
+	std::function<void()> _onclick_func;
+	sf::Time _clickTime;
 
 
 	NormalButton(Texture* texture, Texture* hoverTexture, sf::Vector2f position = sf::Vector2f(0, 0));
@@ -56,18 +56,18 @@ public:
 class NormalButtonWithText : public Button {
 public:
 
-	sf::RectangleShape rect;
-	sf::Text text;
-	sf::Color normal_color;
-	sf::Color hover_color;
-	sf::Color press_color;
+	sf::RectangleShape _rect;
+	sf::Text _text;
+	sf::Color _normal_color;
+	sf::Color _hover_color;
+	sf::Color _press_color;
 
-	sf::Vector2f position;
+	sf::Vector2f _position;
 
-	ButtonState state;
-	std::function<void()> hover_func;
-	std::function<void()> onclick_func;
-	sf::Time clickTime;
+	ButtonState _state;
+	std::function<void()> _hover_func;
+	std::function<void()> _onclick_func;
+	sf::Time _clickTime;
 
 
 	NormalButtonWithText(std::wstring text, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0));
@@ -90,19 +90,19 @@ public:
 class ButtonWithBottomText : public Button {
 public:
 
-	sf::Color textColor;
-	sf::Color hoverTextColor;
-	Texture* texture;
-	Texture* hoverTexture;
-	sf::Sprite sprite;
-	sf::Text text;
+	sf::Color _textColor;
+	sf::Color _hoverTextColor;
+	Texture* _texture;
+	Texture* _hoverTexture;
+	sf::Sprite _sprite;
+	sf::Text _text;
 
-	sf::Vector2f position;
+	sf::Vector2f _position;
 
-	ButtonState state;
-	std::function<void()> hover_func;
-	std::function<void()> onclick_func;
-	sf::Time clickTime;
+	ButtonState _state;
+	std::function<void()> _hover_func;
+	std::function<void()> _onclick_func;
+	sf::Time _clickTime;
 
 
 	ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2f position = sf::Vector2f(0, 0));
@@ -125,20 +125,20 @@ public:
 class ButtonWithRightText : public Button {
 public:
 
-	sf::Color textColor;
-	sf::Color hoverTextColor;
-	Texture* texture;
-	Texture* hoverTexture;
-	sf::Sprite sprite;
-	sf::Text text;
-	sf::RectangleShape rect;
+	sf::Color _textColor;
+	sf::Color _hoverTextColor;
+	Texture* _texture;
+	Texture* _hoverTexture;
+	sf::Sprite _sprite;
+	sf::Text _text;
+	sf::RectangleShape _rect;
 
-	sf::Vector2f position;
+	sf::Vector2f _position;
 
-	ButtonState state;
-	std::function<void()> hover_func;
-	std::function<void()> onclick_func;
-	sf::Time clickTime;
+	ButtonState _state;
+	std::function<void()> _hover_func;
+	std::function<void()> _onclick_func;
+	sf::Time _clickTime;
 
 
 	ButtonWithRightText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2f position = sf::Vector2f(0, 0));
@@ -160,18 +160,18 @@ public:
 class Option : public Button {
 public:
 
-	Texture* texture;
-	Texture* hoverTexture;
-	sf::Sprite sprite;
-	sf::Text text;
-	sf::RectangleShape rect;
+	Texture* _texture;
+	Texture* _hoverTexture;
+	sf::Sprite _sprite;
+	sf::Text _text;
+	sf::RectangleShape _rect;
 
-	sf::Vector2f position;
+	sf::Vector2f _position;
 
-	ButtonState state;
-	std::function<void()> hover_func;
-	std::function<void()> onclick_func;
-	sf::Time clickTime;
+	ButtonState _state;
+	std::function<void()> _hover_func;
+	std::function<void()> _onclick_func;
+	sf::Time _clickTime;
 
 
 	Option(std::wstring text, Texture* texture, Texture* hoverTexture, sf::Vector2f position = sf::Vector2f(0, 0));
@@ -193,25 +193,25 @@ public:
 class ButtonWithTopTextAndList : public Button {
 public:
 
-	sf::Color textColor;
-	sf::Color hoverTextColor;
-	Texture* texture;
-	Texture* hoverTexture;
-	sf::Sprite sprite;
-	sf::Text text;
-	sf::RectangleShape rect;
+	sf::Color _textColor;
+	sf::Color _hoverTextColor;
+	Texture* _texture;
+	Texture* _hoverTexture;
+	sf::Sprite _sprite;
+	sf::Text _text;
+	sf::RectangleShape _rect;
 
-	sf::Vector2f position;
+	sf::Vector2f _position;
 
-	ButtonState state;
-	std::function<void()> hover_func;
-	std::function<void()> onclick_func;
-	sf::Time clickTime;
+	ButtonState _state;
+	std::function<void()> _hover_func;
+	std::function<void()> _onclick_func;
+	sf::Time _clickTime;
 
-	sf::RectangleShape list_rect;
-	sf::VertexArray list_border;
-	std::vector < Option* > options;
-	bool isOpen;
+	sf::RectangleShape _list_rect;
+	sf::VertexArray _list_border;
+	std::vector < Option* > _options;
+	bool _isOpen;
 
 	ButtonWithTopTextAndList(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, sf::Vector2f position = sf::Vector2f(0, 0));
 	~ButtonWithTopTextAndList();

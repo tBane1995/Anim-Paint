@@ -71,7 +71,7 @@ int main() {
 	lasso = new Lasso();
 	brush = new Brush(2);
 	toolbar = new Toolbar();
-	canvas = new Canvas(sf::Vector2i(animation->getLayer(0)->image.getSize()));
+	canvas = new Canvas(sf::Vector2i(animation->getLayer(0)->_image.getSize()));
 
 	while (window->isOpen()) {
 		prevTime = currentTime;
@@ -83,7 +83,7 @@ int main() {
 
 		// delete old dialogs
 		for (int i = 0; i < dialogs.size(); ) {
-			if (dialogs[i]->state == DialogState::ToClose) {
+			if (dialogs[i]->_state == DialogState::ToClose) {
 				delete dialogs[i];
 				dialogs.erase(dialogs.begin() + i);
 			}
@@ -157,13 +157,13 @@ int main() {
 			else if (event.type == sf::Event::KeyPressed) {
 				
 				if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::X) {
-					toolbar->btn_cut->click();
+					toolbar->_btn_cut->click();
 				}
 				else if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::C) {
-					toolbar->btn_copy->click();
+					toolbar->_btn_copy->click();
 				}
 				else if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::V) {
-					toolbar->btn_paste->click();
+					toolbar->_btn_paste->click();
 				}
 				else {
 					for (auto& dialog : dialogs) {

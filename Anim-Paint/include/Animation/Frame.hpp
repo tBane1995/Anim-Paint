@@ -4,7 +4,7 @@
 class Frame {
 
 public:
-	std::vector < Layer* > layers;
+	std::vector < Layer* > _layers;
 
 	Frame();
 	~Frame();

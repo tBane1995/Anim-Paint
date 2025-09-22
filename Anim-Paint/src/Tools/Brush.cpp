@@ -96,7 +96,7 @@ std::vector<std::vector<std::vector<bool>>> square_brushes = {
         {1, 1, 1, 1, 1, 1, 1},
         {1, 1, 1, 1, 1, 1, 1},
         {1, 1, 1, 1, 1, 1, 1},
-        {1, 0, 1, 1, 1, 1, 1}
+        {1, 1, 1, 1, 1, 1, 1}
     },
 
     // 4 - 9x9
@@ -130,9 +130,9 @@ std::vector<std::vector<std::vector<bool>>> square_brushes = {
 };
 
 Brush::Brush(int size) {
-    type = BrushType::Circle;
+    _type = BrushType::Circle;
     setSize(size);
-    pos_px = sf::Vector2i(0, 0);
+    _pos_px = sf::Vector2i(0, 0);
 }
 
 Brush::~Brush() {
@@ -140,36 +140,36 @@ Brush::~Brush() {
 }
 
 void Brush::setBrushType(BrushType type) {
-    this->type = type;
+    _type = type;
 }
 
 void Brush::setSize(int size) {
-    this->size = size;
+    _size = size;
 }
 
 void Brush::decrease() {
-    this->size--;
-    if (this->size < 0)
-        this->size = 0;
+    _size--;
+    if (_size < 0)
+        _size = 0;
 }
 
 void Brush::increase() {
-    this->size++;
-    if (this->size > 5)
-        this->size = 5;
+    _size++;
+    if (_size > 5)
+        _size = 5;
 }
 
 void Brush::setPosition(sf::Vector2i pos_px) {
-    this->pos_px = pos_px;
+    _pos_px = pos_px;
 }
 
 std::vector<std::vector<bool>> Brush::getBrush() {
 
-    if (type == BrushType::Square) {
-        return square_brushes[size];
+    if (_type == BrushType::Square) {
+        return square_brushes[_size];
     }
     else {
-        return circle_brushes[size];
+        return circle_brushes[_size];
     }
 }
 
@@ -186,7 +186,7 @@ void Brush::draw(sf::Vector2f canvas_position, sf::Vector2i canvas_size, float z
 
     // bazowa pozycja lewego-górnego kafelka pędzla w tej samej skali
     sf::Vector2f brush_pos = canvas_position +
-        sf::Vector2f((pos_px.x - halfX) * scale, (pos_px.y - halfY) * scale);
+        sf::Vector2f((_pos_px.x - halfX) * scale, (_pos_px.y - halfY) * scale);
 
     sf::RectangleShape rect({ scale, scale });
     rect.setFillColor(sf::Color::Black);
@@ -195,8 +195,8 @@ void Brush::draw(sf::Vector2f canvas_position, sf::Vector2i canvas_size, float z
         for (int x = 0; x < w; ++x) {
             if (!brush[y][x]) continue;
 
-            const int tx = pos_px.x - halfX + x;
-            const int ty = pos_px.y - halfY + y;
+            const int tx = _pos_px.x - halfX + x;
+            const int ty = _pos_px.y - halfY + y;
             if (tx < 0 || ty < 0 || tx >= canvas_size.x || ty >= canvas_size.y) continue;
 
             rect.setPosition(brush_pos + sf::Vector2f(x * scale, y * scale));

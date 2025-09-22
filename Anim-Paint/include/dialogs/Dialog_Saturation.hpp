@@ -7,15 +7,15 @@ enum class SaturationState { Idle, Edited };
 
 class Dialog_Saturation : public Dialog {
 public:
-	SaturationState state;
+	SaturationState _state;
 
-	sf::Text saturation_text;
-	Slider* saturation_slider;
-	NormalButtonWithText* reset;
-	NormalButtonWithText* confirm;
+	sf::Text _saturation_text;
+	Slider* _saturation_slider;
+	NormalButtonWithText* _reset;
+	NormalButtonWithText* _confirm;
 
-	std::vector < Layer* > original_layers;
-	std::vector < Layer* > edited_layers;
+	std::vector < Layer* > _original_layers;
+	std::vector < Layer* > _edited_layers;
 
 	Dialog_Saturation(std::vector < Layer* > layers);
 	~Dialog_Saturation();

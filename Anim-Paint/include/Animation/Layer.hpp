@@ -3,8 +3,8 @@
 
 class Layer {
 public:
-	std::wstring name;
-	sf::Image image;
+	std::wstring _name;
+	sf::Image _image;
 
 	Layer(std::wstring name, sf::Vector2i size);
 	Layer(Layer* layer);

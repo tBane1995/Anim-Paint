@@ -5,8 +5,8 @@ std::string ConvertWideToUtf8(std::wstring wide);
 
 class Texture {
 public:
-	std::wstring path;
-	sf::Texture* texture;
+	std::wstring _path;
+	sf::Texture* _texture;
 
 	Texture(std::wstring path);
 };

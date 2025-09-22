@@ -3,9 +3,9 @@
 
 class Animation {
 public:
-	std::vector < Frame* > frames;
-	int currentFrame;
-	int currentLayer;
+	std::vector < Frame* > _frames;
+	int _currentFrame;
+	int _currentLayer;
 
 	Animation();
 	~Animation();

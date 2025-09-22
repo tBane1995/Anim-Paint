@@ -9,9 +9,9 @@ std::string ConvertWideToUtf8(std::wstring wide) {
 // Texture class
 
 Texture::Texture(std::wstring path) {
-	this->path = path;
-	texture = new sf::Texture();
-	texture->loadFromFile(ConvertWideToUtf8(path));
+	_path = path;
+	_texture = new sf::Texture();
+	_texture->loadFromFile(ConvertWideToUtf8(path));
 }
 
 ////////////////////
@@ -20,7 +20,7 @@ std::vector < Texture* > textures;
 
 Texture* getTexture(std::wstring path) {
 	for (auto& t : textures) {
-		if (t->path == path)
+		if (t->_path == path)
 			return t;
 	}
 

@@ -6,18 +6,18 @@ enum class SliderState { Idle, Changed };
 
 class Slider : ElementGUI {
 public:
-	int min_value;
-	int max_value;
-	int current_value;
+	int _min_value;
+	int _max_value;
+	int _current_value;
 
-	Texture* bar_texture;
-	Texture* slider_texture;
+	Texture* _bar_texture;
+	Texture* _slider_texture;
 
-	sf::Sprite bar_sprite;
-	sf::Sprite slider_sprite;
+	sf::Sprite _bar_sprite;
+	sf::Sprite _slider_sprite;
 
-	SliderState state;
-	sf::Vector2f offset;
+	SliderState _state;
+	sf::Vector2f _offset;
 
 	Slider(int min_value, int max_value);
 	~Slider();

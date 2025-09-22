@@ -5,9 +5,9 @@
 #include "Mouse.hpp"
 
 Checkbox::Checkbox() : ElementGUI() {
-	value = -1;
-	textures.clear();
-	hoverTextures.clear();
+	_value = -1;
+	_textures.clear();
+	_hoverTextures.clear();
 }
 
 Checkbox::~Checkbox() {
@@ -15,48 +15,48 @@ Checkbox::~Checkbox() {
 }
 
 void Checkbox::setPosition(sf::Vector2f position) {
-	this->position = position;
-	sprite.setPosition(position);
+	_position = position;
+	_sprite.setPosition(_position);
 }
 
 void Checkbox::setValue(int value) {
-	this->value = value;
+	_value = value;
 
-	sprite.setTexture(*textures[value]->texture);
+	_sprite.setTexture(*_textures[_value]->_texture);
 }
 
 void Checkbox::addValue(Texture* texture, Texture* hoverTexture) {
 
-	textures.push_back(texture);
-	hoverTextures.push_back(hoverTexture);
+	_textures.push_back(texture);
+	_hoverTextures.push_back(hoverTexture);
 }
 
 void Checkbox::unclick() {
-	state = CheckboxState::Idle;
-	sprite.setTexture(*textures[value]->texture);
+	_state = CheckboxState::Idle;
+	_sprite.setTexture(*_textures[_value]->_texture);
 }
 
 void Checkbox::hover() {
-	state = CheckboxState::Hover;
-	sprite.setTexture(*hoverTextures[value]->texture);
+	_state = CheckboxState::Hover;
+	_sprite.setTexture(*_hoverTextures[_value]->_texture);
 
 }
 
 void Checkbox::click() {
-	state = CheckboxState::Pressed;
+	_state = CheckboxState::Pressed;
 
-	value += 1;
-	if (value >= textures.size())
-		value = 0;
+	_value += 1;
+	if (_value >= _textures.size())
+		_value = 0;
 
-	sprite.setTexture(*hoverTextures[value]->texture);
-	clickTime = currentTime;
+	_sprite.setTexture(*_hoverTextures[_value]->_texture);
+	_clickTime = currentTime;
 }
 
 void Checkbox::cursorHover() {
 
-	if (value > -1) {
-		if (sprite.getGlobalBounds().contains(worldMousePosition)) {
+	if (_value > -1) {
+		if (_sprite.getGlobalBounds().contains(worldMousePosition)) {
 			ElementGUI_hovered = this;
 		}
 	}
@@ -64,7 +64,7 @@ void Checkbox::cursorHover() {
 }
 
 void Checkbox::handleEvent(sf::Event& event) {
-	if (sprite.getGlobalBounds().contains(worldMousePosition)) {
+	if (_sprite.getGlobalBounds().contains(worldMousePosition)) {
 		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 			ElementGUI_pressed = this;
 		}
@@ -79,10 +79,10 @@ void Checkbox::handleEvent(sf::Event& event) {
 
 void Checkbox::update() {
 
-	if (state == CheckboxState::Pressed) {
-		if ((currentTime - clickTime).asSeconds() > 0.05f) {
-			if (onclick_func) {
-				onclick_func();
+	if (_state == CheckboxState::Pressed) {
+		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
+			if (_onclick_func) {
+				_onclick_func();
 			}
 			ElementGUI_pressed = nullptr;
 			unclick();
@@ -96,5 +96,5 @@ void Checkbox::update() {
 }
 
 void Checkbox::draw() {
-	window->draw(sprite);
+	window->draw(_sprite);
 }

@@ -7,19 +7,19 @@ enum class BrightnessContrastState { Idle, Edited };
 
 class Dialog_Brightness_Contrast : public Dialog {
 public:
-	BrightnessContrastState state;
+	BrightnessContrastState _state;
 
-	sf::Text brightness_text;
-	sf::Text contrast_text;
+	sf::Text _brightness_text;
+	sf::Text _contrast_text;
 	
-	Slider* brightness_slider;
-	Slider* contrast_slider;
+	Slider* _brightness_slider;
+	Slider* _contrast_slider;
 
-	NormalButtonWithText* reset;
-	NormalButtonWithText* confirm;
+	NormalButtonWithText* _reset;
+	NormalButtonWithText* _confirm;
 
-	std::vector < Layer* > original_layers;
-	std::vector < Layer* > edited_layers;
+	std::vector < Layer* > _original_layers;
+	std::vector < Layer* > _edited_layers;
 
 	Dialog_Brightness_Contrast(std::vector < Layer* > layers);
 	~Dialog_Brightness_Contrast();

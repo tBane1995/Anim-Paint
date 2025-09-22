@@ -26,17 +26,17 @@ std::string shader_source = R"(
 
 
 Lasso::Lasso() {
-	state = LassoState::None;
+	_state = LassoState::None;
 
-	points.clear();
+	_points.clear();
 
-	offset = sf::Vector2i(0, 0);
+	_offset = sf::Vector2i(0, 0);
 
-	image = nullptr;
-	rect = sf::IntRect(0, 0, 0, 0);
-	outlineOffset = sf::Vector2i(0, 0);
+	_image = nullptr;
+	_rect = sf::IntRect(0, 0, 0, 0);
+	_outlineOffset = sf::Vector2i(0, 0);
 
-	shader.loadFromMemory(shader_source, sf::Shader::Fragment);
+	_shader.loadFromMemory(shader_source, sf::Shader::Fragment);
 
 }
 
@@ -52,42 +52,42 @@ void Lasso::shiftOriginIfNeeded(sf::Vector2i& point)
 
 	if (shift.x != 0 || shift.y != 0) {
 
-		outlineOffset += shift;
+		_outlineOffset += shift;
 
-		for (auto& p : points)
+		for (auto& p : _points)
 			p -= shift;
 	}
 }
 
 void Lasso::addPoint(sf::Vector2i point)   // tile = globalny punkt w kafelkach
 {
-	point = point - outlineOffset;
+	point = point - _outlineOffset;
 
 	shiftOriginIfNeeded(point);
 
-	if (points.empty() || std::hypot(float(points.back().x - point.x), float(points.back().y - point.y)) > 0.0f)
+	if (_points.empty() || std::hypot(float(_points.back().x - point.x), float(_points.back().y - point.y)) > 0.0f)
 	{
-		points.push_back(point);
+		_points.push_back(point);
 		// std::cout << "add point local: " << point.x << ", " << point.y << "\n";
 	}
 }
 
 void Lasso::unselect() {
-	points.clear();
-	this->outlineOffset = sf::Vector2i(0, 0);
+	_points.clear();
+	_outlineOffset = sf::Vector2i(0, 0);
 	generateRect();
 }
 
 void Lasso::generateRect() {
-	if (points.size() < 3) {
-		rect = sf::IntRect(0, 0, 0, 0);
+	if (_points.size() < 3) {
+		_rect = sf::IntRect(0, 0, 0, 0);
 		return;
 	}
 
 	int maxX = std::numeric_limits<int>::min();
 	int maxY = std::numeric_limits<int>::min();
 
-	for (auto& p : points) {
+	for (auto& p : _points) {
 		maxX = std::max(maxX, p.x);
 		maxY = std::max(maxY, p.y);
 	}
@@ -95,23 +95,23 @@ void Lasso::generateRect() {
 	int width = maxX + 1;
 	int height = maxY + 1;
 
-	rect = sf::IntRect(outlineOffset.x, outlineOffset.y, width, height);
+	_rect = sf::IntRect(_outlineOffset.x, _outlineOffset.y, width, height);
 }
 
 bool Lasso::clickOnSelection(sf::Vector2i point) {
 
-	return rect.contains(point);
+	return _rect.contains(point);
 }
 
 void Lasso::copy(sf::Image* canvas, sf::Color emptyColor)
 {
 
-	if (state != LassoState::Selected)
+	if (_state != LassoState::Selected)
 		return;
 
 	this->generateRect();
 
-	sf::IntRect r = rect;
+	sf::IntRect r = _rect;
 	if (r.width < 0) { r.left += r.width; r.width = -r.width; }
 	if (r.height < 0) { r.top += r.height; r.height = -r.height; }
 
@@ -129,10 +129,10 @@ void Lasso::copy(sf::Image* canvas, sf::Color emptyColor)
 
 	for (int y = 0; y < s.height; ++y)
 		for (int x = 0; x < s.width; ++x)
-			if (maskImg.getPixel(x, y) != sf::Color::White || image->getPixel(x, y) == emptyColor)
-				image->setPixel(x, y, sf::Color::Transparent);
+			if (maskImg.getPixel(x, y) != sf::Color::White || _image->getPixel(x, y) == emptyColor)
+				_image->setPixel(x, y, sf::Color::Transparent);
 
-	copyImageToClipboard(image, sf::IntRect(0, 0, s.width, s.height));
+	copyImageToClipboard(_image, sf::IntRect(0, 0, s.width, s.height));
 
 }
 
@@ -141,112 +141,113 @@ void Lasso::copy(sf::Image* canvas, sf::Color emptyColor)
 void Lasso::paste(sf::Image* canvas, sf::Color emptyColor)
 {
 
-	if (image != nullptr) {
+	if (_image != nullptr) {
 		generateRect();
 
 		int dstW = static_cast<int>(canvas->getSize().x);
 		int dstH = static_cast<int>(canvas->getSize().y);
-		int srcW = static_cast<int>(image->getSize().x);
-		int srcH = static_cast<int>(image->getSize().y);
+		int srcW = static_cast<int>(_image->getSize().x);
+		int srcH = static_cast<int>(_image->getSize().y);
 
-		int x0 = std::max(0, rect.left);
-		int y0 = std::max(0, rect.top);
-		int x1 = std::min(dstW, rect.left + rect.width);
-		int y1 = std::min(dstH, rect.top + rect.height);
+		int x0 = std::max(0, _rect.left);
+		int y0 = std::max(0, _rect.top);
+		int x1 = std::min(dstW, _rect.left + _rect.width);
+		int y1 = std::min(dstH, _rect.top + _rect.height);
 
 		for (int y = y0; y < y1; ++y) {
-			int sy = y - rect.top;
+			int sy = y - _rect.top;
 			if (sy < 0 || sy >= srcH) continue;
 
 			for (int x = x0; x < x1; ++x) {
-				int sx = x - rect.left;
+				int sx = x - _rect.left;
 				if (sx < 0 || sx >= srcW) continue;
 
-				if (image->getPixel(sx, sy) != emptyColor && image->getPixel(sx, sy) != sf::Color::Transparent)
-					canvas->setPixel(x, y, image->getPixel(sx, sy));
+				if (_image->getPixel(sx, sy) != emptyColor && _image->getPixel(sx, sy) != sf::Color::Transparent)
+					canvas->setPixel(x, y, _image->getPixel(sx, sy));
 			}
 		}
 	}
 	else {
-		image = new sf::Image();
+		_image = new sf::Image();
 	}
-	loadImageFromClipboard(*image);
-	state = LassoState::Selected;
-	this->unselect();
+	loadImageFromClipboard(*_image);
+	_state = LassoState::Selected;
+	
+	unselect();
 	addPoint(sf::Vector2i(0, 0));
-	addPoint(sf::Vector2i(0, image->getSize().y - 1));
-	addPoint(sf::Vector2i(image->getSize().x - 1, image->getSize().y - 1));
-	addPoint(sf::Vector2i(image->getSize().x - 1, 0));
+	addPoint(sf::Vector2i(0, _image->getSize().y - 1));
+	addPoint(sf::Vector2i(_image->getSize().x - 1, _image->getSize().y - 1));
+	addPoint(sf::Vector2i(_image->getSize().x - 1, 0));
 }
 
 void Lasso::cut(sf::Image* canvas, sf::Color emptyColor) {
-	if (state == LassoState::Selected) {
+	if (_state == LassoState::Selected) {
 
-		if (image == nullptr) {
+		if (_image == nullptr) {
 			std::cout << "click\n";
-			image = new sf::Image();
-			image->create(rect.width, rect.height, sf::Color::Transparent);
-			image->copy(*canvas, 0, 0, rect, false);
-			copyImageToClipboard(image, sf::IntRect(0, 0, image->getSize().x, image->getSize().y));
+			_image = new sf::Image();
+			_image->create(_rect.width, _rect.height, sf::Color::Transparent);
+			_image->copy(*canvas, 0, 0, _rect, false);
+			copyImageToClipboard(_image, sf::IntRect(0, 0, _image->getSize().x, _image->getSize().y));
 		}
 		else {
-			copyImageToClipboard(image, sf::IntRect(0, 0, image->getSize().x, image->getSize().y));
+			copyImageToClipboard(_image, sf::IntRect(0, 0, _image->getSize().x, _image->getSize().y));
 			//copyImageToClipboard(image, sf::IntRect(0, 0, image->getSize().x, image->getSize().y), mask);
 		}
 
-		delete image;
-		image = nullptr;
-		state = LassoState::None;
-		rect = sf::IntRect(-1, -1, -1, -1);
+		delete _image;
+		_image = nullptr;
+		_state = LassoState::None;
+		_rect = sf::IntRect(-1, -1, -1, -1);
 	}
 }
 
 void Lasso::generateOutline(bool selectionComplete) {
-	if (points.size() < 3) return;
+	if (_points.size() < 3) return;
 
-	if (rect.width <= 0 || rect.height <= 0)
+	if (_rect.width <= 0 || _rect.height <= 0)
 		return;
 
-	if (outlineRenderTexture.getSize() != sf::Vector2u(rect.width, rect.height))
-		outlineRenderTexture.create(rect.width, rect.height);
+	if (_outlineRenderTexture.getSize() != sf::Vector2u(_rect.width, _rect.height))
+		_outlineRenderTexture.create(_rect.width, _rect.height);
 
-	outlineRenderTexture.clear(sf::Color(0, 0, 0, 0));
+	_outlineRenderTexture.clear(sf::Color(0, 0, 0, 0));
 
 	sf::Color lassoColor = sf::Color(47, 127, 127, 255);
 
 	sf::VertexArray lines(sf::LineStrip);
-	for (auto& point : points)
+	for (auto& point : _points)
 		lines.append(sf::Vertex(sf::Vector2f(point), lassoColor));
 
 	// first and last point
 	sf::VertexArray p(sf::Points);
-	p.append(sf::Vertex(sf::Vector2f(points.front()), lassoColor));
-	p.append(sf::Vertex(sf::Vector2f(points.back()), lassoColor));
+	p.append(sf::Vertex(sf::Vector2f(_points.front()), lassoColor));
+	p.append(sf::Vertex(sf::Vector2f(_points.back()), lassoColor));
 
 	if (selectionComplete)
-		lines.append(sf::Vertex(sf::Vector2f(points.front()), lassoColor));
+		lines.append(sf::Vertex(sf::Vector2f(_points.front()), lassoColor));
 
 	sf::RenderStates rs;
 	rs.blendMode = sf::BlendAlpha;
 	rs.transform.translate(0.5f, 0.5f);
-	outlineRenderTexture.draw(lines, rs);
-	outlineRenderTexture.draw(p, rs);
-	outlineRenderTexture.display();
+	_outlineRenderTexture.draw(lines, rs);
+	_outlineRenderTexture.draw(p, rs);
+	_outlineRenderTexture.display();
 }
 
 sf::RenderTexture* Lasso::generateMask() {
 	sf::RenderTexture* mask = new sf::RenderTexture();
-	mask->create(image->getSize().x, image->getSize().y);
+	mask->create(_image->getSize().x, _image->getSize().y);
 
 	//std::cout << image->getSize().x << ", " << image->getSize().y << "\n";
 
-	if (points.size() >= 3) {
+	if (_points.size() >= 3) {
 		mask->clear(sf::Color::Transparent);
 
 		sf::ConvexShape poly;
-		poly.setPointCount(points.size());
-		for (std::size_t i = 0; i < points.size(); ++i)
-			poly.setPoint(i, sf::Vector2f(points[i]));
+		poly.setPointCount(_points.size());
+		for (std::size_t i = 0; i < _points.size(); ++i)
+			poly.setPoint(i, sf::Vector2f(_points[i]));
 
 		poly.setFillColor(sf::Color::White);
 		poly.setOutlineThickness(0.5f);
@@ -267,39 +268,39 @@ sf::RenderTexture* Lasso::generateMask() {
 }
 
 void Lasso::drawImage(sf::Vector2f canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask) {
-	if (!image) return;
+	if (!_image) return;
 
-	if (image->getSize().x < 1 || image->getSize().y < 1)
+	if (_image->getSize().x < 1 || _image->getSize().y < 1)
 		return;
 
 	generateRect();
 	sf::IntRect canvasRect(0, 0, canvasSize.x, canvasSize.y);
 	sf::IntRect visibleRect;
 
-	if (rect.intersects(canvasRect, visibleRect)) {
-		int tx = visibleRect.left - outlineOffset.x;
-		int ty = visibleRect.top - outlineOffset.y;
+	if (_rect.intersects(canvasRect, visibleRect)) {
+		int tx = visibleRect.left - _outlineOffset.x;
+		int ty = visibleRect.top - _outlineOffset.y;
 
 		sf::IntRect texRect(tx, ty, visibleRect.width, visibleRect.height);
 
-		texture = sf::Texture();
-		texture.loadFromImage(*image);
-		texture.setSmooth(false);
+		_texture = sf::Texture();
+		_texture.loadFromImage(*_image);
+		_texture.setSmooth(false);
 
 		sf::RenderTexture* mask = generateMask();
 
-		shader.setUniform("texture", texture);
-		shader.setUniform("mask", mask->getTexture());
-		shader.setUniform("alphaColor", sf::Vector3f(alphaColor.r, alphaColor.g, alphaColor.b));
+		_shader.setUniform("texture", _texture);
+		_shader.setUniform("mask", mask->getTexture());
+		_shader.setUniform("alphaColor", sf::Vector3f(alphaColor.r, alphaColor.g, alphaColor.b));
 
-		sprite = sf::Sprite(texture);
-		sprite.setTextureRect(texRect);
-		sprite.setScale(scale, scale);
-		sprite.setPosition(canvasPosition + sf::Vector2f(visibleRect.left, visibleRect.top) * scale);
+		_sprite = sf::Sprite(_texture);
+		_sprite.setTextureRect(texRect);
+		_sprite.setScale(scale, scale);
+		_sprite.setPosition(canvasPosition + sf::Vector2f(visibleRect.left, visibleRect.top) * scale);
 
 		sf::RenderStates rs;
-		rs.shader = &shader;
-		window->draw(sprite, rs);
+		rs.shader = &_shader;
+		window->draw(_sprite, rs);
 		delete mask;
 
 	}
@@ -308,16 +309,16 @@ void Lasso::drawImage(sf::Vector2f canvasPosition, sf::Vector2i canvasSize, floa
 }
 
 void Lasso::drawOutline(sf::Vector2f canvasPosition, float scale) {
-	outlineSprite = sf::Sprite(outlineRenderTexture.getTexture());
-	outlineSprite.setScale(scale, scale);
-	outlineSprite.setPosition(canvasPosition + sf::Vector2f(outlineOffset) * scale);
-	window->draw(outlineSprite);
+	_outlineSprite = sf::Sprite(_outlineRenderTexture.getTexture());
+	_outlineSprite.setScale(scale, scale);
+	_outlineSprite.setPosition(canvasPosition + sf::Vector2f(_outlineOffset) * scale);
+	window->draw(_outlineSprite);
 
 }
 
 void Lasso::drawRect(sf::Vector2f canvasPosition, float scale) {
-	sf::RectangleShape r(sf::Vector2f(float(rect.width) * scale, float(rect.height) * scale));
-	r.setPosition(canvasPosition + sf::Vector2f(rect.left * scale, rect.top * scale));
+	sf::RectangleShape r(sf::Vector2f(float(_rect.width) * scale, float(_rect.height) * scale));
+	r.setPosition(canvasPosition + sf::Vector2f(_rect.left * scale, _rect.top * scale));
 	r.setFillColor(sf::Color(127, 47, 47, 127));
 	r.setOutlineColor(sf::Color(47, 127, 127, 255));
 	r.setOutlineThickness(4.0f);
@@ -327,15 +328,15 @@ void Lasso::drawRect(sf::Vector2f canvasPosition, float scale) {
 
 void Lasso::draw(sf::Vector2f canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor) {
 
-	if (points.size() >= 3) {
-		if (state == LassoState::Selecting) {
+	if (_points.size() >= 3) {
+		if (_state == LassoState::Selecting) {
 			drawImage(canvasPosition, canvasSize, scale, alphaColor, false);
 			generateOutline(false);
 			drawOutline(canvasPosition, scale);
 
 		}
 
-		if (state == LassoState::Selected || state == LassoState::Moving) {
+		if (_state == LassoState::Selected || _state == LassoState::Moving) {
 			drawImage(canvasPosition, canvasSize, scale, alphaColor, true);
 			drawRect(canvasPosition, scale);
 			generateOutline(true);

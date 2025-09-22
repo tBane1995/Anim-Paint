@@ -2,7 +2,7 @@
 
 Dialog_Save_As::Dialog_Save_As() : Dialog(L"Save As", sf::Vector2f(400, 240), sf::Vector2f(8, 120)) {
 
-	setPosition(position);
+	setPosition(_position);
 }
 
 Dialog_Save_As::~Dialog_Save_As() {

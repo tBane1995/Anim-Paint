@@ -5,9 +5,9 @@ enum class BrushType { Square, Circle };
 
 class Brush {
 public:
-    BrushType type;
-    int size;
-    sf::Vector2i pos_px;
+    BrushType _type;
+    int _size;
+    sf::Vector2i _pos_px;
 
     Brush(int size);
     ~Brush();

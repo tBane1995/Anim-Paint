@@ -8,42 +8,42 @@ class Canvas : public ElementGUI {
 public:
 
 	// background
-	sf::Image bg_image;
-	sf::Texture bg_texture;
-	sf::Sprite bg_sprite;
+	sf::Image _bg_image;
+	sf::Texture _bg_texture;
+	sf::Sprite _bg_sprite;
 
-	sf::Vector2i size;
-	sf::Vector2f position;
+	sf::Vector2i _size;
+	sf::Vector2f _position;
 
 	//std::vector < sf::Texture* > canvas_textures;
 	//std::vector < sf::Sprite > canvas_sprites;
 
-	int pixelSize;
+	int _pixelSize;
 
-	float zoom;			// in percentage
-	float zoom_delta;	// const
-	float min_zoom;
-	float max_zoom;
+	float _zoom;			// in percentage
+	float _zoom_delta;	// const
+	float _min_zoom;
+	float _max_zoom;
 
-	sf::Vector2f edgePointSize;
-	std::vector < sf::RectangleShape* > edgePoints;	// points use to resize of canvas
-	sf::RectangleShape* point_left_top;
-	sf::RectangleShape* point_top;
-	sf::RectangleShape* point_right_top;
-	sf::RectangleShape* point_left;
-	sf::RectangleShape* point_right;
-	sf::RectangleShape* point_left_bottom;
-	sf::RectangleShape* point_bottom;
-	sf::RectangleShape* point_right_bottom;
-	sf::RectangleShape* hoveredEdgePoint;
-	sf::RectangleShape* clickedEdgePoint;
-	sf::Vector2f orginalEdgePointPosition;
-	std::vector < Frame* > backupFrames;
+	sf::Vector2f _edgePointSize;
+	std::vector < sf::RectangleShape* > _edgePoints;	// points use to resize of canvas
+	sf::RectangleShape* _point_left_top;
+	sf::RectangleShape* _point_top;
+	sf::RectangleShape* _point_right_top;
+	sf::RectangleShape* _point_left;
+	sf::RectangleShape* _point_right;
+	sf::RectangleShape* _point_left_bottom;
+	sf::RectangleShape* _point_bottom;
+	sf::RectangleShape* _point_right_bottom;
+	sf::RectangleShape* _hoveredEdgePoint;
+	sf::RectangleShape* _clickedEdgePoint;
+	sf::Vector2f _orginalEdgePointPosition;
+	std::vector < Frame* > _backupFrames;
 
-	CanvasState state;
-	sf::Vector2f offset;	// to movements of canvas
+	CanvasState _state;
+	sf::Vector2f _offset;	// to movements of canvas
 
-	bool brush_is_visible;
+	bool _brush_is_visible;
 
 	Canvas(sf::Vector2i size);
 	~Canvas();

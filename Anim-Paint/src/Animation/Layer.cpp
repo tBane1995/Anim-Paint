@@ -1,15 +1,15 @@
 #include "Animation/Layer.hpp"
 
 Layer::Layer(std::wstring name, sf::Vector2i size) {
-	this->name = name;
+	_name = name;
 
-	image = sf::Image();
-	image.create(size.x, size.y, sf::Color::White);
+	_image = sf::Image();
+	_image.create(size.x, size.y, sf::Color::White);
 }
 
 Layer::Layer(Layer* layer) {
-	this->name = layer->name;
-	this->image = layer->image;
+	_name = layer->_name;
+	_image = layer->_image;
 }
 
 Layer::~Layer() {

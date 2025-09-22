@@ -9,13 +9,13 @@
 class LayerBox : public ElementGUI {
 public:
 
-	sf::RectangleShape rect;			
-	Checkbox* visibling;				// is Visible or No on Canvas
-	sf::Text textName;					// text for name
+	sf::RectangleShape _rect;			
+	Checkbox* _visibling;				// is Visible or No on Canvas
+	sf::Text _textName;					// text for name
 
-	Layer* layer;
-	bool isActive;						// active to draw
-	std::function<void()> onclick_func;	// onclick func
+	Layer* _layer;
+	bool _isActive;						// active to draw
+	std::function<void()> _onclick_func;	// onclick func
 
 	LayerBox(Layer* layer);
 	~LayerBox();

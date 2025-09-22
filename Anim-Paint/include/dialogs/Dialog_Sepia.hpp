@@ -8,15 +8,15 @@ enum class SepiaState { Idle, Edited };
 
 class Dialog_Sepia : public Dialog {
 public:
-	SepiaState state;
+	SepiaState _state;
 
-	sf::Text sepia_text;
-	Slider* sepia_slider;
-	NormalButtonWithText* reset;
-	NormalButtonWithText* confirm;
+	sf::Text _sepia_text;
+	Slider* _sepia_slider;
+	NormalButtonWithText* _reset;
+	NormalButtonWithText* _confirm;
 
-	std::vector < Layer* > original_layers;
-	std::vector < Layer* > edited_layers;
+	std::vector < Layer* > _original_layers;
+	std::vector < Layer* > _edited_layers;
 
 	Dialog_Sepia(std::vector < Layer* > layers);
 	~Dialog_Sepia();

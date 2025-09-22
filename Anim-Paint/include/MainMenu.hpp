@@ -4,11 +4,11 @@
 
 class OptionBox : public ElementGUI {
 public:
-	sf::RectangleShape rect;
-	sf::Text text;
-	ButtonState state;
-	std::function<void()> onclick_func;
-	sf::Time clickTime;
+	sf::RectangleShape _rect;
+	sf::Text _text;
+	ButtonState _state;
+	std::function<void()> _onclick_func;
+	sf::Time _clickTime;
 
 	OptionBox(std::wstring text);
 	~OptionBox();
@@ -26,13 +26,13 @@ public:
 
 class MenuBox : public ElementGUI {
 public:
-	sf::RectangleShape rect;
-	sf::Text text;
-	ButtonState state;
-	std::function<void()> onclick_func;
-	sf::Time clickTime;
-	std::vector < OptionBox* > options;
-	bool isOpen;
+	sf::RectangleShape _rect;
+	sf::Text _text;
+	ButtonState _state;
+	std::function<void()> _onclick_func;
+	sf::Time _clickTime;
+	std::vector < OptionBox* > _options;
+	bool _isOpen;
 
 	MenuBox(std::wstring text);
 	~MenuBox();
@@ -52,10 +52,10 @@ public:
 class MainMenu : public ElementGUI {
 public:
 
-	sf::RectangleShape rect;
-	sf::Sprite logo;
-	std::vector < MenuBox* > menu_boxes;
-	MenuBox* open_menu_box;
+	sf::RectangleShape _rect;
+	sf::Sprite _logo;
+	std::vector < MenuBox* > _menu_boxes;
+	MenuBox* _open_menu_box;
 
 	MainMenu();
 	~MainMenu();
