@@ -73,12 +73,6 @@ int main() {
 	toolbar = new Toolbar();
 	canvas = new Canvas(sf::Vector2i(animation->getLayer(0)->image.getSize()));
 
-	for (int y = 0; y < 32; y++) {
-		for (int x = 0; x < 4; x++) {
-			animation->getCurrentLayer()->image.setPixel(x+6, y+6, sf::Color::Black);
-		}
-	}
-
 	while (window->isOpen()) {
 		prevTime = currentTime;
 		currentTime = mainClock.getElapsedTime();

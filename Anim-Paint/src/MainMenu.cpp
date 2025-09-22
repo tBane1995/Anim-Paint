@@ -4,6 +4,7 @@
 #include "Mouse.hpp"
 #include "Window.hpp"
 #include "Dialogs/Dialog.hpp"
+#include "Dialogs/Dialog_Save_As.hpp"
 #include "Dialogs/Dialog_Rotation.hpp"
 #include "Dialogs/Dialog_Brightness_Contrast.hpp"
 #include "Dialogs/Dialog_Saturation.hpp"
@@ -234,7 +235,15 @@ MainMenu::MainMenu() : ElementGUI() {
 		open_menu_box = nullptr;
 		};
 	OptionBox* file_save = new OptionBox(L"save");
+
 	OptionBox* file_saveAs = new OptionBox(L"save as");
+	file_saveAs->onclick_func = [this]() {
+		dialogs.push_back(new Dialog_Save_As());
+		if (this->open_menu_box != nullptr)
+			open_menu_box->isOpen = false;
+		open_menu_box = nullptr;
+		};
+
 	OptionBox* file_open = new OptionBox(L"open");
 	OptionBox* file_export = new OptionBox(L"export");
 	OptionBox* file_import = new OptionBox(L"import");

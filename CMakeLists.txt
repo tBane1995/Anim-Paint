@@ -21,6 +21,7 @@ set(SOURCES
     Anim-Paint/src/Animation/Frame.cpp
     Anim-Paint/src/Animation/Animation.cpp
     Anim-Paint/src/Dialogs/Dialog.cpp
+    Anim-Paint/src/Dialogs/Dialog_Save_As.cpp
     Anim-Paint/src/Dialogs/FramesDialog.cpp
     Anim-Paint/src/Dialogs/LayersDialog.cpp
     Anim-Paint/src/Dialogs/Dialog_Rotation.cpp
@@ -59,6 +60,7 @@ set(HEADERS
     Anim-Paint/include/Animation/Frame.hpp
     Anim-Paint/include/Animation/Animation.hpp
     Anim-Paint/include/Dialogs/Dialog.hpp
+    Anim-Paint/include/Dialogs/Dialog_Save_As.hpp
     Anim-Paint/include/Dialogs/FramesDialog.hpp
     Anim-Paint/include/Dialogs/LayersDialog.hpp
     Anim-Paint/include/Dialogs/Dialog_Rotation.hpp
