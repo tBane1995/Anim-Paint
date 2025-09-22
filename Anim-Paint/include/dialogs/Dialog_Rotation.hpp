@@ -1,24 +1,25 @@
 #pragma once
 #include "Dialog.hpp"
-#include "ElementGUI/Slider.hpp"
+#include "../ElementGUI/Slider.hpp"
 #include "Animation/Layer.hpp"
 
-enum class SaturationState { Idle, Edited };
+enum class RotationState { Idle, Edited };
 
-class Dialog_Image_Saturation : public Dialog {
+class Dialog_Rotation : public Dialog {
 public:
-	SaturationState state;
 
-	sf::Text saturation_text;
-	Slider* saturation_slider;
+	RotationState state;
+
+	sf::Text rotation_text;
+	Slider* rotation_slider;
 	NormalButtonWithText* reset;
 	NormalButtonWithText* confirm;
 
 	std::vector < Layer* > original_layers;
 	std::vector < Layer* > edited_layers;
 
-	Dialog_Image_Saturation(std::vector < Layer* > layers);
-	~Dialog_Image_Saturation();
+	Dialog_Rotation(std::vector < Layer* > layers);
+	~Dialog_Rotation();
 
 	void setPosition(sf::Vector2f position);
 	void setTheFilter();

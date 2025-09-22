@@ -1,11 +1,11 @@
-#include "Dialogs/Dialog_Image_Brightness_Contrast.hpp"
+#include "Dialogs/Dialog_Brightness_Contrast.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
 #include "Dialogs/LayersDialog.hpp"
 #include "Filters.hpp"
 #include "Window.hpp"
 
-Dialog_Image_Brightness_Contrast::Dialog_Image_Brightness_Contrast(std::vector < Layer* > layers) : Dialog(L"brightness-contrast", sf::Vector2f(256, 160), sf::Vector2f(8, 120)) {
+Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector < Layer* > layers) : Dialog(L"brightness-contrast", sf::Vector2f(256, 160), sf::Vector2f(8, 120)) {
 
 	state = BrightnessContrastState::Idle;
 
@@ -27,7 +27,7 @@ Dialog_Image_Brightness_Contrast::Dialog_Image_Brightness_Contrast(std::vector <
 
 	confirm = new NormalButtonWithText(L"confirm", sf::Vector2f(64, 32));
 	confirm->onclick_func = [this]() {
-		Dialog_Image_Brightness_Contrast::state = BrightnessContrastState::Edited;
+		Dialog_Brightness_Contrast::state = BrightnessContrastState::Edited;
 		Dialog::state = DialogState::ToClose;
 
 		animation->getCurrentFrame()->layers.clear();
@@ -46,9 +46,9 @@ Dialog_Image_Brightness_Contrast::Dialog_Image_Brightness_Contrast(std::vector <
 	setPosition(position);
 }
 
-Dialog_Image_Brightness_Contrast::~Dialog_Image_Brightness_Contrast() {
+Dialog_Brightness_Contrast::~Dialog_Brightness_Contrast() {
 
-	if (Dialog_Image_Brightness_Contrast::state == BrightnessContrastState::Idle) {
+	if (Dialog_Brightness_Contrast::state == BrightnessContrastState::Idle) {
 		brightness_slider->setValue(0);
 		contrast_slider->setValue(0);
 		setTheFilter();
@@ -59,7 +59,7 @@ Dialog_Image_Brightness_Contrast::~Dialog_Image_Brightness_Contrast() {
 	}
 }
 
-void Dialog_Image_Brightness_Contrast::setPosition(sf::Vector2f position) {
+void Dialog_Brightness_Contrast::setPosition(sf::Vector2f position) {
 	Dialog::setPosition(position);
 
 	sf::Vector2f text_pos;
@@ -82,7 +82,7 @@ void Dialog_Image_Brightness_Contrast::setPosition(sf::Vector2f position) {
 	confirm->setPosition(button_pos + sf::Vector2f(48, 0));
 }
 
-void Dialog_Image_Brightness_Contrast::setTheFilter() {
+void Dialog_Brightness_Contrast::setTheFilter() {
 	for (auto& lr : edited_layers) {
 		delete lr;
 	}
@@ -102,7 +102,7 @@ void Dialog_Image_Brightness_Contrast::setTheFilter() {
 
 }
 
-void Dialog_Image_Brightness_Contrast::cursorHover() {
+void Dialog_Brightness_Contrast::cursorHover() {
 	Dialog::cursorHover();
 
 	brightness_slider->cursorHover();
@@ -112,7 +112,7 @@ void Dialog_Image_Brightness_Contrast::cursorHover() {
 	confirm->cursorHover();
 }
 
-void Dialog_Image_Brightness_Contrast::handleEvent(sf::Event& event) {
+void Dialog_Brightness_Contrast::handleEvent(sf::Event& event) {
 	Dialog::handleEvent(event);
 
 	brightness_slider->handleEvent(event);
@@ -122,7 +122,7 @@ void Dialog_Image_Brightness_Contrast::handleEvent(sf::Event& event) {
 	confirm->handleEvent(event);
 }
 
-void Dialog_Image_Brightness_Contrast::update() {
+void Dialog_Brightness_Contrast::update() {
 	Dialog::update();
 
 	brightness_slider->update();
@@ -137,7 +137,7 @@ void Dialog_Image_Brightness_Contrast::update() {
 
 }
 
-void Dialog_Image_Brightness_Contrast::draw() {
+void Dialog_Brightness_Contrast::draw() {
 	Dialog::draw();
 
 	window->draw(brightness_text);

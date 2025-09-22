@@ -5,7 +5,7 @@
 
 enum class BrightnessContrastState { Idle, Edited };
 
-class Dialog_Image_Brightness_Contrast : public Dialog {
+class Dialog_Brightness_Contrast : public Dialog {
 public:
 	BrightnessContrastState state;
 
@@ -21,8 +21,8 @@ public:
 	std::vector < Layer* > original_layers;
 	std::vector < Layer* > edited_layers;
 
-	Dialog_Image_Brightness_Contrast(std::vector < Layer* > layers);
-	~Dialog_Image_Brightness_Contrast();
+	Dialog_Brightness_Contrast(std::vector < Layer* > layers);
+	~Dialog_Brightness_Contrast();
 
 	void setPosition(sf::Vector2f position);
 	void setTheFilter();

@@ -6,7 +6,7 @@
 
 enum class SepiaState { Idle, Edited };
 
-class Dialog_Image_Sepia : public Dialog {
+class Dialog_Sepia : public Dialog {
 public:
 	SepiaState state;
 
@@ -18,8 +18,8 @@ public:
 	std::vector < Layer* > original_layers;
 	std::vector < Layer* > edited_layers;
 
-	Dialog_Image_Sepia(std::vector < Layer* > layers);
-	~Dialog_Image_Sepia();
+	Dialog_Sepia(std::vector < Layer* > layers);
+	~Dialog_Sepia();
 
 	void setPosition(sf::Vector2f position);
 	void setTheFilter();

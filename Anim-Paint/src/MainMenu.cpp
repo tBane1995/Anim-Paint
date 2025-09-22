@@ -4,10 +4,10 @@
 #include "Mouse.hpp"
 #include "Window.hpp"
 #include "Dialogs/Dialog.hpp"
-#include "Dialogs/Dialog_Image_Rotation.hpp"
-#include "Dialogs/Dialog_Image_Brightness_Contrast.hpp"
-#include "Dialogs/Dialog_Image_Saturation.hpp"
-#include "Dialogs/Dialog_Image_Sepia.hpp"
+#include "Dialogs/Dialog_Rotation.hpp"
+#include "Dialogs/Dialog_Brightness_Contrast.hpp"
+#include "Dialogs/Dialog_Saturation.hpp"
+#include "Dialogs/Dialog_Sepia.hpp"
 #include "Animation/Animation.hpp"
 
 OptionBox::OptionBox(std::wstring text) {
@@ -284,7 +284,7 @@ MainMenu::MainMenu() : ElementGUI() {
 	OptionBox* image_trim = new OptionBox(L"trim");
 	OptionBox* image_rotation = new OptionBox(L"rotation");
 	image_rotation->onclick_func = [this]() {
-		dialogs.push_back(new Dialog_Image_Rotation(animation->getLayers()));
+		dialogs.push_back(new Dialog_Rotation(animation->getLayers()));
 
 		if (open_menu_box != nullptr)
 			open_menu_box->isOpen = false;
@@ -292,7 +292,7 @@ MainMenu::MainMenu() : ElementGUI() {
 		};
 	OptionBox* image_brightness_contrast = new OptionBox(L"brightness-contrast");
 	image_brightness_contrast->onclick_func = [this]() {
-		dialogs.push_back(new Dialog_Image_Brightness_Contrast(animation->getLayers()));
+		dialogs.push_back(new Dialog_Brightness_Contrast(animation->getLayers()));
 
 		if (open_menu_box != nullptr)
 			open_menu_box->isOpen = false;
@@ -300,7 +300,7 @@ MainMenu::MainMenu() : ElementGUI() {
 		};
 	OptionBox* image_saturation = new OptionBox(L"saturation");
 	image_saturation->onclick_func = [this]() {
-		dialogs.push_back(new Dialog_Image_Saturation(animation->getLayers()));
+		dialogs.push_back(new Dialog_Saturation(animation->getLayers()));
 
 		if (open_menu_box != nullptr)
 			open_menu_box->isOpen = false;
@@ -313,7 +313,7 @@ MainMenu::MainMenu() : ElementGUI() {
 
 	OptionBox* image_sepia = new OptionBox(L"sepia");
 	image_sepia->onclick_func = [this]() {
-		dialogs.push_back(new Dialog_Image_Sepia(animation->getLayers()));
+		dialogs.push_back(new Dialog_Sepia(animation->getLayers()));
 
 		if (open_menu_box != nullptr)
 			open_menu_box->isOpen = false;

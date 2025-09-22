@@ -23,10 +23,10 @@ set(SOURCES
     Anim-Paint/src/Dialogs/Dialog.cpp
     Anim-Paint/src/Dialogs/FramesDialog.cpp
     Anim-Paint/src/Dialogs/LayersDialog.cpp
-    Anim-Paint/src/Dialogs/Dialog_Image_Rotation.cpp
-    Anim-Paint/src/Dialogs/Dialog_Image_Brightness_Contrast.cpp
-    Anim-Paint/src/Dialogs/Dialog_Image_Saturation.cpp
-    Anim-Paint/src/Dialogs/Dialog_Image_Sepia.cpp
+    Anim-Paint/src/Dialogs/Dialog_Rotation.cpp
+    Anim-Paint/src/Dialogs/Dialog_Brightness_Contrast.cpp
+    Anim-Paint/src/Dialogs/Dialog_Saturation.cpp
+    Anim-Paint/src/Dialogs/Dialog_Sepia.cpp
     Anim-Paint/src/MainMenu.cpp
     Anim-Paint/src/Tools/Selection.cpp
     Anim-Paint/src/Tools/Lasso.cpp
@@ -61,10 +61,10 @@ set(HEADERS
     Anim-Paint/include/Dialogs/Dialog.hpp
     Anim-Paint/include/Dialogs/FramesDialog.hpp
     Anim-Paint/include/Dialogs/LayersDialog.hpp
-    Anim-Paint/include/Dialogs/Dialog_Image_Rotation.hpp
-    Anim-Paint/include/Dialogs/Dialog_Image_Brightness_Contrast.hpp
-    Anim-Paint/include/Dialogs/Dialog_Image_Saturation.hpp
-    Anim-Paint/include/Dialogs/Dialog_Image_Sepia.hpp
+    Anim-Paint/include/Dialogs/Dialog_Rotation.hpp
+    Anim-Paint/include/Dialogs/Dialog_Brightness_Contrast.hpp
+    Anim-Paint/include/Dialogs/Dialog_Saturation.hpp
+    Anim-Paint/include/Dialogs/Dialog_Sepia.hpp
     Anim-Paint/include/MainMenu.hpp
     Anim-Paint/include/Tools/Selection.hpp
     Anim-Paint/include/Tools/Lasso.hpp

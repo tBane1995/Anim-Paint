@@ -1,32 +1,31 @@
-#include "Dialogs/Dialog_Image_Saturation.hpp"
+#include "Dialogs/Dialog_Rotation.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
 #include "Dialogs/LayersDialog.hpp"
-#include "Filters.hpp"
 #include "Window.hpp"
+#include "Filters.hpp"
 
-Dialog_Image_Saturation::Dialog_Image_Saturation(std::vector < Layer* > layers) : Dialog(L"saturation", sf::Vector2f(256, 160), sf::Vector2f(8, 120)) {
+Dialog_Rotation::Dialog_Rotation(std::vector < Layer* > layers) : Dialog(L"rotation", sf::Vector2f(256, 160), sf::Vector2f(8, 120)) {
 
-	state = SaturationState::Idle;
+	state = RotationState::Idle;
+	rotation_text = sf::Text(L"rotation", basicFont, 13);
 
-	saturation_text = sf::Text(L"saturation", basicFont, 13);
-
-	saturation_slider = new Slider(0, 200);
-	saturation_slider->setValue(100);
+	rotation_slider = new Slider(0, 359);
+	rotation_slider->setValue(0);
 
 	reset = new NormalButtonWithText(L"reset", sf::Vector2f(64, 32));
 	reset->onclick_func = [this]() {
-		saturation_slider->setValue(100);
+		rotation_slider->setValue(0);
 		setTheFilter();
 		};
 
 	confirm = new NormalButtonWithText(L"confirm", sf::Vector2f(64, 32));
 	confirm->onclick_func = [this]() {
 		Dialog::state = DialogState::ToClose;
-		Dialog_Image_Saturation::state = SaturationState::Edited;
+		Dialog_Rotation::state = RotationState::Edited;
 
-		animation->getCurrentFrame()->layers.clear();
-		animation->getCurrentFrame()->layers = edited_layers;
+		animation->getCurrentFrame()->getLayers().clear();
+		animation->getCurrentFrame()->getLayers() = edited_layers;
 		layers_dialog->loadLayersFromCurrentFrame();
 		};
 
@@ -39,29 +38,31 @@ Dialog_Image_Saturation::Dialog_Image_Saturation(std::vector < Layer* > layers) 
 	setPosition(position);
 }
 
-Dialog_Image_Saturation::~Dialog_Image_Saturation() {
-	if (Dialog_Image_Saturation::state == SaturationState::Idle) {
-		saturation_slider->setValue(100);
+Dialog_Rotation::~Dialog_Rotation() {
+	if (Dialog_Rotation::state == RotationState::Idle) {
+		rotation_slider->setValue(0);
 		setTheFilter();
 
+		// TO-DO
 		animation->getCurrentFrame()->layers.clear();
 		animation->getCurrentFrame()->layers = edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		//layers_dialog->loadLayersFromCurrentFrame();
 	}
+
 }
 
-void Dialog_Image_Saturation::setPosition(sf::Vector2f position) {
+void Dialog_Rotation::setPosition(sf::Vector2f position) {
 	Dialog::setPosition(position);
 
 	sf::Vector2f text_pos;
 	text_pos.x = int(position.x) / 8 * 8 + 24;
 	text_pos.y = int(position.y) / 8 * 8 + dialog_title_rect_height / 2 + (160) / 2 - 24;
-	saturation_text.setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
+	rotation_text.setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
 
 	sf::Vector2f slider_pos;
 	slider_pos.x = int(position.x) / 8 * 8 + 256 / 2 - 64 / 2;
 	slider_pos.y = int(position.y) / 8 * 8 + dialog_title_rect_height / 2 + (160) / 2 - 24;
-	saturation_slider->setPosition(slider_pos);
+	rotation_slider->setPosition(slider_pos);
 
 	sf::Vector2f button_pos;
 	button_pos.x = int(position.x) / 8 * 8 + 256 / 2 - 32;
@@ -70,7 +71,7 @@ void Dialog_Image_Saturation::setPosition(sf::Vector2f position) {
 	confirm->setPosition(button_pos + sf::Vector2f(48, 0));
 }
 
-void Dialog_Image_Saturation::setTheFilter() {
+void Dialog_Rotation::setTheFilter() {
 	for (auto& lr : edited_layers) {
 		delete lr;
 	}
@@ -79,37 +80,36 @@ void Dialog_Image_Saturation::setTheFilter() {
 
 	for (auto& org : original_layers) {
 		edited_layers.push_back(new Layer(org));
-		set_saturation(edited_layers.back()->image, float(saturation_slider->getValue()) / 100.0f);
+		set_rotation(edited_layers.back()->image, rotation_slider->getValue(), true);
 	}
 
-	// TO-DO
 	animation->getCurrentFrame()->layers.clear();
 	animation->getCurrentFrame()->layers = edited_layers;
-	//layers_dialog->loadLayersFromCurrentFrame();
+	layers_dialog->loadLayersFromCurrentFrame();
 }
 
-void Dialog_Image_Saturation::cursorHover() {
+void Dialog_Rotation::cursorHover() {
 	Dialog::cursorHover();
 
-	this->saturation_slider->cursorHover();
+	this->rotation_slider->cursorHover();
 	reset->cursorHover();
 	confirm->cursorHover();
 }
 
-void Dialog_Image_Saturation::handleEvent(sf::Event& event) {
+void Dialog_Rotation::handleEvent(sf::Event& event) {
 	Dialog::handleEvent(event);
 
-	this->saturation_slider->handleEvent(event);
+	this->rotation_slider->handleEvent(event);
 	reset->handleEvent(event);
 	confirm->handleEvent(event);
 }
 
-void Dialog_Image_Saturation::update() {
+void Dialog_Rotation::update() {
 	Dialog::update();
 
-	saturation_slider->update();
+	rotation_slider->update();
 
-	if (saturation_slider->state == SliderState::Changed) {
+	if (rotation_slider->state == SliderState::Changed) {
 
 		setTheFilter();
 	}
@@ -118,11 +118,11 @@ void Dialog_Image_Saturation::update() {
 	confirm->update();
 }
 
-void Dialog_Image_Saturation::draw() {
+void Dialog_Rotation::draw() {
 	Dialog::draw();
 
-	window->draw(saturation_text);
-	saturation_slider->draw();
+	window->draw(rotation_text);
+	rotation_slider->draw();
 	reset->draw();
 	confirm->draw();
 }

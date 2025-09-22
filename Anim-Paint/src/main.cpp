@@ -29,10 +29,10 @@
 #include "Dialogs/Dialog.hpp"
 #include "Dialogs/FramesDialog.hpp"
 #include "Dialogs/LayersDialog.hpp"
-#include "Dialogs/Dialog_Image_Rotation.hpp"
-#include "Dialogs/Dialog_Image_Brightness_Contrast.hpp"
-#include "Dialogs/Dialog_Image_Saturation.hpp"
-#include "Dialogs/Dialog_Image_Sepia.hpp"
+#include "Dialogs/Dialog_Rotation.hpp"
+#include "Dialogs/Dialog_Brightness_Contrast.hpp"
+#include "Dialogs/Dialog_Saturation.hpp"
+#include "Dialogs/Dialog_Sepia.hpp"
 
 #include "MainMenu.hpp"
 
