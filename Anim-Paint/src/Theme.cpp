@@ -54,6 +54,7 @@ sf::Color tools_button_press_border_color;
 
 // normal text
 sf::Color normal_text_color;
+float normal_text_font_size;
 
 // canvas
 sf::Color canvas_color1;
@@ -119,6 +120,7 @@ void loadTheme() {
 
 	// normal text
 	normal_text_color = sf::Color(191, 191, 191);
+	normal_text_font_size = 17;
 
 	// canvas
 	canvas_color1 = sf::Color(63, 63, 63);

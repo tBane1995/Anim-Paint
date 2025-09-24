@@ -54,6 +54,7 @@ extern sf::Color tools_button_press_border_color;
 
 // normal text
 extern sf::Color normal_text_color;
+extern float normal_text_font_size;
 
 // canvas
 extern sf::Color canvas_color1;
