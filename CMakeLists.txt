@@ -14,6 +14,7 @@ set(SOURCES
     Anim-Paint/src/ElementGUI/Button.cpp
     Anim-Paint/src/ElementGUI/Checkbox.cpp
     Anim-Paint/src/ElementGUI/Slider.cpp
+    Anim-Paint/src/ElementGUI/Scrollbar.cpp
     Anim-Paint/src/WorldToTileConverter.cpp
     Anim-Paint/src/Clipboard.cpp
     Anim-Paint/src/Filters.cpp
@@ -53,6 +54,7 @@ set(HEADERS
     Anim-Paint/include/ElementGUI/Button.hpp
     Anim-Paint/include/ElementGUI/Checkbox.hpp
     Anim-Paint/include/ElementGUI/Slider.hpp
+    Anim-Paint/include/ElementGUI/Scrollbar.hpp
     Anim-Paint/include/WorldToTileConverter.hpp
     Anim-Paint/include/Clipboard.hpp
     Anim-Paint/include/Filters.hpp

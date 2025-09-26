@@ -7,6 +7,7 @@ sf::Font basicFont;
 int dialog_margin;				// distance from edge of screen to dialog
 int dialog_padding;
 float dialog_title_font_size;
+float dialog_content_font_size;
 int dialog_title_rect_height;
 int dialog_border_width;
 sf::Color dialog_border_color;
@@ -71,6 +72,7 @@ void loadTheme() {
 	dialog_margin = 8;
 	dialog_padding = 8;
 	dialog_title_font_size = 17;
+	dialog_content_font_size = 13;
 	dialog_title_rect_height = 32;
 	dialog_border_width = 1;
 	dialog_border_color = sf::Color(63, 63, 63);

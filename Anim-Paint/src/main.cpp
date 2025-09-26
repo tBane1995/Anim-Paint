@@ -29,6 +29,7 @@
 #include "Dialogs/Dialog.hpp"
 #include "Dialogs/FramesDialog.hpp"
 #include "Dialogs/LayersDialog.hpp"
+#include "Dialogs/Dialog_Save_As.hpp"
 #include "Dialogs/Dialog_Rotation.hpp"
 #include "Dialogs/Dialog_Brightness_Contrast.hpp"
 #include "Dialogs/Dialog_Saturation.hpp"
@@ -72,6 +73,8 @@ int main() {
 	brush = new Brush(2);
 	toolbar = new Toolbar();
 	canvas = new Canvas(sf::Vector2i(animation->getLayer(0)->_image.getSize()));
+
+	dialogs.push_back(new Dialog_Save_As());
 
 	while (window->isOpen()) {
 		prevTime = currentTime;
