@@ -39,6 +39,7 @@ void loadTextures() {
 	// dialogs
 	loadTexture(L"tex\\dialog\\close.png");
 	loadTexture(L"tex\\dialog\\close_hover.png");
+	loadTexture(L"tex\\dialog\\harddrive.png");
 	loadTexture(L"tex\\dialog\\dictionary.png");
 	loadTexture(L"tex\\dialog\\file.png");
 	loadTexture(L"tex\\dialog\\empty.png");

@@ -2,7 +2,10 @@
 #include <string>
 #include <functional>
 #define NOMINMAX
-#include <Windows.h>
+#include <windows.h>
+#include <fcntl.h>
+#include <io.h>
+
 #include "SFML/Graphics.hpp"
 
 #include "Window.hpp"
@@ -29,6 +32,7 @@
 #include "Dialogs/Dialog.hpp"
 #include "Dialogs/FramesDialog.hpp"
 #include "Dialogs/LayersDialog.hpp"
+#include "Dialogs/Dialog_Save_As.hpp"
 #include "Dialogs/Dialog_Rotation.hpp"
 #include "Dialogs/Dialog_Brightness_Contrast.hpp"
 #include "Dialogs/Dialog_Saturation.hpp"
@@ -59,7 +63,8 @@ void createDialogs() {
 }
 
 int main() {
-	
+	_setmode(_fileno(stdout), _O_U16TEXT); // wide char UTF-16 output
+
 	window  = new sf::RenderWindow(sf::VideoMode(800,600), "Anim Paint", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
 
 	loadTextures();
@@ -72,6 +77,8 @@ int main() {
 	brush = new Brush(2);
 	toolbar = new Toolbar();
 	canvas = new Canvas(sf::Vector2i(animation->getLayer(0)->_image.getSize()));
+
+	dialogs.push_back(new Dialog_Save_As());
 
 	while (window->isOpen()) {
 		prevTime = currentTime;
@@ -125,10 +132,11 @@ int main() {
 				toolbar->handleEvent(event);
 				main_menu->handleEvent(event);
 				
-				
+				canvas->handleEvent(event);
+
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
-				canvas->handleEvent(event);
+				
 				
 				
 			}
