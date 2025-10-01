@@ -1,30 +1,29 @@
-#include "ElementGUI/Scrollbar.hpp"
+﻿#include "ElementGUI/Scrollbar.hpp"
 #include "Window.hpp"
 #include "Mouse.hpp"
 #include <iostream>
 
 Scrollbar::Scrollbar(float x, float y, float width, float height, int min_value, int max_value, int slider_size, int value) {
 	
-	setMin(min_value);
-	setMax(max_value);
-	_slider_size = slider_size;
-	_value = value;
+	
 
 	_rect = sf::RectangleShape(sf::Vector2f(width, height));
 	_rect.setFillColor(sf::Color(79, 79, 79));
 
 	_slider = sf::RectangleShape(sf::Vector2f(width, width));
-	_slider.setFillColor(sf::Color::Red);
-	updateSliderSize();
-	updateSliderPosition();
+	_slider.setFillColor(sf::Color(47,47,47));
 
+	_min_value = min_value;
+	_max_value = max_value;
+	_slider_size = slider_size;
+	_value = value;
+
+	updateSliderSize();
 	setPosition(x, y);
 
 	_state = ScrollbarState::Idle;
 	_func = {};
 	_dragOffset = sf::Vector2f(0, 0);
-
-	
 }
 
 
@@ -51,28 +50,37 @@ void Scrollbar::setValue(int value) {
 }
 
 void Scrollbar::updateSliderSize() {
+	sf::Vector2f slider = _rect.getSize();
+	int range = _max_value - _min_value;
 
-	sf::Vector2f size = _rect.getSize();
+	if (range <= 0) {                               // treść mieści się w oknie
+		_slider.setSize({ slider.x, slider.y });        // kciuk = pełen tor
+		return;
+	}
 
-	if(_max_value - _min_value == 0)
-		size.y = size.y; // full size
-	else if (_slider_size >= (_max_value - _min_value))
-		size.y = size.y; // full size
-	else
-		size.y = (_slider_size / (float)(_max_value - _min_value)) * size.y;
+	float sizeY = slider.y * ((float)_slider_size / ((float)range + (float)_slider_size));
 
-	_slider.setSize(size);
+	_slider.setSize({ slider.x, sizeY });
 }
 
 void Scrollbar::updateSliderPosition() {
-	sf::Vector2f position = _rect.getPosition();
-	position.y += ((_value - _min_value) / (float)(_max_value - _min_value)) * (_rect.getSize().y - _slider.getSize().y);
-	_slider.setPosition(position);
+	int range = _max_value - _min_value;
+
+	sf::Vector2f pos = _rect.getPosition();
+
+	if (range <= 0) {                // nic do przewijania
+		_slider.setPosition(pos);
+		return;
+	}
+
+	pos.y += ((float)(_value - _min_value) / (float)range) * (_rect.getSize().y - _slider.getSize().y);
+
+	_slider.setPosition(pos);
 }
 
 void Scrollbar::setPosition(float x, float y) {
 	_rect.setPosition(x, y);
-	_slider.setPosition(x, y);
+	updateSliderPosition();
 }
 
 int Scrollbar::getValue() {

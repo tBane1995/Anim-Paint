@@ -15,6 +15,18 @@ sf::Color dialog_title_text_color;
 sf::Color dialog_title_rect_color;
 sf::Color dialog_content_rect_color;
 
+// file dialogs
+float file_dialog_text_font_size;
+sf::Color file_dialog_file_text_color;
+float file_dialog_file_rect_height;
+sf::Color file_dialog_file_rect_idle_color;
+sf::Color file_dialog_file_rect_hover_color;
+sf::Color file_dialog_file_rect_press_color;
+float file_dialog_separator_width;
+sf::Color file_dialog_separator_idle_color;
+sf::Color file_dialog_separator_hover_color;
+sf::Color file_dialog_separator_press_color;
+
 // buttons
 sf::Color button_normal_color;
 sf::Color button_hover_color;
@@ -79,6 +91,19 @@ void loadTheme() {
 	dialog_title_text_color = sf::Color(191, 191, 191);
 	dialog_title_rect_color = sf::Color(15, 15, 15);
 	dialog_content_rect_color = sf::Color(31, 31, 31);
+
+	// file dialogs
+	file_dialog_text_font_size = 13;
+	file_dialog_file_text_color = sf::Color(191,191,191);
+	file_dialog_file_rect_height = 20.0f;
+	file_dialog_file_rect_idle_color = sf::Color::Transparent;
+	file_dialog_file_rect_hover_color = sf::Color(95, 47, 47);
+	file_dialog_file_rect_press_color = sf::Color(63, 47, 47);
+	file_dialog_separator_width = 6;
+	file_dialog_separator_idle_color = sf::Color(63, 47, 47);
+	file_dialog_separator_hover_color = sf::Color(79, 47, 47);
+	file_dialog_separator_press_color = sf::Color(95, 47, 47);
+
 
 	// buttons
 	button_normal_color = sf::Color(47, 47, 47);
