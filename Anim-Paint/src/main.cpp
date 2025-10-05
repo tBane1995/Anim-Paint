@@ -66,7 +66,7 @@ int main() {
 	_setmode(_fileno(stdout), _O_U16TEXT); // wide char UTF-16 output
 
 	window  = new sf::RenderWindow(sf::VideoMode(800,600), "Anim Paint", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
-
+	window->setView(mainView);
 	loadTextures();
 	loadTheme();
 	main_menu = new MainMenu();

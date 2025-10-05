@@ -91,15 +91,42 @@ bool isDrive(const std::wstring& path) {
 	return type != DRIVE_NO_ROOT_DIR && type != DRIVE_UNKNOWN;
 }
 
+bool hasChildren(std::filesystem::path& p) {
+	std::error_code ec;
+	if (!std::filesystem::exists(p, ec) || !std::filesystem::is_directory(p, ec))
+		return false;
+
+	auto opts = std::filesystem::directory_options::skip_permission_denied;
+	for (std::filesystem::directory_iterator it(p, opts, ec), end; it != end; it.increment(ec)) {
+
+		if (ec) { ec.clear(); continue; }
+
+		if (it->is_directory())
+			return true;
+	}
+	return false;
+}
+
 //////////////////////////////////////////////////////////////////////////////
-LocationRect::LocationRect(std::wstring path) : ElementGUI() {
+LocationRect::LocationRect(std::wstring path, int depth = 0) : ElementGUI() {
 	_rect = sf::RectangleShape();
-	_rect.setFillColor(sf::Color(95, 47, 47));
+	unclick();
 
 	_path = getPath(path);
+	_depth = depth;
 
+	_isOpen = false;
+
+	_arrow = sf::Sprite();
+	if (hasChildren(_path))
+		close();
+	else
+		hide();
+
+	
 	_ico = sf::Sprite();
-	if(isDrive(_path))
+
+	if(isDrive(_path.wstring()))
 		_ico.setTexture(*getTexture(L"tex\\dialog\\harddrive.png")->_texture);
 	else if(std::filesystem::is_directory(path))
 		_ico.setTexture(*getTexture(L"tex\\dialog\\dictionary.png")->_texture);
@@ -120,16 +147,111 @@ LocationRect::~LocationRect() {
 
 void LocationRect::setSize(sf::Vector2f size) {
 	_rect.setSize(size);
+
+	if (_isOpen && !_children.empty()) {
+		for(auto& child : _children) {
+			child->setSize(size);
+		}
+	}
+}
+
+float LocationRect::getTotalHeight() {
+	float h = _rect.getSize().y;
+
+	if (_isOpen) {
+		for (auto* child : _children) {
+			h += child->getTotalHeight();
+		}
+	}
+	return h;
 }
 
 void LocationRect::setPosition(sf::Vector2f position) {
+
+	float arrow_margin = 4;
+	float indent = _depth * 12;
+
 	_rect.setPosition(position);
-	_ico.setPosition(position);
-	_text.setPosition(position + sf::Vector2f(20 + 4, (20 - basicFont.getLineSpacing(dialog_content_font_size)) / 2.0f));
+	_arrow.setPosition(position + sf::Vector2f(indent,6));
+	_ico.setPosition(position + sf::Vector2f(indent + 8 + arrow_margin,0));
+	_text.setPosition(position + sf::Vector2f(indent + 20 + 4 + 8 + arrow_margin, (20 - basicFont.getLineSpacing(dialog_content_font_size)) / 2.0f));
+
+	if (_isOpen && !_children.empty()) {
+
+		float cursorY = position.y + _rect.getSize().y;
+
+		for(auto& child : _children) {
+			child->setPosition(sf::Vector2f(position.x, cursorY));
+			cursorY += child->getTotalHeight();
+		}
+	}
 }
 
 void LocationRect::setText(std::wstring text) {
 	
+}
+
+void LocationRect::open(const std::function<void(const std::wstring&)>& onPick)
+{
+	if (!hasChildren(_path))
+		return;
+
+	_isOpen = true;
+	_arrow.setTexture(*getTexture(L"tex\\dialog\\dictionaryIsOpened.png")->_texture);
+
+	if (_children.empty()) {
+
+		std::error_code ec;
+		auto opts = std::filesystem::directory_options::skip_permission_denied;
+
+		for (std::filesystem::directory_iterator it(_path.wstring(), opts, ec), end;
+			it != end; it.increment(ec)) {
+			if (ec) { ec.clear(); continue; }
+
+			std::filesystem::path p = getPath(it->path());
+			if (p.empty()) continue; // ignore empty and .lnk
+			if (!std::filesystem::is_directory(p)) continue; // only directories
+
+			auto name = p.filename().wstring();
+			if (name.empty() || onlyWhitespace(name) || name == L"." || name == L"..")
+				continue;
+
+			auto* child = new LocationRect(p.wstring(), _depth + 1);
+			child->setSize(_rect.getSize());
+
+			child->_onclick_func = [child, onPick]() {
+
+				if (hasChildren(child->_path)) {
+					(child->_isOpen) ? child->close() : child->open(onPick);
+				}
+				if (onPick) onPick(child->_path.wstring());
+				};
+
+			_children.push_back(child);
+		}
+	}
+
+	// jeśli chcesz sortować potomków po nazwie (case-insensitive) — opcjonalnie:
+	/*
+	auto wlower = [](std::wstring s){
+		std::transform(s.begin(), s.end(), s.begin(),
+			[](wchar_t c){ return static_cast<wchar_t>(std::towlower(c)); });
+		return s;
+	};
+	std::sort(_children.begin(), _children.end(),
+		[&](LocationRect* A, LocationRect* B){
+			return wlower(A->_path.filename().wstring()) < wlower(B->_path.filename().wstring());
+		});
+	*/
+}
+void LocationRect::close() {
+	_isOpen = false;
+	_arrow.setTexture(*getTexture(L"tex\\dialog\\dictionaryIsClosed.png")->_texture);
+}
+
+void LocationRect::hide() {
+	_isOpen = false;
+	_arrow.setTexture(*getTexture(L"tex\\dialog\\dictionaryIsEmpty.png")->_texture);
 }
 
 void LocationRect::unclick() {
@@ -150,16 +272,23 @@ void LocationRect::click() {
 
 
 void LocationRect::cursorHover() {
-
+	
+	
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
 		ElementGUI_hovered = this;
 	}
+
+	if (_isOpen && !_children.empty()) {
+		for (auto& child : _children) {
+			child->cursorHover();
+		}
+	}
+
 }
 
 void LocationRect::handleEvent(sf::Event& event) {
-
-
-
+	
+	
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
 		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 			ElementGUI_pressed = this;
@@ -172,9 +301,18 @@ void LocationRect::handleEvent(sf::Event& event) {
 		}
 
 	}
+
+	if (_isOpen && !_children.empty()) {
+		for (auto& child : _children) {
+			child->handleEvent(event);
+		}
+	}
+
 }
 
 void LocationRect::update() {
+	
+
 	if (_state == ButtonState::Pressed) {
 		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
 			if (_onclick_func) {
@@ -189,11 +327,26 @@ void LocationRect::update() {
 	}
 	else
 		unclick();
+
+	if (_isOpen && !_children.empty()) {
+		for (auto& child : _children) {
+			child->update();
+		}
+	}
 }
+
 void LocationRect::draw() {
 	window->draw(_rect);
+	window->draw(_arrow);
 	window->draw(_ico);
 	window->draw(_text);
+
+	if(_isOpen) {
+		for (auto& children : _children) {
+			children->draw();
+		}
+	}
+
 }
 ////////////////////////////////////////////////////////////////////////////
 
@@ -310,14 +463,14 @@ void FileRect::setPosition(sf::Vector2f position) {
 	
 }
 
-void FileRect::setPath(std::filesystem::path path) {
+void FileRect::setFile(std::filesystem::path path) {
 	_path = path;
 
 	if (isDrive(_path.wstring()))
 		_ico.setTexture(*getTexture(L"tex\\dialog\\harddrive.png")->_texture);
 	else if (std::filesystem::is_directory(path))
 		_ico.setTexture(*getTexture(L"tex\\dialog\\dictionary.png")->_texture);
-	else if (std::filesystem::is_regular_file(path))
+	else if (path != std::filesystem::path())
 		_ico.setTexture(*getTexture(L"tex\\dialog\\file.png")->_texture);
 	else
 		_ico.setTexture(*getTexture(L"tex\\dialog\\empty.png")->_texture);
@@ -418,70 +571,122 @@ Dialog_Save_As::Dialog_Save_As() : Dialog(L"Save As", sf::Vector2f(400, 248), sf
 }
 
 Dialog_Save_As::~Dialog_Save_As() {
-	
+
+	for (auto& file : _files) {
+		delete file;
+	}
+
+	for (auto& loc : _locations) {
+		for (auto& child : loc->_children) {
+			delete child;
+		}
+
+		delete loc;
+	}
+}
+
+float Dialog_Save_As::calculateLeftScrollbarHeight() {
+	float hgh = 0;
+	for (auto& fav : _locations)
+		hgh += fav->getTotalHeight();
+	hgh -= _leftRect.getSize().y;
+	return hgh;
 }
 
 void Dialog_Save_As::createLeftPanel(int dictionariesCount) {
 
-	leftPanelWidth = 136.0f;
+	_leftRect = sf::RectangleShape(sf::Vector2f(100.0f, getSize().y - dialog_title_rect_height - 2 * dialog_padding));
+	_leftRect.setFillColor(sf::Color(255, 47, 47, 127));
 
 	const wchar_t* userProfile = _wgetenv(L"USERPROFILE");
 	std::wstring up(userProfile);
 
 	// dictionaries
-	_favorites.push_back(new LocationRect(up + L"\\AppData\\Roaming\\Microsoft\\Windows\\Recent"));
-	_favorites.push_back(new LocationRect(up + L"\\Documents"));
-	_favorites.push_back(new LocationRect(up + L"\\Music"));
-	_favorites.push_back(new LocationRect(up + L"\\Pictures"));
-	_favorites.push_back(new LocationRect(up + L"\\Downloads"));
-	_favorites.push_back(new LocationRect(up + L"\\Desktop"));
-	_favorites.push_back(new LocationRect(up + L"\\Videos"));
+	_locations.push_back(new LocationRect(up + L"\\AppData\\Roaming\\Microsoft\\Windows\\Recent"));
+	_locations.push_back(new LocationRect(up + L"\\Documents"));
+	_locations.push_back(new LocationRect(up + L"\\Music"));
+	_locations.push_back(new LocationRect(up + L"\\Pictures"));
+	_locations.push_back(new LocationRect(up + L"\\Downloads"));
+	_locations.push_back(new LocationRect(up + L"\\Desktop"));
+	_locations.push_back(new LocationRect(up + L"\\Videos"));
 
 	// load the harddrivers
 	DWORD drives = GetLogicalDrives();
 	for (int i = 0; i < 32; i++)
 		if ((drives >> i) & 1) {
 			//printf("%c:\\\n", 'A' + i);
-			_favorites.push_back(new LocationRect(std::wstring(1, L'A' + i) + L":\\"));
+			_locations.push_back(new LocationRect(std::wstring(1, L'A' + i) + L":\\"));
 		}
-			
-	float rect_width = leftPanelWidth - 16 - 2 * dialog_padding;
 
-	for (int i = 0; i < _favorites.size(); i++) {
-		//std::wcout << _favorites[i]->_path.wstring() << std::endl;
-		_favorites[i]->setSize(sf::Vector2f(rect_width, file_dialog_file_rect_height));
-		_favorites[i]->_onclick_func = [this, i]() {
-			// open the directory
-			//std::wcout << _favorites[i]->_path.wstring() << L"\n";
-			currentPath = _favorites[i]->_path.wstring();
+	for (int i = 0; i < _locations.size(); i++) {
+		_locations[i]->setSize(sf::Vector2f(_leftRect.getSize().x, file_dialog_file_rect_height));
+
+		_locations[i]->_onclick_func = [this, i]() {
+			// ustaw bieżącą ścieżkę na kliknięty węzeł
+			currentPath = _locations[i]->_path.wstring();
+
+			// przełącz rozwinięcie gałęzi; dla POTOMKÓW użyjemy callbacka onPick
+			if (_locations[i]->_isOpen) {
+				_locations[i]->close();
+			}
+			else {
+				_locations[i]->open([this](const std::wstring& newPath) {
+					leftScrollbar->setMax(calculateLeftScrollbarHeight());
+					currentPath = newPath;
+					loadDirectory();
+					// prawa kolumna
+					rightScrollbar->setMax((_filesPaths.size() - _files.size() + 1) * file_dialog_file_rect_height);
+					rightScrollbar->setValue(0);
+					setTheFiles();
+					setPosition(_position);
+					});
+			}
+
+			
+			leftScrollbar->setMax(calculateLeftScrollbarHeight());
+
+			// >>> KLUCZ: natychmiastowy refresh po open/close dla WĘZŁA GŁÓWNEGO <<<
 			loadDirectory();
-			this->rightScrollbar->setMax((_paths.size() - _files.size()+1)*file_dialog_file_rect_height);
-			this->rightScrollbar->setValue(0);
+
+			// prawa kolumna
+			rightScrollbar->setMax((_filesPaths.size() - _files.size() + 1) * file_dialog_file_rect_height);
+			rightScrollbar->setValue(0);
 			setTheFiles();
+
+			// przelicz pozycje (ustawi pozycje dzieci, bo LocationRect::setPosition to robi gdy _isOpen)
+			setPosition(_position);
 			};
 	}
 
+
+
 	// scrollbar
-	sf::Vector2f scrollbarPos = sf::Vector2f(_position.x + leftPanelWidth - 16 - dialog_padding, _position.y + dialog_title_rect_height + dialog_padding);
-	sf::Vector2f scrollbarSize = sf::Vector2f(16, 248 - dialog_title_rect_height - dialog_padding * 2);
-	leftScrollbar = new Scrollbar(scrollbarPos.x, scrollbarPos.y, scrollbarSize.x, scrollbarSize.y, 0, _favorites.size() - dictionariesCount, dictionariesCount, 0);
-	leftScrollbar->_func = [this]() { setTheFiles(); };
+	sf::Vector2f scrollbarPos = sf::Vector2f(_position.x + leftPanelWidth + dialog_padding, _position.y + dialog_title_rect_height + dialog_padding);
+	sf::Vector2f scrollbarSize = sf::Vector2f(16, _leftRect.getSize().y);
+
+	float scrollbarMax = calculateLeftScrollbarHeight();
+	float scrollbarSliderSize = (dictionariesCount - 1) * file_dialog_file_rect_height;
+
+	leftScrollbar = new Scrollbar(scrollbarPos.x, scrollbarPos.y, scrollbarSize.x, scrollbarSize.y, 0, scrollbarMax, scrollbarSliderSize, 0);
+	leftScrollbar->_func = [this]() { 
+		setTheFiles();
+		setPosition(_position);
+		};
 }
 
 void Dialog_Save_As::createSeparator(int linesCount) {
 	separator = new LocationAndFilesSeparator(linesCount);
-	separator->_rect.setPosition(sf::Vector2f(_position.x + leftPanelWidth, _position.y + dialog_title_rect_height + dialog_padding));
-	separator->setRange(separator->_rect.getPosition().x, separator->_rect.getPosition().x + 64);
+	separator->_rect.setPosition(sf::Vector2f(_position.x + _leftRect.getSize().x + 16 + dialog_padding, _position.y + dialog_title_rect_height + dialog_padding));
+	separator->setRange(separator->_rect.getPosition().x, separator->_rect.getPosition().x + 128);
 	separator->_func = [this]() {
-		leftPanelWidth = separator->getPosition().x - _position.x;
+		_leftRect.setSize(sf::Vector2f(separator->getPosition().x - _leftRect.getPosition().x - 16, _leftRect.getSize().y));
 
-		float rect_width = leftPanelWidth - 16 - 2 * dialog_padding;
-		for(int i=0;i< _favorites.size(); i++)
-			_favorites[i]->setSize(sf::Vector2f(rect_width, file_dialog_file_rect_height));
+		for(int i=0;i<_locations.size(); i++)
+			_locations[i]->setSize(sf::Vector2f(_leftRect.getSize().x, file_dialog_file_rect_height));
 
-		float file_rect_width = getSize().x - leftPanelWidth - separator->getSize().x - 16 - dialog_padding * 3;
+		_rightRect.setSize(sf::Vector2f(getSize().x - _leftRect.getSize().x - separator->getSize().x - 2 * 16 - dialog_padding * 3, _rightRect.getSize().y));
 		for (int i = 0; i < _files.size(); i++)
-			_files[i]->setSize(sf::Vector2f(file_rect_width, file_dialog_file_rect_height));
+			_files[i]->setSize(sf::Vector2f(_rightRect.getSize().x, file_dialog_file_rect_height));
 
 		setPosition(_position);
 		};
@@ -489,20 +694,22 @@ void Dialog_Save_As::createSeparator(int linesCount) {
 
 void Dialog_Save_As::createRightPanel(int linesCount) {
 	
-	float file_rect_width = getSize().x - leftPanelWidth - separator->getSize().x - 16 - dialog_padding * 3;
+	float w = getSize().x - _leftRect.getSize().x - 2 * 16 - separator->getSize().x - 3*dialog_padding;
+	_rightRect = sf::RectangleShape(sf::Vector2f(w, getSize().y - dialog_title_rect_height - 2 * dialog_padding));
+	_rightRect.setFillColor(sf::Color(255, 47, 47, 127));
 
 	// files
 	for (int i = 0; i < linesCount+1; i++) {
 		FileRect* file = new FileRect();
-		file->setSize(sf::Vector2f(file_rect_width, file_dialog_file_rect_height));
+		file->setSize(sf::Vector2f(_rightRect.getSize().x, file_dialog_file_rect_height));
 		_files.push_back(file);
 	}
 
 	// scrollbar
 	sf::Vector2f scrollbarPos = sf::Vector2f(_position.x + getSize().x - 16 - dialog_padding, _position.y + dialog_title_rect_height + dialog_padding);
-	sf::Vector2f scrollbarSize = sf::Vector2f(16, 248 - dialog_title_rect_height - dialog_padding * 2);
+	sf::Vector2f scrollbarSize = sf::Vector2f(16, _rightRect.getSize().y);
 	float minValue = 0;
-	float maxValue = (_paths.size() - _files.size()) * file_dialog_file_rect_height;
+	float maxValue = (_filesPaths.size() - _files.size()) * file_dialog_file_rect_height;
 	float sliderSize = (_files.size() - 1) * file_dialog_file_rect_height;
 
 	rightScrollbar = new Scrollbar(scrollbarPos.x, scrollbarPos.y, scrollbarSize.x, scrollbarSize.y, minValue, maxValue, sliderSize, 0);
@@ -513,13 +720,58 @@ void Dialog_Save_As::createRightPanel(int linesCount) {
 
 }
 
-void Dialog_Save_As::sortTheFiles() {
-	std::sort(_paths.begin(), _paths.end(), sortkey);
+void Dialog_Save_As::addChildren(std::wstring path, int depth = 0) {
+
+	std::error_code ec;
+	auto opts = std::filesystem::directory_options::skip_permission_denied;
+
+	for (std::filesystem::directory_iterator it(path, opts, ec), end;
+		it != end; it.increment(ec)) {
+		if (ec) { ec.clear(); continue; }
+
+		std::filesystem::path p = getPath(it->path());
+		if (p.empty()) continue; // ignore .lnk
+
+		if (!std::filesystem::is_directory(p))	// only directories
+			continue;
+
+		auto name = p.filename().wstring();	
+		if (name.empty() || onlyWhitespace(name) || name == L"." || name == L"..")	// ignore empty names and . ..
+			continue;
+
+		_locationsPaths.push_back(p);
+		_locationsDepths.push_back(depth);
+		//std::wcout << p.wstring() << std::endl;
+	}
+}
+
+void Dialog_Save_As::getLocations() {
+	_locationsPaths.clear();
+	_locationsDepths.clear();
+
+	for (auto& fav : _locations) {
+		_locationsPaths.push_back(fav->_path);
+		_locationsDepths.push_back(0);
+
+		if(fav->_isOpen) {
+			addChildren(fav->_path.wstring(), 1);
+		}
+	}
+
+	
+}
+
+void Dialog_Save_As::setTheLocations() {
+	int scrollbarValue = leftScrollbar->getValue();
+
+	for (int i = 0; i < _locations.size(); i++) {
+		// 11 elements (9 visible and top and bottom)
+	}
 }
 
 void Dialog_Save_As::loadDirectory() {
 	//std::wcout << L"Loading directory: " << currentPath << std::endl;
-	_paths.clear();
+	_filesPaths.clear();
 
 	std::error_code ec;
 	auto opts = std::filesystem::directory_options::skip_permission_denied;
@@ -535,21 +787,20 @@ void Dialog_Save_As::loadDirectory() {
 		if (name.empty() || onlyWhitespace(name) || name == L"." || name == L"..")
 			continue;
 
-		_paths.push_back(p);
+		_filesPaths.push_back(p);
 		//std::wcout << p.wstring() << std::endl;
 	}
 
-	sortTheFiles();
+	std::sort(_filesPaths.begin(), _filesPaths.end(), sortkey);
 
 	if(!isDrive(currentPath))
-		_paths.insert(_paths.begin(), std::filesystem::path(currentPath).parent_path());
+		_filesPaths.insert(_filesPaths.begin(), std::filesystem::path(currentPath).parent_path());
 
 	//std::wcout << L"Total files: " << _paths.size() << std::endl;
 	
-	rightScrollbar->setMax((_paths.size() - _files.size()+1)*file_dialog_file_rect_height);
+	rightScrollbar->setMax((_filesPaths.size() - _files.size()+1)*file_dialog_file_rect_height);
 	
 }
-
 
 void Dialog_Save_As::setTheFiles() {
 
@@ -557,11 +808,11 @@ void Dialog_Save_As::setTheFiles() {
 	int scrollbarValue = rightScrollbar->getValue();
 
 	for (int i = 0; i < _files.size(); i++) {
-		if (i * file_dialog_file_rect_height + scrollbarValue < _paths.size()* file_dialog_file_rect_height) {
+		if (i * file_dialog_file_rect_height + scrollbarValue < _filesPaths.size() * file_dialog_file_rect_height) {
 
-			std::filesystem::path path = _paths[i + scrollbarValue/file_dialog_file_rect_height];
+			std::filesystem::path path = _filesPaths[i + scrollbarValue/file_dialog_file_rect_height];
 
-			_files[i]->setPath(path);
+			_files[i]->setFile(path);
 
 			if(_files[i]->_path == std::filesystem::path(currentPath).parent_path() && !isDrive(currentPath))
 				_files[i]->_text.setString(L"..");
@@ -574,9 +825,10 @@ void Dialog_Save_As::setTheFiles() {
 					currentPath = path.wstring();
 					loadDirectory();
 
-					this->rightScrollbar->setMax((_paths.size() - _files.size()+1)*file_dialog_file_rect_height);
+					this->rightScrollbar->setMax((_filesPaths.size() - _files.size()+1)*file_dialog_file_rect_height);
 					this->rightScrollbar->setValue(0);
 					setTheFiles();
+
 				}
 				else {
 					// is file then open file
@@ -596,44 +848,151 @@ void Dialog_Save_As::setTheFiles() {
 }
 
 void Dialog_Save_As::setPosition(sf::Vector2f position) {
+
+	// remember old positions for separator
+	sf::Vector2f oldPos = _position;
+	float oldAbsRangeMinX = separator->_minX - _position.x;
+	float oldAbsRangeMaxX = separator->_maxX - _position.x;
+	sf::Vector2f oldAbsSeparatorPos = separator->getPosition() - oldPos;
+
+	// set the position
 	Dialog::setPosition(position);
 
-	for (int i = 0; i < _favorites.size(); i++) {
-		_favorites[i]->setPosition(sf::Vector2f(_position.x + dialog_padding, _position.y + dialog_title_rect_height + dialog_padding + i * file_dialog_file_rect_height));
+	// rects
+	_leftRect.setPosition(sf::Vector2f(_position.x + dialog_padding, _position.y + dialog_title_rect_height + dialog_padding));
+	_rightRect.setPosition(sf::Vector2f(_position.x + getSize().x - _rightRect.getSize().x - 3*dialog_padding, _position.y + dialog_title_rect_height + dialog_padding));
+	
+	// left rect
+	sf::Vector2f pos;
+	pos.x = _position.x + dialog_padding;
+	pos.y = _position.y + dialog_title_rect_height + dialog_padding - leftScrollbar->getValue();
+	for (int i = 0; i < _locations.size(); i++) {
+		_locations[i]->setPosition(pos);
+		pos.y += _locations[i]->getTotalHeight();
 	}
 
+
+	// separator
+	separator->setPosition(_position + oldAbsSeparatorPos);
+	separator->setRange(_position.x + oldAbsRangeMinX, _position.x + oldAbsRangeMaxX);
+
+	// right rect
 	for (int i = 0; i < _files.size(); i++) {
 		sf::Vector2f pos;
 		pos.x = separator->getPosition().x + separator->getSize().x + dialog_padding;
+		pos.x = _rightRect.getPosition().x;
 		pos.y = _position.y + dialog_title_rect_height + dialog_padding + (i * file_dialog_file_rect_height) - rightScrollbar->getValue()%int(file_dialog_file_rect_height); // dlaczegp to nie działa ?
 		//std::wcout << rightScrollbar->getValue() << " : " << pos.y << L"\n";
 		_files[i]->setPosition(pos);
 	}
 
-	sf::Vector2f leftScrollbarPos(separator->getPosition().x - 16, _position.y + dialog_title_rect_height + dialog_padding);
+	// left scrollbar
+	sf::Vector2f leftScrollbarPos(_leftRect.getPosition().x + _leftRect.getSize().x, _leftRect.getPosition().y);
 	leftScrollbar->setPosition(leftScrollbarPos.x, leftScrollbarPos.y);
 
+	// right scrollbar
 	sf::Vector2f rightScrollbarPos(_position.x + getSize().x - 16 - dialog_padding, _position.y + dialog_title_rect_height + dialog_padding);
 	rightScrollbar->setPosition(rightScrollbarPos.x, rightScrollbarPos.y);
 
-	separator->setPosition(sf::Vector2f(_position.x + leftPanelWidth, _position.y + dialog_title_rect_height + dialog_padding));
 
 }
 
+void Dialog_Save_As::drawLeftPanel() {
+
+	sf::View view(sf::FloatRect(
+		_leftRect.getPosition().x,
+		_leftRect.getPosition().y,
+		_leftRect.getSize().x,
+		_leftRect.getSize().y
+	));
+
+	sf::FloatRect vp(
+		_leftRect.getPosition().x / mainView.getSize().x,
+		_leftRect.getPosition().y / mainView.getSize().y,
+		_leftRect.getSize().x / mainView.getSize().x,
+		_leftRect.getSize().y / mainView.getSize().y
+	);
+	view.setViewport(vp);
+
+	window->setView(view);
+
+	for (auto* fav : _locations)
+		fav->draw();
+
+	window->setView(mainView);
+}
+
+void Dialog_Save_As::drawRightPanel() {
+
+	sf::View view(sf::FloatRect(
+		_rightRect.getPosition().x,
+		_rightRect.getPosition().y,
+		_rightRect.getSize().x,
+		_rightRect.getSize().y
+	));
+
+	sf::FloatRect vp(
+		_rightRect.getPosition().x / mainView.getSize().x,
+		_rightRect.getPosition().y / mainView.getSize().y,
+		_rightRect.getSize().x / mainView.getSize().x,
+		_rightRect.getSize().y / mainView.getSize().y
+	);
+	view.setViewport(vp);
+
+	window->setView(view);
+
+	for (auto* file : _files)
+		file->draw();
+
+	window->setView(mainView);
+}
+
+void Dialog_Save_As::cursorHoverLocations(LocationRect* location)
+{
+	location->cursorHover();
+
+	if (location->_isOpen) {
+		for (auto& child : location->_children) {
+			cursorHoverLocations(child);
+		}
+	}
+}
+
+void Dialog_Save_As::handleEventLocations(LocationRect* location, sf::Event& event)
+{
+	location->handleEvent(event);
+
+	if (location->_isOpen) {
+		for (auto& child : location->_children) {
+			handleEventLocations(child, event);
+		}
+	}
+}
+
+void Dialog_Save_As::updateLocations(LocationRect* location)
+{
+	location->update();
+
+	if (location->_isOpen) {
+		for (auto& child : location->_children) {
+			updateLocations(child);
+		}
+	}
+}
 
 void Dialog_Save_As::cursorHover() {
 	Dialog::cursorHover();
-
-	
-
-
 
 	if (rightScrollbar->_state == ScrollbarState::Idle && leftScrollbar->_state == ScrollbarState::Idle) {
 		for (auto* file : _files)
 			file->cursorHover();
 
-		for (auto* fav : _favorites)
-			fav->cursorHover();
+		for (auto* fav : _locations) {
+			cursorHoverLocations(fav);
+		}
+
+		//for (auto* loc : _locations)
+		//	loc->cursorHover();
 	}
 		
 	leftScrollbar->cursorHover();
@@ -648,8 +1007,13 @@ void Dialog_Save_As::handleEvent(sf::Event& event) {
 	for(auto& file : _files)
 		file->handleEvent(event);
 
-	for (auto* fav : _favorites)
-		fav->handleEvent(event);
+	for (auto* fav : _locations) {
+		handleEventLocations(fav, event);
+	}
+		
+
+	//for (auto* loc : _locations)
+	//	loc->handleEvent(event);
 
 	leftScrollbar->handleEvent(event);
 	rightScrollbar->handleEvent(event);
@@ -663,8 +1027,12 @@ void Dialog_Save_As::update() {
 	for (auto* file : _files)
 		file->update();
 
-	for (auto* fav : _favorites)
-		fav->update();
+	for (auto* fav : _locations) {
+		updateLocations(fav);
+	}
+
+	//for (auto* loc : _locations)
+	//	loc->update();
 
 	leftScrollbar->update();
 	rightScrollbar->update();
@@ -675,14 +1043,18 @@ void Dialog_Save_As::update() {
 void Dialog_Save_As::draw() {
 	Dialog::draw();
 
-	for(auto* fav : _favorites)
-		fav->draw();
+	drawLeftPanel();
+	drawRightPanel();
 
-	for(auto* file : _files)
-		file->draw();
-
+	/*
+	for (auto* loc : _locations)
+		loc->draw();
+	*/
 	leftScrollbar->draw();
 	rightScrollbar->draw();
 
 	separator->draw();
+
+	//window->draw(_leftRect);
+	//window->draw(_rightRect);
 }

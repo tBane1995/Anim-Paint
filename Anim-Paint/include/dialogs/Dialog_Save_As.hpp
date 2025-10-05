@@ -8,20 +8,30 @@ bool sortkey(std::filesystem::path a, std::filesystem::path b);
 class LocationRect : public ElementGUI {
 public:
 	std::filesystem::path _path;
+	int _depth;
 	sf::RectangleShape _rect;
+	sf::Sprite _arrow;
 	sf::Sprite _ico;
 	sf::Text _text;
+
+	bool _isOpen;
+	std::vector <LocationRect*> _children;
 
 	ButtonState _state;
 	std::function<void()> _onclick_func;
 	sf::Time _clickTime;
 
-	LocationRect(std::wstring path);
+	LocationRect(std::wstring path, int depth);
 	~LocationRect();
 
 	void setSize(sf::Vector2f size);
+	float getTotalHeight();
 	void setPosition(sf::Vector2f position);
 	void setText(std::wstring text);
+	
+	void open(const std::function<void(const std::wstring&)>& onPick);	
+	void close();
+	void hide();
 
 	void unclick();
 	void hover();
@@ -79,7 +89,7 @@ public:
 
 	void setSize(sf::Vector2f size);
 	void setPosition(sf::Vector2f position);
-	void setPath(std::filesystem::path path);
+	void setFile(std::filesystem::path path);
 	void setText(std::wstring text);
 	
 	void unclick();
@@ -99,30 +109,46 @@ class Dialog_Save_As : public Dialog {
 public:
 
 	float leftPanelWidth;
-	std::vector <LocationRect*> _favorites;
-	std::vector <LocationRect*> _libraries;
-	std::vector <LocationRect*> _computer;
+	
+	sf::RectangleShape _leftRect;
+	sf::RectangleShape _rightRect;
+	
+	std::vector <LocationRect*> _locations;
 	Scrollbar* leftScrollbar;
 
 	LocationAndFilesSeparator* separator;
 
 	std::vector <FileRect*> _files;
 	Scrollbar* rightScrollbar;
-
-	std::wstring currentPath;
-	std::vector <std::filesystem::path> _paths;
-
 	
+	std::vector <std::filesystem::path> _filesPaths;
+	std::vector <std::filesystem::path> _locationsPaths;
+	std::vector <int> _locationsDepths;
+	
+	std::wstring currentPath;
+
 	Dialog_Save_As();
 	~Dialog_Save_As();
+
+	float calculateLeftScrollbarHeight();
 
 	void createLeftPanel(int linesCount);
 	void createSeparator(int linesCount);
 	void createRightPanel(int linesCount);
+
+	void addChildren(std::wstring path, int depth);
+	void getLocations();
+	void setTheLocations();
 	void loadDirectory();
-	void sortTheFiles();
 	void setTheFiles();
+
 	void setPosition(sf::Vector2f position);
+	void drawLeftPanel();
+	void drawRightPanel();
+
+	void cursorHoverLocations(LocationRect* location);
+	void handleEventLocations(LocationRect* location, sf::Event& event);
+	void updateLocations(LocationRect* location);
 
 	void cursorHover();
 	void handleEvent(sf::Event& event);

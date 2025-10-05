@@ -43,6 +43,9 @@ void loadTextures() {
 	loadTexture(L"tex\\dialog\\dictionary.png");
 	loadTexture(L"tex\\dialog\\file.png");
 	loadTexture(L"tex\\dialog\\empty.png");
+	loadTexture(L"tex\\dialog\\dictionaryIsClosed.png");
+	loadTexture(L"tex\\dialog\\dictionaryIsOpened.png");
+	loadTexture(L"tex\\dialog\\dictionaryIsEmpty.png");
 
 	// slider
 	loadTexture(L"tex\\slider\\bar.png");
