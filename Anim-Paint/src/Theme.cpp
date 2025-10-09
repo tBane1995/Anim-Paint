@@ -16,7 +16,7 @@ sf::Color dialog_title_rect_color;
 sf::Color dialog_content_rect_color;
 
 // file dialogs
-float file_dialog_text_font_size;
+float file_dialog_file_text_size;
 sf::Color file_dialog_file_text_color;
 float file_dialog_file_rect_height;
 sf::Color file_dialog_file_rect_idle_color;
@@ -93,7 +93,7 @@ void loadTheme() {
 	dialog_content_rect_color = sf::Color(31, 31, 31);
 
 	// file dialogs
-	file_dialog_text_font_size = 13;
+	file_dialog_file_text_size = 13;
 	file_dialog_file_text_color = sf::Color(191,191,191);
 	file_dialog_file_rect_height = 20.0f;
 	file_dialog_file_rect_idle_color = sf::Color::Transparent;

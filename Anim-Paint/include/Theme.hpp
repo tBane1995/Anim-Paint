@@ -16,7 +16,7 @@ extern sf::Color dialog_title_rect_color;
 extern sf::Color dialog_content_rect_color;
 
 // file dialogs
-extern float file_dialog_text_font_size;
+extern float file_dialog_file_text_size;
 extern sf::Color file_dialog_file_text_color;
 extern float file_dialog_file_rect_height;
 extern sf::Color file_dialog_file_rect_idle_color;

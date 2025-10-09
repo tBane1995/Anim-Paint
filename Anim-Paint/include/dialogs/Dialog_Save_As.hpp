@@ -102,8 +102,22 @@ public:
 	void draw();
 };
 
+class SelectedFileNameBox : public Button {
+public:
 
+	sf::Text _text;
+	sf::Text _filename;
 
+	SelectedFileNameBox(sf::Vector2f dialog_size);
+	~SelectedFileNameBox();
+
+	void setFilename(std::wstring text);
+	void setPosition(sf::Vector2f position);
+	void cursorHover();
+	void handleEvent(sf::Event& event);
+	void update();
+	void draw();
+};
 
 class Dialog_Save_As : public Dialog {
 public:
@@ -126,6 +140,8 @@ public:
 	std::vector <int> _locationsDepths;
 	
 	std::wstring currentPath;
+
+	SelectedFileNameBox* _selectedFileNameBox;
 
 	Dialog_Save_As();
 	~Dialog_Save_As();
