@@ -595,7 +595,28 @@ void SelectedFileNameBox::update() {
 void SelectedFileNameBox::draw() {
 	window->draw(_rect);
 	window->draw(_text);
+
+	sf::View view(sf::FloatRect(
+		_rect.getPosition().x,
+		_rect.getPosition().y,
+		_rect.getSize().x,
+		_rect.getSize().y
+	));
+
+	sf::FloatRect vp(
+		_rect.getPosition().x / mainView.getSize().x,
+		_rect.getPosition().y / mainView.getSize().y,
+		_rect.getSize().x / mainView.getSize().x,
+		_rect.getSize().y / mainView.getSize().y
+	);
+	view.setViewport(vp);
+
+	window->setView(view);
+
 	window->draw(_filename);
+
+	window->setView(mainView);
+	
 }
 
 //////////////////////////////////////////////////////////////////////////////
