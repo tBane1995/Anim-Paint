@@ -549,14 +549,7 @@ void FileRect::draw() {
 
 SelectedFileNameBox::SelectedFileNameBox(sf::Vector2f size) : Button() {
 	
-
-	_text = sf::Text();
-	_text.setFont(basicFont);
-	_text.setCharacterSize(file_dialog_file_text_size);
-	_text.setFillColor(file_dialog_file_text_color);
-	_text.setString(L"File name");
-
-	_rect.setSize(sf::Vector2f(size.x -_text.getGlobalBounds().width - 3*dialog_padding, file_dialog_file_rect_height));
+	_rect.setSize(size);
 	_rect.setFillColor(sf::Color(79, 79, 79));
  
 	_filename = sf::Text();
@@ -575,8 +568,7 @@ void SelectedFileNameBox::setFilename(std::wstring text) {
 }
 
 void SelectedFileNameBox::setPosition(sf::Vector2f position) {
-	_rect.setPosition(position + sf::Vector2f(_text.getGlobalBounds().width + 2*dialog_padding, 0));
-	_text.setPosition(position + sf::Vector2f(dialog_padding, 0));
+	_rect.setPosition(position);
 	_filename.setPosition(_rect.getPosition() + sf::Vector2f(2,0));
 }
 
@@ -594,7 +586,6 @@ void SelectedFileNameBox::update() {
 
 void SelectedFileNameBox::draw() {
 	window->draw(_rect);
-	window->draw(_text);
 
 	sf::View view(sf::FloatRect(
 		_rect.getPosition().x,
@@ -618,7 +609,10 @@ void SelectedFileNameBox::draw() {
 	window->setView(mainView);
 	
 }
+//////////////////////////////////////////////////////////////////////////////
 
+
+ 
 //////////////////////////////////////////////////////////////////////////////
 
 Dialog_Save_As::Dialog_Save_As() : Dialog(L"Save As", sf::Vector2f(400, 280), sf::Vector2f(8, 120)) {
@@ -641,7 +635,16 @@ Dialog_Save_As::Dialog_Save_As() : Dialog(L"Save As", sf::Vector2f(400, 280), sf
 	
 	setTheFiles();
 
-	_selectedFileNameBox = new SelectedFileNameBox(getSize());
+	_bottomRect = sf::RectangleShape(sf::Vector2f(getSize().x, 64));
+	_bottomRect.setFillColor(sf::Color(47, 47, 47));
+
+	_filenameText = sf::Text();
+	_filenameText.setFont(basicFont);
+	_filenameText.setCharacterSize(file_dialog_file_text_size);
+	_filenameText.setFillColor(file_dialog_file_text_color);
+	_filenameText.setString(L"File name");
+
+	_selectedFileNameBox = new SelectedFileNameBox(sf::Vector2f(getSize().x-_filenameText.getGlobalBounds().width - 3*dialog_padding, file_dialog_file_rect_height));
 
 	setPosition(_position);
 }
@@ -906,6 +909,7 @@ void Dialog_Save_As::setTheFiles() {
 					this->rightScrollbar->setMax((_filesPaths.size() - _files.size()+1)*file_dialog_file_rect_height);
 					this->rightScrollbar->setValue(0);
 					setTheFiles();
+					setPosition(_position);
 
 				}
 				else {
@@ -974,7 +978,14 @@ void Dialog_Save_As::setPosition(sf::Vector2f position) {
 	rightScrollbar->setPosition(rightScrollbarPos.x, rightScrollbarPos.y);
 
 	// selected file name box
-	sf::Vector2f selectedFileNameBoxPos(sf::Vector2f(_position.x, _rightRect.getPosition().y + _rightRect.getSize().y + dialog_padding));
+	sf::Vector2f bottomRectPos;
+	bottomRectPos.x = _position.x;
+	bottomRectPos.y = std::max(_rightRect.getPosition().y + _rightRect.getSize().y, _leftRect.getPosition().y + _leftRect.getSize().y);
+	_bottomRect.setPosition(bottomRectPos);
+
+	_filenameText.setPosition(bottomRectPos + sf::Vector2f(dialog_padding,dialog_padding));
+
+	sf::Vector2f selectedFileNameBoxPos(sf::Vector2f(_position.x + _filenameText.getGlobalBounds().width + 2*dialog_padding, _rightRect.getPosition().y + _rightRect.getSize().y + dialog_padding));
 	_selectedFileNameBox->setPosition(selectedFileNameBoxPos);
 
 }
@@ -1137,6 +1148,8 @@ void Dialog_Save_As::draw() {
 
 	separator->draw();
 
+	window->draw(_bottomRect);
+	window->draw(_filenameText);
 	_selectedFileNameBox->draw();
 
 	//window->draw(_leftRect);

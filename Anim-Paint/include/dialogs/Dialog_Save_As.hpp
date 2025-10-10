@@ -141,6 +141,8 @@ public:
 	
 	std::wstring currentPath;
 
+	sf::RectangleShape _bottomRect;
+	sf::Text _filenameText;
 	SelectedFileNameBox* _selectedFileNameBox;
 
 	Dialog_Save_As();
