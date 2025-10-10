@@ -571,6 +571,10 @@ void SelectedFileNameBox::setFilename(std::wstring text) {
 	_filename.setString(text);
 }
 
+std::wstring SelectedFileNameBox::getFilename() {
+	return _filename.getString();
+}
+
 void SelectedFileNameBox::setPosition(sf::Vector2f position) {
 	_rect.setPosition(position);
 	_filename.setPosition(_rect.getPosition() + sf::Vector2f(2,0));
@@ -624,7 +628,7 @@ void SelectedFileNameBox::draw() {
  
 //////////////////////////////////////////////////////////////////////////////
 
-Dialog_Save_As::Dialog_Save_As(std::wstring selectButtonText, std::function<void()> function) : Dialog(L"Save As", sf::Vector2f(400, 292), sf::Vector2f(8, 120)) {
+Dialog_Save_As::Dialog_Save_As(std::wstring selectButtonText, std::function<void(const std::filesystem::path&)> function) : Dialog(L"Save As", sf::Vector2f(400, 292), sf::Vector2f(8, 120)) {
 
 	_files.clear();
 	
@@ -658,7 +662,21 @@ Dialog_Save_As::Dialog_Save_As(std::wstring selectButtonText, std::function<void
 	sf::Vector2f btnSize(64, file_dialog_file_rect_height + dialog_padding);
 	_selectBtn = new NormalButtonWithText(selectButtonText, btnSize);
 	_selectBtn->setColors(sf::Color(31, 31, 31), sf::Color(7,7,7), sf::Color(23, 23, 23));
-	_selectBtn->_onclick_func = function;
+	_selectBtn->_onclick_func = [this, function]() {
+		std::wstring name = _selectedFileNameBox->getFilename();
+		if (name.empty() || onlyWhitespace(name)) {
+			return;
+		}
+		std::filesystem::path fullPath = std::filesystem::path(currentPath) / name;
+		if (fullPath.extension().empty()) 
+			fullPath.replace_extension(L".png");
+
+		if (function) function(fullPath);
+
+		_state = DialogState::ToClose;
+
+		};
+
 	_cancelBtn = new NormalButtonWithText(L"Cancel", btnSize);
 	_cancelBtn->setColors(sf::Color(31, 31, 31), sf::Color(7, 7, 7), sf::Color(23, 23, 23));
 	_cancelBtn->_onclick_func = [this]() {

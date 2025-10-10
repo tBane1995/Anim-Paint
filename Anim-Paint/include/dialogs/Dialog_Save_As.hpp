@@ -112,6 +112,7 @@ public:
 	~SelectedFileNameBox();
 
 	void setFilename(std::wstring text);
+	std::wstring getFilename();
 	void setPosition(sf::Vector2f position);
 	sf::Vector2f getPosition();
 	sf::Vector2f getSize();
@@ -147,7 +148,7 @@ public:
 	NormalButtonWithText* _selectBtn;
 	NormalButtonWithText* _cancelBtn;
 
-	Dialog_Save_As(std::wstring selectButtonText, std::function<void()> function);
+	Dialog_Save_As(std::wstring selectButtonText, std::function<void(const std::filesystem::path&)> function);
 	~Dialog_Save_As();
 
 	float calculateLeftScrollbarHeight();
@@ -156,9 +157,6 @@ public:
 	void createSeparator(int linesCount);
 	void createRightPanel(int linesCount);
 
-	void addChildren(std::wstring path, int depth);
-	void getLocations();
-	void setTheLocations();
 	void loadDirectory();
 	void setTheFiles();
 

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "ElementGUI/ElementGUI.hpp"
 #include "ElementGUI/Button.hpp"
+#include <filesystem>
 
 class OptionBox : public ElementGUI {
 public:
@@ -62,6 +63,7 @@ public:
 
 	sf::Vector2f getSize();
 	void setPosition(sf::Vector2f position);
+	void save(const std::filesystem::path& path);
 
 	void cursorHover();
 	void handleEvent(sf::Event& event);

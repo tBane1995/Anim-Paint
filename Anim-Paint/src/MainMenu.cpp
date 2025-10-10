@@ -11,6 +11,7 @@
 #include "Dialogs/Dialog_Sepia.hpp"
 #include "Animation/Animation.hpp"
 #include <iostream>
+#include <filesystem>
 
 OptionBox::OptionBox(std::wstring text) {
 	_text = sf::Text(text, basicFont, menu_font_size);
@@ -239,7 +240,12 @@ MainMenu::MainMenu() : ElementGUI() {
 
 	OptionBox* file_saveAs = new OptionBox(L"save as");
 	file_saveAs->_onclick_func = [this]() {
-		dialogs.push_back(new Dialog_Save_As(L"Save", []() { std::wcout << L"save\n";  return; }));
+		dialogs.push_back(new Dialog_Save_As(
+			L"Save", 
+			[this](const std::filesystem::path& target) {
+				this->save(target);
+			}
+			));
 		if (_open_menu_box != nullptr)
 			_open_menu_box->_isOpen = false;
 		_open_menu_box = nullptr;
@@ -410,6 +416,10 @@ void MainMenu::setPosition(sf::Vector2f position) {
 		_menu_boxes[i]->setPosition(sf::Vector2f(position.x + x, y));
 		x = x + _menu_boxes[i]->_rect.getSize().x;
 	}
+}
+
+void MainMenu::save(const std::filesystem::path& path) {
+	std::wcout << "save " << path.wstring() << "\n";
 }
 
 void MainMenu::cursorHover() {
