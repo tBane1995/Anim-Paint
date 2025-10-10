@@ -621,13 +621,10 @@ void SelectedFileNameBox::draw() {
 	window->setView(mainView);
 	
 }
-//////////////////////////////////////////////////////////////////////////////
-
-
  
 //////////////////////////////////////////////////////////////////////////////
 
-Dialog_Save_As::Dialog_Save_As() : Dialog(L"Save As", sf::Vector2f(400, 292), sf::Vector2f(8, 120)) {
+Dialog_Save_As::Dialog_Save_As(std::wstring selectButtonText, std::function<void()> function) : Dialog(L"Save As", sf::Vector2f(400, 292), sf::Vector2f(8, 120)) {
 
 	_files.clear();
 	
@@ -659,8 +656,9 @@ Dialog_Save_As::Dialog_Save_As() : Dialog(L"Save As", sf::Vector2f(400, 292), sf
 	_selectedFileNameBox = new SelectedFileNameBox(sf::Vector2f(getContentSize().x - _filenameText.getGlobalBounds().width - 3 * dialog_padding, file_dialog_file_rect_height));
 
 	sf::Vector2f btnSize(64, file_dialog_file_rect_height + dialog_padding);
-	_selectBtn = new NormalButtonWithText(L"Save", btnSize);
+	_selectBtn = new NormalButtonWithText(selectButtonText, btnSize);
 	_selectBtn->setColors(sf::Color(31, 31, 31), sf::Color(7,7,7), sf::Color(23, 23, 23));
+	_selectBtn->_onclick_func = function;
 	_cancelBtn = new NormalButtonWithText(L"Cancel", btnSize);
 	_cancelBtn->setColors(sf::Color(31, 31, 31), sf::Color(7, 7, 7), sf::Color(23, 23, 23));
 	_cancelBtn->_onclick_func = [this]() {
@@ -763,7 +761,7 @@ void Dialog_Save_As::createLeftPanel(int dictionariesCount) {
 
 
 	// scrollbar
-	sf::Vector2f scrollbarPos = sf::Vector2f(_position.x + leftPanelWidth + dialog_padding, _position.y + dialog_title_rect_height + dialog_padding);
+	sf::Vector2f scrollbarPos = sf::Vector2f(_leftRect.getPosition().x + _leftRect.getSize().x + dialog_padding, getContentSize().y + dialog_padding);
 	sf::Vector2f scrollbarSize = sf::Vector2f(16, _leftRect.getSize().y);
 
 	float scrollbarMax = calculateLeftScrollbarHeight();
@@ -822,54 +820,6 @@ void Dialog_Save_As::createRightPanel(int linesCount) {
 
 }
 
-void Dialog_Save_As::addChildren(std::wstring path, int depth = 0) {
-
-	std::error_code ec;
-	auto opts = std::filesystem::directory_options::skip_permission_denied;
-
-	for (std::filesystem::directory_iterator it(path, opts, ec), end;
-		it != end; it.increment(ec)) {
-		if (ec) { ec.clear(); continue; }
-
-		std::filesystem::path p = getPath(it->path());
-		if (p.empty()) continue; // ignore .lnk
-
-		if (!std::filesystem::is_directory(p))	// only directories
-			continue;
-
-		auto name = p.filename().wstring();	
-		if (name.empty() || onlyWhitespace(name) || name == L"." || name == L"..")	// ignore empty names and . ..
-			continue;
-
-		_locationsPaths.push_back(p);
-		_locationsDepths.push_back(depth);
-		//std::wcout << p.wstring() << std::endl;
-	}
-}
-
-void Dialog_Save_As::getLocations() {
-	_locationsPaths.clear();
-	_locationsDepths.clear();
-
-	for (auto& fav : _locations) {
-		_locationsPaths.push_back(fav->_path);
-		_locationsDepths.push_back(0);
-
-		if(fav->_isOpen) {
-			addChildren(fav->_path.wstring(), 1);
-		}
-	}
-
-	
-}
-
-void Dialog_Save_As::setTheLocations() {
-	int scrollbarValue = _leftScrollbar->getValue();
-
-	for (int i = 0; i < _locations.size(); i++) {
-		// 11 elements (9 visible and top and bottom)
-	}
-}
 
 void Dialog_Save_As::loadDirectory() {
 	//std::wcout << L"Loading directory: " << currentPath << std::endl;

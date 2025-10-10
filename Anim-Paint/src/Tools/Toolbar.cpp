@@ -6,6 +6,7 @@
 #include "Tools/Selection.hpp"
 #include "Tools/Brush.hpp"
 #include "Mouse.hpp"
+#include "Dialogs/Dialog.hpp"
 
 Separator::Separator() {
 	_rect = sf::RectangleShape(sf::Vector2f(2, tools_separator_height));
@@ -426,6 +427,10 @@ void Toolbar::selectColorButton(LargeColorButton* colorButton) {
 }
 
 void Toolbar::cursorHover() {
+
+	if (!dialogs.empty())
+		return;
+
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
 		ElementGUI_hovered = this;
 	}
@@ -448,6 +453,10 @@ void Toolbar::cursorHover() {
 }
 
 void Toolbar::handleEvent(sf::Event& event) {
+
+	if (!dialogs.empty())
+		return;
+
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
 		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 			ElementGUI_pressed = this;

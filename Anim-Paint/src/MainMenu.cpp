@@ -10,6 +10,7 @@
 #include "Dialogs/Dialog_Saturation.hpp"
 #include "Dialogs/Dialog_Sepia.hpp"
 #include "Animation/Animation.hpp"
+#include <iostream>
 
 OptionBox::OptionBox(std::wstring text) {
 	_text = sf::Text(text, basicFont, menu_font_size);
@@ -238,7 +239,7 @@ MainMenu::MainMenu() : ElementGUI() {
 
 	OptionBox* file_saveAs = new OptionBox(L"save as");
 	file_saveAs->_onclick_func = [this]() {
-		dialogs.push_back(new Dialog_Save_As());
+		dialogs.push_back(new Dialog_Save_As(L"Save", []() { std::wcout << L"save\n";  return; }));
 		if (_open_menu_box != nullptr)
 			_open_menu_box->_isOpen = false;
 		_open_menu_box = nullptr;

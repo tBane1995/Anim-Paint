@@ -74,7 +74,7 @@ int main() {
 	createDialogs();
 	canvas = new Canvas(sf::Vector2i(animation->getLayer(0)->_image.getSize()));
 
-	dialogs.push_back(new Dialog_Save_As());
+	dialogs.push_back(new Dialog_Save_As(L"Save", []() { std::wcout << L"save\n";  return;}));
 
 	while (window->isOpen()) {
 		prevTime = currentTime;

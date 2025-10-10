@@ -126,8 +126,6 @@ public:
 class Dialog_Save_As : public Dialog {
 public:
 
-	float leftPanelWidth;
-	
 	sf::RectangleShape _leftRect;
 	sf::RectangleShape _rightRect;
 	
@@ -138,11 +136,8 @@ public:
 
 	std::vector <FileRect*> _files;
 	Scrollbar* _rightScrollbar;
-	
+
 	std::vector <std::filesystem::path> _filesPaths;
-	std::vector <std::filesystem::path> _locationsPaths;
-	std::vector <int> _locationsDepths;
-	
 	std::wstring currentPath;
 
 	sf::RectangleShape _bottomRect;
@@ -152,7 +147,7 @@ public:
 	NormalButtonWithText* _selectBtn;
 	NormalButtonWithText* _cancelBtn;
 
-	Dialog_Save_As();
+	Dialog_Save_As(std::wstring selectButtonText, std::function<void()> function);
 	~Dialog_Save_As();
 
 	float calculateLeftScrollbarHeight();

@@ -9,6 +9,7 @@
 #include "Tools/Selection.hpp"
 #include "Tools/Lasso.hpp"
 #include "Dialogs/LayersDialog.hpp"
+#include "Dialogs/Dialog.hpp"
 
 Canvas::Canvas(sf::Vector2i size) : ElementGUI() {
 	this->_size = size;
@@ -223,6 +224,9 @@ void Canvas::fillPixels(sf::Color color) {
 
 void Canvas::cursorHover() {
 
+	if (!dialogs.empty())
+		return;
+
 	_hoveredEdgePoint = nullptr;
 
 	for (auto& point : _edgePoints) {
@@ -242,7 +246,8 @@ void Canvas::handleEvent(sf::Event& event) {
 
 	_brush_is_visible = false;
 
-
+	if (!dialogs.empty())
+		return;
 
 	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 		if (_hoveredEdgePoint != nullptr) {

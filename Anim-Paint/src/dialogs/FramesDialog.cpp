@@ -57,6 +57,9 @@ void FramesDialog::setPosition(sf::Vector2f position) {
 }
 
 void FramesDialog::cursorHover() {
+	if (!dialogs.empty())
+		return;
+
 	Dialog::cursorHover();
 
 	_first_btn->cursorHover();
@@ -66,6 +69,10 @@ void FramesDialog::cursorHover() {
 }
 
 void FramesDialog::handleEvent(sf::Event& event) {
+
+	if (!dialogs.empty())
+		return;
+
 	Dialog::handleEvent(event);
 
 	_first_btn->handleEvent(event);

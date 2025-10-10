@@ -33,6 +33,10 @@ void LayerBox::setPosition(sf::Vector2f position) {
 }
 
 void LayerBox::cursorHover() {
+
+	if (!dialogs.empty())
+		return;
+
 	_visibling->cursorHover();
 
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
@@ -41,6 +45,10 @@ void LayerBox::cursorHover() {
 }
 
 void LayerBox::handleEvent(sf::Event& event) {
+
+	if (!dialogs.empty())
+		return;
+
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
 		if (event.type == event.MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
 			ElementGUI_pressed == this;
