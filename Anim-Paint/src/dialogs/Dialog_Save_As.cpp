@@ -499,27 +499,31 @@ void FileRect::click() {
 
 void FileRect::cursorHover() {
 
-	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		ElementGUI_hovered = this;
+	if (_path != std::filesystem::path()) {
+		if (_rect.getGlobalBounds().contains(worldMousePosition)) {
+			ElementGUI_hovered = this;
+		}
 	}
 }
 
 void FileRect::handleEvent(sf::Event& event) {
 
 	
+	if (_path != std::filesystem::path()) {
+		if (_rect.getGlobalBounds().contains(worldMousePosition)) {
+			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+				ElementGUI_pressed = this;
 
-	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-			ElementGUI_pressed = this;
-			
-		}
-		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
-			if (ElementGUI_pressed == this) {
-				click();
 			}
-		}
+			else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+				if (ElementGUI_pressed == this) {
+					click();
+				}
+			}
 
+		}
 	}
+	
 }
 
 void FileRect::update() {
@@ -1077,8 +1081,11 @@ void Dialog_Save_As::cursorHover() {
 	Dialog::cursorHover();
 
 	if (rightScrollbar->_state == ScrollbarState::Idle && leftScrollbar->_state == ScrollbarState::Idle) {
-		for (auto* file : _files)
-			file->cursorHover();
+		if (_rightRect.getGlobalBounds().contains(worldMousePosition)) {
+			for (auto* file : _files)
+				file->cursorHover();
+		}
+		
 
 		for (auto* fav : _locations) {
 			cursorHoverLocations(fav);
@@ -1097,8 +1104,10 @@ void Dialog_Save_As::cursorHover() {
 void Dialog_Save_As::handleEvent(sf::Event& event) {
 	Dialog::handleEvent(event);
 
-	for(auto& file : _files)
-		file->handleEvent(event);
+	if (_rightRect.getGlobalBounds().contains(worldMousePosition)) {
+		for (auto& file : _files)
+			file->handleEvent(event);
+	}
 
 	for (auto* fav : _locations) {
 		handleEventLocations(fav, event);
