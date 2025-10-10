@@ -252,14 +252,26 @@ MainMenu::MainMenu() : ElementGUI() {
 		_open_menu_box = nullptr;
 		};
 
-	OptionBox* file_open = new OptionBox(L"open");
+	OptionBox* file_load = new OptionBox(L"load");
+	file_load->_onclick_func = [this]() {
+		dialogs.push_back(new Dialog_Save_As(
+			L"Load File",
+			L"Load",
+			[this](const std::filesystem::path& target) {
+				this->load(target);
+			}
+		));
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
 	OptionBox* file_export = new OptionBox(L"export");
 	OptionBox* file_import = new OptionBox(L"import");
 
 	file->addOption(file_new);
 	file->addOption(file_save);
 	file->addOption(file_saveAs);
-	file->addOption(file_open);
+	file->addOption(file_load);
 	file->addOption(file_export);
 	file->addOption(file_import);
 
