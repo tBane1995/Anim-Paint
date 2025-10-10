@@ -47,19 +47,15 @@
 #include "Canvas.hpp"
 
 void createDialogs() {
-	Dialog* preview = new Dialog(L"Preview", sf::Vector2f(192, 192), sf::Vector2f(window->getSize().x - 192 - dialog_margin, main_menu->getSize().y + tools_height + dialog_margin));
-	dialogs.push_back(preview);
 	
 	frames_dialog = new FramesDialog(L"Frames",
 		sf::Vector2f(192, 32 + 32 + dialog_padding * 2),
-		dialogs.back()->getPosition() + sf::Vector2f(0, dialogs.back()->getSize().y + dialog_margin));
-	dialogs.push_back(frames_dialog);
+		sf::Vector2f(window->getSize().x - 192 - dialog_margin, main_menu->getSize().y + toolbar->_rect.getSize().y + dialog_margin));
 
 	layers_dialog = new LayersDialog(L"Layers", 
 		sf::Vector2f(160, 32 + 4 * 32 + dialog_padding * 2), 
-		sf::Vector2f(window->getSize().x - 160 - dialog_margin, dialogs.back()->getPosition().y + dialogs.back()->getSize().y + dialog_margin));
-	dialogs.push_back(layers_dialog);
-
+		sf::Vector2f(window->getSize().x - 160 - dialog_margin, frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin));
+	
 }
 
 int main() {
@@ -71,11 +67,11 @@ int main() {
 	loadTheme();
 	main_menu = new MainMenu();
 	animation = new Animation();
-	createDialogs();
 	selection = new Selection();
 	lasso = new Lasso();
 	brush = new Brush(2);
 	toolbar = new Toolbar();
+	createDialogs();
 	canvas = new Canvas(sf::Vector2i(animation->getLayer(0)->_image.getSize()));
 
 	dialogs.push_back(new Dialog_Save_As());
@@ -105,6 +101,8 @@ int main() {
 		toolbar->cursorHover();
 		main_menu->cursorHover();
 		canvas->cursorHover();
+		frames_dialog->cursorHover();
+		layers_dialog->cursorHover();
 		
 
 		for (auto& dialog : dialogs)
@@ -118,6 +116,8 @@ int main() {
 		
 		main_menu->update();
 		canvas->update();
+		frames_dialog->update();
+		layers_dialog->update();
 
 
 		// handle events
@@ -132,22 +132,26 @@ int main() {
 				toolbar->handleEvent(event);
 				main_menu->handleEvent(event);
 				
-				canvas->handleEvent(event);
-
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
-				
-				
-				
+
+				frames_dialog->handleEvent(event);
+				layers_dialog->handleEvent(event);
+
+				canvas->handleEvent(event);
 			}
 			else if (event.type == sf::Event::MouseButtonReleased) {
 				
 				toolbar->handleEvent(event);
 				main_menu->handleEvent(event);
-				
+
 				
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
+
+				frames_dialog->handleEvent(event);
+				layers_dialog->handleEvent(event);
+
 				canvas->handleEvent(event);
 			}
 			else if (event.type == sf::Event::MouseMoved) {
@@ -157,6 +161,10 @@ int main() {
 				
 				for (auto& dialog : dialogs)
 					dialog->handleEvent(event);
+
+				frames_dialog->handleEvent(event);
+				layers_dialog->handleEvent(event);
+
 				canvas->handleEvent(event);
 			}
 			else if (event.type == sf::Event::MouseWheelScrolled) {
@@ -195,11 +203,14 @@ int main() {
 		toolbar->draw();
 		main_menu->draw();
 
+		frames_dialog->draw();
+		layers_dialog->draw();
+
 		for (auto& dialog : dialogs)
 			dialog->draw();
 		window->display();
 
-
+		
 	}
 
 	
