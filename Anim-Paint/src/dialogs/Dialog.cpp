@@ -51,6 +51,13 @@ sf::Vector2f Dialog::getSize() {
 	return _dialog_rect.getSize();
 }
 
+sf::Vector2f Dialog::getContentPosition() {
+	return _content_rect.getPosition();
+}
+sf::Vector2f Dialog::getContentSize() {
+	return _content_rect.getSize();
+}
+
 void Dialog::setPosition(sf::Vector2f position) {
 
 	_position = sf::Vector2f(sf::Vector2i(position) / 8 * 8);

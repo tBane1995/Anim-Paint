@@ -113,11 +113,15 @@ public:
 
 	void setFilename(std::wstring text);
 	void setPosition(sf::Vector2f position);
+	sf::Vector2f getPosition();
+	sf::Vector2f getSize();
+
 	void cursorHover();
 	void handleEvent(sf::Event& event);
 	void update();
 	void draw();
 };
+
 
 class Dialog_Save_As : public Dialog {
 public:
@@ -128,12 +132,12 @@ public:
 	sf::RectangleShape _rightRect;
 	
 	std::vector <LocationRect*> _locations;
-	Scrollbar* leftScrollbar;
+	Scrollbar* _leftScrollbar;
 
-	LocationAndFilesSeparator* separator;
+	LocationAndFilesSeparator* _separator;
 
 	std::vector <FileRect*> _files;
-	Scrollbar* rightScrollbar;
+	Scrollbar* _rightScrollbar;
 	
 	std::vector <std::filesystem::path> _filesPaths;
 	std::vector <std::filesystem::path> _locationsPaths;
@@ -144,6 +148,9 @@ public:
 	sf::RectangleShape _bottomRect;
 	sf::Text _filenameText;
 	SelectedFileNameBox* _selectedFileNameBox;
+
+	NormalButtonWithText* _selectBtn;
+	NormalButtonWithText* _cancelBtn;
 
 	Dialog_Save_As();
 	~Dialog_Save_As();

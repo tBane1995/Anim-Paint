@@ -58,9 +58,9 @@ public:
 
 	sf::RectangleShape _rect;
 	sf::Text _text;
-	sf::Color _normal_color;
-	sf::Color _hover_color;
-	sf::Color _press_color;
+	sf::Color _idleColor;
+	sf::Color _hoverColor;
+	sf::Color _pressColor;
 
 	sf::Vector2f _position;
 
@@ -75,6 +75,7 @@ public:
 
 	sf::Vector2f getSize();
 	void setPosition(sf::Vector2f position);
+	void setColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor);
 	void unclick();
 	void hover();
 	void click();

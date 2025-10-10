@@ -24,6 +24,8 @@ public:
 	sf::Vector2f getPosition();
 	void setSize(sf::Vector2f size);
 	sf::Vector2f getSize();
+	sf::Vector2f getContentPosition();
+	sf::Vector2f getContentSize();
 	virtual void setPosition(sf::Vector2f position);
 
 	virtual void cursorHover();

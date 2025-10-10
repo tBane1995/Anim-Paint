@@ -151,12 +151,12 @@ void NormalButton::draw() {
 
 NormalButtonWithText::NormalButtonWithText(std::wstring text, sf::Vector2f size, sf::Vector2f position) {
 
-	_normal_color = button_normal_color;
-	_hover_color = button_hover_color;
-	_press_color = button_press_color;
+	_idleColor = button_normal_color;
+	_hoverColor = button_hover_color;
+	_pressColor = button_press_color;
 
 	_rect = sf::RectangleShape(size);
-	_rect.setFillColor(_normal_color);
+	_rect.setFillColor(_idleColor);
 	_rect.setOutlineThickness(dialog_border_width);
 	_rect.setOutlineColor(sf::Color(dialog_border_color));
 
@@ -188,19 +188,25 @@ void NormalButtonWithText::setPosition(sf::Vector2f position) {
 	_text.setPosition(text_pos);
 }
 
+void NormalButtonWithText::setColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor) {
+	_idleColor = idleColor;
+	_hoverColor = hoverColor;
+	_pressColor = pressColor;
+}
+
 void NormalButtonWithText::unclick() {
 	_state = ButtonState::Idle;
-	_rect.setFillColor(_normal_color);
+	_rect.setFillColor(_idleColor);
 }
 
 void NormalButtonWithText::hover() {
 	_state = ButtonState::Hover;
-	_rect.setFillColor(_hover_color);
+	_rect.setFillColor(_hoverColor);
 }
 
 void NormalButtonWithText::click() {
 	_state = ButtonState::Pressed;
-	_rect.setFillColor(_press_color);
+	_rect.setFillColor(_pressColor);
 	_clickTime = currentTime;
 }
 
