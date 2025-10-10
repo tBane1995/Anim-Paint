@@ -353,7 +353,7 @@ void LocationRect::draw() {
 LocationAndFilesSeparator::LocationAndFilesSeparator(int linesCount) {
 	_rect = sf::RectangleShape();
 	_rect.setFillColor(file_dialog_separator_idle_color);
-	setSize(sf::Vector2f(file_dialog_separator_width, (linesCount-1) * file_dialog_file_rect_height));
+	setSize(sf::Vector2f(file_dialog_separator_width, linesCount * file_dialog_file_rect_height));
 
 	_state = LocationAndFilesSeparatorState::Idle;
 }
@@ -641,9 +641,9 @@ Dialog_Save_As::Dialog_Save_As(std::wstring dialogName, std::wstring selectButto
 	}
 	
 	//std::wcout << L"Current path: " << currentPath << std::endl;
-	createLeftPanel(10);
-	createSeparator(10);
-	createRightPanel(10);
+	createLeftPanel(9);
+	createSeparator(9);
+	createRightPanel(9);
 	loadDirectory();
 	
 	setTheFiles();
@@ -713,7 +713,7 @@ float Dialog_Save_As::calculateLeftScrollbarHeight() {
 
 void Dialog_Save_As::createLeftPanel(int dictionariesCount) {
 
-	_leftRect = sf::RectangleShape(sf::Vector2f(100.0f, (dictionariesCount - 1) * file_dialog_file_rect_height));
+	_leftRect = sf::RectangleShape(sf::Vector2f(100.0f, (dictionariesCount) * file_dialog_file_rect_height));
 	_leftRect.setFillColor(sf::Color(255, 47, 47, 127));
 
 	const wchar_t* userProfile = _wgetenv(L"USERPROFILE");
@@ -813,7 +813,7 @@ void Dialog_Save_As::createSeparator(int linesCount) {
 void Dialog_Save_As::createRightPanel(int linesCount) {
 	
 	float w = getContentSize().x - _leftRect.getSize().x - 2 * 16 - _separator->getSize().x - 3*dialog_padding;
-	_rightRect = sf::RectangleShape(sf::Vector2f(w, (linesCount-1)*file_dialog_file_rect_height));
+	_rightRect = sf::RectangleShape(sf::Vector2f(w, linesCount*file_dialog_file_rect_height));
 	_rightRect.setFillColor(sf::Color(255, 47, 47, 127));
 
 	// files
@@ -883,7 +883,7 @@ void Dialog_Save_As::setTheFiles() {
 			std::filesystem::path path = _filesPaths[i + scrollbarValue/file_dialog_file_rect_height];
 
 			_files[i]->setFile(path);
-
+			
 			if(_files[i]->_path == std::filesystem::path(currentPath).parent_path() && !isDrive(currentPath))
 				_files[i]->_text.setString(L"..");
 			else 

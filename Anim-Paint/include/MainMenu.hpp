@@ -63,8 +63,10 @@ public:
 
 	sf::Vector2f getSize();
 	void setPosition(sf::Vector2f position);
-	void save(const std::filesystem::path& path);
-	void load(const std::filesystem::path& path);
+	void saveProject(const std::filesystem::path& path);
+	void loadProject(const std::filesystem::path& path);
+	void exportFile(const std::filesystem::path& path);
+	void importFile(const std::filesystem::path& path);
 
 	void cursorHover();
 	void handleEvent(sf::Event& event);

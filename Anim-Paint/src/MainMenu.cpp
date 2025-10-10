@@ -241,10 +241,10 @@ MainMenu::MainMenu() : ElementGUI() {
 	OptionBox* file_saveAs = new OptionBox(L"save as");
 	file_saveAs->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Save_As(
-			L"Save File",
-			L"Save", 
+			L"save project as",
+			L"save", 
 			[this](const std::filesystem::path& target) {
-				this->save(target);
+				this->saveProject(target);
 			}
 			));
 		if (_open_menu_box != nullptr)
@@ -255,10 +255,10 @@ MainMenu::MainMenu() : ElementGUI() {
 	OptionBox* file_load = new OptionBox(L"load");
 	file_load->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Save_As(
-			L"Load File",
-			L"Load",
+			L"load project",
+			L"load",
 			[this](const std::filesystem::path& target) {
-				this->load(target);
+				this->loadProject(target);
 			}
 		));
 		if (_open_menu_box != nullptr)
@@ -266,7 +266,32 @@ MainMenu::MainMenu() : ElementGUI() {
 		_open_menu_box = nullptr;
 		};
 	OptionBox* file_export = new OptionBox(L"export");
+	file_export->_onclick_func = [this]() {
+		dialogs.push_back(new Dialog_Save_As(
+			L"export as image",
+			L"export",
+			[this](const std::filesystem::path& target) {
+				this->exportFile(target);
+			}
+		));
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
+
 	OptionBox* file_import = new OptionBox(L"import");
+	file_import->_onclick_func = [this]() {
+		dialogs.push_back(new Dialog_Save_As(
+			L"import from image",
+			L"import",
+			[this](const std::filesystem::path& target) {
+				this->importFile(target);
+			}
+		));
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
 
 	file->addOption(file_new);
 	file->addOption(file_save);
@@ -431,12 +456,20 @@ void MainMenu::setPosition(sf::Vector2f position) {
 	}
 }
 
-void MainMenu::save(const std::filesystem::path& path) {
+void MainMenu::saveProject(const std::filesystem::path& path) {
 	std::wcout << "save " << path.wstring() << "\n";
 }
 
-void MainMenu::load(const std::filesystem::path& path) {
+void MainMenu::loadProject(const std::filesystem::path& path) {
 	std::wcout << "load " << path.wstring() << "\n";
+}
+
+void MainMenu::exportFile(const std::filesystem::path& path) {
+	std::wcout << "export " << path.wstring() << "\n";
+}
+
+void MainMenu::importFile(const std::filesystem::path& path) {
+	std::wcout << "import " << path.wstring() << "\n";
 }
 
 void MainMenu::cursorHover() {

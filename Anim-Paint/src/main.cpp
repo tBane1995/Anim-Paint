@@ -46,6 +46,8 @@
 #include "Tools/Toolbar.hpp"
 #include "Canvas.hpp"
 
+
+
 void createDialogs() {
 	
 	frames_dialog = new FramesDialog(L"Frames",
@@ -74,6 +76,11 @@ int main() {
 	createDialogs();
 	canvas = new Canvas(sf::Vector2i(animation->getLayer(0)->_image.getSize()));
 
+	// FPS counter
+	sf::Clock fpsClock;
+	float fps = 0.0f;
+	int frameCount = 0;
+
 	while (window->isOpen()) {
 		prevTime = currentTime;
 		currentTime = mainClock.getElapsedTime();
@@ -91,6 +98,15 @@ int main() {
 			else {
 				i++;
 			}
+		}
+
+		// calculate the FPS
+		frameCount++;
+
+		if (fpsClock.getElapsedTime().asSeconds() >= 1.0f) {
+			fps = frameCount / fpsClock.restart().asSeconds();
+			frameCount = 0;
+			window->setTitle(L"Anim Paint - FPS: " + std::to_wstring(int(fps)));
 		}
 
 		// cursor hovering
