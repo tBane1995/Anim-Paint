@@ -148,7 +148,7 @@ public:
 	NormalButtonWithText* _selectBtn;
 	NormalButtonWithText* _cancelBtn;
 
-	Dialog_Save_As(std::wstring selectButtonText, std::function<void(const std::filesystem::path&)> function);
+	Dialog_Save_As(std::wstring dialogName, std::wstring selectButtonText, std::function<void(const std::filesystem::path&)> function);
 	~Dialog_Save_As();
 
 	float calculateLeftScrollbarHeight();

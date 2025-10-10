@@ -75,9 +75,10 @@ int main() {
 	canvas = new Canvas(sf::Vector2i(animation->getLayer(0)->_image.getSize()));
 
 	Dialog_Save_As* saver = new Dialog_Save_As(
-		L"Save",
+		L"Load File",
+		L"Load",
 		[](const std::filesystem::path& target) {
-			main_menu->save(target);	// podkreśla this
+			main_menu->load(target);	// podkreśla this
 		}
 	);
 	dialogs.push_back(saver);

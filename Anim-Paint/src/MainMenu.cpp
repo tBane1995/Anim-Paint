@@ -241,6 +241,7 @@ MainMenu::MainMenu() : ElementGUI() {
 	OptionBox* file_saveAs = new OptionBox(L"save as");
 	file_saveAs->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Save_As(
+			L"Save File",
 			L"Save", 
 			[this](const std::filesystem::path& target) {
 				this->save(target);
@@ -420,6 +421,10 @@ void MainMenu::setPosition(sf::Vector2f position) {
 
 void MainMenu::save(const std::filesystem::path& path) {
 	std::wcout << "save " << path.wstring() << "\n";
+}
+
+void MainMenu::load(const std::filesystem::path& path) {
+	std::wcout << "load " << path.wstring() << "\n";
 }
 
 void MainMenu::cursorHover() {

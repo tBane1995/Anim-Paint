@@ -628,7 +628,7 @@ void SelectedFileNameBox::draw() {
  
 //////////////////////////////////////////////////////////////////////////////
 
-Dialog_Save_As::Dialog_Save_As(std::wstring selectButtonText, std::function<void(const std::filesystem::path&)> function) : Dialog(L"Save As", sf::Vector2f(400, 292), sf::Vector2f(8, 120)) {
+Dialog_Save_As::Dialog_Save_As(std::wstring dialogName, std::wstring selectButtonText, std::function<void(const std::filesystem::path&)> function) : Dialog(dialogName, sf::Vector2f(400, 292), sf::Vector2f(8, 120)) {
 
 	_files.clear();
 	
