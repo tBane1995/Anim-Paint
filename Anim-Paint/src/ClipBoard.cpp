@@ -17,10 +17,10 @@ bool copyImageToClipboard(sf::Image* image, sf::IntRect rect) {
     int x1 = std::clamp(rect.left + rect.width, 0, int(image->getSize().x));
     int y1 = std::clamp(rect.top + rect.height, 0, int(image->getSize().y));
 
-    std::cout << x0 << "\n";
-    std::cout << y0 << "\n";
-    std::cout << x1 << "\n";
-    std::cout << y1 << "\n";
+    std::wcout << x0 << "\n";
+    std::wcout << y0 << "\n";
+    std::wcout << x1 << "\n";
+    std::wcout << y1 << "\n";
 
     const unsigned int w = (x1 > x0) ? unsigned(x1 - x0) : 0u;
     const unsigned int h = (y1 > y0) ? unsigned(y1 - y0) : 0u;
