@@ -29,6 +29,26 @@ Animation::Animation() {
 		_frames.push_back(frame);
 	}
 
+	{
+		frame = new Frame();
+		std::vector < Layer* >& layers = frame->getLayers();
+		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+		_frames.push_back(frame);
+	}
+
+	{
+		frame = new Frame();
+		std::vector < Layer* >& layers = frame->getLayers();
+		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+		layers.push_back(new Layer(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size, size)));
+		_frames.push_back(frame);
+	}
+
 	lastLayer();
 
 }
