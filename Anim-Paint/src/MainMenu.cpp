@@ -457,7 +457,9 @@ void MainMenu::setPosition(sf::Vector2f position) {
 }
 
 void MainMenu::saveProject(const std::filesystem::path& path) {
-	std::wcout << "save " << path.wstring() << "\n";
+	
+
+	std::wcout << L"save " << path.wstring() << "\n";
 }
 
 void MainMenu::loadProject(const std::filesystem::path& path) {
@@ -465,7 +467,38 @@ void MainMenu::loadProject(const std::filesystem::path& path) {
 }
 
 void MainMenu::exportFile(const std::filesystem::path& path) {
-	std::wcout << "export " << path.wstring() << "\n";
+
+	sf::RenderTexture tex;
+	sf::Vector2f layerSize;
+	layerSize.x = animation->getFrame(0)->getLayers()[0]->_image.getSize().x;
+	layerSize.y = animation->getFrame(0)->getLayers()[0]->_image.getSize().y;
+
+	tex.create(layerSize.x*animation->getFramesCount(), layerSize.y);
+	tex.clear(sf::Color::Transparent);
+
+	sf::Vector2f offset(0, 0);
+
+	for (int f = 0; f < animation->getFramesCount(); f += 1) {
+		for (int l = 0; l < animation->getLayersCount(); l+=1) {
+			sf::Texture t;
+			t.setSmooth(false);
+			t.setRepeated(false);
+			t.loadFromImage(animation->getFrame(f)->getLayers()[l]->_image);
+
+			sf::Sprite spr(t);
+			spr.setPosition(offset);
+			tex.draw(spr);
+		}
+
+		offset.x += layerSize.x;
+	}
+
+	std::wstring filename = path.wstring();
+	sf::Image finalImage = tex.getTexture().copyToImage();
+	finalImage.flipVertically();
+	finalImage.saveToFile(ConvertWideToUtf8(filename));
+
+	std::wcout << "export " << filename << "\n";
 }
 
 void MainMenu::importFile(const std::filesystem::path& path) {

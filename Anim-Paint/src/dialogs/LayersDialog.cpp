@@ -118,7 +118,7 @@ void LayersDialog::loadLayersFromCurrentFrame() {
 	layersBoxes.clear();
 
 	int current_frame = animation->getCurrentFrameID();
-	int count_layers = animation->getLayersSize();
+	int count_layers = animation->getLayersCount();
 	for (int i = 0; i < count_layers; i++) {
 		layersBoxes.push_back(new LayerBox(animation->getLayer(i)));
 		layersBoxes.back()->_onclick_func = [this, i]() {

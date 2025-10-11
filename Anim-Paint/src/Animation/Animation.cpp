@@ -65,6 +65,11 @@ std::vector < Frame* > Animation::getFrames() {
 	return _frames;
 }
 
+Frame* Animation::getFrame(int id) {
+	// return Frame
+	return _frames[id];
+}
+
 Layer* Animation::getLayer(int id) {
 	// return Layer
 	if (id < 0)
@@ -87,12 +92,12 @@ int Animation::getCurrentLayerID() {
 	return _currentLayer;
 }
 
-int Animation::getFramesSize() {
+int Animation::getFramesCount() {
 	// return Frames size
 	return _frames.size();
 }
 
-int Animation::getLayersSize() {
+int Animation::getLayersCount() {
 	// return current Layers size
 	return getCurrentFrame()->_layers.size();
 }

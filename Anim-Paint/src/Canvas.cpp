@@ -697,7 +697,7 @@ void Canvas::draw() {
 	window->draw(_bg_sprite);
 
 
-	for (int i = 0; i < animation->getLayersSize(); i++) {
+	for (int i = 0; i < animation->getLayersCount(); i++) {
 
 		if (layers_dialog->layersBoxes[i]->_visibling->_value == 0) {	// 0 - visible, 1 - invisible
 			sf::Texture tex;

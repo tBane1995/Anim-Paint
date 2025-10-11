@@ -14,11 +14,16 @@ public:
 	std::vector < Layer* > getLayers();
 	Layer* getCurrentLayer();
 	std::vector < Frame* > getFrames();
+
+	Frame* getFrame(int id);
 	Layer* getLayer(int id);
+
 	int getCurrentFrameID();
 	int getCurrentLayerID();
-	int getFramesSize();
-	int getLayersSize();
+
+	int getFramesCount();
+	int getLayersCount();
+
 	void setCurrentFrameID(int id);
 	void setCurrentLayerID(int id);
 	void firstFrame();

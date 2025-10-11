@@ -42,7 +42,7 @@ FramesDialog::FramesDialog(std::wstring title, sf::Vector2f size, sf::Vector2f p
 FramesDialog::~FramesDialog() {}
 
 void FramesDialog::generateText() {
-	_text = sf::Text(std::to_wstring(animation->getCurrentFrameID() + 1) + L" / " + std::to_wstring(animation->getFramesSize()), basicFont, 17);
+	_text = sf::Text(std::to_wstring(animation->getCurrentFrameID() + 1) + L" / " + std::to_wstring(animation->getFramesCount()), basicFont, 17);
 }
 
 void FramesDialog::setPosition(sf::Vector2f position) {
