@@ -17,7 +17,7 @@ public:
 	void generateText();
 	void setPosition(sf::Vector2f position);
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 

@@ -13,7 +13,7 @@ void ElementGUI::cursorHover() {
 
 }
 
-void ElementGUI::handleEvent(sf::Event& event) {
+void ElementGUI::handleEvent(const sf::Event& event) {
 
 }
 

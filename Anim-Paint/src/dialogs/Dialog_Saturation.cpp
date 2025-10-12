@@ -5,11 +5,11 @@
 #include "Filters.hpp"
 #include "Window.hpp"
 
-Dialog_Saturation::Dialog_Saturation(std::vector < Layer* > layers) : Dialog(L"saturation", sf::Vector2f(256, 160), sf::Vector2f(8, 120)) {
+Dialog_Saturation::Dialog_Saturation(std::vector < Layer* > layers) : 
+	Dialog(L"saturation", sf::Vector2f(256, 160), sf::Vector2f(8, 120)),
+	_saturation_text(basicFont, L"saturation", 13) {
 
 	_state = SaturationState::Idle;
-
-	_saturation_text = sf::Text(L"saturation", basicFont, 13);
 
 	_saturation_slider = new Slider(0, 200);
 	_saturation_slider->setValue(100);
@@ -96,7 +96,7 @@ void Dialog_Saturation::cursorHover() {
 	_confirm->cursorHover();
 }
 
-void Dialog_Saturation::handleEvent(sf::Event& event) {
+void Dialog_Saturation::handleEvent(const sf::Event& event) {
 	Dialog::handleEvent(event);
 
 	_saturation_slider->handleEvent(event);

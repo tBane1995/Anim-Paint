@@ -12,10 +12,10 @@ bool copyImageToClipboard(sf::Image* image, sf::IntRect rect) {
         return false;
     }
 
-    int x0 = std::clamp(rect.left, 0, int(image->getSize().x));
-    int y0 = std::clamp(rect.top, 0, int(image->getSize().y));
-    int x1 = std::clamp(rect.left + rect.width, 0, int(image->getSize().x));
-    int y1 = std::clamp(rect.top + rect.height, 0, int(image->getSize().y));
+    int x0 = std::clamp(rect.position.x, 0, int(image->getSize().x));
+    int y0 = std::clamp(rect.position.y, 0, int(image->getSize().y));
+    int x1 = std::clamp(rect.position.x + rect.size.x, 0, int(image->getSize().x));
+    int y1 = std::clamp(rect.position.y + rect.size.y, 0, int(image->getSize().y));
 
     std::wcout << x0 << "\n";
     std::wcout << y0 << "\n";
@@ -24,15 +24,16 @@ bool copyImageToClipboard(sf::Image* image, sf::IntRect rect) {
 
     const unsigned int w = (x1 > x0) ? unsigned(x1 - x0) : 0u;
     const unsigned int h = (y1 > y0) ? unsigned(y1 - y0) : 0u;
-    sf::IntRect r(0, 0, image->getSize().x, image->getSize().y);
+    sf::IntRect r({ 0, 0 }, { int(image->getSize().x), int(image->getSize().y) });
 
-    if (!rect.intersects(r) || w == 0 || h == 0) {
+    
+    if (!rect.findIntersection(r).has_value() || w == 0 || h == 0) {
         if(w == 0) std::cout << " w is 0\n"; // tu  sie włącza
         if(h == 0) std::cout << " h is 0\n"; // tu  sie włącza
         return false;
     }
 
-    const sf::Uint8* pixels = image->getPixelsPtr();
+    const uint8_t* pixels = image->getPixelsPtr();
 
     BITMAPINFOHEADER bi{};
     bi.biSize = sizeof(BITMAPINFOHEADER);
@@ -53,14 +54,14 @@ bool copyImageToClipboard(sf::Image* image, sf::IntRect rect) {
     std::memcpy(pHeader, &bi, sizeof(BITMAPINFOHEADER));
 
     for (unsigned int y = 0; y < h; ++y) {
-        const sf::Uint8* srcRow = pixels + ((y0 + y) * image->getSize().x + x0) * 4;
-        sf::Uint8* dstRow = dstPixels + (y * w) * 4;
+        const uint8_t* srcRow = pixels + ((y0 + y) * image->getSize().x + x0) * 4;
+        uint8_t* dstRow = dstPixels + (y * w) * 4;
 
         for (unsigned int x = 0; x < w; ++x) {
-            const sf::Uint8 r = srcRow[4 * x + 0];
-            const sf::Uint8 g = srcRow[4 * x + 1];
-            const sf::Uint8 b = srcRow[4 * x + 2];
-            const sf::Uint8 a = srcRow[4 * x + 3];
+            const uint8_t r = srcRow[4 * x + 0];
+            const uint8_t g = srcRow[4 * x + 1];
+            const uint8_t b = srcRow[4 * x + 2];
+            const uint8_t a = srcRow[4 * x + 3];
 
             dstRow[4 * x + 0] = b;  // B
             dstRow[4 * x + 1] = g;  // G
@@ -112,8 +113,8 @@ void loadImageFromClipboard(sf::Image& outImage) {
         return;
     }
 
-    const int  width = bih->biWidth;
-    const int  height = std::abs(bih->biHeight);
+    int  width = bih->biWidth;
+    int  height = std::abs(bih->biHeight);
     const bool topDown = (bih->biHeight < 0);
     if (width <= 0 || height <= 0) {
         GlobalUnlock(hData); 
@@ -132,11 +133,11 @@ void loadImageFromClipboard(sf::Image& outImage) {
 
     const size_t srcStride = ((size_t(width) * bih->biBitCount + 31) / 32) * 4;
 
-    std::vector<sf::Uint8> rgba(size_t(width) * size_t(height) * 4);
+    std::vector<uint8_t> rgba(size_t(width) * size_t(height) * 4);
 
     for (int y = 0; y < height; ++y) {
         const BYTE* srcRow = srcPixels + (topDown ? y : (height - 1 - y)) * srcStride;
-        sf::Uint8* dstRow = rgba.data() + size_t(y) * size_t(width) * 4;
+        uint8_t* dstRow = rgba.data() + size_t(y) * size_t(width) * 4;
 
         if (bih->biBitCount == 32) {
             // BGRA -> RGBA
@@ -167,14 +168,13 @@ void loadImageFromClipboard(sf::Image& outImage) {
     GlobalUnlock(hData);
     CloseClipboard();
 
-    sf::Image src;
-    src.create(width, height, rgba.data());
+    sf::Image src(sf::Vector2u(width, height), rgba.data());
 
     if (width <= outImage.getSize().x && height <= outImage.getSize().y) {
-        outImage.copy(src, 0, 0, sf::IntRect(0, 0, width, height), true);
+        outImage.copy(src, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(width, height)), true);
     }
     else {
-        outImage.create(width, height, rgba.data());
-        outImage.copy(src, 0, 0, sf::IntRect(0, 0, width, height), true);
+        outImage.resize(sf::Vector2u(width, height), rgba.data());
+        outImage.copy(src, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(width, height)), true);
     }
 }

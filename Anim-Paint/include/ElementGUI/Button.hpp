@@ -16,7 +16,7 @@ public:
 	virtual sf::Vector2f getSize();
 	virtual void setPosition(sf::Vector2f position);
 	virtual void cursorHover();
-	virtual void handleEvent(sf::Event& event);
+	virtual void handleEvent(const sf::Event& event);
 	virtual void update();
 	virtual void draw();
 
@@ -47,7 +47,7 @@ public:
 	void click();
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 
@@ -81,7 +81,7 @@ public:
 	void click();
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 
@@ -117,7 +117,7 @@ public:
 
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 
@@ -152,7 +152,7 @@ public:
 	void click();
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 
@@ -185,7 +185,7 @@ public:
 	void click();
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 
@@ -227,7 +227,7 @@ public:
 
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 

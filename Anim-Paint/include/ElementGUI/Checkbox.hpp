@@ -20,7 +20,7 @@ public:
 	std::function<void()> _onclick_func;
 	sf::Time _clickTime;
 
-	Checkbox();
+	Checkbox(Texture* texture, Texture* hoverTexture);
 	~Checkbox();
 
 	void setPosition(sf::Vector2f position);
@@ -31,7 +31,7 @@ public:
 	void click();
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 

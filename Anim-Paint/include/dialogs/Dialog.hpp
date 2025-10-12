@@ -29,7 +29,7 @@ public:
 	virtual void setPosition(sf::Vector2f position);
 
 	virtual void cursorHover();
-	virtual void handleEvent(sf::Event& event);
+	virtual void handleEvent(const sf::Event& event);
 	virtual void update();
 	virtual void draw();
 };

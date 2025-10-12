@@ -4,10 +4,17 @@
 #include "Window.hpp"
 #include "Mouse.hpp"
 
-Checkbox::Checkbox() : ElementGUI() {
+Checkbox::Checkbox(Texture* texture, Texture* hoverTexture) :
+	ElementGUI(),
+	_sprite(*texture->_texture)
+{
+
 	_value = -1;
 	_textures.clear();
 	_hoverTextures.clear();
+
+	_textures.push_back(texture);
+	_hoverTextures.push_back(hoverTexture);
 }
 
 Checkbox::~Checkbox() {
@@ -63,12 +70,13 @@ void Checkbox::cursorHover() {
 
 }
 
-void Checkbox::handleEvent(sf::Event& event) {
+void Checkbox::handleEvent(const sf::Event& event) {
 	if (_sprite.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this;
 		}
-		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			if (ElementGUI_pressed == this) {
 				click();
 			}

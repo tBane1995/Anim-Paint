@@ -28,7 +28,7 @@ void Button::cursorHover() {
 
 }
 
-void Button::handleEvent(sf::Event& event) {
+void Button::handleEvent(const sf::Event& event) {
 
 }
 
@@ -43,7 +43,8 @@ void Button::draw() {
 //////////////////////////////////////////////////////////////////
 // NormalButton
 
-NormalButton::NormalButton(Texture* texture, Texture* hoverTexture, sf::Vector2f position) {
+NormalButton::NormalButton(Texture* texture, Texture* hoverTexture, sf::Vector2f position)
+: _sprite(*texture->_texture) {
 
 	_texture = texture;
 	_hoverTexture = hoverTexture;
@@ -51,7 +52,6 @@ NormalButton::NormalButton(Texture* texture, Texture* hoverTexture, sf::Vector2f
 	_rect.setOutlineThickness(1.0f);
 	_rect.setFillColor(sf::Color::Transparent);
 	_rect.setOutlineColor(sf::Color::Transparent);
-	_sprite = sf::Sprite(*texture->_texture);
 
 	setPosition(position);
 
@@ -66,7 +66,7 @@ NormalButton::NormalButton(Texture* texture, Texture* hoverTexture, sf::Vector2f
 NormalButton::~NormalButton() {}
 
 sf::Vector2f NormalButton::getSize() {
-	return _rect.getGlobalBounds().getSize();
+	return _rect.getGlobalBounds().size;
 }
 
 void NormalButton::setPosition(sf::Vector2f position) {
@@ -108,12 +108,13 @@ void NormalButton::cursorHover() {
 
 }
 
-void NormalButton::handleEvent(sf::Event& event) {
+void NormalButton::handleEvent(const sf::Event& event) {
 	if (_sprite.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+		
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left)	{		
 			ElementGUI_pressed = this;
 		}
-		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			if (ElementGUI_pressed == this) {
 				click();
 			}
@@ -149,7 +150,8 @@ void NormalButton::draw() {
 //////////////////////////////////////////////////////////////////
 // NormalButtonWithText
 
-NormalButtonWithText::NormalButtonWithText(std::wstring text, sf::Vector2f size, sf::Vector2f position) {
+NormalButtonWithText::NormalButtonWithText(std::wstring text, sf::Vector2f size, sf::Vector2f position):
+_text(basicFont, text, 13) {
 
 	_idleColor = button_normal_color;
 	_hoverColor = button_hover_color;
@@ -160,7 +162,6 @@ NormalButtonWithText::NormalButtonWithText(std::wstring text, sf::Vector2f size,
 	_rect.setOutlineThickness(dialog_border_width);
 	_rect.setOutlineColor(sf::Color(dialog_border_color));
 
-	_text = sf::Text(text, basicFont, 13);
 	_text.setFillColor(button_text_color);
 
 	setPosition(position);
@@ -183,7 +184,7 @@ void NormalButtonWithText::setPosition(sf::Vector2f position) {
 	_position = position;
 	_rect.setPosition(_position);
 	sf::Vector2f text_pos;
-	text_pos.x = _rect.getPosition().x + _rect.getSize().x / 2 - _text.getGlobalBounds().width / 2;
+	text_pos.x = _rect.getPosition().x + _rect.getSize().x / 2 - _text.getGlobalBounds().size.x / 2;
 	text_pos.y = _rect.getPosition().y + _rect.getSize().y / 2 - basicFont.getLineSpacing(13) / 2;
 	_text.setPosition(text_pos);
 }
@@ -220,12 +221,12 @@ void NormalButtonWithText::cursorHover() {
 
 }
 
-void NormalButtonWithText::handleEvent(sf::Event& event) {
+void NormalButtonWithText::handleEvent(const sf::Event& event) {
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this;
 		}
-		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			if (ElementGUI_pressed == this) {
 				click();
 			}
@@ -260,17 +261,18 @@ void NormalButtonWithText::draw() {
 //////////////////////////////////////////////////////////////////
 // ButtonWithBottomText
 
-ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2f position) {
+ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2f position):
+	_text(basicFont, text, 13),
+	_sprite(*texture->_texture)
+{
 
 	_textColor = textColor;
 	_hoverTextColor = hoverTextColor;
 
-	_text = sf::Text(text, basicFont, 13);
 	_text.setFillColor(textColor);
 
 	_texture = texture;
 	_hoverTexture = hoverTexture;
-	_sprite = sf::Sprite(*texture->_texture);
 
 	_rect = sf::RectangleShape(sf::Vector2f(48 - 2 * tools_border_width, 64 - 2 * tools_border_width));
 	_rect.setFillColor(rectColor);
@@ -289,14 +291,14 @@ ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColo
 ButtonWithBottomText::~ButtonWithBottomText() {}
 
 sf::Vector2f ButtonWithBottomText::getSize() {
-	return _rect.getGlobalBounds().getSize();
+	return _rect.getGlobalBounds().size;
 }
 
 void ButtonWithBottomText::setPosition(sf::Vector2f position) {
 	_position = position;
 	_rect.setPosition(_position + sf::Vector2f(tools_border_width, tools_border_width));
 	_sprite.setPosition(_position);
-	_text.setPosition(_position + sf::Vector2f(48 / 2 - _text.getGlobalBounds().width / 2.0f, _rect.getSize().y - basicFont.getLineSpacing(13) - 4));
+	_text.setPosition(_position + sf::Vector2f(48 / 2 - _text.getGlobalBounds().size.x / 2.0f, _rect.getSize().y - basicFont.getLineSpacing(13) - 4));
 }
 
 void ButtonWithBottomText::unclick() {
@@ -335,12 +337,12 @@ void ButtonWithBottomText::cursorHover() {
 
 }
 
-void ButtonWithBottomText::handleEvent(sf::Event& event) {
+void ButtonWithBottomText::handleEvent(const sf::Event& event) {
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this;
 		}
-		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			if (ElementGUI_pressed == this) {
 				click();
 			}
@@ -376,17 +378,17 @@ void ButtonWithBottomText::draw() {
 //////////////////////////////////////////////////////////////////
 // ButtonWithRightText
 
-ButtonWithRightText::ButtonWithRightText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2f position) {
-
+ButtonWithRightText::ButtonWithRightText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2f position) :
+	_text(basicFont, text, 13),
+	_sprite(*texture->_texture)
+{
 	_textColor = textColor;
 	_hoverTextColor = hoverTextColor;
 
-	_text = sf::Text(text, basicFont, 13);
 	_text.setFillColor(textColor);
 
 	_texture = texture;
 	_hoverTexture = hoverTexture;
-	_sprite = sf::Sprite(*_texture->_texture);
 
 	_rect = sf::RectangleShape(sf::Vector2f(64 - 2 * tools_border_width, 32 - 2 * tools_border_width));
 	_rect.setFillColor(rectColor);
@@ -405,7 +407,7 @@ ButtonWithRightText::ButtonWithRightText(std::wstring text, sf::Color rectColor,
 ButtonWithRightText::~ButtonWithRightText() {}
 
 sf::Vector2f ButtonWithRightText::getSize() {
-	return _rect.getGlobalBounds().getSize();
+	return _rect.getGlobalBounds().size;
 }
 
 void ButtonWithRightText::setPosition(sf::Vector2f position) {
@@ -454,12 +456,12 @@ void ButtonWithRightText::cursorHover() {
 
 }
 
-void ButtonWithRightText::handleEvent(sf::Event& event) {
+void ButtonWithRightText::handleEvent(const sf::Event& event) {
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this;
 		}
-		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			if (ElementGUI_pressed == this) {
 				click();
 			}
@@ -495,16 +497,16 @@ void ButtonWithRightText::draw() {
 //////////////////////////////////////////////////////////////////
 // Option
 
-Option::Option(std::wstring text, Texture* texture, Texture* hoverTexture, sf::Vector2f position) {
+Option::Option(std::wstring text, Texture* texture, Texture* hoverTexture, sf::Vector2f position):
+	_text(basicFont, text, 13),
+	_sprite(*texture->_texture) {
 
-	_text = sf::Text(text, basicFont, 13);
 	_text.setFillColor(menu_text_color);
 
 	_texture = texture;
 	_hoverTexture = hoverTexture;
-	_sprite = sf::Sprite(*texture->_texture);
 
-	_rect = sf::RectangleShape(sf::Vector2f(32 + _text.getGlobalBounds().width + 8, 32));
+	_rect = sf::RectangleShape(sf::Vector2f(32 + _text.getGlobalBounds().size.x + 8, 32));
 	_rect.setFillColor(optionbox_idle_color);
 	setPosition(position);
 
@@ -519,7 +521,7 @@ Option::Option(std::wstring text, Texture* texture, Texture* hoverTexture, sf::V
 Option::~Option() {}
 
 sf::Vector2f Option::getSize() {
-	return _rect.getGlobalBounds().getSize();
+	return _rect.getGlobalBounds().size;
 }
 
 void Option::setPosition(sf::Vector2f position) {
@@ -562,15 +564,14 @@ void Option::cursorHover() {
 
 }
 
-void Option::handleEvent(sf::Event& event) {
+void Option::handleEvent(const sf::Event& event) {
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this;
 		}
-		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			if (ElementGUI_pressed == this) {
 				click();
-
 			}
 		}
 
@@ -604,17 +605,18 @@ void Option::draw() {
 //////////////////////////////////////////////////////////////////
 // ButtonWithTopTextAndList
 
-ButtonWithTopTextAndList::ButtonWithTopTextAndList(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, sf::Vector2f position) {
+ButtonWithTopTextAndList::ButtonWithTopTextAndList(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, sf::Vector2f position) :
+	_text(basicFont, text, 13),
+	_sprite(*getTexture(L"tex\\tools\\bottom_arrow.png")->_texture) {
 
 	_textColor = textColor;
 	_hoverTextColor = hoverTextColor;
-
-	_text = sf::Text(text, basicFont, 13);
+	
 	_text.setFillColor(textColor);
 
 	_texture = getTexture(L"tex\\tools\\bottom_arrow.png");
 	_hoverTexture = getTexture(L"tex\\tools\\bottom_arrow_hover.png");
-	_sprite = sf::Sprite(*_texture->_texture);
+	
 
 	_rect = sf::RectangleShape(sf::Vector2f(48 - 2 * tools_border_width, 32 - 2 * tools_border_width));
 	_rect.setFillColor(rectColor);
@@ -641,10 +643,8 @@ ButtonWithTopTextAndList::ButtonWithTopTextAndList(std::wstring text, sf::Color 
 ButtonWithTopTextAndList::~ButtonWithTopTextAndList() {}
 
 sf::Vector2f ButtonWithTopTextAndList::getSize() {
-	return _rect.getGlobalBounds().getSize();
+	return _rect.getGlobalBounds().size;
 }
-
-
 
 void ButtonWithTopTextAndList::addOption(std::wstring text) {
 	Option* o = new Option(text, getTexture(L"tex\\tools\\btn_none.png"), getTexture(L"tex\\tools\\btn_none_hover.png"));
@@ -669,7 +669,7 @@ void ButtonWithTopTextAndList::setPosition(sf::Vector2f position) {
 	_position = position;
 	_rect.setPosition(_position + sf::Vector2f(tools_border_width, tools_border_width));
 	_sprite.setPosition(_position + sf::Vector2f(0, 16));
-	_text.setPosition(_position + sf::Vector2f(48 / 2 - _text.getGlobalBounds().width / 2.0f, 0));
+	_text.setPosition(_position + sf::Vector2f(48 / 2 - _text.getGlobalBounds().size.x / 2.0f, 0));
 
 
 	sf::Vector2f pos = _rect.getPosition() + sf::Vector2f(0, _rect.getSize().y);
@@ -721,13 +721,14 @@ void ButtonWithTopTextAndList::cursorHover() {
 
 }
 
-void ButtonWithTopTextAndList::handleEvent(sf::Event& event) {
+void ButtonWithTopTextAndList::handleEvent(const sf::Event& event) {
 
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this;
 		}
-		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			if (ElementGUI_pressed == this) {
 				click();
 				_isOpen = !_isOpen;
@@ -745,12 +746,11 @@ void ButtonWithTopTextAndList::handleEvent(sf::Event& event) {
 		}
 	}
 
-	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (clicked_in_menu == false) {
 			_isOpen = false;
 		}
 	}
-
 
 }
 

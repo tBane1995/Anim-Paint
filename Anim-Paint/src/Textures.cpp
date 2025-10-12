@@ -17,6 +17,7 @@ Texture::Texture(std::wstring path) {
 ////////////////////
 
 std::vector < Texture* > textures;
+sf::Texture emptyTexture;
 
 Texture* getTexture(std::wstring path) {
 	for (auto& t : textures) {
@@ -32,6 +33,10 @@ void loadTexture(std::wstring path) {
 }
 
 void loadTextures() {
+
+	emptyTexture.resize(sf::Vector2u(1, 1));
+	sf::Image img(sf::Vector2u(1, 1), sf::Color::Transparent);
+	emptyTexture.update(img);
 
 	// logos
 	loadTexture(L"tex\\logo\\small_logo.png");

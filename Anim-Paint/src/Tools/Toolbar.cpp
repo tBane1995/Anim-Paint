@@ -90,15 +90,22 @@ void LargeColorButton::draw() {
 
 /////////////////////////////////////////////////////////////////////////////
 
-Toolbar::Toolbar() : ElementGUI() {
+Toolbar::Toolbar() : 
+	ElementGUI(),
+	_clipboard_text(basicFont, L"clipboard", 13),
+	_tools_text(basicFont, L"tools", 13),
+	_sizes_text(basicFont, L"size", 13),
+	_first_color_text_col(basicFont, L"color", 13),
+	_first_color_text_val(basicFont, L"1", 13),
+	_second_color_text_col(basicFont, L"color", 13),
+	_second_color_text_val(basicFont, L"2", 13),
+	_colors_text(basicFont, L"colors", 13)
+{
 
 	_rect = sf::RectangleShape(sf::Vector2f(window->getSize().x, tools_height));
 	_rect.setFillColor(tools_bar_color);
 
-
-
 	// clipboard
-	_clipboard_text = sf::Text(L"clipboard", basicFont, 13);
 	_clipboard_text.setFillColor(tools_text_color);
 
 	_btn_paste = new NormalButton(getTexture(L"tex\\tools\\btn_paste.png"), getTexture(L"tex\\tools\\btn_paste_hover.png"));
@@ -143,7 +150,6 @@ Toolbar::Toolbar() : ElementGUI() {
 	_separators.push_back(new Separator());
 
 	// tools
-	_tools_text = sf::Text(L"tools", basicFont, 13);
 	_tools_text.setFillColor(tools_text_color);
 
 	_btn_brush = new NormalButton(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
@@ -185,7 +191,6 @@ Toolbar::Toolbar() : ElementGUI() {
 	_separators.push_back(new Separator());
 
 	// increase / decrease brush size
-	_sizes_text = sf::Text(L"size", basicFont, 13);
 	_sizes_text.setFillColor(tools_text_color);
 
 	_size_decrease = new NormalButton(getTexture(L"tex\\tools\\btn_size_decrease.png"), getTexture(L"tex\\tools\\btn_size_decrease_hover.png"));
@@ -209,12 +214,6 @@ Toolbar::Toolbar() : ElementGUI() {
 	_second_color = new LargeColorButton(sf::Color::White);
 	_selectedColorButton = _first_color;
 
-	_first_color_text_col = sf::Text(L"color", basicFont, 13);
-	_first_color_text_val = sf::Text(L"1", basicFont, 13);
-
-	_second_color_text_col = sf::Text(L"color", basicFont, 13);
-	_second_color_text_val = sf::Text(L"2", basicFont, 13);
-
 	_first_color_text_col.setFillColor(tools_text_color);
 	_first_color_text_val.setFillColor(tools_text_color);
 	_second_color_text_col.setFillColor(tools_text_color);
@@ -231,7 +230,6 @@ Toolbar::Toolbar() : ElementGUI() {
 	_separators.push_back(new Separator());
 
 	// colors
-	_colors_text = sf::Text(L"colors", basicFont, 13);
 	_colors_text.setFillColor(tools_text_color);
 
 	// black - grey - white
@@ -329,7 +327,7 @@ void Toolbar::setPosition(sf::Vector2f position) {
 
 	x += 4;
 
-	_clipboard_text.setPosition(x / 2 - _clipboard_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
+	_clipboard_text.setPosition(sf::Vector2f(x / 2 - _clipboard_text.getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4));
 
 	_separators[0]->setPosition(sf::Vector2f(x, menu_height));
 	x += _separators[0]->getSize().x;
@@ -346,7 +344,7 @@ void Toolbar::setPosition(sf::Vector2f position) {
 
 	x += 2;
 
-	_tools_text.setPosition((x + old_x) / 2 - _tools_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
+	_tools_text.setPosition(sf::Vector2f((x + old_x) / 2 - _tools_text.getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4));
 
 	_separators[1]->setPosition(sf::Vector2f(x, menu_height));
 	x += _separators[1]->getSize().x;
@@ -360,7 +358,7 @@ void Toolbar::setPosition(sf::Vector2f position) {
 	x += 32;
 	x += 2;
 
-	_sizes_text.setPosition((x + old_x) / 2 - _sizes_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
+	_sizes_text.setPosition(sf::Vector2f((x + old_x) / 2 - _sizes_text.getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4));
 
 	_separators[2]->setPosition(sf::Vector2f(x, menu_height));
 	x += _separators[2]->getSize().x;
@@ -370,14 +368,14 @@ void Toolbar::setPosition(sf::Vector2f position) {
 	x += 4;
 
 	_first_color->setPosition(sf::Vector2f(x, y));
-	_first_color_text_col.setPosition(x + 24 - _first_color_text_col.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) * 2 - 4);
-	_first_color_text_val.setPosition(x + 24 - _first_color_text_val.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
+	_first_color_text_col.setPosition(sf::Vector2f(x + 24 - _first_color_text_col.getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) * 2 - 4));
+	_first_color_text_val.setPosition(sf::Vector2f(x + 24 - _first_color_text_val.getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4));
 	x += 48;
 
 
 	_second_color->setPosition(sf::Vector2f(x, y));
-	_second_color_text_col.setPosition(x + 24 - _second_color_text_col.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) * 2 - 4);
-	_second_color_text_val.setPosition(x + 24 - _second_color_text_val.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
+	_second_color_text_col.setPosition(sf::Vector2f(x + 24 - _second_color_text_col.getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) * 2 - 4));
+	_second_color_text_val.setPosition(sf::Vector2f(x + 24 - _second_color_text_val.getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4));
 
 	x += 48 + 4;
 
@@ -394,7 +392,7 @@ void Toolbar::setPosition(sf::Vector2f position) {
 		x += 32;
 	}
 
-	_colors_text.setPosition((x + old_x) / 2 - _colors_text.getGlobalBounds().width / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4);
+	_colors_text.setPosition(sf::Vector2f((x + old_x) / 2 - _colors_text.getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4));
 
 }
 
@@ -452,13 +450,13 @@ void Toolbar::cursorHover() {
 
 }
 
-void Toolbar::handleEvent(sf::Event& event) {
+void Toolbar::handleEvent(const sf::Event& event) {
 
 	if (!dialogs.empty())
 		return;
 
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this;
 		}
 	}

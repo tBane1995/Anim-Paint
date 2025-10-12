@@ -4,7 +4,7 @@ Layer::Layer(std::wstring name, sf::Vector2i size) {
 	_name = name;
 
 	_image = sf::Image();
-	_image.create(size.x, size.y, sf::Color::White);
+	_image.resize(sf::Vector2u(size), sf::Color::White);
 }
 
 Layer::Layer(Layer* layer) {

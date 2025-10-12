@@ -1,4 +1,5 @@
 ﻿#include "WorldToTileConverter.hpp"
+#include <iostream>
 
 sf::Vector2i worldToTile(sf::Vector2f p, sf::Vector2f canvasPosition, sf::Vector2i size, float zoom, float zoom_delta) {
 		float scale = zoom * zoom_delta;
@@ -6,7 +7,7 @@ sf::Vector2i worldToTile(sf::Vector2f p, sf::Vector2f canvasPosition, sf::Vector
 		int tx = std::clamp(int(std::floor(local.x / scale)), 0, size.x-1);
 		int ty = std::clamp(int(std::floor(local.y / scale)), 0, size.y-1);
 
-		//std::cout << "tx = " << tx << ", ty = " << ty << "\n";
+		//std::wcout << L"tx = " << tx << L", ty = " << ty << L"\n";
 		return sf::Vector2i(tx, ty);
 }
 

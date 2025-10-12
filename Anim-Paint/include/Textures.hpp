@@ -11,6 +11,7 @@ public:
 	Texture(std::wstring path);
 };
 
+extern sf::Texture emptyTexture;
 extern std::vector < Texture* > textures;
 
 Texture* getTexture(std::wstring path);

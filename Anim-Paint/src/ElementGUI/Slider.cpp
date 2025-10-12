@@ -5,17 +5,16 @@
 #include "Mouse.hpp"
 #include "Window.hpp"
 
-Slider::Slider(int min_value, int max_value) : ElementGUI() {
+Slider::Slider(int min_value, int max_value) : 
+	ElementGUI(),
+	_bar_sprite(*getTexture(L"tex\\slider\\bar.png")->_texture),
+	_slider_sprite(*getTexture(L"tex\\slider\\slider.png")->_texture)
+{
 	_min_value = min_value;
 	_max_value = max_value;
 	_current_value = min_value;
 
-	_bar_texture = getTexture(L"tex\\slider\\bar.png");
-	_bar_sprite = sf::Sprite(*_bar_texture->_texture);
-	_bar_sprite.setScale(128 / 8, 1.0f);
-
-	_slider_texture = getTexture(L"tex\\slider\\slider.png");
-	_slider_sprite = sf::Sprite(*_slider_texture->_texture);
+	_bar_sprite.setScale({ 128 / 8, 1.0f });
 
 	_state = SliderState::Idle;
 }
@@ -41,7 +40,7 @@ int Slider::getValue() {
 }
 
 sf::Vector2f Slider::getSliderPosition() {
-	float line_length = _bar_sprite.getGlobalBounds().getSize().x - 16;
+	float line_length = _bar_sprite.getGlobalBounds().size.x - 16;
 
 	sf::Vector2f result;
 	result.x = _bar_sprite.getPosition().x + float(_current_value - _min_value) * line_length / float(_max_value - _min_value);
@@ -58,18 +57,17 @@ void Slider::setPosition(sf::Vector2f position) {
 void Slider::cursorHover() {
 
 }
-void Slider::handleEvent(sf::Event& event) {
+void Slider::handleEvent(const sf::Event& event) {	
 
-	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_slider_sprite.getGlobalBounds().contains(worldMousePosition)) {
 			ElementGUI_pressed = this;
 			_offset = worldMousePosition - _slider_sprite.getPosition();
 			_state = SliderState::Changed;
 
 		}
-
 	}
-	else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		if (ElementGUI_pressed == this) {
 			ElementGUI_pressed = nullptr;
 			_state = SliderState::Idle;
@@ -82,10 +80,10 @@ void Slider::update() {
 	if (_state == SliderState::Changed) {
 		sf::Vector2f newPos = worldMousePosition - _offset;
 		newPos.y = _bar_sprite.getPosition().y - 4;
-		newPos.x = std::clamp(newPos.x, _bar_sprite.getPosition().x, _bar_sprite.getPosition().x + _bar_sprite.getGlobalBounds().getSize().x - 16);
+		newPos.x = std::clamp(newPos.x, _bar_sprite.getPosition().x, _bar_sprite.getPosition().x + _bar_sprite.getGlobalBounds().size.x - 16);
 		_slider_sprite.setPosition(newPos);
 
-		_current_value = float(_slider_sprite.getPosition().x - _bar_sprite.getPosition().x) / (_bar_sprite.getGlobalBounds().getSize().x - 16) * (float(_max_value - _min_value)) + _min_value;
+		_current_value = float(_slider_sprite.getPosition().x - _bar_sprite.getPosition().x) / (_bar_sprite.getGlobalBounds().size.x - 16) * (float(_max_value - _min_value)) + _min_value;
 	}
 }
 

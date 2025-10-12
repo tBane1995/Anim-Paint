@@ -10,9 +10,6 @@ public:
 	int _max_value;
 	int _current_value;
 
-	Texture* _bar_texture;
-	Texture* _slider_texture;
-
 	sf::Sprite _bar_sprite;
 	sf::Sprite _slider_sprite;
 
@@ -28,7 +25,7 @@ public:
 	void setPosition(sf::Vector2f position);
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 };

@@ -38,7 +38,7 @@ public:
 	void click();
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 
@@ -68,7 +68,7 @@ public:
 	void setRange(float minX, float maxX);
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 };
@@ -97,7 +97,7 @@ public:
 	void click();
 	
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 };
@@ -105,7 +105,6 @@ public:
 class SelectedFileNameBox : public Button {
 public:
 
-	sf::Text _text;
 	sf::Text _filename;
 
 	SelectedFileNameBox(sf::Vector2f dialog_size);
@@ -118,7 +117,7 @@ public:
 	sf::Vector2f getSize();
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 };
@@ -165,11 +164,11 @@ public:
 	void drawRightPanel();
 
 	void cursorHoverLocations(LocationRect* location);
-	void handleEventLocations(LocationRect* location, sf::Event& event);
+	void handleEventLocations(LocationRect* location, const sf::Event& event);
 	void updateLocations(LocationRect* location);
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 

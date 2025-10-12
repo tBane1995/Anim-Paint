@@ -11,7 +11,9 @@
 #include "Dialogs/LayersDialog.hpp"
 #include "Dialogs/Dialog.hpp"
 
-Canvas::Canvas(sf::Vector2i size) : ElementGUI() {
+Canvas::Canvas(sf::Vector2i size) : 
+	ElementGUI(),
+	_bg_sprite(_bg_texture) {
 	this->_size = size;
 	this->_pixelSize = 8.0f;
 
@@ -50,7 +52,7 @@ void Canvas::generateBackground(sf::Vector2i size) {
 
 	_bg_image = sf::Image();
 	sf::Vector2f s = getZoomedSize(size);
-	_bg_image.create(s.x, s.y, sf::Color::Transparent);
+	_bg_image.resize(sf::Vector2u(s), sf::Color::Transparent);
 
 	sf::Color c1 = canvas_color1;
 	sf::Color c2 = canvas_color2;
@@ -68,7 +70,7 @@ void Canvas::generateBackground(sf::Vector2i size) {
 			else
 				(xx % 2 == 1) ? c = c1 : c = c2;
 
-			_bg_image.setPixel(x, y, c); // tu jest błąd - wychodzi poza zakres
+			_bg_image.setPixel(sf::Vector2u(x,y), c); // tu jest błąd - wychodzi poza zakres
 
 		}
 	}
@@ -178,7 +180,7 @@ void Canvas::drawPixels(sf::Color color) {
 				if (tx < 0 || ty < 0 || tx >= _size.x || ty >= _size.y)
 					continue;
 
-				image.setPixel(tx, ty, color);
+				image.setPixel(sf::Vector2u(tx, ty), color);
 			}
 		}
 	}
@@ -189,7 +191,7 @@ void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelC
 	if (colorToEdit == newColor)
 		return;
 
-	sf::IntRect imageRect = sf::IntRect(0, 0, animation->getCurrentLayer()->_image.getSize().x, animation->getCurrentLayer()->_image.getSize().y);
+	sf::IntRect imageRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(animation->getCurrentLayer()->_image.getSize()));
 	sf::Image& image = animation->getCurrentLayer()->_image;
 
 	std::vector < sf::Vector2i > pixels;
@@ -203,8 +205,8 @@ void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelC
 		if (!imageRect.contains(t))
 			continue;
 
-		if (image.getPixel(t.x, t.y) == colorToEdit) {
-			image.setPixel(t.x, t.y, newColor);
+		if (image.getPixel(sf::Vector2u(t.x, t.y)) == colorToEdit) {
+			image.setPixel(sf::Vector2u(t.x, t.y), newColor);
 
 			pixels.push_back(sf::Vector2i(t.x - 1, t.y));
 			pixels.push_back(sf::Vector2i(t.x + 1, t.y));;
@@ -218,7 +220,7 @@ void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelC
 
 void Canvas::fillPixels(sf::Color color) {
 	sf::Vector2i tile = worldToTile(worldMousePosition, _position, _zoom, _zoom_delta);
-	sf::Color colorToEdit = animation->getCurrentLayer()->_image.getPixel(tile.x, tile.y);
+	sf::Color colorToEdit = animation->getCurrentLayer()->_image.getPixel(sf::Vector2u(tile.x, tile.y));
 	fill(colorToEdit, color, tile);
 }
 
@@ -242,14 +244,14 @@ void Canvas::cursorHover() {
 
 }
 
-void Canvas::handleEvent(sf::Event& event) {
+void Canvas::handleEvent(const sf::Event& event) {
 
 	_brush_is_visible = false;
 
 	if (!dialogs.empty())
 		return;
 
-	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_hoveredEdgePoint != nullptr) {
 			_clickedEdgePoint = _hoveredEdgePoint;
 			_orginalEdgePointPosition = _point_left_top->getPosition();
@@ -281,7 +283,7 @@ void Canvas::handleEvent(sf::Event& event) {
 
 	}
 	else if (_state == CanvasState::Resizing) {
-		if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			_clickedEdgePoint = nullptr;
 			_state = CanvasState::Idle;
 
@@ -292,9 +294,6 @@ void Canvas::handleEvent(sf::Event& event) {
 			}
 
 			_backupFrames.clear();
-		}
-		else if (event.type == sf::Event::MouseMoved) {
-
 		}
 
 		return;
@@ -311,7 +310,7 @@ void Canvas::handleEvent(sf::Event& event) {
 			}
 
 
-			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 
 				if (ElementGUI_pressed == this || ElementGUI_pressed == nullptr) {
 					if (toolbar->_toolType == ToolType::Brush) {
@@ -328,7 +327,7 @@ void Canvas::handleEvent(sf::Event& event) {
 						if (selection->_state == SelectionState::None) {
 							sf::Vector2i tile = worldToTile(worldMousePosition, _position, _size, _zoom, _zoom_delta);
 							selection->_state = SelectionState::Selecting;
-							selection->_rect = sf::IntRect(tile.x, tile.y, 0, 0);
+							selection->_rect = sf::IntRect({ tile.x, tile.y }, { 0, 0 });
 						}
 					}
 					else if (toolbar->_toolType == ToolType::Lasso) {
@@ -344,11 +343,11 @@ void Canvas::handleEvent(sf::Event& event) {
 				}
 			}
 
-			else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+			else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 
 			}
 
-			else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+			else if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 
 				if (_state == CanvasState::Idle) {
 					if (ElementGUI_pressed == this || ElementGUI_pressed == nullptr) {
@@ -361,28 +360,28 @@ void Canvas::handleEvent(sf::Event& event) {
 					}
 				}
 			}
-			else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right) {
+			else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Right) {
 				if (_state == CanvasState::Idle) {
 
 				}
 			}
-			else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Middle) {
+			else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {
 				_state = CanvasState::Moving;
 				_offset = _bg_sprite.getPosition() - worldMousePosition;
 			}
 
-			else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+			else if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
 
 				if (_state == CanvasState::Idle) {
 
 				}
 			}
-			else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Middle) {
+			else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Middle) {
 				_state = CanvasState::Idle;
 			}
 
-			else if (event.type == sf::Event::MouseWheelScrolled) {
-				setZoom(event.mouseWheelScroll.delta);
+			else if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>()) {
+				setZoom(mws->delta);
 			}
 		}
 		else {
@@ -393,24 +392,24 @@ void Canvas::handleEvent(sf::Event& event) {
 		_brush_is_visible = false;
 	}
 
-	if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+	if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv &&  sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 		if (toolbar->_toolType == ToolType::Selector) {
 			if (selection->_state == SelectionState::Moving) {
-				sf::Vector2i tile = selectionToTile(worldMousePosition, _position, _size, selection->_rect.getSize(), selection->_offset, _zoom, _zoom_delta);
+				sf::Vector2i tile = selectionToTile(worldMousePosition, _position, _size, selection->_rect.size, selection->_offset, _zoom, _zoom_delta);
 				sf::Vector2i dst = tile - selection->_offset;
-				selection->_rect.left = dst.x;
-				selection->_rect.top = dst.y;
+				selection->_rect.position.x = dst.x;
+				selection->_rect.position.y = dst.y;
 			}
 			else if (selection->_state == SelectionState::Selecting) {
 				sf::Vector2i tile = worldToTile(worldMousePosition, _position, _size, _zoom, _zoom_delta);
-				selection->_rect.width = tile.x - selection->_rect.left;
-				selection->_rect.height = tile.y - selection->_rect.top;
+				selection->_rect.size.x = tile.x - selection->_rect.position.x;
+				selection->_rect.size.y = tile.y - selection->_rect.position.y;
 			}
 
 		}
 		else if (toolbar->_toolType == ToolType::Lasso) {
 			if (lasso->_state == LassoState::Moving) {
-				sf::Vector2i tile = selectionToTile(worldMousePosition, _position, _size, lasso->_rect.getSize(), lasso->_offset, _zoom, _zoom_delta);
+				sf::Vector2i tile = selectionToTile(worldMousePosition, _position, _size, lasso->_rect.size, lasso->_offset, _zoom, _zoom_delta);
 				sf::Vector2i dst = tile - lasso->_offset;
 				lasso->_outlineOffset.x = dst.x;
 				lasso->_outlineOffset.y = dst.y;
@@ -421,7 +420,7 @@ void Canvas::handleEvent(sf::Event& event) {
 
 				if (lasso->_image != nullptr) {
 					lasso->generateRect();
-					paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.left, lasso->_rect.top, toolbar->_second_color->_color);
+					paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, toolbar->_second_color->_color);
 					lasso->_image = nullptr;
 				}
 
@@ -429,8 +428,8 @@ void Canvas::handleEvent(sf::Event& event) {
 				lasso->generateRect();
 
 				lasso->_image = new sf::Image();
-				if (lasso->_rect.width > 0 && lasso->_rect.height > 0) {
-					lasso->_image->create(lasso->_rect.width, lasso->_rect.height, sf::Color::Transparent);
+				if (lasso->_rect.size.x > 0 && lasso->_rect.size.y > 0) {
+					lasso->_image->resize(sf::Vector2u(lasso->_rect.size), sf::Color::Transparent);
 					copy(lasso->_image, &animation->getCurrentLayer()->_image, lasso->_rect, toolbar->_second_color->_color);
 					remove(animation->getCurrentLayer()->_image, lasso->_rect, lasso->generateMask(), toolbar->_second_color->_color);
 				}
@@ -438,11 +437,11 @@ void Canvas::handleEvent(sf::Event& event) {
 		}
 	}
 
-	if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		if (toolbar->_toolType == ToolType::Selector) {
 			if (selection->_state == SelectionState::Selecting) {
 				sf::IntRect norm = selection->normalizeRect();
-				if (norm.width <= 0 || norm.height <= 0) {
+				if (norm.size.x <= 0 || norm.size.y <= 0) {
 					selection->_state = SelectionState::None;
 				}
 				else {
@@ -466,7 +465,7 @@ void Canvas::handleEvent(sf::Event& event) {
 		}
 	}
 
-	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 
 		if (ElementGUI_pressed == nullptr) {
 			if (toolbar->_toolType == ToolType::Selector) {
@@ -474,33 +473,33 @@ void Canvas::handleEvent(sf::Event& event) {
 				sf::IntRect norm = selection->normalizeRect();
 
 				if (selection->clickOnSelection(tile)) {
-					selection->_offset = tile - sf::Vector2i(norm.left, norm.top);
+					selection->_offset = tile - sf::Vector2i(norm.position.x, norm.position.y);
 					selection->_state = SelectionState::Moving;
 
 					if (selection->_img == nullptr) {
 						selection->_img = new sf::Image();
-						selection->_img->create(norm.width, norm.height, sf::Color::Transparent);
-						copy(selection->_img, &animation->getCurrentLayer()->_image, lasso->_rect, toolbar->_second_color->_color);
+						selection->_img->resize(sf::Vector2u(norm.size), sf::Color::Transparent);
+						copy(selection->_img, &animation->getCurrentLayer()->_image, selection->normalizeRect(), toolbar->_second_color->_color);
 						remove(animation->getCurrentLayer()->_image, norm, toolbar->_second_color->_color);
 					}
 				}
 				else if (_bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 					if (selection->_img != nullptr) {
-						paste(&animation->getCurrentLayer()->_image, selection->_img, norm.left, norm.top, toolbar->_second_color->_color);
+						paste(&animation->getCurrentLayer()->_image, selection->_img, norm.position.x, norm.position.y, toolbar->_second_color->_color);
 						selection->_img = nullptr;
 					}
 
 					selection->_state = SelectionState::Selecting;
-					selection->_rect = sf::IntRect(tile.x, tile.y, 0, 0);
+					selection->_rect = sf::IntRect({ tile.x, tile.y }, { 0, 0 });
 				}
 				else {
 					if (selection->_img != nullptr) {
-						paste(&animation->getCurrentLayer()->_image, selection->_img, norm.left, norm.top, toolbar->_second_color->_color);
+						paste(&animation->getCurrentLayer()->_image, selection->_img, norm.position.x, norm.position.y, toolbar->_second_color->_color);
 						selection->_img = nullptr;
 					}
 
 					selection->_state = SelectionState::None;
-					selection->_rect = sf::IntRect(0, 0, 0, 0);
+					selection->_rect = sf::IntRect({ 0, 0 }, { 0, 0 });
 				}
 			}
 			else if (toolbar->_toolType == ToolType::Lasso) {
@@ -519,7 +518,7 @@ void Canvas::handleEvent(sf::Event& event) {
 				}
 				else if (_bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 					if (lasso->_image != nullptr) {
-						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.left, lasso->_rect.top, toolbar->_second_color->_color);
+						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, toolbar->_second_color->_color);
 						lasso->_image = nullptr;
 
 					}
@@ -533,7 +532,7 @@ void Canvas::handleEvent(sf::Event& event) {
 				else {
 					if (lasso->_image != nullptr) {
 						lasso->generateRect();
-						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.left, lasso->_rect.top, toolbar->_second_color->_color);
+						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, toolbar->_second_color->_color);
 						lasso->_image = nullptr;
 					}
 
@@ -639,16 +638,16 @@ void Canvas::update() {
 
 		_position = sf::Vector2f(minX, minY);
 
-		_point_left_top->setPosition(minX, minY);
-		_point_top->setPosition((minX + maxX) / 2, minY);
-		_point_right_top->setPosition(maxX, minY);
+		_point_left_top->setPosition(sf::Vector2f(minX, minY));
+		_point_top->setPosition(sf::Vector2f((minX + maxX) / 2, minY));
+		_point_right_top->setPosition(sf::Vector2f(maxX, minY));
 
-		_point_left->setPosition(minX, (minY + maxY) / 2);
-		_point_right->setPosition(maxX, (minY + maxY) / 2);
+		_point_left->setPosition(sf::Vector2f(minX, (minY + maxY) / 2));
+		_point_right->setPosition(sf::Vector2f(maxX, (minY + maxY) / 2));
 
-		_point_left_bottom->setPosition(minX, maxY);
-		_point_bottom->setPosition((minX + maxX) / 2, maxY);
-		_point_right_bottom->setPosition(maxX, maxY);
+		_point_left_bottom->setPosition(sf::Vector2f(minX, maxY));
+		_point_bottom->setPosition(sf::Vector2f((minX + maxX) / 2, maxY));
+		_point_right_bottom->setPosition(sf::Vector2f(maxX, maxY));
 
 		////////////////////
 
@@ -677,7 +676,7 @@ void Canvas::update() {
 				Layer* orgLayer = org->getLayers()[l];
 
 				sf::Image newImage;
-				newImage.create(_size.x, _size.y, toolbar->_second_color->_color);
+				newImage.resize(sf::Vector2u(_size), toolbar->_second_color->_color);
 				paste(&newImage, &srcLayer->_image, dst.x, dst.y);
 				orgLayer->_image = newImage;
 			}
@@ -686,8 +685,8 @@ void Canvas::update() {
 	}
 	else if (_state == CanvasState::Moving) {
 		sf::Vector2f target = worldMousePosition + _offset;
-		float x = clampAxisOverscroll(target.x, _bg_sprite.getGlobalBounds().width, window->getSize().x, 0.5f);
-		float y = clampAxisOverscroll(target.y, _bg_sprite.getGlobalBounds().height, window->getSize().y, 0.5f);
+		float x = clampAxisOverscroll(target.x, _bg_sprite.getGlobalBounds().size.x, window->getSize().x, 0.5f);
+		float y = clampAxisOverscroll(target.y, _bg_sprite.getGlobalBounds().size.y, window->getSize().y, 0.5f);
 		setPosition(sf::Vector2f(x, y));
 	}
 }
@@ -705,7 +704,7 @@ void Canvas::draw() {
 
 			sf::Sprite spr(tex);
 			spr.setPosition(_bg_sprite.getPosition());
-			spr.setScale(_zoom * _zoom_delta, _zoom * _zoom_delta);
+			spr.setScale(sf::Vector2f(_zoom * _zoom_delta, _zoom * _zoom_delta));
 			window->draw(spr);
 		}
 	}

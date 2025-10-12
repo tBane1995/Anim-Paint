@@ -95,11 +95,14 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 # set the SFML lib
-set(SFML_DIR "C:/SFML-2.6.2/lib/cmake/SFML")
+set(SFML_DIR "C:/SFML-3.0.2/lib/cmake/SFML")
 
 # set the packages SFML
-find_package(SFML 2.6.2 COMPONENTS graphics window system REQUIRED)
-target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system)
+find_package(SFML 3.0.2 COMPONENTS Graphics Window System REQUIRED)
+target_link_libraries(${PROJECT_NAME} 
+	SFML::Graphics
+        SFML::Window
+        SFML::System)
 
 # set the working directory (assets)
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -108,5 +111,5 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 # set the path for SFML bin
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    VS_DEBUGGER_ENVIRONMENT "PATH=%PATH%;C:\\SFML-2.6.2\\bin"
+    VS_DEBUGGER_ENVIRONMENT "PATH=%PATH%;C:\\SFML-3.0.2\\bin"
 )

@@ -107,10 +107,10 @@ void set_rotation(sf::Image& image, float angle, bool set_smooth) {
     tex.loadFromImage(image);
 
     sf::RenderTexture rtex;
-    rtex.create(tex.getSize().x, tex.getSize().y);
+    rtex.resize(tex.getSize());
 
     sf::Shader sh;
-    sh.loadFromMemory(rotation_shader_source, sf::Shader::Fragment);
+    sh.loadFromMemory(rotation_shader_source, sf::Shader::Type::Fragment);
     sh.setUniform("angle", angle);
 
     tex.setSmooth(set_smooth);
@@ -129,10 +129,10 @@ void set_brightness(sf::Image& image, float value) {
     tex.loadFromImage(image);
 
     sf::RenderTexture rtex;
-    rtex.create(tex.getSize().x, tex.getSize().y);
+    rtex.resize(tex.getSize());
 
     sf::Shader sh;
-    sh.loadFromMemory(brightness_shader_source, sf::Shader::Fragment);
+    sh.loadFromMemory(brightness_shader_source, sf::Shader::Type::Fragment);
     sh.setUniform("brightness", value);
 
     sf::Sprite spr(tex);
@@ -151,10 +151,10 @@ void set_contrast(sf::Image& image, float value) {
     tex.loadFromImage(image);
 
     sf::RenderTexture rtex;
-    rtex.create(tex.getSize().x, tex.getSize().y);
+    rtex.resize(tex.getSize());
 
     sf::Shader sh;
-    sh.loadFromMemory(contrast_shader_source, sf::Shader::Fragment);
+    sh.loadFromMemory(contrast_shader_source, sf::Shader::Type::Fragment);
     sh.setUniform("contrast", value);
 
     sf::Sprite spr(tex);
@@ -172,10 +172,10 @@ void set_saturation(sf::Image& image, float value) {
     tex.loadFromImage(image);
 
     sf::RenderTexture rtex;
-    rtex.create(tex.getSize().x, tex.getSize().y);
+    rtex.resize(tex.getSize());
 
     sf::Shader sh;
-    sh.loadFromMemory(saturation_shader_source, sf::Shader::Fragment);
+    sh.loadFromMemory(saturation_shader_source, sf::Shader::Type::Fragment);
     sh.setUniform("saturation", value);
 
     sf::Sprite spr(tex);
@@ -193,10 +193,10 @@ void set_sepia(sf::Image& image, float value) {
     tex.loadFromImage(image);
 
     sf::RenderTexture rtex;
-    rtex.create(tex.getSize().x, tex.getSize().y);
+    rtex.resize(tex.getSize());
 
     sf::Shader sh;
-    sh.loadFromMemory(sepia_shader_source, sf::Shader::Fragment);
+    sh.loadFromMemory(sepia_shader_source, sf::Shader::Type::Fragment);
     sh.setUniform("sepia", value);
 
     sf::Sprite spr(tex);

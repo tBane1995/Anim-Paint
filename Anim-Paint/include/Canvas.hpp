@@ -58,7 +58,7 @@ public:
 	void fillPixels(sf::Color color);
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	float clampAxisOverscroll(float v, float content, float viewport, float overscrollRatio = 0.5f);
 	void update();
 	void draw();

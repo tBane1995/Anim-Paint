@@ -79,7 +79,7 @@ void Scrollbar::updateSliderPosition() {
 }
 
 void Scrollbar::setPosition(float x, float y) {
-	_rect.setPosition(x, y);
+	_rect.setPosition(sf::Vector2f(x, y));
 	updateSliderPosition();
 }
 
@@ -93,21 +93,22 @@ void Scrollbar::cursorHover() {
 	}
 }
 
-void Scrollbar::handleEvent(sf::Event& event) {
-	
-	if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+void Scrollbar::handleEvent(const sf::Event& event) {
+
+	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		if (ElementGUI_pressed == this) {
 			_state = ScrollbarState::Idle;
 		}
 	}
-	else if (_slider.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+		if (_slider.getGlobalBounds().contains(worldMousePosition)) {
 			ElementGUI_pressed = this;
 			if (_slider.getSize().y < _rect.getSize().y) {
 				_state = ScrollbarState::Dragging;
 				_dragOffset = worldMousePosition - _slider.getPosition();
 			}
 		}
+		
 	}
 	
 

@@ -5,11 +5,13 @@
 #include "Window.hpp"
 #include "Filters.hpp"
 
-Dialog_Rotation::Dialog_Rotation(std::vector < Layer* > layers) : Dialog(L"rotation", sf::Vector2f(256, 160), sf::Vector2f(8, 120)) {
+Dialog_Rotation::Dialog_Rotation(std::vector < Layer* > layers) : 
+	Dialog(L"rotation", sf::Vector2f(256, 160), sf::Vector2f(8, 120)),
+	_rotation_text(basicFont, L"rotation", 13)
+{
 
 	_state = RotationState::Idle;
-	_rotation_text = sf::Text(L"rotation", basicFont, 13);
-
+	
 	_rotation_slider = new Slider(0, 359);
 	_rotation_slider->setValue(0);
 
@@ -96,7 +98,7 @@ void Dialog_Rotation::cursorHover() {
 	_confirm->cursorHover();
 }
 
-void Dialog_Rotation::handleEvent(sf::Event& event) {
+void Dialog_Rotation::handleEvent(const sf::Event& event) {
 	Dialog::handleEvent(event);
 
 	_rotation_slider->handleEvent(event);

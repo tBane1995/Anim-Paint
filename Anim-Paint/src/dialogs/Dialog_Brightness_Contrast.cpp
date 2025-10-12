@@ -5,12 +5,12 @@
 #include "Filters.hpp"
 #include "Window.hpp"
 
-Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector < Layer* > layers) : Dialog(L"brightness-contrast", sf::Vector2f(256, 160), sf::Vector2f(8, 120)) {
+Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector < Layer* > layers) : 
+	Dialog(L"brightness-contrast", sf::Vector2f(256, 160), sf::Vector2f(8, 120)),
+	_brightness_text(basicFont, L"brightness", 13),
+	_contrast_text(basicFont, L"contrast", 13) {
 
 	_state = BrightnessContrastState::Idle;
-
-	_brightness_text = sf::Text(L"brightness", basicFont, 13);
-	_contrast_text = sf::Text(L"contrast", basicFont, 13);
 
 	_brightness_slider = new Slider(-50, 50);
 	_brightness_slider->setValue(0);
@@ -112,7 +112,7 @@ void Dialog_Brightness_Contrast::cursorHover() {
 	_confirm->cursorHover();
 }
 
-void Dialog_Brightness_Contrast::handleEvent(sf::Event& event) {
+void Dialog_Brightness_Contrast::handleEvent(const sf::Event& event) {
 	Dialog::handleEvent(event);
 
 	_brightness_slider->handleEvent(event);

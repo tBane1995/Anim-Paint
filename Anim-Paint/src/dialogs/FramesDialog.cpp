@@ -3,7 +3,10 @@
 #include "Theme.hpp"
 #include "Window.hpp"
 
-FramesDialog::FramesDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position) : Dialog(title, size, position) {
+FramesDialog::FramesDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position) : 
+	Dialog(title, size, position),
+	_text(basicFont, std::to_wstring(animation->getCurrentFrameID() + 1) + L" / " + std::to_wstring(animation->getFramesCount()), 17)
+{
 
 	_first_btn = new NormalButton(getTexture(L"tex\\frames\\first.png"), getTexture(L"tex\\frames\\first_hover.png"));
 	_prev_btn = new NormalButton(getTexture(L"tex\\frames\\prev.png"), getTexture(L"tex\\frames\\prev_hover.png"));
@@ -42,7 +45,7 @@ FramesDialog::FramesDialog(std::wstring title, sf::Vector2f size, sf::Vector2f p
 FramesDialog::~FramesDialog() {}
 
 void FramesDialog::generateText() {
-	_text = sf::Text(std::to_wstring(animation->getCurrentFrameID() + 1) + L" / " + std::to_wstring(animation->getFramesCount()), basicFont, 17);
+	_text.setString(std::to_wstring(animation->getCurrentFrameID() + 1) + L" / " + std::to_wstring(animation->getFramesCount()));
 }
 
 void FramesDialog::setPosition(sf::Vector2f position) {
@@ -53,7 +56,7 @@ void FramesDialog::setPosition(sf::Vector2f position) {
 	_next_btn->setPosition(_position + sf::Vector2f(getSize().x - dialog_padding - 64, 32 + dialog_padding));
 	_last_btn->setPosition(_position + sf::Vector2f(getSize().x - dialog_padding - 32, 32 + dialog_padding));
 
-	_text.setPosition(_position + sf::Vector2f(getSize().x / 2 - _text.getGlobalBounds().width / 2.0f, 32 + dialog_padding + (32 - basicFont.getLineSpacing(17)) / 2));
+	_text.setPosition(_position + sf::Vector2f(getSize().x / 2 - _text.getGlobalBounds().size.x / 2.0f, 32 + dialog_padding + (32 - basicFont.getLineSpacing(17)) / 2));
 }
 
 void FramesDialog::cursorHover() {
@@ -68,7 +71,7 @@ void FramesDialog::cursorHover() {
 	_last_btn->cursorHover();
 }
 
-void FramesDialog::handleEvent(sf::Event& event) {
+void FramesDialog::handleEvent(const sf::Event& event) {
 
 	if (!dialogs.empty())
 		return;
@@ -80,12 +83,14 @@ void FramesDialog::handleEvent(sf::Event& event) {
 	_next_btn->handleEvent(event);
 	_last_btn->handleEvent(event);
 
-	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::B) {
+	
+
+	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::B) {
 		if (_prev_btn->_state != ButtonState::Pressed)
 			_prev_btn->click();
 	}
 
-	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::N) {
+	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::N) {
 		if (_next_btn->_state != ButtonState::Pressed)
 			_next_btn->click();
 	}

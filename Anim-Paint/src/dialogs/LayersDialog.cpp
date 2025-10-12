@@ -4,7 +4,9 @@
 #include "Mouse.hpp"
 #include "Window.hpp"
 
-LayerBox::LayerBox(Layer* layer) : ElementGUI() {
+LayerBox::LayerBox(Layer* layer) : 
+	ElementGUI(),
+	_textName(basicFont, layer->_name, 17) {
 
 	_layer = layer;
 
@@ -13,12 +15,10 @@ LayerBox::LayerBox(Layer* layer) : ElementGUI() {
 	_rect = sf::RectangleShape(sf::Vector2f(160 - 2 * dialog_padding, 32));
 	_rect.setFillColor(sf::Color::Transparent);
 
-	_visibling = new Checkbox();
-	_visibling->addValue(getTexture(L"tex\\layers\\visible.png"), getTexture(L"tex\\layers\\visible_hover.png"));
+	_visibling = new Checkbox(getTexture(L"tex\\layers\\visible.png"), getTexture(L"tex\\layers\\visible_hover.png"));
 	_visibling->addValue(getTexture(L"tex\\layers\\unvisible.png"), getTexture(L"tex\\layers\\unvisible_hover.png"));
 	_visibling->setValue(0);
 
-	_textName = sf::Text(layer->_name, basicFont, 17);
 	_textName.setFillColor(normal_text_color);
 
 	rect_coloring();
@@ -44,13 +44,13 @@ void LayerBox::cursorHover() {
 	}
 }
 
-void LayerBox::handleEvent(sf::Event& event) {
+void LayerBox::handleEvent(const sf::Event& event) {
 
 	if (!dialogs.empty())
 		return;
 
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == event.MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed == this;
 		}
 	}
@@ -160,7 +160,7 @@ void LayersDialog::cursorHover() {
 	}
 }
 
-void LayersDialog::handleEvent(sf::Event& event) {
+void LayersDialog::handleEvent(const sf::Event& event) {
 	Dialog::handleEvent(event);
 
 	for (auto& layerbox : layersBoxes) {

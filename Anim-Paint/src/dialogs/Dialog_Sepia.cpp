@@ -5,11 +5,11 @@
 #include "Filters.hpp"
 #include "Window.hpp"
 
-Dialog_Sepia::Dialog_Sepia(std::vector < Layer* > layers) : Dialog(L"sepia", sf::Vector2f(256, 160), sf::Vector2f(8, 120)) {
+Dialog_Sepia::Dialog_Sepia(std::vector < Layer* > layers) : 
+	Dialog(L"sepia", sf::Vector2f(256, 160), sf::Vector2f(8, 120)),
+	_sepia_text(basicFont, L"sepia", 13) {
 
 	_state = SepiaState::Idle;
-
-	_sepia_text = sf::Text(L"sepia", basicFont, 13);
 
 	_sepia_slider = new Slider(0, 100);
 	_sepia_slider->setValue(0);
@@ -96,7 +96,7 @@ void Dialog_Sepia::cursorHover() {
 	_confirm->cursorHover();
 }
 
-void Dialog_Sepia::handleEvent(sf::Event& event) {
+void Dialog_Sepia::handleEvent(const sf::Event& event) {
 	Dialog::handleEvent(event);
 
 	_sepia_slider->handleEvent(event);

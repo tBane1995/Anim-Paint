@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <io.h>
 
+#include "SFML/Window/VideoMode.hpp"
 #include "SFML/Graphics.hpp"
 
 #include "Window.hpp"
@@ -62,8 +63,7 @@ void createDialogs() {
 
 int main() {
 	_setmode(_fileno(stdout), _O_U16TEXT); // wide char UTF-16 output
-
-	window  = new sf::RenderWindow(sf::VideoMode(800,600), "Anim Paint", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+	window = new sf::RenderWindow(sf::VideoMode({800, 600}), "Anim Paint", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
 	window->setView(mainView);
 	loadTextures();
 	loadTheme();
@@ -133,71 +133,69 @@ int main() {
 		frames_dialog->update();
 		layers_dialog->update();
 
-
 		// handle events
-		sf::Event event;
-		while (window->pollEvent(event)) {
+		while (const std::optional event = window->pollEvent()) {
 
-			if (event.type == sf::Event::Closed)
+			if (event->is<sf::Event::Closed>())
 				window->close();
 
-			if (event.type == sf::Event::MouseButtonPressed) {
+			if (event->getIf<sf::Event::MouseButtonPressed>()) {
 
-				toolbar->handleEvent(event);
-				main_menu->handleEvent(event);
-				
+				toolbar->handleEvent(*event);
+				main_menu->handleEvent(*event);
+
 				for (auto& dialog : dialogs)
-					dialog->handleEvent(event);
+					dialog->handleEvent(*event);
 
-				frames_dialog->handleEvent(event);
-				layers_dialog->handleEvent(event);
+				frames_dialog->handleEvent(*event);
+				layers_dialog->handleEvent(*event);
 
-				canvas->handleEvent(event);
+				canvas->handleEvent(*event);
 			}
-			else if (event.type == sf::Event::MouseButtonReleased) {
-				
-				toolbar->handleEvent(event);
-				main_menu->handleEvent(event);
+			else if (event->getIf<sf::Event::MouseButtonReleased>()) {
 
-				
+				toolbar->handleEvent(*event);
+				main_menu->handleEvent(*event);
+
+
 				for (auto& dialog : dialogs)
-					dialog->handleEvent(event);
+					dialog->handleEvent(*event);
 
-				frames_dialog->handleEvent(event);
-				layers_dialog->handleEvent(event);
+				frames_dialog->handleEvent(*event);
+				layers_dialog->handleEvent(*event);
 
-				canvas->handleEvent(event);
+				canvas->handleEvent(*event);
 			}
-			else if (event.type == sf::Event::MouseMoved) {
-				toolbar->handleEvent(event);
-				main_menu->handleEvent(event);
-				
-				
+			else if (event->getIf<sf::Event::MouseMoved>()) {
+				toolbar->handleEvent(*event);
+				main_menu->handleEvent(*event);
+
+
 				for (auto& dialog : dialogs)
-					dialog->handleEvent(event);
+					dialog->handleEvent(*event);
 
-				frames_dialog->handleEvent(event);
-				layers_dialog->handleEvent(event);
+				frames_dialog->handleEvent(*event);
+				layers_dialog->handleEvent(*event);
 
-				canvas->handleEvent(event);
+				canvas->handleEvent(*event);
 			}
-			else if (event.type == sf::Event::MouseWheelScrolled) {
-				canvas->handleEvent(event);
+			else if (event->getIf < sf::Event::MouseWheelScrolled>()) {
+				canvas->handleEvent(*event);
 			}
-			else if (event.type == sf::Event::KeyPressed) {
-				
-				if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::X) {
+			else if (const auto* kp = event->getIf<sf::Event::KeyPressed>()) {
+
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::X) {
 					toolbar->_btn_cut->click();
 				}
-				else if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::C) {
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::C) {
 					toolbar->_btn_copy->click();
 				}
-				else if (event.type == sf::Event::KeyPressed && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) && event.key.code == sf::Keyboard::V) {
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::V) {
 					toolbar->_btn_paste->click();
 				}
 				else {
 					for (auto& dialog : dialogs) {
-						dialog->handleEvent(event);
+						dialog->handleEvent(*event);
 					}
 				}
 				

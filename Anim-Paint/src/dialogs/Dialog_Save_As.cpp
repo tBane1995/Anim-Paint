@@ -108,7 +108,12 @@ bool hasChildren(std::filesystem::path& p) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-LocationRect::LocationRect(std::wstring path, int depth = 0) : ElementGUI() {
+LocationRect::LocationRect(std::wstring path, int depth = 0) : 
+	ElementGUI(),
+	_arrow(*getTexture(L"tex\\dialog\\dictionaryIsEmpty.png")->_texture),
+	_ico(*getTexture(L"tex\\dialog\\empty.png")->_texture),
+	_text(basicFont, L"", file_dialog_file_text_size) {
+
 	_rect = sf::RectangleShape();
 	unclick();
 
@@ -117,14 +122,10 @@ LocationRect::LocationRect(std::wstring path, int depth = 0) : ElementGUI() {
 
 	_isOpen = false;
 
-	_arrow = sf::Sprite();
 	if (hasChildren(_path))
 		close();
 	else
 		hide();
-
-	
-	_ico = sf::Sprite();
 
 	if(isDrive(_path.wstring()))
 		_ico.setTexture(*getTexture(L"tex\\dialog\\harddrive.png")->_texture);
@@ -133,11 +134,7 @@ LocationRect::LocationRect(std::wstring path, int depth = 0) : ElementGUI() {
 	else
 		_ico.setTexture(*getTexture(L"tex\\dialog\\empty.png")->_texture);
 
-	_text = sf::Text();
-	_text.setFont(basicFont);
-	_text.setCharacterSize(file_dialog_file_text_size);
 	_text.setFillColor(file_dialog_file_text_color);
-
 	_text.setString((isDrive(_path)? _path.wstring() : _path.filename().wstring()));
 }
 
@@ -286,19 +283,20 @@ void LocationRect::cursorHover() {
 
 }
 
-void LocationRect::handleEvent(sf::Event& event) {
+void LocationRect::handleEvent(const sf::Event& event) {
 	
 	
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-			ElementGUI_pressed = this;
 
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+			ElementGUI_pressed = this;
 		}
-		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			if (ElementGUI_pressed == this) {
 				click();
 			}
 		}
+
 
 	}
 
@@ -394,21 +392,23 @@ void LocationAndFilesSeparator::cursorHover() {
 		_rect.setFillColor(file_dialog_separator_idle_color);
 }
 
-void LocationAndFilesSeparator::handleEvent(sf::Event& event) {
-	if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+void LocationAndFilesSeparator::handleEvent(const sf::Event& event) {
+	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		if (ElementGUI_pressed == this) {
 			ElementGUI_pressed = nullptr;
 			_state = LocationAndFilesSeparatorState::Idle;
 		}
 	}
-	else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-		if(_rect.getGlobalBounds().contains(worldMousePosition)){
+	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+		if (_rect.getGlobalBounds().contains(worldMousePosition)) {
 			ElementGUI_pressed = this;
 			_state = LocationAndFilesSeparatorState::Moving;
 			_offset = worldMousePosition - sf::Vector2f(_rect.getPosition().x, _rect.getPosition().y);
-			
+
 		}
 	}
+	
+
 
 }
 
@@ -430,17 +430,15 @@ void LocationAndFilesSeparator::draw() {
 }
 ////////////////////////////////////////////////////////////////////////////
 
-FileRect::FileRect() : ElementGUI() {
+FileRect::FileRect() : 
+	ElementGUI(),
+	_ico(*getTexture(L"tex\\dialog\\empty.png")->_texture),
+	_text(basicFont, L"...", file_dialog_file_text_size) {
+
 	_rect = sf::RectangleShape();
 	_rect.setFillColor(sf::Color(95, 47, 47));
 
-	_ico = sf::Sprite();
-
-	_text = sf::Text();
-	_text.setFont(basicFont);
-	_text.setCharacterSize(file_dialog_file_text_size);
 	_text.setFillColor(file_dialog_file_text_color);
-	_text.setString(L"...");
 
 	_state = ButtonState::Idle;
 	_clickTime = currentTime;
@@ -506,16 +504,16 @@ void FileRect::cursorHover() {
 	}
 }
 
-void FileRect::handleEvent(sf::Event& event) {
+void FileRect::handleEvent(const sf::Event& event) {
 
 	
 	if (_path != std::filesystem::path()) {
 		if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 				ElementGUI_pressed = this;
 
 			}
-			else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+			else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 				if (ElementGUI_pressed == this) {
 					click();
 				}
@@ -551,16 +549,14 @@ void FileRect::draw() {
 }
 //////////////////////////////////////////////////////////////////////////////
 
-SelectedFileNameBox::SelectedFileNameBox(sf::Vector2f size) : Button() {
+SelectedFileNameBox::SelectedFileNameBox(sf::Vector2f size) : 
+	Button(),
+	_filename(basicFont, L"", file_dialog_file_text_size) {
 	
 	_rect.setSize(size);
 	_rect.setFillColor(sf::Color(79, 79, 79));
- 
-	_filename = sf::Text();
-	_filename.setFont(basicFont);
-	_filename.setCharacterSize(file_dialog_file_text_size);
+
 	_filename.setFillColor(file_dialog_file_text_color);
-	_filename.setString(L"");
 }
 
 SelectedFileNameBox::~SelectedFileNameBox() {
@@ -592,7 +588,7 @@ void SelectedFileNameBox::cursorHover() {
 
 }
 
-void SelectedFileNameBox::handleEvent(sf::Event& event) {
+void SelectedFileNameBox::handleEvent(const sf::Event& event) {
 
 }
 
@@ -604,18 +600,15 @@ void SelectedFileNameBox::draw() {
 	window->draw(_rect);
 
 	sf::View view(sf::FloatRect(
-		_rect.getPosition().x,
-		_rect.getPosition().y,
-		_rect.getSize().x,
-		_rect.getSize().y
+		{ _rect.getPosition().x,_rect.getPosition().y }, 
+		{ _rect.getSize().x, _rect.getSize().y }
 	));
 
 	sf::FloatRect vp(
-		_rect.getPosition().x / mainView.getSize().x,
-		_rect.getPosition().y / mainView.getSize().y,
-		_rect.getSize().x / mainView.getSize().x,
-		_rect.getSize().y / mainView.getSize().y
+		{ _rect.getPosition().x / mainView.getSize().x, _rect.getPosition().y / mainView.getSize().y },
+		{ _rect.getSize().x / mainView.getSize().x, _rect.getSize().y / mainView.getSize().y }
 	);
+
 	view.setViewport(vp);
 
 	window->setView(view);
@@ -628,7 +621,10 @@ void SelectedFileNameBox::draw() {
  
 //////////////////////////////////////////////////////////////////////////////
 
-Dialog_Save_As::Dialog_Save_As(std::wstring dialogName, std::wstring selectButtonText, std::function<void(const std::filesystem::path&)> function) : Dialog(dialogName, sf::Vector2f(400, 292), sf::Vector2f(8, 120)) {
+Dialog_Save_As::Dialog_Save_As(std::wstring dialogName, std::wstring selectButtonText, std::function<void(const std::filesystem::path&)> function) : 
+	Dialog(dialogName, sf::Vector2f(400, 292), sf::Vector2f(8, 120)),
+	_filenameText(basicFont, L"File name", file_dialog_file_text_size)
+{
 
 	_files.clear();
 	
@@ -651,13 +647,9 @@ Dialog_Save_As::Dialog_Save_As(std::wstring dialogName, std::wstring selectButto
 	_bottomRect = sf::RectangleShape(sf::Vector2f(getContentSize().x, 70));
 	_bottomRect.setFillColor(sf::Color(47, 47, 47));
 
-	_filenameText = sf::Text();
-	_filenameText.setFont(basicFont);
-	_filenameText.setCharacterSize(file_dialog_file_text_size);
 	_filenameText.setFillColor(file_dialog_file_text_color);
-	_filenameText.setString(L"File name");
 
-	_selectedFileNameBox = new SelectedFileNameBox(sf::Vector2f(getContentSize().x - _filenameText.getGlobalBounds().width - 3 * dialog_padding, file_dialog_file_rect_height));
+	_selectedFileNameBox = new SelectedFileNameBox(sf::Vector2f(getContentSize().x - _filenameText.getGlobalBounds().size.x - 3 * dialog_padding, file_dialog_file_rect_height));
 
 	sf::Vector2f btnSize(64, file_dialog_file_rect_height + dialog_padding);
 	_selectBtn = new NormalButtonWithText(selectButtonText, btnSize);
@@ -779,8 +771,8 @@ void Dialog_Save_As::createLeftPanel(int dictionariesCount) {
 
 
 	// scrollbar
-	sf::Vector2f scrollbarPos = sf::Vector2f(_leftRect.getPosition().x + _leftRect.getSize().x + dialog_padding, getContentSize().y + dialog_padding);
-	sf::Vector2f scrollbarSize = sf::Vector2f(16, _leftRect.getSize().y);
+	sf::Vector2f scrollbarPos = { _leftRect.getPosition().x + _leftRect.getSize().x + dialog_padding, getContentSize().y + dialog_padding };
+	sf::Vector2f scrollbarSize = { 16, _leftRect.getSize().y };
 
 	float scrollbarMax = calculateLeftScrollbarHeight();
 	float scrollbarSliderSize = (dictionariesCount - 1) * file_dialog_file_rect_height;
@@ -973,7 +965,7 @@ void Dialog_Save_As::setPosition(sf::Vector2f position) {
 
 	_filenameText.setPosition(bottomRectPos + sf::Vector2f(dialog_padding,dialog_padding));
 
-	sf::Vector2f selectedFileNameBoxPos(sf::Vector2f(getContentPosition().x + _filenameText.getGlobalBounds().width + 2 * dialog_padding, _rightRect.getPosition().y + _rightRect.getSize().y + dialog_padding));
+	sf::Vector2f selectedFileNameBoxPos(sf::Vector2f(getContentPosition().x + _filenameText.getGlobalBounds().size.x + 2 * dialog_padding, _rightRect.getPosition().y + _rightRect.getSize().y + dialog_padding));
 	_selectedFileNameBox->setPosition(selectedFileNameBoxPos);
 
 	sf::Vector2f btnPos;
@@ -989,18 +981,15 @@ void Dialog_Save_As::setPosition(sf::Vector2f position) {
 void Dialog_Save_As::drawLeftPanel() {
 
 	sf::View view(sf::FloatRect(
-		_leftRect.getPosition().x,
-		_leftRect.getPosition().y,
-		_leftRect.getSize().x,
-		_leftRect.getSize().y
+		{ _leftRect.getPosition().x, _leftRect.getPosition().y, },
+		{ _leftRect.getSize().x, _leftRect.getSize().y }
 	));
 
 	sf::FloatRect vp(
-		_leftRect.getPosition().x / mainView.getSize().x,
-		_leftRect.getPosition().y / mainView.getSize().y,
-		_leftRect.getSize().x / mainView.getSize().x,
-		_leftRect.getSize().y / mainView.getSize().y
+		{ _leftRect.getPosition().x / mainView.getSize().x, _leftRect.getPosition().y / mainView.getSize().y },
+		{ _leftRect.getSize().x / mainView.getSize().x, _leftRect.getSize().y / mainView.getSize().y }
 	);
+
 	view.setViewport(vp);
 
 	window->setView(view);
@@ -1014,17 +1003,13 @@ void Dialog_Save_As::drawLeftPanel() {
 void Dialog_Save_As::drawRightPanel() {
 
 	sf::View view(sf::FloatRect(
-		_rightRect.getPosition().x,
-		_rightRect.getPosition().y,
-		_rightRect.getSize().x,
-		_rightRect.getSize().y
+		{ _rightRect.getPosition().x, _rightRect.getPosition().y },
+		{ _rightRect.getSize().x, _rightRect.getSize().y }
 	));
 
 	sf::FloatRect vp(
-		_rightRect.getPosition().x / mainView.getSize().x,
-		_rightRect.getPosition().y / mainView.getSize().y,
-		_rightRect.getSize().x / mainView.getSize().x,
-		_rightRect.getSize().y / mainView.getSize().y
+		{ _rightRect.getPosition().x / mainView.getSize().x, _rightRect.getPosition().y / mainView.getSize().y },
+		{ _rightRect.getSize().x / mainView.getSize().x, _rightRect.getSize().y / mainView.getSize().y }
 	);
 	view.setViewport(vp);
 
@@ -1047,7 +1032,7 @@ void Dialog_Save_As::cursorHoverLocations(LocationRect* location)
 	}
 }
 
-void Dialog_Save_As::handleEventLocations(LocationRect* location, sf::Event& event)
+void Dialog_Save_As::handleEventLocations(LocationRect* location, const sf::Event& event)
 {
 	location->handleEvent(event);
 
@@ -1096,7 +1081,7 @@ void Dialog_Save_As::cursorHover() {
 	_cancelBtn->cursorHover();
 }
 
-void Dialog_Save_As::handleEvent(sf::Event& event) {
+void Dialog_Save_As::handleEvent(const sf::Event& event) {
 	Dialog::handleEvent(event);
 
 	if (_rightRect.getGlobalBounds().contains(worldMousePosition)) {

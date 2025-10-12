@@ -95,7 +95,7 @@ public:
 	void selectColorButton(LargeColorButton* colorButton);
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 };

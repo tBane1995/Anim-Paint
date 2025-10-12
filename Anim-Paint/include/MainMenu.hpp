@@ -20,7 +20,7 @@ public:
 	void click();
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 };
@@ -45,7 +45,7 @@ public:
 	void click();
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 };
@@ -69,7 +69,7 @@ public:
 	void importFile(const std::filesystem::path& path);
 
 	void cursorHover();
-	void handleEvent(sf::Event& event);
+	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 };

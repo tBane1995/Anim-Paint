@@ -3,7 +3,9 @@
 #include "Window.hpp"
 #include "Mouse.hpp"
 
-Dialog::Dialog(std::wstring title, sf::Vector2f size, sf::Vector2f position) {
+Dialog::Dialog(std::wstring title, sf::Vector2f size, sf::Vector2f position) :
+	_title_text(basicFont, title, dialog_title_font_size)
+{
 
 	_state = DialogState::Idle;
 
@@ -13,7 +15,6 @@ Dialog::Dialog(std::wstring title, sf::Vector2f size, sf::Vector2f position) {
 	_title_rect = sf::RectangleShape(sf::Vector2f(size.x - 2 * dialog_border_width, dialog_title_rect_height));
 	_title_rect.setFillColor(dialog_title_rect_color);
 
-	_title_text = sf::Text(title, basicFont, dialog_title_font_size);
 	_title_text.setFillColor(dialog_title_text_color);
 
 	_content_rect = sf::RectangleShape(sf::Vector2f(size.x - 2 * dialog_border_width, size.y - 2 * dialog_border_width - _title_rect.getSize().y));
@@ -65,7 +66,7 @@ void Dialog::setPosition(sf::Vector2f position) {
 	_dialog_rect.setPosition(_position);
 	_title_rect.setPosition(_position + sf::Vector2f(dialog_border_width, dialog_border_width));
 	_close_btn->setPosition(_position + sf::Vector2f(this->getSize().x - dialog_border_width - 32, dialog_border_width));
-	sf::Vector2f pos(_position + sf::Vector2f(dialog_border_width + (_title_rect.getSize().y - _title_text.getFont()->getLineSpacing(dialog_title_font_size)) / 2.0f, dialog_border_width + (_title_rect.getSize().y - _title_text.getFont()->getLineSpacing(dialog_title_font_size)) / 2.0f));
+	sf::Vector2f pos(_position + sf::Vector2f(dialog_border_width + (_title_rect.getSize().y - _title_text.getFont().getLineSpacing(dialog_title_font_size)) / 2.0f, dialog_border_width + (_title_rect.getSize().y - _title_text.getFont().getLineSpacing(dialog_title_font_size)) / 2.0f));
 	_title_text.setPosition(pos);
 	_content_rect.setPosition(_position + sf::Vector2f(dialog_border_width, dialog_border_width + _title_rect.getSize().y));
 }
@@ -78,14 +79,14 @@ void Dialog::cursorHover() {
 	_close_btn->cursorHover();
 }
 
-void Dialog::handleEvent(sf::Event& event) {
-	if (event.type == sf::Event::MouseButtonPressed) {
+void Dialog::handleEvent(const sf::Event& event) {
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (ElementGUI_hovered == this && _title_rect.getGlobalBounds().contains(worldMousePosition)) {
 			_is_moved = true;
 			_offset = _title_rect.getPosition() - worldMousePosition;
 		}
 	}
-	else if (event.type == sf::Event::MouseButtonReleased) {
+	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		_is_moved = false;
 	}
 

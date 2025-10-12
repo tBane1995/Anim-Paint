@@ -78,7 +78,7 @@ int colors_dialog_margin;
 
 void loadTheme() {
 
-	basicFont.loadFromFile("C:/Windows/Fonts/arial.ttf");
+	basicFont.openFromFile("C:/Windows/Fonts/arial.ttf");
 
 	// dialogs
 	dialog_margin = 8;

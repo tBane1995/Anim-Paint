@@ -13,10 +13,11 @@
 #include <iostream>
 #include <filesystem>
 
-OptionBox::OptionBox(std::wstring text) {
-	_text = sf::Text(text, basicFont, menu_font_size);
+OptionBox::OptionBox(std::wstring text) 
+: _text(basicFont, text, menu_font_size)
+{
 	_text.setFillColor(menu_text_color);
-	_rect = sf::RectangleShape(sf::Vector2f(_text.getGlobalBounds().width + 2 * menu_horizontal_margin, menu_height));
+	_rect = sf::RectangleShape(sf::Vector2f(_text.getGlobalBounds().size.x + 2 * menu_horizontal_margin, menu_height));
 	_rect.setFillColor(optionbox_idle_color);
 	_state = ButtonState::Idle;
 	_onclick_func = { };
@@ -53,17 +54,19 @@ void OptionBox::cursorHover() {
 	}
 }
 
-void OptionBox::handleEvent(sf::Event& event) {
-	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-			ElementGUI_pressed = this;
-		}
-		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
-			if (ElementGUI_pressed == this) {
-				click();
-			}
-		}
+void OptionBox::handleEvent(const sf::Event& event)
+{
+	if (!_rect.getGlobalBounds().contains(worldMousePosition))
+		return;
 
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left)
+	{
+		ElementGUI_pressed = this;
+	}
+	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left)
+	{
+		if (ElementGUI_pressed == this)
+			click();
 	}
 }
 
@@ -91,10 +94,12 @@ void OptionBox::draw() {
 }
 
 /////////////////////////////////////////////////////////////////////////
-MenuBox::MenuBox(std::wstring text) : ElementGUI() {
-	_text = sf::Text(text, basicFont, menu_font_size);
+MenuBox::MenuBox(std::wstring text) 
+: ElementGUI(), 
+_text(basicFont, text, menu_font_size)
+{
 	_text.setFillColor(menu_text_color);
-	_rect = sf::RectangleShape(sf::Vector2f(_text.getGlobalBounds().width + 2 * menu_horizontal_margin, menu_height));
+	_rect = sf::RectangleShape(sf::Vector2f(_text.getGlobalBounds().size.x + 2 * menu_horizontal_margin, menu_height));
 
 	_isOpen = false;
 	_options.clear();
@@ -158,12 +163,13 @@ void MenuBox::cursorHover() {
 	}
 }
 
-void MenuBox::handleEvent(sf::Event& event) {
+void MenuBox::handleEvent(const sf::Event& event) {
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this;
 		}
-		else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+		else if (const auto* mbp = event.getIf < sf::Event::MouseButtonReleased > (); mbp && mbp->button == sf::Mouse::Button::Left) {
 			if (ElementGUI_pressed == this) {
 				click();
 			}
@@ -211,12 +217,14 @@ void MenuBox::draw() {
 
 /////////////////////////////////////////////////////////////////////////
 
-MainMenu::MainMenu() : ElementGUI() {
+MainMenu::MainMenu() : 
+ElementGUI(), 
+_logo(*getTexture(L"tex\\logo\\small_logo.png")->_texture) 
+{
 	_rect = sf::RectangleShape(sf::Vector2f(window->getSize().x, menu_height));
 	_rect.setFillColor(menu_bar_color);
-	_rect.setPosition(0, 0);
+	_rect.setPosition(sf::Vector2f(0,0));
 
-	_logo = sf::Sprite(*getTexture(L"tex\\logo\\small_logo.png")->_texture);
 
 	// FILE
 	MenuBox* file = new MenuBox(L"file");
@@ -446,7 +454,7 @@ sf::Vector2f MainMenu::getSize() {
 
 void MainMenu::setPosition(sf::Vector2f position) {
 	_rect.setPosition(position);
-	_logo.setPosition(sf::Vector2f(0, (menu_height - _logo.getGlobalBounds().getSize().y) / 2.0f));
+	_logo.setPosition(sf::Vector2f(0, (menu_height - _logo.getGlobalBounds().size.y) / 2.0f));
 
 	int x = 24;
 	int y = position.y + menu_padding;
@@ -473,7 +481,7 @@ void MainMenu::exportFile(const std::filesystem::path& path) {
 	layerSize.x = animation->getFrame(0)->getLayers()[0]->_image.getSize().x;
 	layerSize.y = animation->getFrame(0)->getLayers()[0]->_image.getSize().y;
 
-	tex.create(layerSize.x*animation->getFramesCount(), layerSize.y);
+	tex.resize(sf::Vector2u(layerSize.x * animation->getFramesCount(), layerSize.y));
 	tex.clear(sf::Color::Transparent);
 
 	sf::Vector2f offset(0, 0);
@@ -493,9 +501,10 @@ void MainMenu::exportFile(const std::filesystem::path& path) {
 		offset.x += layerSize.x;
 	}
 
-	std::wstring filename = path.wstring();
+	
 	sf::Image finalImage = tex.getTexture().copyToImage();
 	finalImage.flipVertically();
+	std::wstring filename = path.wstring();
 	finalImage.saveToFile(ConvertWideToUtf8(filename));
 
 	std::wcout << "export " << filename << "\n";
@@ -515,7 +524,7 @@ void MainMenu::cursorHover() {
 
 }
 
-void MainMenu::handleEvent(sf::Event& event) {
+void MainMenu::handleEvent(const sf::Event& event) {
 	bool clicked_in_menu = false;
 
 	for (auto& mb : _menu_boxes) {
@@ -534,8 +543,8 @@ void MainMenu::handleEvent(sf::Event& event) {
 		}
 	}
 
-	if (event.type == sf::Event::MouseButtonPressed &&
-		event.mouseButton.button == sf::Mouse::Left) {
+	
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (!clicked_in_menu) {
 			if (_open_menu_box != nullptr)
 				_open_menu_box->_isOpen = false;
