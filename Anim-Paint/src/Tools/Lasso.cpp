@@ -71,6 +71,11 @@ void Lasso::addPoint(sf::Vector2i point)   // tile = globalny punkt w kafelkach
 
 	if (_points.empty() || std::hypot(float(_points.back().x - point.x), float(_points.back().y - point.y)) > 0.0f)
 	{
+		for (auto& p : _points) {
+			if (p == point) {
+				return;
+			}
+		}
 		_points.push_back(point);
 		// std::cout << "add point local: " << point.x << ", " << point.y << "\n";
 	}
@@ -285,11 +290,10 @@ sf::RenderTexture* Lasso::generateMask() {
 
 void Lasso::drawImage(sf::Vector2f canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask) {
 	if (!_image) return;
-
-	if (_image->getSize().x < 1 || _image->getSize().y < 1)
-		return;
-
+	if (_image->getSize().x < 1 || _image->getSize().y < 1) return;
 	generateRect();
+	if (_rect.size.x < 2 || _rect.size.y < 2) return;
+
 	sf::IntRect canvasRect(sf::Vector2i(0, 0), canvasSize);
 	
 	if (!_rect.findIntersection(canvasRect).has_value())
@@ -304,13 +308,12 @@ void Lasso::drawImage(sf::Vector2f canvasPosition, sf::Vector2i canvasSize, floa
 	sf::IntRect texRect(sf::Vector2i(tx, ty), visibleRect.size);
 
 	_texture = sf::Texture();
+	_texture.resize(_image->getSize());
 	_texture.loadFromImage(*_image);
 	_texture.setSmooth(false);
 
 	sf::RenderTexture* mask = generateMask();
-
-	if (mask == nullptr)
-		return;
+	if (mask == nullptr) return;
 
 	_shader.setUniform("texture", _texture);
 	_shader.setUniform("mask", mask->getTexture());
@@ -362,9 +365,8 @@ void Lasso::draw(sf::Vector2f canvasPosition, sf::Vector2i canvasSize, float sca
 		if (_state == LassoState::Selected || _state == LassoState::Moving) {
 			drawImage(canvasPosition, canvasSize, scale, alphaColor, true);
 			drawRect(canvasPosition, scale);
-			generateOutline(true);
-			drawOutline(canvasPosition, scale);
-
+			//generateOutline(true);
+			//drawOutline(canvasPosition, scale);
 		}
 	}
 

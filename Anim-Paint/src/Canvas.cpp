@@ -428,11 +428,14 @@ void Canvas::handleEvent(const sf::Event& event) {
 				lasso->generateRect();
 
 				lasso->_image = new sf::Image();
-				if (lasso->_rect.size.x > 0 && lasso->_rect.size.y > 0) {
+				
+				if (lasso->_rect.size.x > 1 && lasso->_rect.size.y > 1) {
 					lasso->_image->resize(sf::Vector2u(lasso->_rect.size), sf::Color::Transparent);
+					
 					copy(lasso->_image, &animation->getCurrentLayer()->_image, lasso->_rect, toolbar->_second_color->_color);
 					remove(animation->getCurrentLayer()->_image, lasso->_rect, lasso->generateMask(), toolbar->_second_color->_color);
 				}
+				
 			}
 		}
 	}
