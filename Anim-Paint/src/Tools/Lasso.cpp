@@ -271,7 +271,7 @@ sf::RenderTexture* Lasso::generateMask() {
 			poly.setPoint(i, sf::Vector2f(_points[i]));
 
 		poly.setFillColor(sf::Color::White);
-		poly.setOutlineThickness(1);
+		poly.setOutlineThickness(0.5f);
 		poly.setOutlineColor(sf::Color::White);
 
 		sf::RenderStates st;
@@ -304,7 +304,7 @@ void Lasso::drawImage(sf::Vector2f canvasPosition, sf::Vector2i canvasSize, floa
 
 	int tx = visibleRect.position.x - _outlineOffset.x;
 	int ty = visibleRect.position.y - _outlineOffset.y;
-
+	std::wcout << tx << ", " << ty << "\n";
 	sf::IntRect texRect(sf::Vector2i(tx, ty), visibleRect.size);
 
 	_texture = sf::Texture();
