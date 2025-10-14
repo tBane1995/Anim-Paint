@@ -2,13 +2,13 @@
 #include "SFML/Graphics.hpp"
 
 void remove(sf::Image& image, sf::IntRect rect, sf::Color alphaColor = sf::Color::Transparent);
-void remove(sf::Image& image, sf::IntRect rect, sf::RenderTexture* mask, sf::Color alphaColor = sf::Color::Transparent);
+void remove(sf::Image& image, sf::IntRect rect, sf::Image* mask, sf::Color alphaColor = sf::Color::Transparent);
 
 void copy(sf::Image* dst, sf::Image* src, sf::IntRect srcRect);
 void copy(sf::Image* dst, sf::Image* src, sf::IntRect srcRect, sf::Color emptyColor = sf::Color::Transparent);
 
 void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::Color alphaColor = sf::Color::Transparent);
-void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::RenderTexture* mask, sf::Color alphaColor = sf::Color::Transparent);
+void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::Image* mask, sf::Color alphaColor = sf::Color::Transparent);
 
 enum class SelectionState { None, Selecting, Selected, Moving };
 

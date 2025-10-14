@@ -10,6 +10,7 @@
 #include "Tools/Lasso.hpp"
 #include "Dialogs/LayersDialog.hpp"
 #include "Dialogs/Dialog.hpp"
+#include <iostream>
 
 Canvas::Canvas(sf::Vector2i size) : 
 	ElementGUI(),
@@ -429,7 +430,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 				lasso->generateRect();
 
 				lasso->_image = new sf::Image();
-				lasso->_image->resize(sf::Vector2u(1, 1));
+				lasso->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
 				if (lasso->_rect.size.x > 1 && lasso->_rect.size.y > 1) {
 					lasso->_image->resize(sf::Vector2u(lasso->_rect.size), sf::Color::Transparent);
 					
@@ -515,14 +516,15 @@ void Canvas::handleEvent(const sf::Event& event) {
 
 					if (lasso->_image == nullptr) {
 						lasso->_image = new sf::Image();
-						lasso->_image->resize(sf::Vector2u(1, 1));
+						lasso->_image->resize(sf::Vector2u(1,1), sf::Color::Transparent);
 						copy(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect, toolbar->_second_color->_color);
 						remove(animation->getCurrentLayer()->_image, lasso->_rect, toolbar->_second_color->_color);
 					}
 				}
 				else if (_bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 					if (lasso->_image != nullptr) {
-						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, toolbar->_second_color->_color);
+						std::wcout << L"paste\n";
+						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, lasso->generateMask(), toolbar->_second_color->_color);
 						lasso->_image = nullptr;
 					}
 
@@ -534,8 +536,8 @@ void Canvas::handleEvent(const sf::Event& event) {
 				}
 				else {
 					if (lasso->_image != nullptr) {
-						lasso->generateRect();
-						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, toolbar->_second_color->_color);
+						std::wcout << L"paste\n";
+						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, lasso->generateMask(), toolbar->_second_color->_color);
 						lasso->_image = nullptr;
 					}
 

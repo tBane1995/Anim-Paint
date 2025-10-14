@@ -1,6 +1,7 @@
 ﻿#include "Tools/Selection.hpp"
 #include "Clipboard.hpp"
 #include "Window.hpp"
+#include <iostream>
 
 void remove(sf::Image& image, sf::IntRect rect, sf::Color alphaColor)
 {
@@ -21,7 +22,7 @@ void remove(sf::Image& image, sf::IntRect rect, sf::Color alphaColor)
 	image.copy(backgroundImage, sf::Vector2u(clipped.position), r, false);
 }
 
-void remove(sf::Image& image, sf::IntRect rect, sf::RenderTexture* mask, sf::Color alphaColor)
+void remove(sf::Image& image, sf::IntRect rect, sf::Image* mask, sf::Color alphaColor)
 {
 	if (rect.size.x <= 0 || rect.size.y <= 0)
 		return;
@@ -37,12 +38,9 @@ void remove(sf::Image& image, sf::IntRect rect, sf::RenderTexture* mask, sf::Col
 
 	sf::IntRect r(clipped.position - rect.position, clipped.size);
 
-	sf::Image m = sf::Image();
-	m = mask->getTexture().copyToImage();
-
 	for (int y = 0; y < backgroundImage.getSize().y; y++) {
 		for (int x = 0; x < backgroundImage.getSize().x; x++) {
-			if (m.getPixel(sf::Vector2u(x, y)) == sf::Color::White) {
+			if (mask->getPixel(sf::Vector2u(x, y)) == sf::Color::White) {
 				backgroundImage.setPixel(sf::Vector2u(x, y), alphaColor);
 			}
 			else {
@@ -135,7 +133,7 @@ void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::Color alphaCo
 	dst->copy(tmp, sf::Vector2u(dstX, dstY), all, true);
 }
 
-void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::RenderTexture* mask, sf::Color alphaColor)
+void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::Image* mask, sf::Color alphaColor)
 {
 	if (!dst || !src) 
 		return;
@@ -159,10 +157,16 @@ void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::RenderTexture
 	clip = place.findIntersection(canvas).value();
 
 
-	sf::Image m;
+	sf::Image* m;
 	bool useMask = (mask != nullptr);
-	if (useMask) 
-		m = mask->getTexture().copyToImage();
+	if (useMask) {
+		std::wcout << L"use the mask\n";
+		m = mask;
+	}
+	else {
+		std::wcout << L"mask is nullptr\n";
+		m = new sf::Image(sf::Vector2u(src->getSize()), sf::Color::White);
+	}
 
 	for (int y = clip.position.y; y < clip.position.y + clip.size.y; ++y) {
 		for (int x = clip.position.x; x < clip.position.x + clip.size.x; ++x) {
@@ -171,7 +175,7 @@ void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::RenderTexture
 			int sy = y - dstY;
 
 			if (useMask) {
-				if (m.getPixel(sf::Vector2u(sx, sy)) != sf::Color::White)
+				if (m->getPixel(sf::Vector2u(sx, sy)) != sf::Color::White)
 					continue;
 			}
 

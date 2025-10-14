@@ -11,17 +11,11 @@ std::string shader_source = R"(
 
     void main() {
         vec2 uv = gl_TexCoord[0].xy;
-        vec2 muv = uv;
-
-		muv.y = 1.0 - muv.y;	// flip Y dla renderTexture
-        
 		vec4 c = texture2D(texture, uv);
-		float alpha;
-		if( c.r == alphaColor.r/255.0 && c.g == alphaColor.g/255.0 && c.b == alphaColor.b/255.0)
-			alpha = 0;
-		else
-			alpha = texture2D(mask, muv).a;
-        gl_FragColor = vec4(c.rgb, c.a * alpha);
+		float alpha = (c.r == alphaColor.r/255.0 && c.g == alphaColor.g/255.0 && c.b == alphaColor.b/255.0)
+					  ? 0.0
+					  : texture2D(mask, uv).a;
+		gl_FragColor = vec4(c.rgb, c.a * alpha);
     }
 )";
 
@@ -115,6 +109,8 @@ bool Lasso::clickOnSelection(sf::Vector2i point) {
 void Lasso::copy(sf::Image* canvas, sf::Color emptyColor)
 {
 
+	paste(canvas, _image, _rect.position.x, _rect.position.y, generateMask(), emptyColor);
+
 	if (_state != LassoState::Selected)
 		return;
 
@@ -135,52 +131,88 @@ void Lasso::copy(sf::Image* canvas, sf::Color emptyColor)
 	if (s.size.x <= 0 || s.size.y<= 0)
 		return;
 
-	sf::RenderTexture* mask = generateMask();
-	sf::Image maskImg = mask->getTexture().copyToImage();
-	
+	sf::Image* maskImg = generateMask();
 
 	for (int y = 0; y < s.size.y; ++y)
-		for (int x = 0; x < s.size.x; ++x)
-			if (maskImg.getPixel(sf::Vector2u(x, y)) != sf::Color::White || _image->getPixel(sf::Vector2u(x, y)) == emptyColor)
+		for (int x = 0; x < s.size.x; ++x) {
+
+			int cx = s.position.x + x;
+			int cy = s.position.y + y;
+
+			_image->setPixel(sf::Vector2u(x, y), canvas->getPixel(sf::Vector2u(cx, cy)));
+
+			if (maskImg->getPixel(sf::Vector2u(x, y)) != sf::Color::White || _image->getPixel(sf::Vector2u(x, y)) == emptyColor)
 				_image->setPixel(sf::Vector2u(x, y), sf::Color::Transparent);
+		}
+			
 
 	copyImageToClipboard(_image, sf::IntRect(sf::Vector2i(0,0), s.size));
-	delete mask;
+	delete maskImg;
 }
 
+void Lasso::paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::Image* mask, sf::Color alphaColor)
+{
+	if (!dst || !src)
+		return;
 
+	int dw = dst->getSize().x;
+	int dh = dst->getSize().y;
+	int sw = src->getSize().x;
+	int sh = src->getSize().y;
+
+	if (dw <= 0 || dh <= 0 || sw <= 0 || sh <= 0)
+		return;
+
+	sf::IntRect place(sf::Vector2i(dstX, dstY), sf::Vector2i(sw, sh));
+	sf::IntRect canvas(sf::Vector2i(0, 0), sf::Vector2i(dw, dh));
+	sf::IntRect clip;
+
+
+	if (!place.findIntersection(canvas).has_value())
+		return;
+
+	clip = place.findIntersection(canvas).value();
+
+
+	sf::Image* m;
+	bool useMask = (mask != nullptr);
+	if (useMask) {
+		std::wcout << L"use the mask\n";
+		m = mask;
+	}
+	else {
+		std::wcout << L"mask is nullptr\n";
+		m = new sf::Image(sf::Vector2u(src->getSize()), sf::Color::White);
+	}
+
+	for (int y = clip.position.y; y < clip.position.y + clip.size.y; ++y) {
+		for (int x = clip.position.x; x < clip.position.x + clip.size.x; ++x) {
+
+			int sx = x - dstX;
+			int sy = y - dstY;
+
+			if (useMask) {
+				if (m->getPixel(sf::Vector2u(sx, sy)) != sf::Color::White)
+					continue;
+			}
+
+			sf::Color c = src->getPixel(sf::Vector2u(sx, sy));
+			if (c == alphaColor || c.a == 0)
+				continue;
+
+			dst->setPixel(sf::Vector2u(x, y), c);
+		}
+	}
+}
 
 void Lasso::paste(sf::Image* canvas, sf::Color emptyColor)
 {
 
 	if (_image != nullptr) {
-		generateRect();
-
-		int dstW = static_cast<int>(canvas->getSize().x);
-		int dstH = static_cast<int>(canvas->getSize().y);
-		int srcW = static_cast<int>(_image->getSize().x);
-		int srcH = static_cast<int>(_image->getSize().y);
-
-		int x0 = std::max(0, _rect.position.x);
-		int y0 = std::max(0, _rect.position.y);
-		int x1 = std::min(dstW, _rect.position.x + _rect.size.x);
-		int y1 = std::min(dstH, _rect.position.y+ _rect.size.y);
-
-		for (int y = y0; y < y1; ++y) {
-			int sy = y - _rect.position.y;
-			if (sy < 0 || sy >= srcH) continue;
-
-			for (int x = x0; x < x1; ++x) {
-				int sx = x - _rect.position.x;
-				if (sx < 0 || sx >= srcW) continue;
-
-				if (_image->getPixel(sf::Vector2u(sx, sy)) != emptyColor && _image->getPixel(sf::Vector2u(sx, sy)) != sf::Color::Transparent)
-					canvas->setPixel(sf::Vector2u(sx, sy), _image->getPixel(sf::Vector2u(sx, sy)));
-			}
-		}
+		paste(canvas, _image, _rect.position.x, _rect.position.y, generateMask(), emptyColor);
 	}
 	else {
-		_image = new sf::Image();
+		_image = new sf::Image();   
 	}
 	loadImageFromClipboard(*_image);
 	_state = LassoState::Selected;
@@ -221,8 +253,7 @@ void Lasso::generateOutline(bool selectionComplete) {
 	if (_rect.size.x <= 0 || _rect.size.y <= 0)
 		return;
 
-	if (_outlineRenderTexture.getSize() != sf::Vector2u(_rect.size))
-		_outlineRenderTexture.resize(sf::Vector2u(_rect.size));
+	_outlineRenderTexture.resize(sf::Vector2u(_image->getSize()));
 
 	_outlineRenderTexture.clear(sf::Color(0, 0, 0, 0));
 
@@ -248,44 +279,69 @@ void Lasso::generateOutline(bool selectionComplete) {
 	_outlineRenderTexture.draw(p, rs);
 	_outlineRenderTexture.display();
 }
+bool Lasso::pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b)
+{
+	int cross = 1LL * (b.x - a.x) * (p.y - a.y) - 1LL * (b.y - a.y) * (p.x - a.x);
+	
+	if (cross != 0) 
+		return false;
 
-sf::RenderTexture* Lasso::generateMask() {
+	int minx = std::min(a.x, b.x);
+	int maxx = std::max(a.x, b.x);
+	int miny = std::min(a.y, b.y);
+	int maxy = std::max(a.y, b.y);
 
-	if (!_image) 
-		return nullptr;
+	return (p.x >= minx && p.x <= maxx && p.y >= miny && p.y <= maxy);
+}
 
-	if (_image->getSize().x == 0 || _image->getSize().y == 0) 
-		return nullptr;
+bool Lasso::isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly)
+{
+	size_t n = poly.size();
+	if (n < 3) 
+		return false;
 
-	sf::RenderTexture* mask = new sf::RenderTexture();
-	mask->resize(_image->getSize());
+	bool inside = false;
+	for (size_t i = 0, j = n - 1; i < n; j = i++) {
+		sf::Vector2i& a = poly[j];
+		sf::Vector2i& b = poly[i];
 
-	//std::cout << image->getSize().x << ", " << image->getSize().y << "\n";
+		if (pointOnSegment(p, a, b)) 
+			return true;
 
-	if (_points.size() >= 3) {
-		mask->clear(sf::Color::Transparent);
+		bool crossesY = ((a.y > p.y) != (b.y > p.y));
+		if (!crossesY) 
+			continue;
 
-		sf::ConvexShape poly;
-		poly.setPointCount(_points.size());
-		for (std::size_t i = 0; i < _points.size(); ++i)
-			poly.setPoint(i, sf::Vector2f(_points[i]));
+		int dy = b.y - a.y;
+		int lhs = (p.x - a.x) * dy;
+		int rhs = (b.x - a.x) * (p.y - a.y);
 
-		poly.setFillColor(sf::Color::White);
-		poly.setOutlineThickness(0.5f);
-		poly.setOutlineColor(sf::Color::White);
-
-		sf::RenderStates st;
-		st.blendMode = sf::BlendNone;
-		st.transform.translate(sf::Vector2f(0.5f, 0.5f));
-		mask->draw(poly, st);
+		bool hit = (dy > 0) ? (lhs < rhs) : (lhs > rhs);
+		if (hit) inside = !inside;
 	}
-	else {
-		mask->clear(sf::Color::White);
+	return inside;
+}
+
+sf::Image* Lasso::generateMask() {
+
+	if (!_image) return nullptr;
+	if (_image->getSize().x == 0 || _image->getSize().y == 0) return nullptr;
+
+	sf::Vector2u size = _image->getSize();
+
+	sf::Image* maskImage = new sf::Image();
+	maskImage->resize(size, sf::Color::Transparent);
+
+	for (unsigned int y = 0; y < size.y; ++y) {
+		for (unsigned int x = 0; x < size.x; ++x) {
+			if (isPointInPolygon(sf::Vector2i(x,y), _points)) {
+				//std::wcout << x << L", " << y << L": is inside\n";
+				maskImage->setPixel(sf::Vector2u(x, y), sf::Color::White);
+			}
+		}
 	}
 
-	mask->display();
-	mask->setSmooth(false);
-	return mask;
+	return maskImage;
 }
 
 void Lasso::drawImage(sf::Vector2f canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask) {
@@ -304,7 +360,6 @@ void Lasso::drawImage(sf::Vector2f canvasPosition, sf::Vector2i canvasSize, floa
 
 	int tx = visibleRect.position.x - _outlineOffset.x;
 	int ty = visibleRect.position.y - _outlineOffset.y;
-	std::wcout << tx << ", " << ty << "\n";
 	sf::IntRect texRect(sf::Vector2i(tx, ty), visibleRect.size);
 
 	_texture = sf::Texture();
@@ -312,11 +367,27 @@ void Lasso::drawImage(sf::Vector2f canvasPosition, sf::Vector2i canvasSize, floa
 	_texture.loadFromImage(*_image);
 	_texture.setSmooth(false);
 
-	sf::RenderTexture* mask = generateMask();
-	if (mask == nullptr) return;
+	sf::Image* maskImage;;
+	if (useMask) {
+		maskImage = generateMask();
+		if (maskImage == nullptr) return;
+	}
+	else {
+		maskImage = new sf::Image();
+		if (_image->getSize().x == 0 || _image->getSize().y == 0)
+			return;
 
+		maskImage->resize(_image->getSize(), sf::Color::White);
+	}
+
+	sf::Image maskSub;
+	maskSub.resize(sf::Vector2u(texRect.size), sf::Color::Transparent);
+	maskSub.copy(*maskImage, sf::Vector2u(0,0), texRect, true);
+
+	sf::Texture maskTexture;
+	maskTexture.loadFromImage(*maskImage);
 	_shader.setUniform("texture", _texture);
-	_shader.setUniform("mask", mask->getTexture());
+	_shader.setUniform("mask", maskTexture);
 	_shader.setUniform("alphaColor", sf::Vector3f(alphaColor.r, alphaColor.g, alphaColor.b));
 
 	_sprite = sf::Sprite(_texture);
@@ -327,7 +398,8 @@ void Lasso::drawImage(sf::Vector2f canvasPosition, sf::Vector2i canvasSize, floa
 	sf::RenderStates rs;
 	rs.shader = &_shader;
 	window->draw(_sprite, rs);
-	delete mask;
+
+	delete maskImage;
 
 
 }

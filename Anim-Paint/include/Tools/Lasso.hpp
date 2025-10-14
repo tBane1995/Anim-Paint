@@ -37,10 +37,13 @@ public:
 	void generateRect();
 	bool clickOnSelection(sf::Vector2i point);
 	void copy(sf::Image* canvas, sf::Color emptyColor);
+	void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::Image* mask, sf::Color alphaColor);
 	void paste(sf::Image* canvas, sf::Color emptyColor);
 	void cut(sf::Image* canvas, sf::Color emptyColor);
 	void generateOutline(bool selectionComplete = false);
-	sf::RenderTexture* generateMask();
+	bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
+	bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
+	sf::Image* generateMask();
 	void drawImage(sf::Vector2f canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask = false);
 	void drawOutline(sf::Vector2f canvasPosition, float scale);
 	void drawRect(sf::Vector2f canvasPosition, float scale);
