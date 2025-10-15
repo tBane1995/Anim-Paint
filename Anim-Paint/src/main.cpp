@@ -181,6 +181,10 @@ int main() {
 			}
 			else if (event->getIf < sf::Event::MouseWheelScrolled>()) {
 				canvas->handleEvent(*event);
+
+				for (auto& dialog : dialogs)
+					dialog->handleEvent(*event);
+
 			}
 			else if (const auto* kp = event->getIf<sf::Event::KeyPressed>()) {
 

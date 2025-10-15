@@ -505,7 +505,7 @@ void MainMenu::exportFile(const std::filesystem::path& path) {
 	sf::Image finalImage = tex.getTexture().copyToImage();
 	finalImage.flipVertically();
 	std::wstring filename = path.wstring();
-	finalImage.saveToFile(ConvertWideToUtf8(filename));
+	finalImage.saveToFile(filename);
 
 	std::wcout << "export " << filename << "\n";
 }

@@ -782,6 +782,7 @@ void Dialog_Save_As::createLeftPanel(int dictionariesCount) {
 		setTheFiles();
 		setPosition(_position);
 		};
+	_leftScrollbar->setScrollArea(&_leftRect, file_dialog_file_rect_height * 0.25f);
 }
 
 void Dialog_Save_As::createSeparator(int linesCount) {
@@ -827,7 +828,7 @@ void Dialog_Save_As::createRightPanel(int linesCount) {
 		setTheFiles();
 		setPosition(_position);
 		};
-
+	_rightScrollbar->setScrollArea(&_rightRect, file_dialog_file_rect_height * 0.25f);
 }
 
 
@@ -1063,13 +1064,9 @@ void Dialog_Save_As::cursorHover() {
 				file->cursorHover();
 		}
 		
-
 		for (auto* fav : _locations) {
 			cursorHoverLocations(fav);
 		}
-
-		//for (auto* loc : _locations)
-		//	loc->cursorHover();
 	}
 		
 	_leftScrollbar->cursorHover();
@@ -1084,21 +1081,19 @@ void Dialog_Save_As::cursorHover() {
 void Dialog_Save_As::handleEvent(const sf::Event& event) {
 	Dialog::handleEvent(event);
 
+	_leftScrollbar->handleEvent(event);
+	_rightScrollbar->handleEvent(event);
+
 	if (_rightRect.getGlobalBounds().contains(worldMousePosition)) {
 		for (auto& file : _files)
 			file->handleEvent(event);
 	}
 
-	for (auto* fav : _locations) {
-		handleEventLocations(fav, event);
+	if (_leftRect.getGlobalBounds().contains(worldMousePosition)) {
+		for (auto* fav : _locations) {
+			handleEventLocations(fav, event);
+		}
 	}
-		
-
-	//for (auto* loc : _locations)
-	//	loc->handleEvent(event);
-
-	_leftScrollbar->handleEvent(event);
-	_rightScrollbar->handleEvent(event);
 
 	_separator->handleEvent(event);
 
@@ -1116,9 +1111,6 @@ void Dialog_Save_As::update() {
 		updateLocations(fav);
 	}
 
-	//for (auto* loc : _locations)
-	//	loc->update();
-
 	_leftScrollbar->update();
 	_rightScrollbar->update();
 	
@@ -1134,10 +1126,6 @@ void Dialog_Save_As::draw() {
 	drawLeftPanel();
 	drawRightPanel();
 
-	/*
-	for (auto* loc : _locations)
-		loc->draw();
-	*/
 	_leftScrollbar->draw();
 	_rightScrollbar->draw();
 
