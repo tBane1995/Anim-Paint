@@ -213,6 +213,7 @@ Toolbar::Toolbar() :
 	_first_color = new LargeColorButton(sf::Color::Black);
 	_second_color = new LargeColorButton(sf::Color::White);
 	_selectedColorButton = _first_color;
+	_selectedColorButton->select();
 
 	_first_color_text_col.setFillColor(tools_text_color);
 	_first_color_text_val.setFillColor(tools_text_color);
@@ -398,29 +399,25 @@ void Toolbar::setPosition(sf::Vector2f position) {
 
 void Toolbar::selectToolButton(Button* toolButton) {
 	if (_selectedToolButton != nullptr) {
-		_selectedToolButton->_rect.setFillColor(sf::Color::Transparent);
-		_selectedToolButton->_rect.setOutlineColor(sf::Color::Transparent);
+		_selectedToolButton->unselect();
 	}
 
 	_selectedToolButton = toolButton;
 
 	if (_selectedToolButton != nullptr) {
-		_selectedToolButton->_rect.setFillColor(sf::Color(95, 47, 47));
-		_selectedToolButton->_rect.setOutlineColor(sf::Color(127, 47, 47));
+		_selectedToolButton->select();
 	}
 }
 
 void Toolbar::selectColorButton(LargeColorButton* colorButton) {
 	if (_selectedColorButton != nullptr) {
-		_selectedColorButton->_rect.setFillColor(sf::Color::Transparent);
-		_selectedColorButton->_rect.setOutlineColor(sf::Color::Transparent);
+		_selectedColorButton->unselect();
 	}
 
 	_selectedColorButton = colorButton;
 
 	if (_selectedColorButton != nullptr) {
-		_selectedColorButton->_rect.setFillColor(sf::Color(95, 47, 47));
-		_selectedColorButton->_rect.setOutlineColor(sf::Color(127, 47, 47));
+		_selectedColorButton->select();
 	}
 }
 
@@ -492,16 +489,6 @@ void Toolbar::update() {
 
 	for (auto& color : _colors)
 		color->update();
-
-	if (_selectedToolButton != nullptr) {
-		_selectedToolButton->_rect.setFillColor(tools_button_press_color);
-		_selectedToolButton->_rect.setOutlineColor(tools_button_press_border_color);
-	}
-
-	if (_selectedColorButton != nullptr) {
-		_selectedColorButton->_rect.setFillColor(tools_button_press_color);
-		_selectedColorButton->_rect.setOutlineColor(tools_button_press_border_color);
-	}
 
 }
 

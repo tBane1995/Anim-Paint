@@ -28,6 +28,7 @@ extern sf::Color file_dialog_separator_hover_color;
 extern sf::Color file_dialog_separator_press_color;
 
 // buttons
+extern sf::Color button_select_color;
 extern sf::Color button_normal_color;
 extern sf::Color button_hover_color;
 extern sf::Color button_press_color;
@@ -45,6 +46,7 @@ extern sf::Color menubox_hover_color;
 extern sf::Color menubox_press_color;
 extern int menuoptions_border_width;
 extern sf::Color menuoptions_border_color;
+extern sf::Color optionbox_select_color;
 extern sf::Color optionbox_idle_color;
 extern sf::Color optionbox_hover_color;
 extern sf::Color optionbox_press_color;
@@ -58,9 +60,11 @@ extern sf::Color tools_text_color;
 extern sf::Color tools_text_hover_color;
 
 extern float tools_border_width;
+extern sf::Color tools_button_select_color;
 extern sf::Color tools_button_idle_color;
 extern sf::Color tools_button_hover_color;
 extern sf::Color tools_button_press_color;
+extern sf::Color tools_button_select_border_color;
 extern sf::Color tools_button_idle_border_color;
 extern sf::Color tools_button_hover_border_color;
 extern sf::Color tools_button_press_border_color;

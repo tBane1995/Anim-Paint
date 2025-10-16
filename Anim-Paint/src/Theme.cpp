@@ -28,6 +28,7 @@ sf::Color file_dialog_separator_hover_color;
 sf::Color file_dialog_separator_press_color;
 
 // buttons
+sf::Color button_select_color;
 sf::Color button_normal_color;
 sf::Color button_hover_color;
 sf::Color button_press_color;
@@ -45,6 +46,7 @@ sf::Color menubox_hover_color;
 sf::Color menubox_press_color;
 int menuoptions_border_width;
 sf::Color menuoptions_border_color;
+sf::Color optionbox_select_color;
 sf::Color optionbox_idle_color;
 sf::Color optionbox_hover_color;
 sf::Color optionbox_press_color;
@@ -58,9 +60,11 @@ sf::Color tools_text_color;
 sf::Color tools_text_hover_color;
 
 float tools_border_width;
+sf::Color tools_button_select_color;
 sf::Color tools_button_idle_color;
 sf::Color tools_button_hover_color;
 sf::Color tools_button_press_color;
+sf::Color tools_button_select_border_color;
 sf::Color tools_button_idle_border_color;
 sf::Color tools_button_hover_border_color;
 sf::Color tools_button_press_border_color;
@@ -106,6 +110,7 @@ void loadTheme() {
 
 
 	// buttons
+	button_select_color = sf::Color(79, 31, 31);
 	button_normal_color = sf::Color(47, 47, 47);
 	button_hover_color = sf::Color(31, 31, 31);
 	button_press_color = sf::Color(23, 23, 23);
@@ -125,6 +130,7 @@ void loadTheme() {
 	menuoptions_border_width = 2.0f;
 	menuoptions_border_color = sf::Color(63, 63, 63);
 
+	optionbox_select_color = sf::Color(79, 31, 31);
 	optionbox_idle_color = sf::Color(31, 31, 31);
 	optionbox_hover_color = sf::Color(47, 47, 47);
 	optionbox_press_color = sf::Color(39, 39, 39);
@@ -138,9 +144,11 @@ void loadTheme() {
 	tools_text_hover_color = sf::Color(163, 163, 163);
 
 	tools_border_width = 1.0f;
+	tools_button_select_color = sf::Color(79, 47, 47);
 	tools_button_idle_color = sf::Color::Transparent;
-	tools_button_hover_color = sf::Color(79,47,47);
+	tools_button_hover_color = sf::Color(95,47,47);
 	tools_button_press_color = sf::Color(111, 47, 47);
+	tools_button_select_border_color = sf::Color(95, 47, 47);
 	tools_button_idle_border_color = sf::Color::Transparent;
 	tools_button_hover_border_color = sf::Color(95, 47, 47);
 	tools_button_press_border_color = sf::Color(127, 47, 47);

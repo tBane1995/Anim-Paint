@@ -9,7 +9,7 @@
 // Button
 
 Button::Button() : ElementGUI() {
-
+	_isSelected = false;
 }
 
 Button::~Button() {
@@ -19,6 +19,15 @@ Button::~Button() {
 sf::Vector2f Button::getSize() { 
 	return sf::Vector2f(0, 0); 
 }
+
+void Button::select() {
+	_isSelected = true;
+}
+
+void Button::unselect() {
+	_isSelected = false;
+}
+
 
 void Button::setPosition(sf::Vector2f position) {
 
@@ -78,8 +87,16 @@ void NormalButton::setPosition(sf::Vector2f position) {
 void NormalButton::unclick() {
 	_state = ButtonState::Idle;
 	_sprite.setTexture(*_texture->_texture);
-	_rect.setFillColor(tools_button_idle_color);
-	_rect.setOutlineColor(tools_button_idle_border_color);
+
+	if (_isSelected) {
+		_rect.setFillColor(tools_button_select_color);
+		_rect.setOutlineColor(tools_button_select_border_color);
+	}
+	else {
+		_rect.setFillColor(tools_button_idle_color);
+		_rect.setOutlineColor(tools_button_idle_border_color);
+	}
+	
 }
 
 void NormalButton::hover() {
@@ -189,7 +206,8 @@ void NormalButtonWithText::setPosition(sf::Vector2f position) {
 	_text.setPosition(text_pos);
 }
 
-void NormalButtonWithText::setColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor) {
+void NormalButtonWithText::setColors(sf::Color selectColor, sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor) {
+	_selectColor = selectColor;
 	_idleColor = idleColor;
 	_hoverColor = hoverColor;
 	_pressColor = pressColor;
@@ -197,7 +215,10 @@ void NormalButtonWithText::setColors(sf::Color idleColor, sf::Color hoverColor, 
 
 void NormalButtonWithText::unclick() {
 	_state = ButtonState::Idle;
-	_rect.setFillColor(_idleColor);
+	if(_isSelected)
+		_rect.setFillColor(_selectColor);
+	else
+		_rect.setFillColor(_idleColor);
 }
 
 void NormalButtonWithText::hover() {
@@ -305,8 +326,15 @@ void ButtonWithBottomText::unclick() {
 	_state = ButtonState::Idle;
 	_sprite.setTexture(*_texture->_texture);
 	_text.setFillColor(_textColor);
-	_rect.setFillColor(tools_button_idle_color);
-	_rect.setOutlineColor(tools_button_idle_border_color);
+
+	if (_isSelected) {
+		_rect.setFillColor(tools_button_select_color);
+		_rect.setOutlineColor(tools_button_select_border_color);
+	}
+	else {
+		_rect.setFillColor(tools_button_idle_color);
+		_rect.setOutlineColor(tools_button_idle_border_color);
+	}
 }
 
 void ButtonWithBottomText::hover() {
@@ -422,8 +450,14 @@ void ButtonWithRightText::unclick() {
 	_sprite.setTexture(*_texture->_texture);
 	_text.setFillColor(_textColor);
 
-	_rect.setFillColor(tools_button_idle_color);
-	_rect.setOutlineColor(tools_button_idle_border_color);
+	if (_isSelected) {
+		_rect.setFillColor(tools_button_select_color);
+		_rect.setOutlineColor(tools_button_select_border_color);
+	}
+	else {
+		_rect.setFillColor(tools_button_idle_color);
+		_rect.setOutlineColor(tools_button_idle_border_color);
+	}
 }
 
 void ButtonWithRightText::hover() {
@@ -534,8 +568,14 @@ void Option::setPosition(sf::Vector2f position) {
 void Option::unclick() {
 	_state = ButtonState::Idle;
 	_sprite.setTexture(*_texture->_texture);
-	_rect.setFillColor(optionbox_idle_color);
-	_text.setFillColor(menu_text_color);
+	if (_isSelected) {
+		_rect.setFillColor(optionbox_select_color);
+		_text.setFillColor(menu_text_color);
+	}
+	else {
+		_rect.setFillColor(optionbox_idle_color);
+		_text.setFillColor(menu_text_color);
+	}
 }
 
 void Option::hover() {
@@ -685,8 +725,14 @@ void ButtonWithTopTextAndList::unclick() {
 	_state = ButtonState::Idle;
 	_sprite.setTexture(*_texture->_texture);
 	_text.setFillColor(_textColor);
-	_rect.setFillColor(tools_button_idle_color);
-	_rect.setOutlineColor(tools_button_idle_border_color);
+	
+	if (_isSelected) {
+		_rect.setFillColor(tools_button_select_color);
+		_rect.setOutlineColor(tools_button_select_border_color);
+	} else {
+		_rect.setFillColor(tools_button_idle_color);
+		_rect.setOutlineColor(tools_button_idle_border_color);
+	}
 }
 
 void ButtonWithTopTextAndList::hover() {

@@ -9,11 +9,14 @@ enum class ButtonState { Idle, Hover, Pressed };
 class Button : public ElementGUI {
 public:
 	sf::RectangleShape _rect;
-	
+	bool _isSelected;
+
 	Button();
 	~Button();
 
 	virtual sf::Vector2f getSize();
+	virtual void select();
+	virtual void unselect();
 	virtual void setPosition(sf::Vector2f position);
 	virtual void cursorHover();
 	virtual void handleEvent(const sf::Event& event);
@@ -58,6 +61,7 @@ public:
 
 	sf::RectangleShape _rect;
 	sf::Text _text;
+	sf::Color _selectColor;
 	sf::Color _idleColor;
 	sf::Color _hoverColor;
 	sf::Color _pressColor;
@@ -75,7 +79,7 @@ public:
 
 	sf::Vector2f getSize();
 	void setPosition(sf::Vector2f position);
-	void setColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor);
+	void setColors(sf::Color selectColor, sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor);
 	void unclick();
 	void hover();
 	void click();

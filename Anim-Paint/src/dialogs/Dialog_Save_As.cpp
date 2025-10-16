@@ -653,7 +653,7 @@ Dialog_Save_As::Dialog_Save_As(std::wstring dialogName, std::wstring selectButto
 
 	sf::Vector2f btnSize(64, file_dialog_file_rect_height + dialog_padding);
 	_selectBtn = new NormalButtonWithText(selectButtonText, btnSize);
-	_selectBtn->setColors(sf::Color(31, 31, 31), sf::Color(7,7,7), sf::Color(23, 23, 23));
+	_selectBtn->setColors(sf::Color(31,31,31), sf::Color(31, 31, 31), sf::Color(7,7,7), sf::Color(23, 23, 23));
 	_selectBtn->_onclick_func = [this, function]() {
 		std::wstring name = _selectedFileNameBox->getFilename();
 		if (name.empty() || onlyWhitespace(name)) {
@@ -670,7 +670,7 @@ Dialog_Save_As::Dialog_Save_As(std::wstring dialogName, std::wstring selectButto
 		};
 
 	_cancelBtn = new NormalButtonWithText(L"Cancel", btnSize);
-	_cancelBtn->setColors(sf::Color(31, 31, 31), sf::Color(7, 7, 7), sf::Color(23, 23, 23));
+	_cancelBtn->setColors(sf::Color(31, 31, 31), sf::Color(31, 31, 31), sf::Color(7, 7, 7), sf::Color(23, 23, 23));
 	_cancelBtn->_onclick_func = [this]() {
 		_state = DialogState::ToClose;
 		};
