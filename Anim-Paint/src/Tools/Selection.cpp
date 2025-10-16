@@ -156,15 +156,12 @@ void paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::Image* mask, 
 
 	clip = place.findIntersection(canvas).value();
 
-
 	sf::Image* m;
 	bool useMask = (mask != nullptr);
 	if (useMask) {
-		std::wcout << L"use the mask\n";
 		m = mask;
 	}
 	else {
-		std::wcout << L"mask is nullptr\n";
 		m = new sf::Image(sf::Vector2u(src->getSize()), sf::Color::White);
 	}
 

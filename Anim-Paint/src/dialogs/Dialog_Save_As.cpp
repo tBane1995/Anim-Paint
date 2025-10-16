@@ -754,7 +754,7 @@ void Dialog_Save_As::createLeftPanel(int dictionariesCount) {
 
 			
 			_leftScrollbar->setMax(calculateLeftScrollbarHeight());
-
+			_leftScrollbar->setValue(_leftScrollbar->_value); // value clamp
 			// >>> KLUCZ: natychmiastowy refresh po open/close dla WĘZŁA GŁÓWNEGO <<<
 			loadDirectory();
 
@@ -782,7 +782,7 @@ void Dialog_Save_As::createLeftPanel(int dictionariesCount) {
 		setTheFiles();
 		setPosition(_position);
 		};
-	_leftScrollbar->setScrollArea(&_leftRect, file_dialog_file_rect_height * 0.25f);
+	_leftScrollbar->setScrollArea(&_leftRect, file_dialog_file_rect_height * 0.5f);
 }
 
 void Dialog_Save_As::createSeparator(int linesCount) {
@@ -828,7 +828,7 @@ void Dialog_Save_As::createRightPanel(int linesCount) {
 		setTheFiles();
 		setPosition(_position);
 		};
-	_rightScrollbar->setScrollArea(&_rightRect, file_dialog_file_rect_height * 0.25f);
+	_rightScrollbar->setScrollArea(&_rightRect, file_dialog_file_rect_height * 0.5f);
 }
 
 

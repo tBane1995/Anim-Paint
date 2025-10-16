@@ -21,7 +21,7 @@
 ## Instalacja
 1. Pobierz i zainstaluj Visual Studio 2022
 2. Pobierz i zainstaluje CMake
-3. Pobierz bibliotekę SFML 2.6.2 (https://www.sfml-dev.org/) i umieść ją w katalogu `C:\SFML-2.6.2`.
+3. Pobierz bibliotekę SFML-3.0.2 (https://www.sfml-dev.org/) i umieść ją w katalogu `C:\SFML-3.0.2`.
 4. Otwórz **Wiersz poleceń (cmd)**.
 5. Przejdź do katalogu projektu:
 `
@@ -47,7 +47,7 @@ cmake --build .
 10. Plik wykonywalny znajdziesz w **build/Debug** lub **build/Release**
 
 ## Technologie
-Program stworzono w języku C++ z wykorzystaniem biblioteki SFML 2.6.2.  
+Program stworzono w języku C++ z wykorzystaniem biblioteki SFML 3.0.2.  
   
 ## Licencja
 Licencja Otwarta – Uznanie autorstwa  

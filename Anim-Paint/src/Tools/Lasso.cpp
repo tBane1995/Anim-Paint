@@ -108,8 +108,9 @@ bool Lasso::clickOnSelection(sf::Vector2i point) {
 
 void Lasso::copy(sf::Image* canvas, sf::Color emptyColor)
 {
-
-	paste(canvas, _image, _rect.position.x, _rect.position.y, generateMask(), emptyColor);
+	sf::Image* mask = generateMask();
+	paste(canvas, _image, _rect.position.x, _rect.position.y, mask, emptyColor);
+	delete mask;
 
 	if (_state != LassoState::Selected)
 		return;
@@ -177,11 +178,9 @@ void Lasso::paste(sf::Image* dst, sf::Image* src, int dstX, int dstY, sf::Image*
 	sf::Image* m;
 	bool useMask = (mask != nullptr);
 	if (useMask) {
-		std::wcout << L"use the mask\n";
 		m = mask;
 	}
 	else {
-		std::wcout << L"mask is nullptr\n";
 		m = new sf::Image(sf::Vector2u(src->getSize()), sf::Color::White);
 	}
 
@@ -209,7 +208,9 @@ void Lasso::paste(sf::Image* canvas, sf::Color emptyColor)
 {
 
 	if (_image != nullptr) {
-		paste(canvas, _image, _rect.position.x, _rect.position.y, generateMask(), emptyColor);
+		sf::Image* mask = generateMask();
+		paste(canvas, _image, _rect.position.x, _rect.position.y, mask, emptyColor);
+		delete mask;
 	}
 	else {
 		_image = new sf::Image();   

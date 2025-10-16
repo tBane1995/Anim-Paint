@@ -435,7 +435,9 @@ void Canvas::handleEvent(const sf::Event& event) {
 					lasso->_image->resize(sf::Vector2u(lasso->_rect.size), sf::Color::Transparent);
 					
 					copy(lasso->_image, &animation->getCurrentLayer()->_image, lasso->_rect, toolbar->_second_color->_color);
-					remove(animation->getCurrentLayer()->_image, lasso->_rect, lasso->generateMask(), toolbar->_second_color->_color);
+					sf::Image* mask = lasso->generateMask();
+					remove(animation->getCurrentLayer()->_image, lasso->_rect, mask, toolbar->_second_color->_color);
+					delete mask;
 				}
 				
 			}
@@ -523,8 +525,9 @@ void Canvas::handleEvent(const sf::Event& event) {
 				}
 				else if (_bg_sprite.getGlobalBounds().contains(worldMousePosition)) {
 					if (lasso->_image != nullptr) {
-						std::wcout << L"paste\n";
-						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, lasso->generateMask(), toolbar->_second_color->_color);
+						sf::Image* mask = lasso->generateMask();
+						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, mask, toolbar->_second_color->_color);
+						delete mask;
 						lasso->_image = nullptr;
 					}
 
@@ -537,7 +540,9 @@ void Canvas::handleEvent(const sf::Event& event) {
 				else {
 					if (lasso->_image != nullptr) {
 						std::wcout << L"paste\n";
-						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, lasso->generateMask(), toolbar->_second_color->_color);
+						sf::Image* mask = lasso->generateMask();
+						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, mask, toolbar->_second_color->_color);
+						delete mask;
 						lasso->_image = nullptr;
 					}
 
