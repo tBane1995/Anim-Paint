@@ -136,7 +136,12 @@ void MenuBox::setPosition(sf::Vector2f position) {
 
 void MenuBox::unclick() {
 	_state = ButtonState::Idle;
-	_rect.setFillColor(menubox_idle_color);
+	if (_isOpen) {
+		_rect.setFillColor(menubox_open_color);
+	}
+	else {
+		_rect.setFillColor(menubox_idle_color);
+	}
 }
 
 void MenuBox::hover() {
@@ -229,8 +234,10 @@ _logo(*getTexture(L"tex\\logo\\small_logo.png")->_texture)
 	// FILE
 	MenuBox* file = new MenuBox(L"file");
 	file->_onclick_func = [this, file]() {
-		if (_open_menu_box != nullptr)
+		if (_open_menu_box != nullptr) {
 			_open_menu_box->_isOpen = false;
+		}
+			
 
 		_open_menu_box = file;
 		_open_menu_box->_isOpen = true;

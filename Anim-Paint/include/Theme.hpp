@@ -41,6 +41,7 @@ extern int menu_padding;
 extern int menu_font_size;
 extern sf::Color menu_bar_color;
 extern sf::Color menu_text_color;
+extern sf::Color menubox_open_color;
 extern sf::Color menubox_idle_color;
 extern sf::Color menubox_hover_color;
 extern sf::Color menubox_press_color;

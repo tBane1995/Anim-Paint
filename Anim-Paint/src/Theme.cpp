@@ -41,6 +41,7 @@ int menu_padding;
 int menu_font_size;
 sf::Color menu_bar_color;
 sf::Color menu_text_color;
+sf::Color menubox_open_color;
 sf::Color menubox_idle_color;
 sf::Color menubox_hover_color;
 sf::Color menubox_press_color;
@@ -123,9 +124,10 @@ void loadTheme() {
 	menu_bar_color = sf::Color(15, 15, 15);
 	menu_text_color = sf::Color(191, 191, 191);
 
+	menubox_open_color = sf::Color(31, 31, 31);
 	menubox_idle_color = sf::Color(15, 15, 15);
 	menubox_hover_color = sf::Color(47, 47, 47);
-	menubox_press_color = sf::Color(31, 31, 31);
+	menubox_press_color = sf::Color(39, 39, 39);
 
 	menuoptions_border_width = 2.0f;
 	menuoptions_border_color = sf::Color(63, 63, 63);
