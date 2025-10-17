@@ -424,6 +424,9 @@ _logo(*getTexture(L"tex\\logo\\small_logo.png")->_texture)
 
 	select->addOption(select_all);
 	select->addOption(select_none);
+	select_none->_onclick_func = [this]() {
+		lasso->unselect();
+		};
 	select->addOption(select_invert);
 	select->addOption(select_align);
 	select_align->_onclick_func = [this]() {
