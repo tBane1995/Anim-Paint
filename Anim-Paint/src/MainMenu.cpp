@@ -12,6 +12,8 @@
 #include "Animation/Animation.hpp"
 #include <iostream>
 #include <filesystem>
+#include "Tools/Lasso.hpp"
+#include "Tools/Selection.hpp"
 
 OptionBox::OptionBox(std::wstring text) 
 : _text(basicFont, text, menu_font_size)
@@ -331,12 +333,14 @@ _logo(*getTexture(L"tex\\logo\\small_logo.png")->_texture)
 	OptionBox* edit_cut = new OptionBox(L"cut");
 	OptionBox* edit_copy = new OptionBox(L"copy");
 	OptionBox* edit_paste = new OptionBox(L"paste");
+	OptionBox* edit_paste_as = new OptionBox(L"paste as");
 
 	edit->addOption(edit_undo);
 	edit->addOption(edit_redo);
 	edit->addOption(edit_cut);
 	edit->addOption(edit_copy);
 	edit->addOption(edit_paste);
+	edit->addOption(edit_paste_as);
 
 	// IMAGE
 	MenuBox* image = new MenuBox(L"image");
@@ -415,23 +419,23 @@ _logo(*getTexture(L"tex\\logo\\small_logo.png")->_texture)
 	OptionBox* select_all = new OptionBox(L"select all");
 	OptionBox* select_none = new OptionBox(L"none");
 	OptionBox* select_invert = new OptionBox(L"invert selection");
-	OptionBox* select_resize_scale = new OptionBox(L"resize/scale");
-	OptionBox* select_brightness_contrast = new OptionBox(L"brightness-contrast");
-	OptionBox* select_saturation = new OptionBox(L"saturation");
-	OptionBox* select_hue = new OptionBox(L"hue");
-	OptionBox* select_gray = new OptionBox(L"grayscale mode");
-	OptionBox* select_invert_colors = new OptionBox(L"invert colors");
+	OptionBox* select_align = new OptionBox(L"align center");
 
 
 	select->addOption(select_all);
 	select->addOption(select_none);
 	select->addOption(select_invert);
-	select->addOption(select_resize_scale);
-	select->addOption(select_brightness_contrast);
-	select->addOption(select_saturation);
-	select->addOption(select_hue);
-	select->addOption(select_gray);
-	select->addOption(select_invert_colors);
+	select->addOption(select_align);
+	select_align->_onclick_func = [this]() {
+		
+		if (lasso->_image == nullptr)
+			return;
+
+		sf::Vector2i newPosition(animation->getCurrentLayer()->_image.getSize()/2u);
+		lasso->_outlineOffset = newPosition - lasso->_rect.size/2;
+		lasso->generateRect();
+
+		};
 
 
 	// SETTINGS

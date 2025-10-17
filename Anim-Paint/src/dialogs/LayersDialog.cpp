@@ -49,13 +49,16 @@ void LayerBox::handleEvent(const sf::Event& event) {
 	if (!dialogs.empty())
 		return;
 
+	_visibling->handleEvent(event);
+
 	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed == this;
+			_onclick_func();
 		}
 	}
 
-	_visibling->handleEvent(event);
+	
 
 
 
@@ -132,8 +135,6 @@ void LayersDialog::loadLayersFromCurrentFrame() {
 
 	for (auto& l : layersBoxes)
 		l->rect_coloring();
-
-
 
 	setPosition(this->getPosition());
 }

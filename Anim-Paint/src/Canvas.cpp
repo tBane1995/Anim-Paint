@@ -539,7 +539,6 @@ void Canvas::handleEvent(const sf::Event& event) {
 				}
 				else {
 					if (lasso->_image != nullptr) {
-						std::wcout << L"paste\n";
 						sf::Image* mask = lasso->generateMask();
 						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, mask, toolbar->_second_color->_color);
 						delete mask;
