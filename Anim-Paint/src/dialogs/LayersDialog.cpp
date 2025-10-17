@@ -51,10 +51,12 @@ void LayerBox::handleEvent(const sf::Event& event) {
 
 	_visibling->handleEvent(event);
 
-	if (_rect.getGlobalBounds().contains(worldMousePosition)) {
-		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			ElementGUI_pressed == this;
-			_onclick_func();
+	if (ElementGUI_pressed != _visibling) {
+		if (_rect.getGlobalBounds().contains(worldMousePosition)) {
+			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+				ElementGUI_pressed == this;
+				_onclick_func();
+			}
 		}
 	}
 
