@@ -76,6 +76,10 @@ int main() {
 	createDialogs();
 	canvas = new Canvas(sf::Vector2i(animation->getLayer(0)->_image.getSize()));
 
+	// TO-DO - for the tests
+	main_menu->_menu_boxes[0]->_options[4]->click();
+
+
 	// FPS counter
 	sf::Clock fpsClock;
 	float fps = 0.0f;

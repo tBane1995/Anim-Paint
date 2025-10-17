@@ -2,6 +2,8 @@
 #include "Dialog.hpp"
 #include <filesystem>
 #include "ElementGUI/Scrollbar.hpp"
+#include "ElementGUI/TextInput.hpp"
+
 
 bool sortkey(std::filesystem::path a, std::filesystem::path b);
 
@@ -102,27 +104,6 @@ public:
 	void draw();
 };
 
-class SelectedFileNameBox : public Button {
-public:
-
-	sf::Text _filename;
-
-	SelectedFileNameBox(sf::Vector2f dialog_size);
-	~SelectedFileNameBox();
-
-	void setFilename(std::wstring text);
-	std::wstring getFilename();
-	void setPosition(sf::Vector2f position);
-	sf::Vector2f getPosition();
-	sf::Vector2f getSize();
-
-	void cursorHover();
-	void handleEvent(const sf::Event& event);
-	void update();
-	void draw();
-};
-
-
 class Dialog_Save_As : public Dialog {
 public:
 
@@ -142,7 +123,7 @@ public:
 
 	sf::RectangleShape _bottomRect;
 	sf::Text _filenameText;
-	SelectedFileNameBox* _selectedFileNameBox;
+	TextInput* _filenameInput;
 
 	NormalButtonWithText* _selectBtn;
 	NormalButtonWithText* _cancelBtn;
@@ -162,6 +143,7 @@ public:
 	void setPosition(sf::Vector2f position);
 	void drawLeftPanel();
 	void drawRightPanel();
+	void drawBottomPanel();
 
 	void cursorHoverLocations(LocationRect* location);
 	void handleEventLocations(LocationRect* location, const sf::Event& event);
