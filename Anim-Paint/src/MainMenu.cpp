@@ -285,7 +285,7 @@ _logo(*getTexture(L"tex\\logo\\small_logo.png")->_texture)
 	OptionBox* file_export = new OptionBox(L"export");
 	file_export->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Save_As(
-			L"export as image",
+			L"export as effects",
 			L"export",
 			[this](const std::filesystem::path& target) {
 				this->exportFile(target);
@@ -343,36 +343,36 @@ _logo(*getTexture(L"tex\\logo\\small_logo.png")->_texture)
 	edit->addOption(edit_paste_as);
 
 	// IMAGE
-	MenuBox* image = new MenuBox(L"image");
-	image->_onclick_func = [this, image]() {
+	MenuBox* effects = new MenuBox(L"effects");
+	effects->_onclick_func = [this, effects]() {
 		if (_open_menu_box != nullptr)
 			_open_menu_box->_isOpen = false;
 
-		_open_menu_box = image;
+		_open_menu_box = effects;
 		_open_menu_box->_isOpen = true;
 		};
-	_menu_boxes.push_back(image);
+	_menu_boxes.push_back(effects);
 
-	OptionBox* image_resize_scale = new OptionBox(L"resize/scale");
-	OptionBox* image_trim = new OptionBox(L"trim");
-	OptionBox* image_rotation = new OptionBox(L"rotation");
-	image_rotation->_onclick_func = [this]() {
+	OptionBox* effects_resize_scale = new OptionBox(L"resize/scale");
+	OptionBox* effects_trim = new OptionBox(L"trim");
+	OptionBox* effects_rotation = new OptionBox(L"rotation");
+	effects_rotation->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Rotation(animation->getLayers()));
 
 		if (_open_menu_box != nullptr)
 			_open_menu_box->_isOpen = false;
 		_open_menu_box = nullptr;
 		};
-	OptionBox* image_brightness_contrast = new OptionBox(L"brightness-contrast");
-	image_brightness_contrast->_onclick_func = [this]() {
+	OptionBox* effects_brightness_contrast = new OptionBox(L"brightness-contrast");
+	effects_brightness_contrast->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Brightness_Contrast(animation->getLayers()));
 
 		if (_open_menu_box != nullptr)
 			_open_menu_box->_isOpen = false;
 		_open_menu_box = nullptr;
 		};
-	OptionBox* image_saturation = new OptionBox(L"saturation");
-	image_saturation->_onclick_func = [this]() {
+	OptionBox* effects_saturation = new OptionBox(L"saturation");
+	effects_saturation->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Saturation(animation->getLayers()));
 
 		if (_open_menu_box != nullptr)
@@ -381,11 +381,11 @@ _logo(*getTexture(L"tex\\logo\\small_logo.png")->_texture)
 		};
 
 
-	OptionBox* image_hue = new OptionBox(L"hue");
-	OptionBox* image_gray = new OptionBox(L"grayscale mode");
+	OptionBox* effects_hue = new OptionBox(L"hue");
+	OptionBox* effects_gray = new OptionBox(L"grayscale mode");
 
-	OptionBox* image_sepia = new OptionBox(L"sepia");
-	image_sepia->_onclick_func = [this]() {
+	OptionBox* effects_sepia = new OptionBox(L"sepia");
+	effects_sepia->_onclick_func = [this]() {
 		dialogs.push_back(new Dialog_Sepia(animation->getLayers()));
 
 		if (_open_menu_box != nullptr)
@@ -393,17 +393,17 @@ _logo(*getTexture(L"tex\\logo\\small_logo.png")->_texture)
 		_open_menu_box = nullptr;
 		};
 
-	OptionBox* image_invert = new OptionBox(L"invert colors");
+	OptionBox* effects_invert = new OptionBox(L"invert colors");
 
-	image->addOption(image_resize_scale);
-	image->addOption(image_trim);
-	image->addOption(image_rotation);
-	image->addOption(image_brightness_contrast);
-	image->addOption(image_saturation);
-	image->addOption(image_hue);
-	image->addOption(image_gray);
-	image->addOption(image_sepia);
-	image->addOption(image_invert);
+	effects->addOption(effects_resize_scale);
+	effects->addOption(effects_trim);
+	effects->addOption(effects_rotation);
+	effects->addOption(effects_brightness_contrast);
+	effects->addOption(effects_saturation);
+	effects->addOption(effects_hue);
+	effects->addOption(effects_gray);
+	effects->addOption(effects_sepia);
+	effects->addOption(effects_invert);
 
 	// SELECT
 	MenuBox* select = new MenuBox(L"select");
