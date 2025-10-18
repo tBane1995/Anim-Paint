@@ -2,17 +2,22 @@
 #include "ElementGUI/ElementGUI.hpp"
 #include "SFML//Graphics.hpp"
 
+enum class TextInputState { Idle, TextEntered };
+
 class TextInput : public ElementGUI {
 public:
 
 	sf::RectangleShape _rect;
 	int _limitCharacters;
 	sf::Text _text;
+	TextInputState _state;
+	int _cursorPosition;
 	sf::RectangleShape _cursor;
 
 	TextInput(sf::Vector2f size, int limitCharacters, int characterSize);
 	~TextInput();
 	
+	void cursorPositioning();
 	void setPosition(sf::Vector2f position);
 	void setText(std::wstring text);
 	void setLimitCharacters(int limitCharacters);

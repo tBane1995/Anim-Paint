@@ -997,6 +997,7 @@ void Dialog_Save_As::handleEventLocations(LocationRect* location, const sf::Even
 			handleEventLocations(child, event);
 		}
 	}
+
 }
 
 void Dialog_Save_As::updateLocations(LocationRect* location)
@@ -1008,6 +1009,8 @@ void Dialog_Save_As::updateLocations(LocationRect* location)
 			updateLocations(child);
 		}
 	}
+
+	_filenameInput->update();
 }
 
 void Dialog_Save_As::cursorHover() {
@@ -1028,6 +1031,8 @@ void Dialog_Save_As::cursorHover() {
 	_rightScrollbar->cursorHover();
 
 	_separator->cursorHover();
+
+	_filenameInput->cursorHover();
 
 	_selectBtn->cursorHover();
 	_cancelBtn->cursorHover();
@@ -1052,6 +1057,8 @@ void Dialog_Save_As::handleEvent(const sf::Event& event) {
 
 	_separator->handleEvent(event);
 
+	_filenameInput->handleEvent(event);
+
 	_selectBtn->handleEvent(event);
 	_cancelBtn->handleEvent(event);
 }
@@ -1070,6 +1077,8 @@ void Dialog_Save_As::update() {
 	_rightScrollbar->update();
 	
 	_separator->update();
+
+	_filenameInput->update();
 
 	_selectBtn->update();
 	_cancelBtn->update();

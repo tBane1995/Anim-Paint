@@ -65,6 +65,7 @@ int main() {
 	_setmode(_fileno(stdout), _O_U16TEXT); // wide char UTF-16 output
 	window = new sf::RenderWindow(sf::VideoMode({800, 600}), "Anim Paint", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
 	window->setView(mainView);
+	//window->setKeyRepeatEnabled(false);
 	loadTextures();
 	loadTheme();
 	main_menu = new MainMenu();
@@ -143,54 +144,18 @@ int main() {
 			if (event->is<sf::Event::Closed>())
 				window->close();
 
-			if (event->getIf<sf::Event::MouseButtonPressed>()) {
+			toolbar->handleEvent(*event);
+			main_menu->handleEvent(*event);
 
-				toolbar->handleEvent(*event);
-				main_menu->handleEvent(*event);
+			for (auto& dialog : dialogs)
+				dialog->handleEvent(*event);
 
-				for (auto& dialog : dialogs)
-					dialog->handleEvent(*event);
+			frames_dialog->handleEvent(*event);
+			layers_dialog->handleEvent(*event);
 
-				frames_dialog->handleEvent(*event);
-				layers_dialog->handleEvent(*event);
+			canvas->handleEvent(*event);
 
-				canvas->handleEvent(*event);
-			}
-			else if (event->getIf<sf::Event::MouseButtonReleased>()) {
-
-				toolbar->handleEvent(*event);
-				main_menu->handleEvent(*event);
-
-
-				for (auto& dialog : dialogs)
-					dialog->handleEvent(*event);
-
-				frames_dialog->handleEvent(*event);
-				layers_dialog->handleEvent(*event);
-
-				canvas->handleEvent(*event);
-			}
-			else if (event->getIf<sf::Event::MouseMoved>()) {
-				toolbar->handleEvent(*event);
-				main_menu->handleEvent(*event);
-
-
-				for (auto& dialog : dialogs)
-					dialog->handleEvent(*event);
-
-				frames_dialog->handleEvent(*event);
-				layers_dialog->handleEvent(*event);
-
-				canvas->handleEvent(*event);
-			}
-			else if (event->getIf < sf::Event::MouseWheelScrolled>()) {
-				canvas->handleEvent(*event);
-
-				for (auto& dialog : dialogs)
-					dialog->handleEvent(*event);
-
-			}
-			else if (const auto* kp = event->getIf<sf::Event::KeyPressed>()) {
+			if (const auto* kp = event->getIf<sf::Event::KeyPressed>()) {
 
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::X) {
 					toolbar->_btn_cut->click();
@@ -200,11 +165,6 @@ int main() {
 				}
 				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::V) {
 					toolbar->_btn_paste->click();
-				}
-				else {
-					for (auto& dialog : dialogs) {
-						dialog->handleEvent(*event);
-					}
 				}
 				
 			}
