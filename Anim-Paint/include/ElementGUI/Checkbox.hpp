@@ -13,7 +13,7 @@ public:
 	std::vector < Texture* > _hoverTextures;
 	sf::Sprite* _sprite;
 
-	sf::Vector2f _position;
+	sf::Vector2i _position;
 	
 	CheckboxState _state;
 	std::function<void()> _hover_func;
@@ -23,7 +23,7 @@ public:
 	Checkbox(Texture* texture, Texture* hoverTexture);
 	~Checkbox();
 
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void setValue(int value);
 	void addValue(Texture* texture, Texture* hoverTexture);
 	void unclick();

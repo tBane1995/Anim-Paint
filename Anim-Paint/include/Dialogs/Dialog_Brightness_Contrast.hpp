@@ -18,13 +18,13 @@ public:
 	ColoredButtonWithText* _reset;
 	ColoredButtonWithText* _confirm;
 
-	std::vector < Layer* > _original_layers;
-	std::vector < Layer* > _edited_layers;
+	std::vector<std::shared_ptr<Layer>> _original_layers;
+	std::vector<std::shared_ptr<Layer>> _edited_layers;
 
-	Dialog_Brightness_Contrast(std::vector < Layer* > layers);
+	Dialog_Brightness_Contrast(std::vector<std::shared_ptr<Layer>> layers);
 	~Dialog_Brightness_Contrast();
 
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void setTheFilter();
 
 	void cursorHover();

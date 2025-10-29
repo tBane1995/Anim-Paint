@@ -14,15 +14,15 @@ public:
 	sf::Sprite* _slider_sprite;
 
 	SliderState _state;
-	sf::Vector2f _offset;
+	sf::Vector2i _offset;
 
 	Slider(int min_value, int max_value);
 	~Slider();
 
 	void setValue(int value);
 	int getValue();
-	sf::Vector2f getSliderPosition();
-	void setPosition(sf::Vector2f position);
+	sf::Vector2i getSliderPosition();
+	void setPosition(sf::Vector2i position);
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

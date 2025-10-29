@@ -15,7 +15,7 @@ public:
 	sf::Vector2i _minSize;
 	sf::Vector2i _maxSize;
 	sf::Vector2i _size;
-	sf::Vector2f _position;
+	sf::Vector2i _position;
 
 	//std::vector < sf::Texture* > canvas_textures;
 	//std::vector < sf::Sprite > canvas_sprites;
@@ -40,10 +40,10 @@ public:
 	sf::RectangleShape* _hoveredEdgePoint;
 	sf::RectangleShape* _clickedEdgePoint;
 	sf::Vector2f _orginalEdgePointPosition;
-	std::vector < Frame* > _backupFrames;
+	std::vector<std::shared_ptr<Frame>> _backupFrames;
 
 	CanvasState _state;
-	sf::Vector2f _offset;	// to movements of canvas
+	sf::Vector2i _offset;	// to movements of canvas
 
 	bool _brush_is_visible;
 
@@ -54,7 +54,7 @@ public:
 	sf::Vector2f getZoomedSize(sf::Vector2i size);
 	void generateBackground(sf::Vector2i size);
 	void generateEdgePoints();
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void setZoom(float mouseWheelScrolllDelta);
 	void drawPixels(sf::Color color);
 	void fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords);

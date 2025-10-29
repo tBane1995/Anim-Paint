@@ -4,7 +4,7 @@
 #include "Window.hpp"
 #include "Dialogs/LayersDialog.hpp"
 
-FramesDialog::FramesDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position) : Dialog(title, size, position) {
+FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
 
 	_first_btn = new NormalButton(getTexture(L"tex\\frames\\first.png"), getTexture(L"tex\\frames\\first_hover.png"));
 	_prev_btn = new NormalButton(getTexture(L"tex\\frames\\prev.png"), getTexture(L"tex\\frames\\prev_hover.png"));
@@ -51,18 +51,18 @@ FramesDialog::~FramesDialog() {
 
 void FramesDialog::generateText() {
 	_text->setString(std::to_wstring(animation->getCurrentFrameID() + 1) + L" / " + std::to_wstring(animation->getFramesCount()));
-	_text->setPosition(_position + sf::Vector2f(getSize().x / 2 - _text->getGlobalBounds().size.x / 2.0f, 32 + dialog_padding + (32 - basicFont.getLineSpacing(17)) / 2));
+	_text->setPosition(sf::Vector2f(_position) + sf::Vector2f(getSize().x / 2 - _text->getGlobalBounds().size.x / 2.0f, 32 + dialog_padding + (32 - basicFont.getLineSpacing(17)) / 2));
 }
 
-void FramesDialog::setPosition(sf::Vector2f position) {
+void FramesDialog::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
-	_first_btn->setPosition(_position + sf::Vector2f(dialog_padding, 32 + dialog_padding));
-	_prev_btn->setPosition(_position + sf::Vector2f(dialog_padding + 32, 32 + dialog_padding));
-	_next_btn->setPosition(_position + sf::Vector2f(getSize().x - dialog_padding - 64, 32 + dialog_padding));
-	_last_btn->setPosition(_position + sf::Vector2f(getSize().x - dialog_padding - 32, 32 + dialog_padding));
+	_first_btn->setPosition(_position + sf::Vector2i(dialog_padding, 32 + dialog_padding));
+	_prev_btn->setPosition(_position + sf::Vector2i(dialog_padding + 32, 32 + dialog_padding));
+	_next_btn->setPosition(_position + sf::Vector2i(getSize().x - dialog_padding - 64, 32 + dialog_padding));
+	_last_btn->setPosition(_position + sf::Vector2i(getSize().x - dialog_padding - 32, 32 + dialog_padding));
 
-	_text->setPosition(_position + sf::Vector2f(getSize().x / 2 - _text->getGlobalBounds().size.x / 2.0f, 32 + dialog_padding + (32 - basicFont.getLineSpacing(17)) / 2));
+	_text->setPosition(sf::Vector2f(_position) + sf::Vector2f(getSize().x / 2 - _text->getGlobalBounds().size.x / 2.0f, 32 + dialog_padding + (32 - basicFont.getLineSpacing(17)) / 2));
 }
 
 void FramesDialog::cursorHover() {

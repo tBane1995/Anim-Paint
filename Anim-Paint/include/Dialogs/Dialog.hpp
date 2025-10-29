@@ -6,27 +6,29 @@ enum class DialogState { Idle, ToClose };
 
 class Dialog : public ElementGUI {
 public:
-	sf::Vector2f _position;
-	sf::RectangleShape _dialog_rect;
-	sf::RectangleShape _title_rect;
-	sf::Text* _title_text;
-	sf::RectangleShape _content_rect;
-	NormalButton* _close_btn;
+	sf::Vector2i _position;
+	std::wstring _title;
+
+	sf::IntRect _dialogRect;
+	sf::IntRect _titleRect;
+	std::unique_ptr<sf::Text> _titleText;
+	sf::IntRect _contentRect;
+	NormalButton* _closeBtn;
 
 	DialogState _state;
 
 	bool _is_moved;
-	sf::Vector2f _offset;
+	sf::Vector2i _offset;
 
-	Dialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(-1, -1));
+	Dialog(std::wstring title, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(-1, -1));
 	virtual ~Dialog();
 
-	sf::Vector2f getPosition();
+	sf::Vector2i getPosition();
 	void setSize(sf::Vector2f size);
-	sf::Vector2f getSize();
-	sf::Vector2f getContentPosition();
-	sf::Vector2f getContentSize();
-	virtual void setPosition(sf::Vector2f position);
+	sf::Vector2i getSize();
+	sf::Vector2i getContentPosition();
+	sf::Vector2i getContentSize();
+	virtual void setPosition(sf::Vector2i position);
 
 	virtual void cursorHover();
 	virtual void handleEvent(const sf::Event& event);

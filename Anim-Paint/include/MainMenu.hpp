@@ -67,7 +67,7 @@ public:
 	void saveProject(const std::filesystem::path& path);
 	void loadProject(const std::filesystem::path& path);
 	void exportAsFile(const std::filesystem::path& path);
-	void importAnimation(Animation* newAnimation);
+	void importAnimation(std::shared_ptr<Animation> newAnimation);
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

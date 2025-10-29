@@ -18,7 +18,7 @@ public:
     void increase();
     void setPosition(sf::Vector2i pos_px);
     std::vector<std::vector<bool>> getBrush();
-    void draw(sf::Vector2f canvas_position, sf::Vector2i canvas_size, float zoom, float zoom_delta);
+    void draw(sf::Vector2i canvas_position, sf::Vector2i canvas_size, float zoom, float zoom_delta);
 };
 
 extern Brush* brush;

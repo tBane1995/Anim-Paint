@@ -8,6 +8,6 @@ public:
 
 	Layer(std::wstring name, sf::Vector2i size);
 	Layer(std::wstring name, sf::Image image);
-	Layer(Layer* layer);
+	Layer(std::shared_ptr<Layer> layer);
 	~Layer();
 };

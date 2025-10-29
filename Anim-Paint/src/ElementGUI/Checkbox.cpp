@@ -22,9 +22,9 @@ Checkbox::~Checkbox() {
 	delete _sprite;
 }
 
-void Checkbox::setPosition(sf::Vector2f position) {
+void Checkbox::setPosition(sf::Vector2i position) {
 	_position = position;
-	_sprite->setPosition(_position);
+	_sprite->setPosition(sf::Vector2f(_position));
 }
 
 void Checkbox::setValue(int value) {
@@ -64,7 +64,7 @@ void Checkbox::click() {
 void Checkbox::cursorHover() {
 
 	if (_value > -1) {
-		if (_sprite->getGlobalBounds().contains(cursor->_worldMousePosition)) {
+		if (_sprite->getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 			ElementGUI_hovered = this;
 		}
 	}
@@ -72,7 +72,7 @@ void Checkbox::cursorHover() {
 }
 
 void Checkbox::handleEvent(const sf::Event& event) {
-	if (_sprite->getGlobalBounds().contains(cursor->_worldMousePosition)) {
+	if (_sprite->getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this;

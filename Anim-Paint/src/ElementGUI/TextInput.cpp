@@ -70,7 +70,7 @@ sf::Vector2f TextInput::getSize() {
 	return _rect.getSize();
 }
 void TextInput::cursorHover() {
-	if (_rect.getGlobalBounds().contains(cursor->_worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 		ElementGUI_hovered = this;
 	}
 }
@@ -80,7 +80,7 @@ void TextInput::handleEvent(const sf::Event& event) {
 
 	if (const auto* mp = event.getIf<sf::Event::MouseButtonPressed>(); mp) {
 		
-		if (_rect.getGlobalBounds().contains(cursor->_worldMousePosition)) {
+		if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 			_state = TextInputState::TextEntered;
 			if (_onClickedFunction)
 				_onClickedFunction();

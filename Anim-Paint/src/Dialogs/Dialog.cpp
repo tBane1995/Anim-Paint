@@ -3,29 +3,23 @@
 #include "Window.hpp"
 #include "Mouse.hpp"
 
-Dialog::Dialog(std::wstring title, sf::Vector2f size, sf::Vector2f position) : ElementGUI() {
+Dialog::Dialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : ElementGUI() {
 
 	_state = DialogState::Idle;
 
-	_dialog_rect = sf::RectangleShape(size);
-	_dialog_rect.setFillColor(dialog_border_color);
+	_dialogRect = sf::IntRect(position, size);
+	_titleRect = sf::IntRect(position, sf::Vector2i(size.x - 2 * dialog_border_width, dialog_title_rect_height));
 
-	_title_rect = sf::RectangleShape(sf::Vector2f(size.x - 2 * dialog_border_width, dialog_title_rect_height));
-	_title_rect.setFillColor(dialog_title_rect_color);
+	sf::Vector2i p = position + sf::Vector2i(dialog_border_width, dialog_border_width + _titleRect.size.y);
+	_contentRect = sf::IntRect(p, sf::Vector2i(size.x - 2 * dialog_border_width, size.y - 2 * dialog_border_width - _titleRect.size.y));
 
-	_title_text = new sf::Text(basicFont, title, dialog_title_font_size);
-	_title_text->setFillColor(dialog_title_text_color);
-
-	_content_rect = sf::RectangleShape(sf::Vector2f(size.x - 2 * dialog_border_width, size.y - 2 * dialog_border_width - _title_rect.getSize().y));
-	_content_rect.setFillColor(dialog_content_rect_color);
-
-	_close_btn = new NormalButton(getTexture(L"tex\\dialog\\close.png"), getTexture(L"tex\\dialog\\close_hover.png"));
-	_close_btn->_onclick_func = [this]() {
+	_closeBtn = new NormalButton(getTexture(L"tex\\dialog\\close.png"), getTexture(L"tex\\dialog\\close_hover.png"));
+	_closeBtn->_onclick_func = [this]() {
 		_state = DialogState::ToClose;
 		};
 
-	if (position == sf::Vector2f(-1, -1)) {
-		sf::Vector2f pos;
+	if (position == sf::Vector2i(-1, -1)) {
+		sf::Vector2i pos;
 		pos.x = window->getSize().x / 2 - size.x / 2;
 		pos.y = window->getSize().y / 2 - size.y / 2;
 		setPosition(pos);
@@ -34,65 +28,61 @@ Dialog::Dialog(std::wstring title, sf::Vector2f size, sf::Vector2f position) : E
 		setPosition(position);
 
 	_is_moved = false;
-	_offset = sf::Vector2f(0, 0);
+	_offset = sf::Vector2i(0, 0);
 }
 
 Dialog::~Dialog() {
-	delete _title_text;
-	delete _close_btn;
+
 }
 
-sf::Vector2f Dialog::getPosition() {
-	return _dialog_rect.getPosition();
+sf::Vector2i Dialog::getPosition() {
+	return _dialogRect.position;
 }
 
 void Dialog::setSize(sf::Vector2f size) {
 
 }
 
-sf::Vector2f Dialog::getSize() {
-	return _dialog_rect.getSize();
+sf::Vector2i Dialog::getSize() {
+	return _dialogRect.size;
 }
 
-sf::Vector2f Dialog::getContentPosition() {
-	return _content_rect.getPosition();
+sf::Vector2i Dialog::getContentPosition() {
+	return _contentRect.position;
 }
-sf::Vector2f Dialog::getContentSize() {
-	return _content_rect.getSize();
+sf::Vector2i Dialog::getContentSize() {
+	return _contentRect.size;
 }
 
-void Dialog::setPosition(sf::Vector2f position) {
+void Dialog::setPosition(sf::Vector2i position) {
 
-	_position = sf::Vector2f(sf::Vector2i(position) / 8 * 8);
+	_position = position;
+	_dialogRect.position = position;
+	_titleRect.position = position;
+	_contentRect.position = position + sf::Vector2i(dialog_border_width, dialog_border_width + _titleRect.size.y);
 
-	_dialog_rect.setPosition(_position);
-	_title_rect.setPosition(_position + sf::Vector2f(dialog_border_width, dialog_border_width));
-	_close_btn->setPosition(_position + sf::Vector2f(this->getSize().x - dialog_border_width - 32, dialog_border_width));
-	sf::Vector2f pos(_position + sf::Vector2f(dialog_border_width + (_title_rect.getSize().y - _title_text->getFont().getLineSpacing(dialog_title_font_size)) / 2.0f, dialog_border_width + (_title_rect.getSize().y - _title_text->getFont().getLineSpacing(dialog_title_font_size)) / 2.0f));
-	_title_text->setPosition(pos);
-	_content_rect.setPosition(_position + sf::Vector2f(dialog_border_width, dialog_border_width + _title_rect.getSize().y));
 }
 
 void Dialog::cursorHover() {
-	if (_dialog_rect.getGlobalBounds().contains(cursor->_worldMousePosition)) {
+	if (_dialogRect.contains(cursor->_worldMousePosition)) {
 		ElementGUI_hovered = this;
 	}
 
-	_close_btn->cursorHover();
+	_closeBtn->cursorHover();
 }
 
 void Dialog::handleEvent(const sf::Event& event) {
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (ElementGUI_hovered == this && _title_rect.getGlobalBounds().contains(cursor->_worldMousePosition)) {
+		if (ElementGUI_hovered == this && _titleRect.contains(cursor->_worldMousePosition)) {
 			_is_moved = true;
-			_offset = _title_rect.getPosition() - cursor->_worldMousePosition;
+			_offset = _titleRect.position - cursor->_worldMousePosition;
 		}
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		_is_moved = false;
 	}
 
-	_close_btn->handleEvent(event);
+	_closeBtn->handleEvent(event);
 }
 
 void Dialog::update() {
@@ -100,15 +90,39 @@ void Dialog::update() {
 		setPosition(cursor->_worldMousePosition + _offset);
 	}
 
-	_close_btn->update();
+	_closeBtn->update();
 }
 
 void Dialog::draw() {
-	window->draw(_dialog_rect);
-	window->draw(_title_rect);
-	_close_btn->draw();
-	window->draw(*_title_text);
-	window->draw(_content_rect);
+
+	sf::RectangleShape dialogRect(sf::Vector2f(_dialogRect.size));
+	dialogRect.setFillColor(dialog_border_color);
+	dialogRect.setPosition(sf::Vector2f(_position));
+	window->draw(dialogRect);
+
+	sf::RectangleShape titleRect(sf::Vector2f(_titleRect.size));
+	titleRect.setFillColor(dialog_title_rect_color);
+	titleRect.setPosition(sf::Vector2f(_position.x + dialog_border_width, _position.y + dialog_border_width));
+	window->draw(titleRect);
+
+	_closeBtn->draw();
+
+	if (_titleText == nullptr) {
+		_titleText = std::make_unique<sf::Text>(basicFont, _title, dialog_title_font_size);
+		_titleText->setFillColor(dialog_title_text_color);
+	}
+
+	sf::Vector2f pos(sf::Vector2f(_position) + sf::Vector2f(dialog_border_width + (_titleRect.size.y - _titleText->getFont().getLineSpacing(dialog_title_font_size)) / 2.0f, dialog_border_width + (_titleRect.size.y - _titleText->getFont().getLineSpacing(dialog_title_font_size)) / 2.0f));
+	_titleText->setPosition(pos);
+	window->draw(*_titleText);
+
+	_closeBtn->setPosition(_position + sf::Vector2i(this->getSize().x - dialog_border_width - 32, dialog_border_width));
+	_closeBtn->draw();
+
+	sf::RectangleShape contentRect(sf::Vector2f(_dialogRect.size.x - 2 * dialog_border_width, _dialogRect.size.y - 2 * dialog_border_width - _titleRect.size.y));
+	contentRect.setFillColor(dialog_content_rect_color);
+	contentRect.setPosition(sf::Vector2f(_position) + sf::Vector2f(dialog_border_width, dialog_border_width + _titleRect.size.y));
+	window->draw(contentRect);
 }
 
 std::vector < Dialog* > dialogs;

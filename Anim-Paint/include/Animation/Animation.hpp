@@ -3,7 +3,7 @@
 
 class Animation {
 public:
-	std::vector < Frame* > _frames;
+	std::vector<std::shared_ptr<Frame>> _frames;
 	int _currentFrame;
 	int _currentLayer;
 
@@ -12,13 +12,13 @@ public:
 
 	void addEmptyFrame(sf::Vector2i size);
 
-	Frame* getCurrentFrame();
-	std::vector < Layer* > getLayers();
-	Layer* getCurrentLayer();
-	std::vector < Frame* > getFrames();
+	std::shared_ptr<Frame> getCurrentFrame();
+	std::vector<std::shared_ptr<Layer>>& getLayers();
+	std::shared_ptr<Layer> getCurrentLayer();
+	std::vector<std::shared_ptr<Frame>> getFrames();
 
-	Frame* getFrame(int id);
-	Layer* getLayer(int id);
+	std::shared_ptr<Frame> getFrame(int id);
+	std::shared_ptr<Layer> getLayer(int id);
 
 	int getCurrentFrameID();
 	int getCurrentLayerID();
@@ -36,4 +36,4 @@ public:
 	void lastLayer();
 };
 
-extern Animation* animation;
+extern std::shared_ptr<Animation> animation;

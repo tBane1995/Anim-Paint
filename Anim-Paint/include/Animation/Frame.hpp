@@ -4,11 +4,11 @@
 class Frame {
 
 public:
-	std::vector < Layer* > _layers;
+	std::vector<std::shared_ptr<Layer>> _layers;
 
 	Frame();
 	~Frame();
 
-	std::vector < Layer* >& getLayers();
-	Layer* getLayer(int id);
+	std::vector<std::shared_ptr<Layer>>& getLayers();
+	std::shared_ptr<Layer> getLayer(int id);
 };

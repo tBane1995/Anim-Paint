@@ -11,11 +11,11 @@ public:
 	sf::Text* _text;
 
 
-	FramesDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0));
+	FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(0, 0));
 	~FramesDialog();
 
 	void generateText();
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void cursorHover();
 	void handleEvent(const sf::Event& event);
 	void update();

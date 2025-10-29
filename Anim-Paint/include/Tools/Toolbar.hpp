@@ -24,7 +24,7 @@ public:
 	ColorButton(std::wstring color_name, sf::Color color);
 	~ColorButton();
 
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void draw();
 };
 
@@ -37,7 +37,7 @@ public:
 	LargeColorButton(sf::Color color);
 	~LargeColorButton();
 	
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void setColor(sf::Color color);
 	void draw();
 };
@@ -90,7 +90,7 @@ public:
 	Toolbar();
 	~Toolbar();
 
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void selectToolButton(Button* toolButton);
 	void selectColorButton(LargeColorButton* colorButton);
 

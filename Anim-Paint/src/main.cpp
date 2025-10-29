@@ -50,12 +50,12 @@
 void createDialogs() {
 	
 	frames_dialog = new FramesDialog(L"Frames",
-		sf::Vector2f(192, 32 + 32 + dialog_padding * 2),
-		sf::Vector2f(window->getSize().x - 192 - dialog_margin, main_menu->getSize().y + toolbar->_rect.getSize().y + dialog_margin));
+		sf::Vector2i(192, 32 + 32 + dialog_padding * 2),
+		sf::Vector2i(window->getSize().x - 192 - dialog_margin, main_menu->getSize().y + toolbar->_rect.getSize().y + dialog_margin));
 
 	layers_dialog = new LayersDialog(L"Layers", 
-		sf::Vector2f(160, 32 + 4 * 32 + dialog_padding * 2), 
-		sf::Vector2f(window->getSize().x - 160 - dialog_margin, frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin));
+		sf::Vector2i(160, 32 + 4 * 32 + dialog_padding * 2), 
+		sf::Vector2i(window->getSize().x - 160 - dialog_margin, frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin));
 	
 }
 
@@ -69,7 +69,7 @@ int main() {
 	loadTheme();
 	cursor = new Cursor();
 	main_menu = new MainMenu();
-	animation = new Animation();
+	animation = std::make_shared<Animation>();
 	animation->addEmptyFrame(sf::Vector2i(64,64));
 	selection = new Selection();
 	lasso = new Lasso();

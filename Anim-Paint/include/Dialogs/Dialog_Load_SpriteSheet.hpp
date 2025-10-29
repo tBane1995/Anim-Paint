@@ -7,7 +7,7 @@ class Dialog_Load_SpriteSheet : public Dialog {
 public:
 
 	sf::Image spriteSheet;
-	Animation* _animation;
+	std::shared_ptr<Animation> _animation;
 	sf::Texture _frameTexture;
 	sf::Time _lastFrameTime;
 
@@ -31,7 +31,7 @@ public:
 	Dialog_Load_SpriteSheet(std::filesystem::path path);
 	~Dialog_Load_SpriteSheet();
 
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void loadAnimationsByFrameSize(sf::Vector2i frameSize);
 	bool datasIsCorrect();
 	void loadFrame();

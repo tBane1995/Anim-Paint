@@ -62,14 +62,14 @@ void OptionBox::click() {
 
 
 void OptionBox::cursorHover() {
-	if (_rect.getGlobalBounds().contains(cursor->_worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 		ElementGUI_hovered = this;
 	}
 }
 
 void OptionBox::handleEvent(const sf::Event& event)
 {
-	if (!_rect.getGlobalBounds().contains(cursor->_worldMousePosition))
+	if (!_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition)))
 		return;
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left)
@@ -170,7 +170,7 @@ void MenuBox::click() {
 
 
 void MenuBox::cursorHover() {
-	if (_rect.getGlobalBounds().contains(cursor->_worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 		ElementGUI_hovered = this;
 	}
 
@@ -181,7 +181,7 @@ void MenuBox::cursorHover() {
 }
 
 void MenuBox::handleEvent(const sf::Event& event) {
-	if (_rect.getGlobalBounds().contains(cursor->_worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this;
@@ -256,7 +256,7 @@ MainMenu::MainMenu() : ElementGUI() {
 
 	OptionBox* file_new = new OptionBox(L"new file");
 	file_new->_onclick_func = [this]() {
-		dialogs.push_back(new Dialog(L"new file", sf::Vector2f(200, 200)));
+		dialogs.push_back(new Dialog(L"new file", sf::Vector2i(200, 200)));
 		if (_open_menu_box != nullptr)
 			_open_menu_box->_isOpen = false;
 		_open_menu_box = nullptr;
@@ -508,9 +508,8 @@ void MainMenu::exportAsFile(const std::filesystem::path& path) {
 	std::wcout << "export " << filename << "\n";
 }
 
-void MainMenu::importAnimation(Animation* newAnimation) {
+void MainMenu::importAnimation(std::shared_ptr<Animation> newAnimation) {
 
-	delete animation;
 	animation = newAnimation;
 
 	canvas->resize(sf::Vector2i(animation->getLayer(0)->_image.getSize()));
@@ -523,7 +522,7 @@ void MainMenu::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
-	if (_rect.getGlobalBounds().contains(cursor->_worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 		ElementGUI_hovered = this;
 	}
 

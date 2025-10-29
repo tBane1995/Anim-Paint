@@ -13,7 +13,7 @@ class Cursor {
 public:
 	sf::Cursor* _cursor;
 	sf::Vector2i _mousePosition;
-	sf::Vector2f _worldMousePosition;
+	sf::Vector2i _worldMousePosition;
 	ElementGUI* _hoveredElementGUI;
 	sf::Sprite* _ico;
 	

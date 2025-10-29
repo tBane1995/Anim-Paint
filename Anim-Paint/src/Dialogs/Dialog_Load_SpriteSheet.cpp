@@ -8,7 +8,7 @@
 #include "Time.hpp"
 #include "Canvas.hpp"
 
-Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : Dialog(L"Import Animation", sf::Vector2f(256+16, 256+16+80)) {
+Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : Dialog(L"Import Animation", sf::Vector2i(256+16, 256+16+80)) {
 	
 	std::wcout << L"Import Animation: " << path << L"\n";
 
@@ -101,7 +101,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 	_animationsCount->_onEnteredFunction = [this]() { activateOnTabElement(4); };
 	_frameCount->_onEnteredFunction = [this]() { activateOnTabElement(4); };
 
-	sf::Vector2f btnSize(64, basic_text_rect_height + dialog_padding);
+	sf::Vector2i btnSize(64, basic_text_rect_height + dialog_padding);
 	_rect = sf::RectangleShape(sf::Vector2f(getContentSize().x, btnSize.y + 2 * dialog_padding));
 	_rect.setFillColor(dialog_content_rect_color_2);
 
@@ -157,7 +157,7 @@ Dialog_Load_SpriteSheet::~Dialog_Load_SpriteSheet() {
 	delete _cancelBtn;
 }
 
-void Dialog_Load_SpriteSheet::setPosition(sf::Vector2f position) {
+void Dialog_Load_SpriteSheet::setPosition(sf::Vector2i position) {
 	
 	Dialog::setPosition(position);
 
@@ -181,29 +181,26 @@ void Dialog_Load_SpriteSheet::setPosition(sf::Vector2f position) {
 	_animationsCountText->setPosition(_animationsCount->getPosition() + sf::Vector2f(size.x/2-_animationsCountText->getGlobalBounds().size.x/2, -dy2));
 	_frameCountText->setPosition(_frameCount->getPosition() + sf::Vector2f(size.x/2-_frameCountText->getGlobalBounds().size.x/2, -dy2));
 
-	_rect.setPosition(getContentPosition() + sf::Vector2f(0, getContentSize().y- _rect.getSize().y));
+	_rect.setPosition(sf::Vector2f(getContentPosition()) + sf::Vector2f(0, getContentSize().y - _rect.getSize().y));
 
 	float xx = 48;
-	_confirmBtn->setPosition(getContentPosition() + sf::Vector2f(getContentSize().x/2 - xx - _confirmBtn->getSize().x/2, getContentSize().y - _confirmBtn->getSize().y - dialog_padding));
-	_cancelBtn->setPosition(getContentPosition() + sf::Vector2f(getContentSize().x/2 + xx - _cancelBtn->getSize().x/2, getContentSize().y - _cancelBtn->getSize().y - dialog_padding));
+	_confirmBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x/2 - xx - _confirmBtn->getSize().x/2, getContentSize().y - _confirmBtn->getSize().y - dialog_padding));
+	_cancelBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x/2 + xx - _cancelBtn->getSize().x/2, getContentSize().y - _cancelBtn->getSize().y - dialog_padding));
 }
 
 void Dialog_Load_SpriteSheet::loadAnimationsByFrameSize(sf::Vector2i frameSize) {
 
-	if (_animation != nullptr)
-		delete _animation;
 
-	_animation = new Animation();
+	_animation = std::make_shared<Animation>();
 	sf::Vector2u spriteSheetSize = spriteSheet.getSize();
 
 	for (int x = 0, id = 1; x < spriteSheetSize.x; x += frameSize.x, id += 1) {
-		Frame* frame = new Frame();
-
+		std::shared_ptr<Frame> frame = std::make_shared<Frame>();
 		sf::Image img;
 		img.resize(sf::Vector2u(frameSize), sf::Color::White);
 		if (img.copy(spriteSheet, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(x, 0), frameSize), true)) {
 			//std::wcout << L"load the frame: " << id << "\n";
-			frame->_layers.push_back(new Layer(L"sprite", img));
+			frame->_layers.push_back(std::make_shared<Layer>(L"sprite", img));
 			_animation->_frames.push_back(frame);
 		}
 	}
@@ -235,9 +232,9 @@ bool Dialog_Load_SpriteSheet::datasIsCorrect() {
 
 void Dialog_Load_SpriteSheet::loadFrame() {
 
-	Frame* currentFrame = _animation->getCurrentFrame();
+	std::shared_ptr<Frame> currentFrame = _animation->getCurrentFrame();
 	if (currentFrame != nullptr) {
-		Layer* currentLayer = currentFrame->getLayer(0);
+		std::shared_ptr<Layer> currentLayer = currentFrame->getLayer(0);
 
 		if (currentLayer != nullptr) {
 			sf::Image& img = currentLayer->_image;
@@ -352,7 +349,7 @@ void Dialog_Load_SpriteSheet::draw() {
 	_frameSprite->setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(_frameTexture.getSize())));
 	float scaleFactor = 128.0f / float(std::max(_frameTexture.getSize().x, _frameTexture.getSize().y));
 	_frameSprite->setScale(sf::Vector2f(scaleFactor, scaleFactor));
-	_frameSprite->setPosition(getContentPosition() + sf::Vector2f((getContentSize().x - _frameSprite->getGlobalBounds().size.x) / 2, (128 - _frameSprite->getGlobalBounds().size.y) / 2 + dialog_padding));
+	_frameSprite->setPosition(sf::Vector2f(getContentPosition()) + sf::Vector2f((getContentSize().x - _frameSprite->getGlobalBounds().size.x) / 2, (128 - _frameSprite->getGlobalBounds().size.y) / 2 + dialog_padding));
 	window->draw(*_frameSprite);
 
 	// draw texts inputs

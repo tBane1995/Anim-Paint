@@ -32,7 +32,7 @@ void Slider::setValue(int value) {
 	else if (_current_value > _max_value)
 		_current_value = _max_value;
 
-	_slider_sprite->setPosition(getSliderPosition());
+	_slider_sprite->setPosition(sf::Vector2f(getSliderPosition()));
 
 }
 
@@ -40,19 +40,19 @@ int Slider::getValue() {
 	return _current_value;
 }
 
-sf::Vector2f Slider::getSliderPosition() {
+sf::Vector2i Slider::getSliderPosition() {
 	float line_length = _bar_sprite->getGlobalBounds().size.x - 16;
 
-	sf::Vector2f result;
+	sf::Vector2i result;
 	result.x = _bar_sprite->getPosition().x + float(_current_value - _min_value) * line_length / float(_max_value - _min_value);
 	result.y = _bar_sprite->getPosition().y - 4;
 
 	return result;
 }
 
-void Slider::setPosition(sf::Vector2f position) {
-	_bar_sprite->setPosition(position);
-	_slider_sprite->setPosition(getSliderPosition());
+void Slider::setPosition(sf::Vector2i position) {
+	_bar_sprite->setPosition(sf::Vector2f(position));
+	_slider_sprite->setPosition(sf::Vector2f(getSliderPosition()));
 }
 
 void Slider::cursorHover() {
@@ -61,9 +61,9 @@ void Slider::cursorHover() {
 void Slider::handleEvent(const sf::Event& event) {	
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_slider_sprite->getGlobalBounds().contains(cursor->_worldMousePosition)) {
+		if (_slider_sprite->getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 			ElementGUI_pressed = this;
-			_offset = cursor->_worldMousePosition - _slider_sprite->getPosition();
+			_offset = cursor->_worldMousePosition - sf::Vector2i(_slider_sprite->getPosition());
 			_state = SliderState::Changed;
 
 		}
@@ -79,10 +79,10 @@ void Slider::handleEvent(const sf::Event& event) {
 
 void Slider::update() {
 	if (_state == SliderState::Changed) {
-		sf::Vector2f newPos = cursor->_worldMousePosition - _offset;
+		sf::Vector2i newPos = cursor->_worldMousePosition - _offset;
 		newPos.y = _bar_sprite->getPosition().y - 4;
-		newPos.x = std::clamp(newPos.x, _bar_sprite->getPosition().x, _bar_sprite->getPosition().x + _bar_sprite->getGlobalBounds().size.x - 16);
-		_slider_sprite->setPosition(newPos);
+		newPos.x = std::clamp(newPos.x, int(_bar_sprite->getPosition().x), int(_bar_sprite->getPosition().x + _bar_sprite->getGlobalBounds().size.x - 16));
+		_slider_sprite->setPosition(sf::Vector2f(newPos));
 
 		_current_value = float(_slider_sprite->getPosition().x - _bar_sprite->getPosition().x) / (_bar_sprite->getGlobalBounds().size.x - 16) * (float(_max_value - _min_value)) + _min_value;
 	}

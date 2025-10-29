@@ -30,9 +30,9 @@ public:
 	LocationRect(std::wstring path, int depth);
 	~LocationRect();
 
-	void setSize(sf::Vector2f size);
+	void setSize(sf::Vector2i size);
 	float getTotalHeight();
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void setText(std::wstring text);
 	
 	void open(const std::function<void(const std::wstring&)>& onPick);	
@@ -55,19 +55,19 @@ enum class LocationAndFilesSeparatorState { Idle, Hover, Moving };
 class LocationAndFilesSeparator : public ElementGUI {
 public:
 	sf::IntRect _rect;
-	float _minX;
-	float _maxX;
+	int _minX;
+	int _maxX;
 
 	LocationAndFilesSeparatorState _state;
-	sf::Vector2f _offset;
+	sf::Vector2i _offset;
 	std::function<void()> _func;
 
 	LocationAndFilesSeparator(int linesCount);
 	~LocationAndFilesSeparator();
 
-	sf::Vector2f getSize();
-	void setPosition(sf::Vector2f position);
-	sf::Vector2f getPosition();
+	sf::Vector2i getSize();
+	void setPosition(sf::Vector2i position);
+	sf::Vector2i getPosition();
 	void setRange(float minX, float maxX);
 
 	void cursorHover();
@@ -90,7 +90,7 @@ public:
 	~FileRect();
 
 	void setSize(sf::Vector2i size);
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void setFile(std::filesystem::path path);
 	void setText(std::wstring text);
 	
@@ -107,8 +107,8 @@ public:
 class FileDialog : public Dialog {
 public:
 
-	sf::IntRect _leftRect;
-	sf::IntRect _rightRect;
+	std::shared_ptr<sf::IntRect> _leftRect;
+	std::shared_ptr<sf::IntRect> _rightRect;
 
 	std::vector <LocationRect*> _locations;
 	Scrollbar* _leftScrollbar;
@@ -140,7 +140,7 @@ public:
 	void loadDirectory();
 	void setTheFiles();
 
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void drawLeftPanel();
 	void drawRightPanel();
 	void drawBottomPanel();

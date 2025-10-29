@@ -30,13 +30,13 @@ Canvas::Canvas() : ElementGUI() {
 
 	_state = CanvasState::Idle;
 
-	this->_offset = sf::Vector2f(0, 0);
+	this->_offset = sf::Vector2i(0, 0);
 
 	this->_brush_is_visible = false;
 
 	resize(_size);
 
-	setPosition((sf::Vector2f(window->getSize()) - getZoomedSize(_size)) / 2.0f);
+	setPosition((sf::Vector2i(window->getSize()) - sf::Vector2i(getZoomedSize(_size))) / 2);
 }
 
 Canvas::~Canvas() {
@@ -145,25 +145,25 @@ void Canvas::generateEdgePoints() {
 	_clickedEdgePoint = nullptr;
 }
 
-void Canvas::setPosition(sf::Vector2f position) {
+void Canvas::setPosition(sf::Vector2i position) {
 	_position = position;
-	_bg_sprite->setPosition(_position);
+	_bg_sprite->setPosition(sf::Vector2f(_position));
 
-	_point_left_top->setPosition(_position);
-	_point_top->setPosition(_position + sf::Vector2f(getZoomedSize(_size).x / 2.0f, 0));
-	_point_right_top->setPosition(_position + sf::Vector2f(getZoomedSize(_size).x, 0));
-	_point_left->setPosition(_position + sf::Vector2f(0, getZoomedSize(_size).y / 2.0f));
-	_point_right->setPosition(_position + sf::Vector2f(getZoomedSize(_size).x, getZoomedSize(_size).y / 2.0f));
-	_point_left_bottom->setPosition(_position + sf::Vector2f(0, getZoomedSize(_size).y));
-	_point_bottom->setPosition(_position + sf::Vector2f(getZoomedSize(_size).x / 2.0f, getZoomedSize(_size).y));
-	_point_right_bottom->setPosition(_position + sf::Vector2f(getZoomedSize(_size).x, getZoomedSize(_size).y));
+	_point_left_top->setPosition(sf::Vector2f(_position));
+	_point_top->setPosition(sf::Vector2f(_position) + sf::Vector2f(getZoomedSize(_size).x / 2.0f, 0));
+	_point_right_top->setPosition(sf::Vector2f(_position) + sf::Vector2f(getZoomedSize(_size).x, 0));
+	_point_left->setPosition(sf::Vector2f(_position) + sf::Vector2f(0, getZoomedSize(_size).y / 2.0f));
+	_point_right->setPosition(sf::Vector2f(_position) + sf::Vector2f(getZoomedSize(_size).x, getZoomedSize(_size).y / 2.0f));
+	_point_left_bottom->setPosition(sf::Vector2f(_position) + sf::Vector2f(0, getZoomedSize(_size).y));
+	_point_bottom->setPosition(sf::Vector2f(_position) + sf::Vector2f(getZoomedSize(_size).x / 2.0f, getZoomedSize(_size).y));
+	_point_right_bottom->setPosition(sf::Vector2f(_position) + sf::Vector2f(getZoomedSize(_size).x, getZoomedSize(_size).y));
 
 }
 
 
 void Canvas::setZoom(float mouseWheelScrolllDelta) {
 
-	sf::Vector2f mouseBeforeZoom = cursor->_worldMousePosition - _position;
+	sf::Vector2i mouseBeforeZoom = cursor->_worldMousePosition - _position;
 	float oldZoom = _zoom;
 
 	_zoom += 0.25f * mouseWheelScrolllDelta;
@@ -171,7 +171,7 @@ void Canvas::setZoom(float mouseWheelScrolllDelta) {
 
 	generateBackground(_size);
 
-	sf::Vector2f mouseAfterZoom = mouseBeforeZoom * (_zoom / oldZoom);
+	sf::Vector2i mouseAfterZoom = sf::Vector2i(sf::Vector2f(mouseBeforeZoom) * (_zoom / oldZoom));
 	_position += (cursor->_worldMousePosition - (_position + mouseAfterZoom));
 	setPosition(_position);
 }
@@ -181,9 +181,11 @@ void Canvas::drawPixels(sf::Color color) {
 
 	std::vector<std::vector<bool>> b = brush->getBrush();
 
-	Layer* layer = animation->getCurrentLayer();
+	std::shared_ptr<Layer> layer = animation->getCurrentLayer();
+
 	if (layer == nullptr)
 		return;
+
 	sf::Image& image = layer->_image;
 	for (int y = 0; y < b.size(); y++) {
 		for (int x = 0; x < b[y].size(); x++) {
@@ -247,13 +249,13 @@ void Canvas::cursorHover() {
 	_hoveredEdgePoint = nullptr;
 
 	for (auto& point : _edgePoints) {
-		if (point->getGlobalBounds().contains(cursor->_worldMousePosition)) {
+		if (point->getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 			_hoveredEdgePoint = point;
 			return;
 		}
 	}
 
-	if (_bg_sprite->getGlobalBounds().contains(cursor->_worldMousePosition)) {
+	if (_bg_sprite->getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 		ElementGUI_hovered = this;
 	}
 
@@ -273,26 +275,21 @@ void Canvas::handleEvent(const sf::Event& event) {
 
 			_state = CanvasState::Resizing;
 
-			for (auto* f : _backupFrames) {
-				for (auto* l : f->getLayers())
-					delete l;
-				delete f;
-			}
-
+			// TO-DO - do sprawdzenia czy da się uprościć bo teraz operujemy na inteligentnych wskaźnikach
 			_backupFrames.clear();
-			for (auto* frame : animation->getFrames()) {
-				Frame* newFrame = new Frame();
+			for (auto frame : animation->getFrames()) {
+				std::shared_ptr<Frame> newFrame = std::make_shared<Frame>();
 				newFrame->_layers.reserve(frame->getLayers().size());
 
-				for (auto* layer : frame->getLayers()) {
-					Layer* newLayer = new Layer(layer->_name, sf::Vector2i(layer->_image.getSize()));
+				for (auto layer : frame->getLayers()) {
+					std::shared_ptr<Layer> newLayer = std::make_shared<Layer>(layer->_name, sf::Vector2i(layer->_image.getSize()));
 					newLayer->_image = layer->_image;
 					newFrame->_layers.push_back(newLayer);
 				}
 				_backupFrames.push_back(newFrame);
 			}
-
 			return;
+			//
 		}
 
 
@@ -301,13 +298,6 @@ void Canvas::handleEvent(const sf::Event& event) {
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			_clickedEdgePoint = nullptr;
 			_state = CanvasState::Idle;
-
-			for (auto* f : _backupFrames) {
-				for (auto* l : f->getLayers())
-					delete l;
-				delete f;
-			}
-
 			_backupFrames.clear();
 		}
 
@@ -315,7 +305,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 	}
 
 	if (ElementGUI_hovered == this || ElementGUI_hovered == nullptr) {
-		if (_bg_sprite->getGlobalBounds().contains(cursor->_worldMousePosition)) {
+		if (_bg_sprite->getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 
 			if (_state == CanvasState::Idle && _hoveredEdgePoint == nullptr) {
 				if (toolbar->_toolType == ToolType::Brush || toolbar->_toolType == ToolType::Eraser) {
@@ -383,7 +373,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 			}
 			else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {
 				_state = CanvasState::Moving;
-				_offset = _bg_sprite->getPosition() - cursor->_worldMousePosition;
+				_offset = sf::Vector2i(_bg_sprite->getPosition()) - cursor->_worldMousePosition;
 			}
 
 			else if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
@@ -499,7 +489,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 						remove(animation->getCurrentLayer()->_image, norm, toolbar->_second_color->_color);
 					}
 				}
-				else if (_bg_sprite->getGlobalBounds().contains(cursor->_worldMousePosition)) {
+				else if (_bg_sprite->getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 					if (selection->_img != nullptr) {
 						paste(&animation->getCurrentLayer()->_image, selection->_img, norm.position.x, norm.position.y, toolbar->_second_color->_color);
 						selection->_img = nullptr;
@@ -534,7 +524,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 						remove(animation->getCurrentLayer()->_image, lasso->_rect, toolbar->_second_color->_color);
 					}
 				}
-				else if (_bg_sprite->getGlobalBounds().contains(cursor->_worldMousePosition)) {
+				else if (_bg_sprite->getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 					if (lasso->_image != nullptr) {
 						sf::Image* mask = lasso->generateMask();
 						paste(&animation->getCurrentLayer()->_image, lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, mask, toolbar->_second_color->_color);
@@ -583,8 +573,8 @@ void Canvas::update() {
 
 	if (_state == CanvasState::Resizing) {
 		sf::Vector2f p;
-		p = (cursor->_worldMousePosition + _edgePointSize / 2.0f - _clickedEdgePoint->getPosition()) / (_zoom * _zoom_delta);
-		sf::Vector2i pp = sf::Vector2i(p.x, p.y);
+		p = (sf::Vector2f(cursor->_worldMousePosition) + _edgePointSize / 2.0f - _clickedEdgePoint->getPosition()) / (_zoom * _zoom_delta);
+		sf::Vector2i pp = sf::Vector2i(p);
 		//std::cout << pp.x << ", " << pp.y << "\n";
 
 		float minX, minY, maxX, maxY;
@@ -661,7 +651,7 @@ void Canvas::update() {
 
 
 
-		_position = sf::Vector2f(minX, minY);
+		_position = sf::Vector2i(minX, minY);
 
 		_point_left_top->setPosition(sf::Vector2f(minX, minY));
 		_point_top->setPosition(sf::Vector2f((minX + maxX) / 2, minY));
@@ -692,13 +682,13 @@ void Canvas::update() {
 
 		const size_t framesCount = std::min(_backupFrames.size(), animation->getFrames().size());
 		for (size_t f = 0; f < framesCount; ++f) {
-			Frame* src = _backupFrames[f];
-			Frame* org = animation->getFrames()[f];
+			std::shared_ptr<Frame> src = _backupFrames[f];
+			std::shared_ptr<Frame> org = animation->getFrames()[f];
 
 			const size_t layersCount = std::min(src->getLayers().size(), org->getLayers().size());
 			for (size_t l = 0; l < layersCount; ++l) {
-				Layer* srcLayer = src->getLayers()[l];
-				Layer* orgLayer = org->getLayers()[l];
+				std::shared_ptr<Layer> srcLayer = src->getLayers()[l];
+				std::shared_ptr<Layer> orgLayer = org->getLayers()[l];
 
 				sf::Image newImage;
 				newImage.resize(sf::Vector2u(_size), toolbar->_second_color->_color);
@@ -709,10 +699,10 @@ void Canvas::update() {
 		}
 	}
 	else if (_state == CanvasState::Moving) {
-		sf::Vector2f target = cursor->_worldMousePosition + _offset;
+		sf::Vector2f target = sf::Vector2f(cursor->_worldMousePosition + _offset);
 		float x = clampAxisOverscroll(target.x, _bg_sprite->getGlobalBounds().size.x, window->getSize().x, 0.5f);
 		float y = clampAxisOverscroll(target.y, _bg_sprite->getGlobalBounds().size.y, window->getSize().y, 0.5f);
-		setPosition(sf::Vector2f(x, y));
+		setPosition(sf::Vector2i(x, y));
 	}
 }
 

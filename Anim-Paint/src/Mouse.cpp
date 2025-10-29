@@ -5,7 +5,7 @@ Cursor::Cursor() {
 
 	_cursor = new sf::Cursor(sf::Cursor::Type::Arrow);
 	_mousePosition = sf::Mouse::getPosition(*window);
-	_worldMousePosition = window->mapPixelToCoords(_mousePosition);
+	_worldMousePosition = sf::Vector2i(window->mapPixelToCoords(_mousePosition));
 	window->setMouseCursor(*_cursor);
 	_hoveredElementGUI = nullptr;
 	_ico = nullptr;
@@ -20,7 +20,7 @@ Cursor::~Cursor() {
 
 void Cursor::update() {
 	_mousePosition = sf::Mouse::getPosition(*window);
-	_worldMousePosition = window->mapPixelToCoords(_mousePosition);
+	_worldMousePosition = sf::Vector2i(window->mapPixelToCoords(_mousePosition));
 }
 
 void Cursor::handleEvent(const sf::Event& event) {

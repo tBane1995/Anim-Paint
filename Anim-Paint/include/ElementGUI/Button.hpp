@@ -18,7 +18,7 @@ public:
 	virtual sf::Vector2i getSize();
 	void select();
 	void unselect();
-	virtual void setPosition(sf::Vector2f position);
+	virtual void setPosition(sf::Vector2i position);
 	virtual void cursorHover();
 	virtual void handleEvent(const sf::Event& event);
 	virtual void update();
@@ -39,11 +39,11 @@ public:
 	sf::Time _clickTime;
 
 
-	NormalButton(Texture* texture, Texture* hoverTexture, sf::Vector2f position = sf::Vector2f(0, 0));
+	NormalButton(Texture* texture, Texture* hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~NormalButton();
 
 	sf::Vector2i getSize();
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void unclick();
 	void hover();
 	void click();
@@ -71,11 +71,11 @@ public:
 	sf::Time _clickTime;
 
 
-	ColoredButtonWithText(std::wstring text, sf::Vector2f size, sf::Vector2f position = sf::Vector2f(0, 0));
+	ColoredButtonWithText(std::wstring text, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ColoredButtonWithText();
 
 	sf::Vector2i getSize();
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void setColors(sf::Color selectColor, sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor);
 	void unclick();
 	void hover();
@@ -106,11 +106,11 @@ public:
 	sf::Time _clickTime;
 
 
-	ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2f position = sf::Vector2f(0, 0));
+	ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithBottomText();
 
 	sf::Vector2i getSize();
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void unclick();
 	void hover();
 	void click();
@@ -139,11 +139,11 @@ public:
 	sf::Time _clickTime;
 
 
-	ButtonWithRightText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2f position = sf::Vector2f(0, 0));
+	ButtonWithRightText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithRightText();
 
 	sf::Vector2i getSize();
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void unclick();
 	void hover();
 	void click();
@@ -169,11 +169,11 @@ public:
 	sf::Time _clickTime;
 
 
-	Option(std::wstring text, Texture* texture, Texture* hoverTexture, sf::Vector2f position = sf::Vector2f(0, 0));
+	Option(std::wstring text, Texture* texture, Texture* hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~Option();
 
 	sf::Vector2i getSize();
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void unclick();
 	void hover();
 	void click();
@@ -206,13 +206,13 @@ public:
 	std::vector < Option* > _options;
 	bool _isOpen;
 
-	ButtonWithTopTextAndList(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, sf::Vector2f position = sf::Vector2f(0, 0));
+	ButtonWithTopTextAndList(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithTopTextAndList();
 
 	sf::Vector2i getSize();
 
 	void addOption(std::wstring text);
-	void setPosition(sf::Vector2f position);
+	void setPosition(sf::Vector2i position);
 	void unclick();
 	void hover();
 	void click();

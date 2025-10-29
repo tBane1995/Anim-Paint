@@ -3,7 +3,7 @@
 #include "Mouse.hpp"
 #include <iostream>
 
-Scrollbar::Scrollbar(float x, float y, float width, float height, int min_value, int max_value, int slider_size, int value) {
+Scrollbar::Scrollbar(int x, int y, int width, int height, int min_value, int max_value, int slider_size, int value) {
 	
 	
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(width, height));
@@ -15,7 +15,7 @@ Scrollbar::Scrollbar(float x, float y, float width, float height, int min_value,
 	_value = value;
 
 	updateSliderSize();
-	setPosition(x, y);
+	setPosition(sf::Vector2i(x,y));
 
 	_state = ScrollbarState::Idle;
 	_func = {};
@@ -48,8 +48,8 @@ void Scrollbar::setValue(int value) {
 	updateSliderPosition();
 }
 
-void Scrollbar::setScrollArea(sf::IntRect& rect, float scrollStep) {
-	_scrollArea = &rect;
+void Scrollbar::setScrollArea(std::shared_ptr<sf::IntRect> rect, float scrollStep) {
+	_scrollArea = rect;
 	_scrollStep = scrollStep;
 }
 
@@ -82,8 +82,8 @@ void Scrollbar::updateSliderPosition() {
 	_slider.position = pos;
 }
 
-void Scrollbar::setPosition(float x, float y) {
-	_rect.position = sf::Vector2i(x, y);
+void Scrollbar::setPosition(sf::Vector2i position) {
+	_rect.position = position;
 	updateSliderPosition();
 }
 
@@ -92,7 +92,7 @@ int Scrollbar::getValue() {
 }
 
 void Scrollbar::cursorHover() {
-	if (_rect.contains(sf::Vector2i(cursor->_worldMousePosition))) {
+	if (_rect.contains(cursor->_worldMousePosition)) {
 		ElementGUI_hovered = this;
 	}
 }
@@ -105,17 +105,17 @@ void Scrollbar::handleEvent(const sf::Event& event) {
 		}
 	}
 	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_slider.contains(sf::Vector2i(cursor->_worldMousePosition))) {
+		if (_slider.contains(cursor->_worldMousePosition)) {
 			ElementGUI_pressed = this;
 			if (_slider.size.y < _rect.size.y) {
 				_state = ScrollbarState::Dragging;
-				_dragOffset = sf::Vector2i(cursor->_worldMousePosition) - _slider.position;
+				_dragOffset = cursor->_worldMousePosition - _slider.position;
 			}
 		}
 		
 	}
 	else if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>(); mws) {
-		if (_rect.contains(sf::Vector2i(cursor->_worldMousePosition)) || _scrollArea->contains(sf::Vector2i(cursor->_worldMousePosition))) {
+		if (_rect.contains(cursor->_worldMousePosition) || _scrollArea->contains(cursor->_worldMousePosition)) {
 			_state = ScrollbarState::Scrolled;
 			_deltaScroll = -mws->delta;
 		}

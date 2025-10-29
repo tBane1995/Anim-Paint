@@ -41,9 +41,9 @@ ColorButton::~ColorButton() {
 
 }
 
-void ColorButton::setPosition(sf::Vector2f position) {
+void ColorButton::setPosition(sf::Vector2i position) {
 	NormalButton::setPosition(position);
-	_rect.setPosition(position + sf::Vector2f(4, 4));
+	_rect.setPosition(sf::Vector2f(position) + sf::Vector2f(4, 4));
 
 }
 
@@ -66,7 +66,7 @@ LargeColorButton::~LargeColorButton() {
 
 }
 
-void LargeColorButton::setPosition(sf::Vector2f position) {
+void LargeColorButton::setPosition(sf::Vector2i position) {
 	NormalButton::setPosition(position);
 }
 
@@ -277,7 +277,7 @@ Toolbar::Toolbar() : ElementGUI() {
 	_selectedColorButton = nullptr;
 	selectColorButton(_first_color);
 
-	setPosition(sf::Vector2f(0, 0));
+	setPosition(sf::Vector2i(0, 0));
 }
 
 Toolbar::~Toolbar() {
@@ -310,25 +310,25 @@ Toolbar::~Toolbar() {
 	delete _colors_text;
 }
 
-void Toolbar::setPosition(sf::Vector2f position) {
-	_rect.setPosition(position + sf::Vector2f(0, menu_height));
+void Toolbar::setPosition(sf::Vector2i position) {
+	_rect.setPosition(sf::Vector2f(position.x, position.y + menu_height));
 
-	position += sf::Vector2f(menuoptions_border_width, 0);
+	position += sf::Vector2i(menuoptions_border_width, 0);
 
 	// clipboard
-	_clipboard[0]->setPosition(position + sf::Vector2f(0, menu_height));
+	_clipboard[0]->setPosition(position + sf::Vector2i(0, menu_height));
 
-	_clipboard[1]->setPosition(position + sf::Vector2f(0, menu_height + 32));
-	int x = _clipboard[0]->getSize().x;
+	_clipboard[1]->setPosition(position + sf::Vector2i(0, menu_height + 32));
+	int x = _clipboard[1]->getSize().x;
 
-	_clipboard[2]->setPosition(position + sf::Vector2f(x, menu_height + 2));
-	_clipboard[3]->setPosition(position + sf::Vector2f(x, menu_height + 32 + 2));
+	_clipboard[2]->setPosition(position + sf::Vector2i(x, menu_height));
+	_clipboard[3]->setPosition(position + sf::Vector2i(x, menu_height + 32));
 	x += _clipboard[3]->getSize().x;
 
-	_clipboard[4]->setPosition(position + sf::Vector2f(x, menu_height));
+	_clipboard[4]->setPosition(position + sf::Vector2i(x, menu_height));
 	x += _clipboard[4]->getSize().x;
 
-	_clipboard[5]->setPosition(position + sf::Vector2f(x, menu_height));
+	_clipboard[5]->setPosition(position + sf::Vector2i(x, menu_height));
 	x += _clipboard[5]->getSize().x;
 
 	x += 4;
@@ -343,8 +343,8 @@ void Toolbar::setPosition(sf::Vector2f position) {
 	int y = menu_height + 4;
 	x += 2;
 	for (int i = 0; i < _tools.size(); i += 2) {
-		_tools[i]->setPosition(sf::Vector2f(x, y));
-		_tools[i + 1]->setPosition(sf::Vector2f(x, y + 32));
+		_tools[i]->setPosition(sf::Vector2i(x, y));
+		_tools[i + 1]->setPosition(sf::Vector2i(x, y + 32));
 		x += 32;
 	}
 
@@ -359,8 +359,8 @@ void Toolbar::setPosition(sf::Vector2f position) {
 	old_x = x;
 
 	x += 2;
-	_sizes[0]->setPosition(sf::Vector2f(x, menu_height + 4));
-	_sizes[1]->setPosition(sf::Vector2f(x, menu_height + 32 + 4));
+	_sizes[0]->setPosition(sf::Vector2i(x, menu_height + 4));
+	_sizes[1]->setPosition(sf::Vector2i(x, menu_height + 32 + 4));
 	x += 32;
 	x += 2;
 
@@ -373,13 +373,13 @@ void Toolbar::setPosition(sf::Vector2f position) {
 	y = menu_height + 4;
 	x += 4;
 
-	_first_color->setPosition(sf::Vector2f(x, y));
+	_first_color->setPosition(sf::Vector2i(x, y));
 	_first_color_text_col->setPosition(sf::Vector2f(x + 24 - _first_color_text_col->getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) * 2 - 4));
 	_first_color_text_val->setPosition(sf::Vector2f(x + 24 - _first_color_text_val->getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4));
 	x += 48;
 
 
-	_second_color->setPosition(sf::Vector2f(x, y));
+	_second_color->setPosition(sf::Vector2i(x, y));
 	_second_color_text_col->setPosition(sf::Vector2f(x + 24 - _second_color_text_col->getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) * 2 - 4));
 	_second_color_text_val->setPosition(sf::Vector2f(x + 24 - _second_color_text_val->getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4));
 
@@ -393,8 +393,8 @@ void Toolbar::setPosition(sf::Vector2f position) {
 	x += 4;
 	old_x = x;
 	for (int i = 0; i < _colors.size(); i += 2) {
-		_colors[i]->setPosition(sf::Vector2f(x, y));
-		_colors[i + 1]->setPosition(sf::Vector2f(x, y + 32));
+		_colors[i]->setPosition(sf::Vector2i(x, y));
+		_colors[i + 1]->setPosition(sf::Vector2i(x, y + 32));
 		x += 32;
 	}
 
@@ -431,7 +431,7 @@ void Toolbar::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
-	if (_rect.getGlobalBounds().contains(cursor->_worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 		ElementGUI_hovered = this;
 	}
 
@@ -457,7 +457,7 @@ void Toolbar::handleEvent(const sf::Event& event) {
 	if (!dialogs.empty())
 		return;
 
-	if (_rect.getGlobalBounds().contains(cursor->_worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this;
 		}

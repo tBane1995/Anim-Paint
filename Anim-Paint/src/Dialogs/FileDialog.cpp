@@ -127,7 +127,7 @@ LocationRect::~LocationRect() {
 
 }
 
-void LocationRect::setSize(sf::Vector2f size) {
+void LocationRect::setSize(sf::Vector2i size) {
 	_rect.size = sf::Vector2i(size);
 
 	if (_isOpen && !_children.empty()) {
@@ -148,7 +148,7 @@ float LocationRect::getTotalHeight() {
 	return h;
 }
 
-void LocationRect::setPosition(sf::Vector2f position) {
+void LocationRect::setPosition(sf::Vector2i position) {
 
 
 	_rect.position = sf::Vector2i(position);
@@ -158,7 +158,7 @@ void LocationRect::setPosition(sf::Vector2f position) {
 		float cursorY = position.y + _rect.size.y;
 
 		for(auto& child : _children) {
-			child->setPosition(sf::Vector2f(position.x, cursorY));
+			child->setPosition(sf::Vector2i(position.x, cursorY));
 			cursorY += child->getTotalHeight();
 		}
 	}
@@ -193,7 +193,7 @@ void LocationRect::open(const std::function<void(const std::wstring&)>& onPick)
 				continue;
 
 			auto* child = new LocationRect(p.wstring(), _depth + 1);
-			child->setSize(sf::Vector2f(_rect.size));
+			child->setSize(_rect.size);
 
 			child->_onclick_func = [child, onPick]() {
 
@@ -245,7 +245,7 @@ void LocationRect::click() {
 void LocationRect::cursorHover() {
 	
 	
-	if (_rect.contains(sf::Vector2i(cursor->_worldMousePosition))) {
+	if (_rect.contains(cursor->_worldMousePosition)) {
 		ElementGUI_hovered = this;
 	}
 
@@ -260,7 +260,7 @@ void LocationRect::cursorHover() {
 void LocationRect::handleEvent(const sf::Event& event) {
 	
 	
-	if (_rect.contains(sf::Vector2i(cursor->_worldMousePosition))) {
+	if (_rect.contains(cursor->_worldMousePosition)) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this;
@@ -363,16 +363,16 @@ LocationAndFilesSeparator::~LocationAndFilesSeparator() {
 
 }
 
-sf::Vector2f LocationAndFilesSeparator::getSize() {
-	return sf::Vector2f(_rect.size);
+sf::Vector2i LocationAndFilesSeparator::getSize() {
+	return _rect.size;
 }
 
-void LocationAndFilesSeparator::setPosition(sf::Vector2f position) {
-	_rect.position = sf::Vector2i(position);
+void LocationAndFilesSeparator::setPosition(sf::Vector2i position) {
+	_rect.position = position;
 }
 
-sf::Vector2f LocationAndFilesSeparator::getPosition() {
-	return sf::Vector2f(_rect.position);
+sf::Vector2i LocationAndFilesSeparator::getPosition() {
+	return _rect.position;
 }
 
 void LocationAndFilesSeparator::setRange(float minX, float maxX) {
@@ -381,7 +381,7 @@ void LocationAndFilesSeparator::setRange(float minX, float maxX) {
 }
 
 void LocationAndFilesSeparator::cursorHover() {
-	if (_rect.contains(sf::Vector2i(cursor->_worldMousePosition)) || _state == LocationAndFilesSeparatorState::Moving) {
+	if (_rect.contains(cursor->_worldMousePosition) || _state == LocationAndFilesSeparatorState::Moving) {
 		ElementGUI_hovered = this;
 	}
 }
@@ -394,10 +394,10 @@ void LocationAndFilesSeparator::handleEvent(const sf::Event& event) {
 		}
 	}
 	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_rect.contains(sf::Vector2i(cursor->_worldMousePosition))) {
+		if (_rect.contains(cursor->_worldMousePosition)) {
 			ElementGUI_pressed = this;
 			_state = LocationAndFilesSeparatorState::Moving;
-			_offset = cursor->_worldMousePosition - sf::Vector2f(_rect.position.x, _rect.position.y);
+			_offset = cursor->_worldMousePosition - _rect.position;
 
 		}
 	}
@@ -407,9 +407,9 @@ void LocationAndFilesSeparator::update() {
 
 	if (_state == LocationAndFilesSeparatorState::Moving) {
 
-		sf::Vector2f newPos = cursor->_worldMousePosition - _offset;
+		sf::Vector2i newPos = cursor->_worldMousePosition - _offset;
 		newPos.x = std::clamp(newPos.x, _minX, _maxX);
-		_rect.position = sf::Vector2i(sf::Vector2f(newPos.x, _rect.position.y));
+		_rect.position = sf::Vector2i(newPos.x, _rect.position.y);
 		if (_func)
 			_func();
 	}
@@ -453,8 +453,8 @@ void FileRect::setSize(sf::Vector2i size) {
 	_rect.size = size;
 }
 
-void FileRect::setPosition(sf::Vector2f position) {
-	_rect.position = sf::Vector2i(position);
+void FileRect::setPosition(sf::Vector2i position) {
+	_rect.position = position;
 	
 }
 
@@ -483,7 +483,7 @@ void FileRect::click() {
 void FileRect::cursorHover() {
 
 	if (_path != std::filesystem::path()) {
-		if (_rect.contains(sf::Vector2i(cursor->_worldMousePosition))) {
+		if (_rect.contains(cursor->_worldMousePosition)) {
 			ElementGUI_hovered = this;
 		}
 	}
@@ -493,7 +493,7 @@ void FileRect::handleEvent(const sf::Event& event) {
 
 	
 	if (_path != std::filesystem::path()) {
-		if (_rect.contains(sf::Vector2i(cursor->_worldMousePosition))) {
+		if (_rect.contains(cursor->_worldMousePosition)) {
 			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 				ElementGUI_pressed = this;
 
@@ -566,7 +566,7 @@ void FileRect::draw() {
 //////////////////////////////////////////////////////////////////////////////
 
 FileDialog::FileDialog(std::wstring dialogName, std::wstring selectButtonText) :
-	Dialog(dialogName, sf::Vector2f(400, 292), sf::Vector2f(8, 120)),
+	Dialog(dialogName, sf::Vector2i(400, 292), sf::Vector2i(8, 120)),
 	_filenameText(basicFont, L"File name", basic_text_size)
 {
 
@@ -596,7 +596,7 @@ FileDialog::FileDialog(std::wstring dialogName, std::wstring selectButtonText) :
 	sf::Vector2f InputSize(getContentSize().x - _filenameText.getGlobalBounds().size.x - 3 * dialog_padding, basic_text_rect_height);
 	_filenameInput = new TextInput(InputSize, 32, basic_text_size);
 	
-	sf::Vector2f btnSize(64, basic_text_rect_height + dialog_padding);
+	sf::Vector2i btnSize(64, basic_text_rect_height + dialog_padding);
 	_selectBtn = new ColoredButtonWithText(selectButtonText, btnSize);
 	_selectBtn->setColors(dark_button_select_color, dark_button_normal_color, dark_button_hover_color, dark_button_press_color);
 	_selectBtn->_onclick_func = [this](){
@@ -641,13 +641,13 @@ float FileDialog::calculateLeftScrollbarHeight() {
 	float hgh = 0;
 	for (auto& fav : _locations)
 		hgh += fav->getTotalHeight();
-	hgh -= _leftRect.size.y;
+	hgh -= _leftRect->size.y;
 	return hgh;
 }
 
 void FileDialog::createLeftPanel(int dictionariesCount) {
 
-	_leftRect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(100.0f, (dictionariesCount)*basic_text_rect_height));
+	_leftRect = std::make_shared<sf::IntRect>(sf::Vector2i(0,0), sf::Vector2i(100.0f, (dictionariesCount)*basic_text_rect_height));
 
 	const wchar_t* userProfile = _wgetenv(L"USERPROFILE");
 	std::wstring up(userProfile);
@@ -670,7 +670,7 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 		}
 
 	for (int i = 0; i < _locations.size(); i++) {
-		_locations[i]->setSize(sf::Vector2f(_leftRect.size.x, basic_text_rect_height));
+		_locations[i]->setSize(sf::Vector2i(_leftRect->size.x, basic_text_rect_height));
 
 		_locations[i]->_onclick_func = [this, i]() {
 			// ustaw bieżącą ścieżkę na kliknięty węzeł
@@ -712,8 +712,8 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 
 
 	// scrollbar
-	sf::Vector2f scrollbarPos = sf::Vector2f(_leftRect.position.x + _leftRect.size.x + dialog_padding, getContentSize().y + dialog_padding);
-	sf::Vector2f scrollbarSize = sf::Vector2f(16, _leftRect.size.y);
+	sf::Vector2f scrollbarPos = sf::Vector2f(_leftRect->position.x + _leftRect->size.x + dialog_padding, getContentSize().y + dialog_padding);
+	sf::Vector2f scrollbarSize = sf::Vector2f(16, _leftRect->size.y);
 
 	float scrollbarMax = calculateLeftScrollbarHeight();
 	float scrollbarSliderSize = (dictionariesCount - 1) * basic_text_rect_height;
@@ -728,17 +728,17 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 
 void FileDialog::createSeparator(int linesCount) {
 	_separator = new LocationAndFilesSeparator(linesCount);
-	_separator->_rect.position = sf::Vector2i(getContentPosition().x + _leftRect.size.x + 16 + dialog_padding, getContentPosition().y + dialog_padding);
+	_separator->_rect.position = sf::Vector2i(getContentPosition().x + _leftRect->size.x + 16 + dialog_padding, getContentPosition().y + dialog_padding);
 	_separator->setRange(_separator->_rect.position.x, _separator->_rect.position.x + 128);
 	_separator->_func = [this]() {
-		_leftRect.size = sf::Vector2i(_separator->getPosition().x - _leftRect.position.x - 16, _leftRect.size.y);
+		_leftRect->size = sf::Vector2i(_separator->getPosition().x - _leftRect->position.x - 16, _leftRect->size.y);
 
 		for(int i=0;i<_locations.size(); i++)
-			_locations[i]->setSize(sf::Vector2f(_leftRect.size.x, basic_text_rect_height));
+			_locations[i]->setSize(sf::Vector2i(_leftRect->size.x, basic_text_rect_height));
 
-		_rightRect.size = sf::Vector2i(getContentSize().x - _leftRect.size.x - _separator->getSize().x - 2 * 16 - dialog_padding * 3, _rightRect.size.y);
+		_rightRect->size = sf::Vector2i(getContentSize().x - _leftRect->size.x - _separator->getSize().x - 2 * 16 - dialog_padding * 3, _rightRect->size.y);
 		for (int i = 0; i < _files.size(); i++)
-			_files[i]->setSize(sf::Vector2i(_rightRect.size.x, basic_text_rect_height));
+			_files[i]->setSize(sf::Vector2i(_rightRect->size.x, basic_text_rect_height));
 
 		setPosition(_position);
 		};
@@ -746,19 +746,19 @@ void FileDialog::createSeparator(int linesCount) {
 
 void FileDialog::createRightPanel(int linesCount) {
 	
-	float w = getContentSize().x - _leftRect.size.x - 2 * 16 - _separator->getSize().x - 3*dialog_padding;
-	_rightRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(w, linesCount * basic_text_rect_height));
+	float w = getContentSize().x - _leftRect->size.x - 2 * 16 - _separator->getSize().x - 3*dialog_padding;
+	_rightRect = std::make_shared<sf::IntRect>(sf::Vector2i(0, 0), sf::Vector2i(w, linesCount * basic_text_rect_height));
 
 	// files
 	for (int i = 0; i < linesCount+1; i++) {
 		FileRect* file = new FileRect();
-		file->setSize(sf::Vector2i(_rightRect.size.x, basic_text_rect_height));
+		file->setSize(sf::Vector2i(_rightRect->size.x, basic_text_rect_height));
 		_files.push_back(file);
 	}
 
 	// scrollbar
 	sf::Vector2f scrollbarPos = sf::Vector2f(_position.x + getContentSize().x - 16 - dialog_padding, _position.y + dialog_title_rect_height + dialog_padding);
-	sf::Vector2f scrollbarSize = sf::Vector2f(16, _rightRect.size.y);
+	sf::Vector2f scrollbarSize = sf::Vector2f(16, _rightRect->size.y);
 	float minValue = 0;
 	float maxValue = (_filesPaths.size() - _files.size()) * basic_text_rect_height;
 	float sliderSize = (_files.size() - 1) * basic_text_rect_height;
@@ -851,23 +851,23 @@ void FileDialog::setTheFiles() {
 
 }
 
-void FileDialog::setPosition(sf::Vector2f position) {
+void FileDialog::setPosition(sf::Vector2i position) {
 
 	// remember old positions for separator
-	sf::Vector2f oldPos = getContentPosition();
+	sf::Vector2i oldPos = getContentPosition();
 	float oldAbsRangeMinX = _separator->_minX - getContentPosition().x;
 	float oldAbsRangeMaxX = _separator->_maxX - getContentPosition().x;
-	sf::Vector2f oldAbsSeparatorPos = _separator->getPosition() - oldPos;
+	sf::Vector2i oldAbsSeparatorPos = sf::Vector2i(_separator->getPosition() - oldPos);
 
 	// set the position
 	Dialog::setPosition(position);
 
 	// rects
-	_leftRect.position = sf::Vector2i(getContentPosition().x + dialog_padding, getContentPosition().y + dialog_padding);
-	_rightRect.position = sf::Vector2i(getContentPosition().x + getContentSize().x - _rightRect.size.x - 3 * dialog_padding, getContentPosition().y + dialog_padding);
+	_leftRect->position = sf::Vector2i(getContentPosition().x + dialog_padding, getContentPosition().y + dialog_padding);
+	_rightRect->position = sf::Vector2i(getContentPosition().x + getContentSize().x - _rightRect->size.x - 3 * dialog_padding, getContentPosition().y + dialog_padding);
 	
 	// left rect
-	sf::Vector2f pos;
+	sf::Vector2i pos;
 	pos.x = getContentPosition().x + dialog_padding;
 	pos.y = getContentPosition().y + dialog_padding - _leftScrollbar->getValue();
 	for (int i = 0; i < _locations.size(); i++) {
@@ -881,34 +881,34 @@ void FileDialog::setPosition(sf::Vector2f position) {
 
 	// right rect
 	for (int i = 0; i < _files.size(); i++) {
-		sf::Vector2f pos;
+		sf::Vector2i pos;
 		pos.x = _separator->getPosition().x + _separator->getSize().x + dialog_padding;
-		pos.x = _rightRect.position.x;
+		pos.x = _rightRect->position.x;
 		pos.y = getContentPosition().y + dialog_padding + (i * basic_text_rect_height) - _rightScrollbar->getValue() % int(basic_text_rect_height);
 		//std::wcout << rightScrollbar->getValue() << " : " << pos.y << L"\n";
 		_files[i]->setPosition(pos);
 	}
 
 	// left scrollbar
-	sf::Vector2f leftScrollbarPos(_leftRect.position.x + _leftRect.size.x, _leftRect.position.y);
-	_leftScrollbar->setPosition(leftScrollbarPos.x, leftScrollbarPos.y);
+	sf::Vector2i leftScrollbarPos(_leftRect->position.x + _leftRect->size.x, _leftRect->position.y);
+	_leftScrollbar->setPosition(leftScrollbarPos);
 
 	// right scrollbar
-	sf::Vector2f rightScrollbarPos(getContentPosition().x + getContentSize().x - 16 - dialog_padding, getContentPosition().y + dialog_padding);
-	_rightScrollbar->setPosition(rightScrollbarPos.x, rightScrollbarPos.y);
+	sf::Vector2i rightScrollbarPos(getContentPosition().x + getContentSize().x - 16 - dialog_padding, getContentPosition().y + dialog_padding);
+	_rightScrollbar->setPosition(rightScrollbarPos);
 
 	// selected file name box
 	sf::Vector2i bottomRectPos;
 	bottomRectPos.x = getContentPosition().x;
-	bottomRectPos.y = std::max(_rightRect.position.y + _rightRect.size.y, _leftRect.position.y + _leftRect.size.y);
+	bottomRectPos.y = std::max(_rightRect->position.y + _rightRect->size.y, _leftRect->position.y + _leftRect->size.y);
 	_bottomRect.position = bottomRectPos;
 
 	_filenameText.setPosition(sf::Vector2f(bottomRectPos.x + dialog_padding, bottomRectPos.y + dialog_padding));
 
-	sf::Vector2f filenameInputPos(sf::Vector2f(getContentPosition().x + _filenameText.getGlobalBounds().size.x + 2 * dialog_padding, _rightRect.position.y + _rightRect.size.y + dialog_padding));
+	sf::Vector2f filenameInputPos(sf::Vector2f(getContentPosition().x + _filenameText.getGlobalBounds().size.x + 2 * dialog_padding, _rightRect->position.y + _rightRect->size.y + dialog_padding));
 	_filenameInput->setPosition(filenameInputPos);
 
-	sf::Vector2f btnPos;
+	sf::Vector2i btnPos;
 	btnPos.x = getContentPosition().x + getContentSize().x - _cancelBtn->getSize().x - dialog_padding;
 	btnPos.y = _filenameInput->getPosition().y + _filenameInput->getSize().y + dialog_padding;
 	_cancelBtn->setPosition(btnPos);
@@ -921,13 +921,13 @@ void FileDialog::setPosition(sf::Vector2f position) {
 void FileDialog::drawLeftPanel() {
 
 	sf::View view(sf::FloatRect(
-		sf::Vector2f( _leftRect.position.x, _leftRect.position.y),
-		sf::Vector2f( _leftRect.size.x, _leftRect.size.y)
+		sf::Vector2f( _leftRect->position.x, _leftRect->position.y),
+		sf::Vector2f( _leftRect->size.x, _leftRect->size.y)
 	));
 
 	sf::FloatRect vp(
-		sf::Vector2f(_leftRect.position.x / mainView.getSize().x, _leftRect.position.y / mainView.getSize().y),
-		sf::Vector2f(_leftRect.size.x / mainView.getSize().x, _leftRect.size.y / mainView.getSize().y)
+		sf::Vector2f(_leftRect->position.x / mainView.getSize().x, _leftRect->position.y / mainView.getSize().y),
+		sf::Vector2f(_leftRect->size.x / mainView.getSize().x, _leftRect->size.y / mainView.getSize().y)
 	);
 
 	view.setViewport(vp);
@@ -947,13 +947,13 @@ void FileDialog::drawLeftPanel() {
 void FileDialog::drawRightPanel() {
 
 	sf::View view(sf::FloatRect(
-		sf::Vector2f(_rightRect.position.x, _rightRect.position.y),
-		sf::Vector2f(_rightRect.size.x, _rightRect.size.y)
+		sf::Vector2f(_rightRect->position.x, _rightRect->position.y),
+		sf::Vector2f(_rightRect->size.x, _rightRect->size.y)
 	));
 
 	sf::FloatRect vp(
-		sf::Vector2f(_rightRect.position.x / mainView.getSize().x, _rightRect.position.y / mainView.getSize().y),
-		sf::Vector2f(_rightRect.size.x / mainView.getSize().x, _rightRect.size.y / mainView.getSize().y)
+		sf::Vector2f(_rightRect->position.x / mainView.getSize().x, _rightRect->position.y / mainView.getSize().y),
+		sf::Vector2f(_rightRect->size.x / mainView.getSize().x, _rightRect->size.y / mainView.getSize().y)
 	);
 	view.setViewport(vp);
 
@@ -1038,7 +1038,7 @@ void FileDialog::cursorHover() {
 	Dialog::cursorHover();
 
 	if (_rightScrollbar->_state == ScrollbarState::Idle && _leftScrollbar->_state == ScrollbarState::Idle) {
-		if (_rightRect.contains(sf::Vector2i(cursor->_worldMousePosition))) {
+		if (_rightRect->contains(cursor->_worldMousePosition)) {
 			for (auto* file : _files)
 				file->cursorHover();
 		}
@@ -1065,12 +1065,12 @@ void FileDialog::handleEvent(const sf::Event& event) {
 	_leftScrollbar->handleEvent(event);
 	_rightScrollbar->handleEvent(event);
 
-	if (_rightRect.contains(sf::Vector2i(cursor->_worldMousePosition))) {
+	if (_rightRect->contains(cursor->_worldMousePosition)) {
 		for (auto& file : _files)
 			file->handleEvent(event);
 	}
 
-	if (_leftRect.contains(sf::Vector2i(cursor->_worldMousePosition))) {
+	if (_leftRect->contains(cursor->_worldMousePosition)) {
 		for (auto* fav : _locations) {
 			handleEventLocations(fav, event);
 		}

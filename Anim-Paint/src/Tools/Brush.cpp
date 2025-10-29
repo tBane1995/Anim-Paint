@@ -174,7 +174,7 @@ std::vector<std::vector<bool>> Brush::getBrush() {
     }
 }
 
-void Brush::draw(sf::Vector2f canvas_position, sf::Vector2i canvas_size, float zoom, float zoom_delta) {
+void Brush::draw(sf::Vector2i canvas_position, sf::Vector2i canvas_size, float zoom, float zoom_delta) {
     std::vector<std::vector<bool>> brush = getBrush();
 
 
@@ -186,8 +186,7 @@ void Brush::draw(sf::Vector2f canvas_position, sf::Vector2i canvas_size, float z
     const int halfY = h / 2;
 
     // bazowa pozycja lewego-górnego kafelka pędzla w tej samej skali
-    sf::Vector2f brush_pos = canvas_position +
-        sf::Vector2f((_pos_px.x - halfX) * scale, (_pos_px.y - halfY) * scale);
+    sf::Vector2f brush_pos = sf::Vector2f(canvas_position) + sf::Vector2f((_pos_px.x - halfX) * scale, (_pos_px.y - halfY) * scale);
 
     sf::RectangleShape rect({ scale, scale });
     rect.setFillColor(toolbar->_first_color->_color);

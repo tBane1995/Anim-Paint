@@ -19,21 +19,21 @@ public:
 	std::function<void()> _func;
 	sf::Vector2i _dragOffset;
 
-	sf::IntRect* _scrollArea;
+	std::shared_ptr<sf::IntRect> _scrollArea;
 	int _deltaScroll;
 	float _scrollStep;
 
-	Scrollbar(float x, float y, float width, float height, int min_value, int max_value, int slider_size, int value);
+	Scrollbar(int x, int y, int width, int height, int min_value, int max_value, int slider_size, int value);
 	~Scrollbar();
 
 	void setMin(int min_value);
 	void setMax(int max_value);
 	void setValue(int value);
-	void setScrollArea(sf::IntRect& rect, float scrollStep);
+	void setScrollArea(std::shared_ptr<sf::IntRect> rect, float scrollStep);
 
 	void updateSliderSize();
 	void updateSliderPosition();
-	void setPosition(float x, float y);
+	void setPosition(sf::Vector2i position);
 	int getValue();
 
 	void cursorHover();

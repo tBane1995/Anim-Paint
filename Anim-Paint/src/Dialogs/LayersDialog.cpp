@@ -4,7 +4,7 @@
 #include "Mouse.hpp"
 #include "Window.hpp"
 
-LayerBox::LayerBox(Layer* layer) : ElementGUI() {
+LayerBox::LayerBox(std::shared_ptr<Layer> layer) : ElementGUI() {
 
 	_layer = layer;
 
@@ -29,10 +29,10 @@ LayerBox::~LayerBox() {
 
 }
 
-void LayerBox::setPosition(sf::Vector2f position) {
+void LayerBox::setPosition(sf::Vector2i position) {
 	_visibling->setPosition(position);
-	_rect.setPosition(position);
-	_textName->setPosition(position + sf::Vector2f(32 + dialog_padding, (32.0f / 2.0f - basicFont.getLineSpacing(17) / 2.0f)));
+	_rect.setPosition(sf::Vector2f(position));
+	_textName->setPosition(sf::Vector2f(position) + sf::Vector2f(32 + dialog_padding, (32.0f / 2.0f - basicFont.getLineSpacing(17) / 2.0f)));
 }
 
 void LayerBox::cursorHover() {
@@ -42,7 +42,7 @@ void LayerBox::cursorHover() {
 
 	_visibling->cursorHover();
 
-	if (_rect.getGlobalBounds().contains(cursor->_worldMousePosition)) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 		ElementGUI_hovered = this;
 	}
 }
@@ -55,7 +55,7 @@ void LayerBox::handleEvent(const sf::Event& event) {
 	_visibling->handleEvent(event);
 
 	if (ElementGUI_pressed != _visibling) {
-		if (_rect.getGlobalBounds().contains(cursor->_worldMousePosition)) {
+		if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
 			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 				ElementGUI_pressed == this;
 				_onclick_func();
@@ -111,7 +111,7 @@ void LayerBox::draw() {
 
 /////////////////////////////////////////////////////////////
 
-LayersDialog::LayersDialog(std::wstring title, sf::Vector2f size, sf::Vector2f position) : Dialog(title, size, position) {
+LayersDialog::LayersDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
 
 	loadLayersFromCurrentFrame();
 }
@@ -151,14 +151,14 @@ void LayersDialog::loadLayersFromCurrentFrame() {
 	setPosition(this->getPosition());
 }
 
-void LayersDialog::setPosition(sf::Vector2f position) {
+void LayersDialog::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
 
 	for (int i = 0; i < layersBoxes.size(); i++) {
 
-		sf::Vector2f pos;
-		pos = _position + sf::Vector2f(dialog_padding, 32 + dialog_padding + (layersBoxes.size() - 1 - i) * 32);
+		sf::Vector2i pos;
+		pos = _position + sf::Vector2i(dialog_padding, 32 + dialog_padding + (layersBoxes.size() - 1 - i) * 32);
 
 		layersBoxes[i]->setPosition(pos);
 	}
