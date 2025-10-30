@@ -6,15 +6,14 @@ std::string ConvertWideToUtf8(std::wstring wide);
 class Texture {
 public:
 	std::wstring _path;
-	sf::Texture* _texture;
+	std::shared_ptr<sf::Texture> _texture;
 
 	Texture(std::wstring path);
+	~Texture();
 };
 
-extern sf::Texture emptyTexture;
-extern sf::Texture emptyTexture_128x128;
-extern std::vector < Texture* > textures;
+extern std::vector<std::shared_ptr<Texture>> textures;
 
-Texture* getTexture(std::wstring path);
+std::shared_ptr<Texture> getTexture(std::wstring path);
 void loadTexture(std::wstring path);
 void loadTextures();

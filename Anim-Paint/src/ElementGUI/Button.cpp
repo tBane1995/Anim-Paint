@@ -53,7 +53,7 @@ void Button::draw() {
 //////////////////////////////////////////////////////////////////
 // NormalButton
 
-NormalButton::NormalButton(Texture* texture, Texture* hoverTexture, sf::Vector2i position)
+NormalButton::NormalButton(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position)
 : Button() {
 
 	_texture = texture;
@@ -61,8 +61,6 @@ NormalButton::NormalButton(Texture* texture, Texture* hoverTexture, sf::Vector2i
 	
 	sf::Vector2i rectSize = sf::Vector2i(_texture->_texture->getSize());
 	_rect = sf::IntRect(sf::Vector2i(0, 0), rectSize);
-
-	_sprite = new sf::Sprite(*texture->_texture);
 
 	setPosition(position);
 
@@ -75,7 +73,7 @@ NormalButton::NormalButton(Texture* texture, Texture* hoverTexture, sf::Vector2i
 }
 
 NormalButton::~NormalButton() {
-	delete _sprite;
+	
 }
 
 sf::Vector2i NormalButton::getSize() {
@@ -84,23 +82,18 @@ sf::Vector2i NormalButton::getSize() {
 
 void NormalButton::setPosition(sf::Vector2i position) {
 	_rect.position = position;
-	_sprite->setPosition(sf::Vector2f(position));
-	
 }
 
 void NormalButton::unclick() {
 	_state = ButtonState::Idle;
-	_sprite->setTexture(*_texture->_texture);
 }
 
 void NormalButton::hover() {
 	_state = ButtonState::Hover;
-	_sprite->setTexture(*_hoverTexture->_texture);
 }
 
 void NormalButton::click() {
 	_state = ButtonState::Pressed;
-	_sprite->setTexture(*_hoverTexture->_texture);
 	_clickTime = currentTime;
 }
 
@@ -176,7 +169,10 @@ void NormalButton::draw() {
 
 	rect.setPosition(sf::Vector2f(_rect.position.x + 1.0f, _rect.position.y + 1.0f));
 	window->draw(rect);
-	window->draw(*_sprite);
+
+	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
+	sprite.setPosition(sf::Vector2f(_rect.position));
+	window->draw(sprite);
 
 }
 
@@ -328,20 +324,17 @@ void ColoredButtonWithText::draw() {
 //////////////////////////////////////////////////////////////////
 // ButtonWithBottomText
 
-ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2i position) : Button()
+ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position) : Button()
 {
+	_textStr = text;
 	_rectColor = rectColor;
 	_textColor = textColor;
 	_hoverTextColor = hoverTextColor;
 
-	_text = new sf::Text(basicFont, text, 13);
-	_text->setFillColor(textColor);
-
 	_texture = texture;
 	_hoverTexture = hoverTexture;
 
-	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(48 - 2 * tools_border_width, 64 - 2 * tools_border_width));
-	_sprite = new sf::Sprite(*_texture->_texture);
+	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(48, 64));
 
 	setPosition(position);
 
@@ -354,8 +347,7 @@ ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColo
 }
 
 ButtonWithBottomText::~ButtonWithBottomText() {
-	delete _text;
-	delete _sprite;
+
 }
 
 sf::Vector2i ButtonWithBottomText::getSize() {
@@ -363,28 +355,20 @@ sf::Vector2i ButtonWithBottomText::getSize() {
 }
 
 void ButtonWithBottomText::setPosition(sf::Vector2i position) {
-	_sprite->setPosition(sf::Vector2f(position));
-	_rect.position = sf::Vector2i(position + sf::Vector2i(tools_border_width, tools_border_width));
-	_text->setPosition(sf::Vector2f(position) + sf::Vector2f(48 / 2 - _text->getGlobalBounds().size.x / 2.0f, _rect.size.y - basicFont.getLineSpacing(13) - 4));
+	_rect.position = position;
 }
 
 void ButtonWithBottomText::unclick() {
 	_state = ButtonState::Idle;
-	_sprite->setTexture(*_texture->_texture);
-	_text->setFillColor(_textColor);
 }
 
 void ButtonWithBottomText::hover() {
 	_state = ButtonState::Hover;
-	_sprite->setTexture(*_hoverTexture->_texture);
-	_text->setFillColor(_hoverTextColor);
 
 }
 
 void ButtonWithBottomText::click() {
 	_state = ButtonState::Pressed;
-	_sprite->setTexture(*_hoverTexture->_texture);
-	_text->setFillColor(_hoverTextColor);
 	_clickTime = currentTime;
 }
 
@@ -432,7 +416,7 @@ void ButtonWithBottomText::update() {
 
 void ButtonWithBottomText::draw() {
 
-	sf::RectangleShape rect(sf::Vector2f(_rect.size));
+	sf::RectangleShape rect(sf::Vector2f(_rect.size.x - 2*tools_border_width, _rect.size.y - 2*tools_border_width));
 	switch (_state) {
 	case ButtonState::Pressed:
 		rect.setFillColor(tools_button_press_color);
@@ -457,30 +441,37 @@ void ButtonWithBottomText::draw() {
 		};
 		break;
 	};
-	rect.setPosition(sf::Vector2f(_rect.position));
+	rect.setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(tools_border_width, tools_border_width));
 	window->draw(rect);
 
-	window->draw(*_sprite);
+
+	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
+	sprite.setPosition(sf::Vector2f(_rect.position));
+	window->draw(sprite);
+
+	if (_text == nullptr) {
+		_text = std::make_unique<sf::Text>(basicFont, _textStr, 13);
+	}
+	_text->setFillColor((_state == ButtonState::Idle) ? _textColor : _hoverTextColor);
+	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(48 / 2 - _text->getGlobalBounds().size.x / 2.0f, _rect.size.y - basicFont.getLineSpacing(13) - 4));
+
 	window->draw(*_text);
 }
 
 //////////////////////////////////////////////////////////////////
 // ButtonWithRightText
 
-ButtonWithRightText::ButtonWithRightText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2i position) : Button()
+ButtonWithRightText::ButtonWithRightText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position) : Button()
 {
+	_textStr = text;
+
 	_textColor = textColor;
 	_hoverTextColor = hoverTextColor;
-
-	_text = new sf::Text(basicFont, text, 13);
-	_text->setFillColor(textColor);
 
 	_texture = texture;
 	_hoverTexture = hoverTexture;
 
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(64, 32));
-
-	_sprite = new sf::Sprite(*_texture->_texture);
 
 	setPosition(position);
 
@@ -493,8 +484,7 @@ ButtonWithRightText::ButtonWithRightText(std::wstring text, sf::Color rectColor,
 }
 
 ButtonWithRightText::~ButtonWithRightText() {
-	delete _text;
-	delete _sprite;
+
 }
 
 sf::Vector2i ButtonWithRightText::getSize() {
@@ -503,28 +493,19 @@ sf::Vector2i ButtonWithRightText::getSize() {
 
 void ButtonWithRightText::setPosition(sf::Vector2i position) {
 	_rect.position = position;
-	_sprite->setPosition(sf::Vector2f(position));
-	_text->setPosition(sf::Vector2f(position) + sf::Vector2f(32, 24 - basicFont.getLineSpacing(13)));
 }
 
 void ButtonWithRightText::unclick() {
 	_state = ButtonState::Idle;
-	_sprite->setTexture(*_texture->_texture);
-	_text->setFillColor(_textColor);
 
 }
 
 void ButtonWithRightText::hover() {
 	_state = ButtonState::Hover;
-	_sprite->setTexture(*_hoverTexture->_texture);
-	_text->setFillColor(_hoverTextColor);
-
 }
 
 void ButtonWithRightText::click() {
 	_state = ButtonState::Pressed;
-	_sprite->setTexture(*_hoverTexture->_texture);
-	_text->setFillColor(_hoverTextColor);
 	_clickTime = currentTime;
 }
 
@@ -600,24 +581,30 @@ void ButtonWithRightText::draw() {
 	rect.setPosition(sf::Vector2f(_rect.position.x + tools_border_width, _rect.position.y + tools_border_width));
 	window->draw(rect);
 
-	window->draw(*_sprite);
+	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
+	sprite.setPosition(sf::Vector2f(_rect.position));
+	window->draw(sprite);
+
+	if (_text == nullptr) {
+		_text = std::make_unique<sf::Text>(basicFont, _textStr, 13);
+	}
+	_text->setFillColor((_state == ButtonState::Idle) ? _textColor : _hoverTextColor);
+	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32, 24 - basicFont.getLineSpacing(13)));
 	window->draw(*_text);
 }
 
 //////////////////////////////////////////////////////////////////
 // Option
 
-Option::Option(std::wstring text, Texture* texture, Texture* hoverTexture, sf::Vector2i position) : Button() {
+Option::Option(std::wstring text, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position) : Button() {
 
-	_text = new sf::Text(basicFont, text, 13);
-	_text->setFillColor(menu_text_color);
+	_textStr = text;
 
 	_texture = texture;
 	_hoverTexture = hoverTexture;
 	
-	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32 + _text->getGlobalBounds().size.x + 8, 32));
-
-	_sprite = new sf::Sprite(*_texture->_texture);
+	sf::Text _text(basicFont, text, 13);
+	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32 + _text.getGlobalBounds().size.x + 8, 32));
 
 	setPosition(position);
 
@@ -630,8 +617,6 @@ Option::Option(std::wstring text, Texture* texture, Texture* hoverTexture, sf::V
 }
 
 Option::~Option() {
-	delete _text;
-	delete _sprite;
 }
 
 sf::Vector2i Option::getSize() {
@@ -639,33 +624,20 @@ sf::Vector2i Option::getSize() {
 }
 
 void Option::setPosition(sf::Vector2i position) {
-	_sprite->setPosition(sf::Vector2f(position));
 	_rect.position = sf::Vector2i(position);
-	_text->setPosition(sf::Vector2f(position) + sf::Vector2f(32, 24 - basicFont.getLineSpacing(13)));
+	
 }
 
 void Option::unclick() {
 	_state = ButtonState::Idle;
-	_sprite->setTexture(*_texture->_texture);
-	if (_isSelected) {
-		_text->setFillColor(menu_text_color);
-	}
-	else {
-		_text->setFillColor(menu_text_color);
-	}
 }
 
 void Option::hover() {
 	_state = ButtonState::Hover;
-	_sprite->setTexture(*_hoverTexture->_texture);
-	_text->setFillColor(menu_text_color);
-
 }
 
 void Option::click() {
 	_state = ButtonState::Pressed;
-	_sprite->setTexture(*_hoverTexture->_texture);
-	_text->setFillColor(menu_text_color);
 	_clickTime = currentTime;
 }
 
@@ -713,6 +685,7 @@ void Option::update() {
 
 void Option::draw() {
 
+	// draw rectangle
 	sf::RectangleShape rect(sf::Vector2f(_rect.size));
 	switch (_state) {
 	case ButtonState::Pressed:
@@ -732,8 +705,18 @@ void Option::draw() {
 	};
 	rect.setPosition(sf::Vector2f(_rect.position));
 	window->draw(rect);
-	
-	window->draw(*_sprite);
+
+	// Draw sprite
+	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
+	sprite.setPosition(sf::Vector2f(_rect.position));
+	window->draw(sprite);
+
+	// draw text
+	if(_text == nullptr) {
+		_text = std::make_unique<sf::Text>(basicFont, _textStr, 13);
+	}
+	_text->setFillColor(menu_text_color);
+	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32, 24 - basicFont.getLineSpacing(13)));
 	window->draw(*_text);
 }
 
@@ -742,18 +725,15 @@ void Option::draw() {
 
 ButtonWithTopTextAndList::ButtonWithTopTextAndList(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, sf::Vector2i position) : Button() {
 
+	_textStr = text;
+
 	_textColor = textColor;
 	_hoverTextColor = hoverTextColor;
 	
-	_text = new sf::Text(basicFont, text, 13);
-	_text->setFillColor(textColor);
-
 	_texture = getTexture(L"tex\\tools\\bottom_arrow.png");
 	_hoverTexture = getTexture(L"tex\\tools\\bottom_arrow_hover.png");
 	
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(48, 32));
-
-	_sprite = new sf::Sprite(*_texture->_texture);
 
 	setPosition(position);
 
@@ -774,12 +754,7 @@ ButtonWithTopTextAndList::ButtonWithTopTextAndList(std::wstring text, sf::Color 
 }
 
 ButtonWithTopTextAndList::~ButtonWithTopTextAndList() { 
-	delete _text;
-	delete _sprite;
 
-	for(auto& o : _options) {
-		delete o;
-	}
 }
 
 sf::Vector2i ButtonWithTopTextAndList::getSize() {
@@ -787,7 +762,7 @@ sf::Vector2i ButtonWithTopTextAndList::getSize() {
 }
 
 void ButtonWithTopTextAndList::addOption(std::wstring text) {
-	Option* o = new Option(text, getTexture(L"tex\\tools\\btn_none.png"), getTexture(L"tex\\tools\\btn_none_hover.png"));
+	std::shared_ptr<Option> o = std::make_shared<Option>(text, getTexture(L"tex\\tools\\btn_none.png"), getTexture(L"tex\\tools\\btn_none_hover.png"));
 
 	if (_options.size() == 0) {
 		_options.push_back(o);
@@ -806,10 +781,8 @@ void ButtonWithTopTextAndList::addOption(std::wstring text) {
 }
 
 void ButtonWithTopTextAndList::setPosition(sf::Vector2i position) {
-	_sprite->setPosition(sf::Vector2f(position.x, position.y + 16));
-	_text->setPosition(sf::Vector2f(position) + sf::Vector2f(48 / 2 - _text->getGlobalBounds().size.x / 2.0f, 0));
-
-	_rect.position = sf::Vector2i(position);
+	
+	_rect.position = position;
 
 	sf::Vector2i pos = _rect.position + sf::Vector2i(0, _rect.size.y);
 
@@ -822,20 +795,15 @@ void ButtonWithTopTextAndList::setPosition(sf::Vector2i position) {
 
 void ButtonWithTopTextAndList::unclick() {
 	_state = ButtonState::Idle;
-	_sprite->setTexture(*_texture->_texture);
-	_text->setFillColor(_textColor);
+	
 }
 
 void ButtonWithTopTextAndList::hover() {
 	_state = ButtonState::Hover;
-	_sprite->setTexture(*_hoverTexture->_texture);
-	_text->setFillColor(_hoverTextColor);
 }
 
 void ButtonWithTopTextAndList::click() {
 	_state = ButtonState::Pressed;
-	_sprite->setTexture(*_hoverTexture->_texture);
-	_text->setFillColor(_hoverTextColor);
 	_clickTime = currentTime;
 }
 
@@ -874,7 +842,7 @@ void ButtonWithTopTextAndList::handleEvent(const sf::Event& event) {
 	if (_isOpen) {
 		for (auto& option : _options) {
 			option->handleEvent(event);
-			if (ElementGUI_pressed == option)
+			if (ElementGUI_pressed == option.get())
 				clicked_in_menu = true;
 		}
 	}
@@ -911,9 +879,8 @@ void ButtonWithTopTextAndList::update() {
 
 void ButtonWithTopTextAndList::draw() {
 
-
+	// draw rect
 	sf::RectangleShape rect(sf::Vector2f(_rect.size - sf::Vector2i(2*tools_border_width, 2*tools_border_width)));
-	
 	switch (_state) {
 	case ButtonState::Pressed:
 		rect.setFillColor(tools_button_press_color);
@@ -948,8 +915,17 @@ void ButtonWithTopTextAndList::draw() {
 	rect.setPosition(sf::Vector2f(_rect.position.x + tools_border_width, _rect.position.y + tools_border_width));
 	window->draw(rect);
 
+	// draw sprite
+	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
+	sprite.setPosition(sf::Vector2f(_rect.position.x, _rect.position.y + 16));
+	window->draw(sprite);
 
-	window->draw(*_sprite);
+	// draw text
+	if (_text == nullptr) {
+		_text = std::make_unique<sf::Text>(basicFont, _textStr, 13);
+	}
+	_text->setFillColor((_state == ButtonState::Idle) ? _textColor : _hoverTextColor);
+	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(48 / 2 - _text->getGlobalBounds().size.x / 2.0f, 0));
 	window->draw(*_text);
 
 	if (_isOpen) {

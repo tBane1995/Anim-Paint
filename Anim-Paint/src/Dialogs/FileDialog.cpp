@@ -117,6 +117,8 @@ LocationRect::LocationRect(std::wstring path, int depth = 0) : ElementGUI() {
 
 	_isOpen = false;
 
+	_clickType = LocationRectClickType::None;
+
 	if (hasChildren(_path))
 		close();
 	else
@@ -195,12 +197,21 @@ void LocationRect::open(const std::function<void(const std::wstring&)>& onPick)
 			auto child = std::make_shared<LocationRect>(p.wstring(), _depth + 1);
 			child->setSize(_rect.size);
 
-			child->_onclick_func = [child, onPick]() {
-
-				if (hasChildren(child->_path)) {
-					(child->_isOpen) ? child->close() : child->open(onPick);
+			child->_onclick_arrow_func = [child, onPick]() {
+				if (!hasChildren(child->_path)) return;
+				if (child->_isOpen) {
+					child->close();
 				}
-				if (onPick) onPick(child->_path.wstring());
+				else {
+					child->open(onPick);
+				}
+				};
+
+			child->_onclick_location_func = [child, onPick]() {
+				
+				if (onPick) {
+					onPick(child->_path.wstring());
+				}
 				};
 
 			_children.push_back(child);
@@ -230,17 +241,24 @@ void LocationRect::hide() {
 
 void LocationRect::unclick() {
 	_state = ButtonState::Idle;
+	_clickType = LocationRectClickType::None;
 }
 
 void LocationRect::hover() {
 	_state = ButtonState::Hover;
 }
 
-void LocationRect::click() {
+void LocationRect::locationClick() {
 	_state = ButtonState::Pressed;
+	_clickType = LocationRectClickType::ClickLocation;
 	_clickTime = currentTime;
 }
 
+void LocationRect::arrowClick() {
+	_state = ButtonState::Pressed;
+	_clickType = LocationRectClickType::ClickArrow;
+	_clickTime = currentTime;
+}
 
 void LocationRect::cursorHover() {
 	
@@ -265,11 +283,22 @@ void LocationRect::handleEvent(const sf::Event& event) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			if (_rect.position.x + _depth*_indentDelta + _arrowMargin + 8 > cursor->_worldMousePosition.x ) {
 				ElementGUI_pressed = this;
+				_clickType = LocationRectClickType::ClickArrow;
+			}
+			else {
+				ElementGUI_pressed = this;
+				_clickType = LocationRectClickType::ClickLocation;
 			}
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			if (ElementGUI_pressed == this) {
-				click();
+				if (_clickType == LocationRectClickType::ClickArrow) {
+					arrowClick();
+				}
+				else if(_clickType == LocationRectClickType::ClickLocation) {
+					locationClick();
+				}
+				
 			}
 		}
 
@@ -289,9 +318,16 @@ void LocationRect::update() {
 
 	if (_state == ButtonState::Pressed) {
 		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
-			if (_onclick_func) {
-				_onclick_func();
+			if (this->_clickType == LocationRectClickType::ClickArrow) {
+				if (_onclick_arrow_func)
+					_onclick_arrow_func();
 			}
+
+			if (this->_clickType == LocationRectClickType::ClickLocation) {
+				if (_onclick_location_func)
+					_onclick_location_func();
+			}
+
 			ElementGUI_pressed = nullptr;
 			unclick();
 		}
@@ -650,20 +686,29 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 	for (int i = 0; i < _locations.size(); i++) {
 		_locations[i]->setSize(sf::Vector2i(_leftRect->size.x, basic_text_rect_height));
 
-		_locations[i]->_onclick_func = [this, i]() {
-			// ustaw bieżącą ścieżkę na kliknięty węzeł
+		// KLIK W NAZWĘ -> otwórz po PRAWEJ
+		_locations[i]->_onclick_location_func = [this, i]() {
 			currentPath = _locations[i]->_path.wstring();
+			loadDirectory();
+			_rightScrollbar->setMax((_filesPaths.size() - _files.size() + 1) * basic_text_rect_height);
+			_rightScrollbar->setValue(0);
+			setTheFiles();
+			setPosition(_position);
+			};
 
-			// przełącz rozwinięcie gałęzi; dla POTOMKÓW użyjemy callbacka onPick
-			if (_locations[i]->_isOpen) {
-				_locations[i]->close();
+		// KLIK W STRZAŁKĘ -> tylko rozwiń/zwiń po LEWEJ
+		_locations[i]->_onclick_arrow_func = [this, i]() {
+			auto& node = _locations[i];
+			if (!hasChildren(node->_path)) return;
+
+			if (node->_isOpen) {
+				node->close();
 			}
 			else {
-				_locations[i]->open([this](const std::wstring& newPath) {
-					_leftScrollbar->setMax(calculateLeftScrollbarHeight());
+				// UWAGA: przekazujemy onPick, żeby POTOMKOWIE mieli poprawny "open po prawej"
+				node->open([this](const std::wstring& newPath) {
 					currentPath = newPath;
 					loadDirectory();
-					// prawa kolumna
 					_rightScrollbar->setMax((_filesPaths.size() - _files.size() + 1) * basic_text_rect_height);
 					_rightScrollbar->setValue(0);
 					setTheFiles();
@@ -671,23 +716,12 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 					});
 			}
 
-			
+			// odśwież lewy panel (wysokość + pozycje)
 			_leftScrollbar->setMax(calculateLeftScrollbarHeight());
-			_leftScrollbar->setValue(_leftScrollbar->_value); // value clamp
-			// >>> KLUCZ: natychmiastowy refresh po open/close dla WĘZŁA GŁÓWNEGO <<<
-			loadDirectory();
-
-			// prawa kolumna
-			_rightScrollbar->setMax((_filesPaths.size() - _files.size() + 1) * basic_text_rect_height);
-			_rightScrollbar->setValue(0);
-			setTheFiles();
-
-			// przelicz pozycje (ustawi pozycje dzieci, bo LocationRect::setPosition to robi gdy _isOpen)
+			_leftScrollbar->setValue(_leftScrollbar->_value); // clamp
 			setPosition(_position);
 			};
 	}
-
-
 
 	// scrollbar
 	sf::Vector2f scrollbarPos = sf::Vector2f(_leftRect->position.x + _leftRect->size.x + dialog_padding, getContentSize().y + dialog_padding);
@@ -1072,9 +1106,13 @@ void FileDialog::update() {
 		updateLocations(fav);
 	}
 
+	// DODAJ TO (odśwież max i clamp wartości po ewentualnym expand/collapse):
+	_leftScrollbar->setMax(calculateLeftScrollbarHeight());
+	_leftScrollbar->setValue(_leftScrollbar->_value); // clamp
+
 	_leftScrollbar->update();
 	_rightScrollbar->update();
-	
+
 	_separator->update();
 
 	_filenameInput->update();

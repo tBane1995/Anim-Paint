@@ -13,6 +13,8 @@ bool onlyWhitespace(const std::wstring& s);
 bool isDrive(const std::wstring& path);
 bool hasChildren(std::filesystem::path& p);
 
+enum class LocationRectClickType { None, ClickArrow, ClickLocation };
+
 class LocationRect : public ElementGUI {
 public:
 
@@ -28,7 +30,9 @@ public:
 	std::vector <std::shared_ptr<LocationRect>> _children;
 
 	ButtonState _state;
-	std::function<void()> _onclick_func;
+	LocationRectClickType _clickType;
+	std::function<void()> _onclick_arrow_func;
+	std::function<void()> _onclick_location_func;
 	sf::Time _clickTime;
 
 	LocationRect(std::wstring path, int depth);
@@ -45,7 +49,8 @@ public:
 
 	void unclick();
 	void hover();
-	void click();
+	void locationClick();
+	void arrowClick();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

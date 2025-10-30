@@ -166,7 +166,7 @@ void Canvas::setZoom(float mouseWheelScrolllDelta) {
 	sf::Vector2i mouseBeforeZoom = cursor->_worldMousePosition - _position;
 	float oldZoom = _zoom;
 
-	_zoom += 0.25f * mouseWheelScrolllDelta;
+	_zoom += 0.0625f * mouseWheelScrolllDelta;
 	_zoom = std::clamp(_zoom, _min_zoom, _max_zoom);
 
 	generateBackground(_size);

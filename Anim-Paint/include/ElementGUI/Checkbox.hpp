@@ -9,23 +9,21 @@ enum class CheckboxState { Idle, Hover, Pressed };
 class Checkbox : public ElementGUI {
 public:
 	int _value;
-	std::vector < Texture* > _textures;
-	std::vector < Texture* > _hoverTextures;
-	sf::Sprite* _sprite;
-
-	sf::Vector2i _position;
+	sf::IntRect _rect;
+	std::vector<std::shared_ptr<Texture>> _textures;
+	std::vector<std::shared_ptr<Texture>> _hoverTextures;
 	
 	CheckboxState _state;
 	std::function<void()> _hover_func;
 	std::function<void()> _onclick_func;
 	sf::Time _clickTime;
 
-	Checkbox(Texture* texture, Texture* hoverTexture);
+	Checkbox(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture);
 	~Checkbox();
 
 	void setPosition(sf::Vector2i position);
 	void setValue(int value);
-	void addValue(Texture* texture, Texture* hoverTexture);
+	void addValue(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture);
 	void unclick();
 	void hover();
 	void click();

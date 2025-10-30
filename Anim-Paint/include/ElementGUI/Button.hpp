@@ -29,9 +29,8 @@ public:
 class NormalButton : public Button {
 public:
 	
-	Texture* _texture;
-	Texture* _hoverTexture;
-	sf::Sprite* _sprite;
+	std::shared_ptr<Texture> _texture;
+	std::shared_ptr<Texture> _hoverTexture;
 	
 	ButtonState _state;
 	std::function<void()> _hover_func;
@@ -39,7 +38,7 @@ public:
 	sf::Time _clickTime;
 
 
-	NormalButton(Texture* texture, Texture* hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
+	NormalButton(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~NormalButton();
 
 	sf::Vector2i getSize();
@@ -91,14 +90,13 @@ public:
 
 class ButtonWithBottomText : public Button {
 public:
-
+	std::wstring _textStr;
 	sf::Color _rectColor;
 	sf::Color _textColor;
 	sf::Color _hoverTextColor;
-	Texture* _texture;
-	Texture* _hoverTexture;
-	sf::Sprite* _sprite;
-	sf::Text* _text;
+	std::shared_ptr<Texture> _texture;
+	std::shared_ptr<Texture> _hoverTexture;
+	std::unique_ptr<sf::Text> _text;
 
 	ButtonState _state;
 	std::function<void()> _hover_func;
@@ -106,7 +104,7 @@ public:
 	sf::Time _clickTime;
 
 
-	ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
+	ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithBottomText();
 
 	sf::Vector2i getSize();
@@ -126,12 +124,12 @@ public:
 class ButtonWithRightText : public Button {
 public:
 
+	std::wstring _textStr;
 	sf::Color _textColor;
 	sf::Color _hoverTextColor;
-	Texture* _texture;
-	Texture* _hoverTexture;
-	sf::Sprite* _sprite;
-	sf::Text* _text;
+	std::shared_ptr<Texture> _texture;
+	std::shared_ptr<Texture> _hoverTexture;
+	std::unique_ptr<sf::Text> _text;
 
 	ButtonState _state;
 	std::function<void()> _hover_func;
@@ -139,7 +137,7 @@ public:
 	sf::Time _clickTime;
 
 
-	ButtonWithRightText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, Texture* texture, Texture* hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
+	ButtonWithRightText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithRightText();
 
 	sf::Vector2i getSize();
@@ -157,11 +155,10 @@ public:
 
 class Option : public Button {
 public:
-
-	Texture* _texture;
-	Texture* _hoverTexture;
-	sf::Sprite* _sprite;
-	sf::Text* _text;
+	std::wstring _textStr;
+	std::shared_ptr<Texture> _texture;
+	std::shared_ptr<Texture> _hoverTexture;
+	std::unique_ptr<sf::Text> _text;
 
 	ButtonState _state;
 	std::function<void()> _hover_func;
@@ -169,7 +166,7 @@ public:
 	sf::Time _clickTime;
 
 
-	Option(std::wstring text, Texture* texture, Texture* hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
+	Option(std::wstring text, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~Option();
 
 	sf::Vector2i getSize();
@@ -189,12 +186,12 @@ class ButtonWithTopTextAndList : public Button {
 
 public:
 
+	std::wstring _textStr;
 	sf::Color _textColor;
 	sf::Color _hoverTextColor;
-	Texture* _texture;
-	Texture* _hoverTexture;
-	sf::Sprite* _sprite;
-	sf::Text* _text;
+	std::shared_ptr<Texture> _texture;
+	std::shared_ptr<Texture> _hoverTexture;
+	std::unique_ptr<sf::Text> _text;
 
 	ButtonState _state;
 	std::function<void()> _hover_func;
@@ -203,7 +200,7 @@ public:
 
 	sf::RectangleShape _list_rect;
 	sf::VertexArray _list_border;
-	std::vector < Option* > _options;
+	std::vector<std::shared_ptr<Option>> _options;
 	bool _isOpen;
 
 	ButtonWithTopTextAndList(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, sf::Vector2i position = sf::Vector2i(0, 0));

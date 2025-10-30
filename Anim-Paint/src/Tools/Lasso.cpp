@@ -116,9 +116,6 @@ bool Lasso::clickOnSelection(sf::Vector2i point) {
 
 void Lasso::copy(sf::Image* canvas, sf::Color emptyColor)
 {
-	sf::Image* mask = generateMask();
-	paste(canvas, _image, _rect.position.x, _rect.position.y, mask, emptyColor);
-	delete mask;
 
 	if (_state != LassoState::Selected)
 		return;
@@ -141,6 +138,8 @@ void Lasso::copy(sf::Image* canvas, sf::Color emptyColor)
 		return;
 
 	sf::Image* maskImg = generateMask();
+	sf::Image* copiedImage = new sf::Image();
+	copiedImage->resize(sf::Vector2u(s.size), sf::Color::Transparent);
 
 	for (int y = 0; y < s.size.y; ++y)
 		for (int x = 0; x < s.size.x; ++x) {
@@ -148,14 +147,14 @@ void Lasso::copy(sf::Image* canvas, sf::Color emptyColor)
 			int cx = s.position.x + x;
 			int cy = s.position.y + y;
 
-			_image->setPixel(sf::Vector2u(x, y), canvas->getPixel(sf::Vector2u(cx, cy)));
+			copiedImage->setPixel(sf::Vector2u(x, y), canvas->getPixel(sf::Vector2u(cx, cy)));
 
-			if (maskImg->getPixel(sf::Vector2u(x, y)) != sf::Color::White || _image->getPixel(sf::Vector2u(x, y)) == emptyColor)
-				_image->setPixel(sf::Vector2u(x, y), sf::Color::Transparent);
+			if (maskImg->getPixel(sf::Vector2u(x, y)) != sf::Color::White || copiedImage->getPixel(sf::Vector2u(x, y)) == emptyColor)
+				copiedImage->setPixel(sf::Vector2u(x, y), sf::Color::Transparent);
 		}
 			
 
-	copyImageToClipboard(_image, sf::IntRect(sf::Vector2i(0,0), s.size));
+	copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0,0), s.size));
 	delete maskImg;
 }
 

@@ -10,17 +10,20 @@ std::string ConvertWideToUtf8(std::wstring wide) {
 
 Texture::Texture(std::wstring path) {
 	_path = path;
-	_texture = new sf::Texture();
+	_texture = std::make_shared<sf::Texture>();
 	_texture->loadFromFile(ConvertWideToUtf8(path));
+}
+
+Texture::~Texture() {
+
 }
 
 ////////////////////
 
-std::vector < Texture* > textures;
-sf::Texture emptyTexture;
-sf::Texture emptyTexture_128x128;
+std::vector<std::shared_ptr<Texture>> textures;
 
-Texture* getTexture(std::wstring path) {
+
+std::shared_ptr<Texture> getTexture(std::wstring path) {
 	for (auto& t : textures) {
 		if (t->_path == path)
 			return t;
@@ -30,22 +33,10 @@ Texture* getTexture(std::wstring path) {
 }
 
 void loadTexture(std::wstring path) {
-	textures.push_back(new Texture(path));
+	textures.push_back(std::make_shared<Texture>(path));
 }
 
 void loadTextures() {
-
-	{
-		emptyTexture.resize(sf::Vector2u(1, 1));
-		sf::Image img(sf::Vector2u(1, 1), sf::Color::Transparent);
-		emptyTexture.update(img);
-	}
-
-	{
-		emptyTexture_128x128.resize(sf::Vector2u(128, 128));
-		sf::Image img(sf::Vector2u(128, 128), sf::Color::Transparent);
-		emptyTexture_128x128.update(img);
-	}
 
 	// logos
 	loadTexture(L"tex\\logo\\small_logo.png");
