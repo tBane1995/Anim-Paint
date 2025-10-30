@@ -15,13 +15,17 @@ bool hasChildren(std::filesystem::path& p);
 
 class LocationRect : public ElementGUI {
 public:
+
+	const float _arrowMargin = 4;
+	const float _indentDelta = 12;
+
 	std::filesystem::path _path;
 	int _depth;
 	sf::IntRect _rect;
-	std::unique_ptr < sf::Text > _text;
+	std::unique_ptr<sf::Text> _text;
 
 	bool _isOpen;
-	std::vector <LocationRect*> _children;
+	std::vector <std::shared_ptr<LocationRect>> _children;
 
 	ButtonState _state;
 	std::function<void()> _onclick_func;
@@ -80,7 +84,7 @@ class FileRect : public ElementGUI {
 public:
 	std::filesystem::path _path;
 	sf::IntRect _rect;
-	std::unique_ptr < sf::Text > _text;
+	std::unique_ptr<sf::Text> _text;
 	std::wstring _textStr;
 	ButtonState _state;
 	std::function<void()> _onclick_func;
@@ -110,23 +114,24 @@ public:
 	std::shared_ptr<sf::IntRect> _leftRect;
 	std::shared_ptr<sf::IntRect> _rightRect;
 
-	std::vector <LocationRect*> _locations;
-	Scrollbar* _leftScrollbar;
+	std::vector <std::shared_ptr<LocationRect>> _locations;
+	std::shared_ptr<Scrollbar> _leftScrollbar;
 
-	LocationAndFilesSeparator* _separator;
+	std::shared_ptr<LocationAndFilesSeparator> _separator;
 
-	std::vector <FileRect*> _files;
-	Scrollbar* _rightScrollbar;
+	std::vector <std::shared_ptr<FileRect>> _files;
+	std::shared_ptr<Scrollbar> _rightScrollbar;
 
 	std::vector <std::filesystem::path> _filesPaths;
 	std::wstring currentPath;
 
 	sf::IntRect _bottomRect;
-	sf::Text _filenameText;
-	TextInput* _filenameInput;
+	std::unique_ptr<sf::Text> _filenameText;
+	int _filenameTextWidth;
+	std::shared_ptr<TextInput> _filenameInput;
 
-	ColoredButtonWithText* _selectBtn;
-	ColoredButtonWithText* _cancelBtn;
+	std::shared_ptr<ColoredButtonWithText> _selectBtn;
+	std::shared_ptr<ColoredButtonWithText> _cancelBtn;
 
 	FileDialog(std::wstring dialogName, std::wstring selectButtonText);
 	~FileDialog();
@@ -145,9 +150,9 @@ public:
 	void drawRightPanel();
 	void drawBottomPanel();
 
-	void cursorHoverLocations(LocationRect* location);
-	void handleEventLocations(LocationRect* location, const sf::Event& event);
-	void updateLocations(LocationRect* location);
+	void cursorHoverLocations(std::shared_ptr<LocationRect> location);
+	void handleEventLocations(std::shared_ptr<LocationRect> location, const sf::Event& event);
+	void updateLocations(std::shared_ptr<LocationRect> location);
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

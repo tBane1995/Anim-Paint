@@ -10,10 +10,10 @@ public:
 
 	RotationState _state;
 
-	sf::Text* _rotation_text;
-	Slider* _rotation_slider;
-	ColoredButtonWithText* _reset;
-	ColoredButtonWithText* _confirm;
+	std::unique_ptr<sf::Text> _rotation_text;
+	std::shared_ptr<Slider> _rotation_slider;
+	std::shared_ptr<ColoredButtonWithText> _reset;
+	std::shared_ptr<ColoredButtonWithText> _confirm;
 
 	std::vector<std::shared_ptr<Layer>> _original_layers;
 	std::vector<std::shared_ptr<Layer>> _edited_layers;

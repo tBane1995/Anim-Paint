@@ -5,6 +5,8 @@
 
 Dialog::Dialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : ElementGUI() {
 
+	_title = title;
+
 	_state = DialogState::Idle;
 
 	_dialogRect = sf::IntRect(position, size);
@@ -13,7 +15,7 @@ Dialog::Dialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : E
 	sf::Vector2i p = position + sf::Vector2i(dialog_border_width, dialog_border_width + _titleRect.size.y);
 	_contentRect = sf::IntRect(p, sf::Vector2i(size.x - 2 * dialog_border_width, size.y - 2 * dialog_border_width - _titleRect.size.y));
 
-	_closeBtn = new NormalButton(getTexture(L"tex\\dialog\\close.png"), getTexture(L"tex\\dialog\\close_hover.png"));
+	_closeBtn = std::make_shared<NormalButton>(getTexture(L"tex\\dialog\\close.png"), getTexture(L"tex\\dialog\\close_hover.png"));
 	_closeBtn->_onclick_func = [this]() {
 		_state = DialogState::ToClose;
 		};

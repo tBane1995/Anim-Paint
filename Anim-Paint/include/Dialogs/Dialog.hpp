@@ -13,7 +13,7 @@ public:
 	sf::IntRect _titleRect;
 	std::unique_ptr<sf::Text> _titleText;
 	sf::IntRect _contentRect;
-	NormalButton* _closeBtn;
+	std::shared_ptr<NormalButton> _closeBtn;
 
 	DialogState _state;
 

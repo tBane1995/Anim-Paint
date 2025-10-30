@@ -6,63 +6,40 @@
 
 FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
 
-	_first_btn = new NormalButton(getTexture(L"tex\\frames\\first.png"), getTexture(L"tex\\frames\\first_hover.png"));
-	_prev_btn = new NormalButton(getTexture(L"tex\\frames\\prev.png"), getTexture(L"tex\\frames\\prev_hover.png"));
-	_next_btn = new NormalButton(getTexture(L"tex\\frames\\next.png"), getTexture(L"tex\\frames\\next_hover.png"));
-	_last_btn = new NormalButton(getTexture(L"tex\\frames\\last.png"), getTexture(L"tex\\frames\\last_hover.png"));
+	_first_btn = std::make_shared<NormalButton>(getTexture(L"tex\\frames\\first.png"), getTexture(L"tex\\frames\\first_hover.png"));
+	_prev_btn = std::make_shared<NormalButton>(getTexture(L"tex\\frames\\prev.png"), getTexture(L"tex\\frames\\prev_hover.png"));
+	_next_btn = std::make_shared<NormalButton>(getTexture(L"tex\\frames\\next.png"), getTexture(L"tex\\frames\\next_hover.png"));
+	_last_btn = std::make_shared<NormalButton>(getTexture(L"tex\\frames\\last.png"), getTexture(L"tex\\frames\\last_hover.png"));
 
 	_first_btn->_onclick_func = [this, position]() {
 		animation->firstFrame();
-		generateText();
 		layers_dialog->loadLayersFromCurrentFrame();
 		};
 
 	_prev_btn->_onclick_func = [this, position]() {
 		animation->prevFrame();
-		generateText();
 		layers_dialog->loadLayersFromCurrentFrame();
 	};
 
 	_next_btn->_onclick_func = [this, position]() {
 		animation->nextFrame();
-		generateText();
 		layers_dialog->loadLayersFromCurrentFrame();
 	};
 
 	_last_btn->_onclick_func = [this, position]() {
 		animation->lastFrame();
-		generateText();
 		layers_dialog->loadLayersFromCurrentFrame();
 	};
-
-	_text = new sf::Text(basicFont, std::to_wstring(animation->getCurrentFrameID() + 1) + L" / " + std::to_wstring(animation->getFramesCount()), 17);
-	generateText();
 
 	setPosition(position);
 }
 
 FramesDialog::~FramesDialog() {
-	delete _first_btn;
-	delete _prev_btn;
-	delete _next_btn;
-	delete _last_btn;
-	delete _text;
-}
 
-void FramesDialog::generateText() {
-	_text->setString(std::to_wstring(animation->getCurrentFrameID() + 1) + L" / " + std::to_wstring(animation->getFramesCount()));
-	_text->setPosition(sf::Vector2f(_position) + sf::Vector2f(getSize().x / 2 - _text->getGlobalBounds().size.x / 2.0f, 32 + dialog_padding + (32 - basicFont.getLineSpacing(17)) / 2));
 }
 
 void FramesDialog::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
-
-	_first_btn->setPosition(_position + sf::Vector2i(dialog_padding, 32 + dialog_padding));
-	_prev_btn->setPosition(_position + sf::Vector2i(dialog_padding + 32, 32 + dialog_padding));
-	_next_btn->setPosition(_position + sf::Vector2i(getSize().x - dialog_padding - 64, 32 + dialog_padding));
-	_last_btn->setPosition(_position + sf::Vector2i(getSize().x - dialog_padding - 32, 32 + dialog_padding));
-
-	_text->setPosition(sf::Vector2f(_position) + sf::Vector2f(getSize().x / 2 - _text->getGlobalBounds().size.x / 2.0f, 32 + dialog_padding + (32 - basicFont.getLineSpacing(17)) / 2));
 }
 
 void FramesDialog::cursorHover() {
@@ -114,10 +91,21 @@ void FramesDialog::update() {
 void FramesDialog::draw() {
 	Dialog::draw();
 
+	_first_btn->setPosition(_position + sf::Vector2i(dialog_padding, 32 + dialog_padding));
+	_prev_btn->setPosition(_position + sf::Vector2i(dialog_padding + 32, 32 + dialog_padding));
+	_next_btn->setPosition(_position + sf::Vector2i(getSize().x - dialog_padding - 64, 32 + dialog_padding));
+	_last_btn->setPosition(_position + sf::Vector2i(getSize().x - dialog_padding - 32, 32 + dialog_padding));
+
 	_first_btn->draw();
 	_prev_btn->draw();
 	_next_btn->draw();
 	_last_btn->draw();
+
+	if (_text == nullptr) {
+		_text = std::make_unique<sf::Text>(basicFont, std::to_wstring(animation->getCurrentFrameID() + 1) + L" / " + std::to_wstring(animation->getFramesCount()), 17);
+	}
+	_text->setString(std::to_wstring(animation->getCurrentFrameID() + 1) + L" / " + std::to_wstring(animation->getFramesCount()));
+	_text->setPosition(sf::Vector2f(_position) + sf::Vector2f(getSize().x / 2 - _text->getGlobalBounds().size.x / 2.0f, 32 + dialog_padding + (32 - basicFont.getLineSpacing(17)) / 2));
 	window->draw(*_text);
 }
 

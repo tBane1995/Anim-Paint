@@ -9,23 +9,20 @@ Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector<std::shared_p
 
 	_state = BrightnessContrastState::Idle;
 
-	_brightness_slider = new Slider(-50, 50);
+	_brightness_slider = std::make_shared<Slider>(-50, 50);
 	_brightness_slider->setValue(0);
 
-	_contrast_slider = new Slider(-50, 50);
+	_contrast_slider = std::make_shared<Slider>(-50, 50);
 	_contrast_slider->setValue(0);
 
-	_brightness_text = new sf::Text(basicFont, L"brightness", 13);
-	_contrast_text = new sf::Text(basicFont, L"contrast", 13);
-
-	_reset = new ColoredButtonWithText(L"reset", sf::Vector2i(64, 32));
+	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
 		_brightness_slider->setValue(0);
 		_contrast_slider->setValue(0);
 		setTheFilter();
 		};
 
-	_confirm = new ColoredButtonWithText(L"confirm", sf::Vector2i(64, 32));
+	_confirm = std::make_shared<ColoredButtonWithText>(L"confirm", sf::Vector2i(64, 32));
 	_confirm->_onclick_func = [this]() {
 		Dialog_Brightness_Contrast::_state = BrightnessContrastState::Edited;
 		Dialog::_state = DialogState::ToClose;
@@ -58,37 +55,10 @@ Dialog_Brightness_Contrast::~Dialog_Brightness_Contrast() {
 		layers_dialog->loadLayersFromCurrentFrame();
 	}
 
-	delete _brightness_slider;
-	delete _contrast_slider;
-
-	delete _brightness_text;
-	delete _contrast_text;
-
-	delete _reset;
-	delete _confirm;
 }
 
 void Dialog_Brightness_Contrast::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
-
-	sf::Vector2f text_pos;
-	text_pos.x = int(position.x) / 8 * 8 + 24;
-	text_pos.y = int(position.y) / 8 * 8 + 160 / 2 - 28;
-
-	_brightness_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
-	_contrast_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2) + sf::Vector2f(0, 32));
-
-	sf::Vector2i slider_pos;
-	slider_pos.x = int(position.x) / 8 * 8 + 256 / 2 - 64 / 2;
-	slider_pos.y = int(position.y) / 8 * 8 + 160 / 2 - 28;
-	_brightness_slider->setPosition(slider_pos);
-	_contrast_slider->setPosition(slider_pos + sf::Vector2i(0, 32));
-
-	sf::Vector2i button_pos;
-	button_pos.x = int(position.x) / 8 * 8 + 256 / 2 - 32;
-	button_pos.y = int(position.y) / 8 * 8 + 160 - _confirm->getSize().y - 16;
-	_reset->setPosition(button_pos - sf::Vector2i(48, 0));
-	_confirm->setPosition(button_pos + sf::Vector2i(48, 0));
 }
 
 void Dialog_Brightness_Contrast::setTheFilter() {
@@ -145,11 +115,36 @@ void Dialog_Brightness_Contrast::update() {
 void Dialog_Brightness_Contrast::draw() {
 	Dialog::draw();
 
+	sf::Vector2f text_pos;
+	text_pos.x = _position.x + 24;
+	text_pos.y = _position.y + 160 / 2 - 28;
+
+	if (_brightness_text == nullptr) {
+		_brightness_text = std::make_unique<sf::Text>(basicFont, L"brightness", 13);
+	}
+	_brightness_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
 	window->draw(*_brightness_text);
+
+	if (_contrast_text == nullptr) {
+		_contrast_text = std::make_unique<sf::Text>(basicFont, L"contrast", 13);
+	}
+	_contrast_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2) + sf::Vector2f(0, 32));
 	window->draw(*_contrast_text);
+
+	sf::Vector2i slider_pos;
+	slider_pos.x = _position.x + 256 / 2 - 64 / 2;
+	slider_pos.y = _position.y + 160 / 2 - 28;
+	_brightness_slider->setPosition(slider_pos);
+	_contrast_slider->setPosition(slider_pos + sf::Vector2i(0, 32));
 
 	_brightness_slider->draw();
 	_contrast_slider->draw();
+
+	sf::Vector2i button_pos;
+	button_pos.x = _position.x + 256 / 2 - 32;
+	button_pos.y = _position.y + 160 - _confirm->getSize().y - 16;
+	_reset->setPosition(button_pos - sf::Vector2i(48, 0));
+	_confirm->setPosition(button_pos + sf::Vector2i(48, 0));
 
 	_reset->draw();
 	_confirm->draw();

@@ -9,10 +9,10 @@ class Dialog_Saturation : public Dialog {
 public:
 	SaturationState _state;
 
-	sf::Text* _saturation_text;
-	Slider* _saturation_slider;
-	ColoredButtonWithText* _reset;
-	ColoredButtonWithText* _confirm;
+	std::unique_ptr<sf::Text> _saturation_text;
+	std::shared_ptr<Slider> _saturation_slider;
+	std::shared_ptr<ColoredButtonWithText> _reset;
+	std::shared_ptr<ColoredButtonWithText> _confirm;
 
 	std::vector<std::shared_ptr<Layer>> _original_layers;
 	std::vector<std::shared_ptr<Layer>> _edited_layers;

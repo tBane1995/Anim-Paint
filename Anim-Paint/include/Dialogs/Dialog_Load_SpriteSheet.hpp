@@ -11,21 +11,21 @@ public:
 	sf::Texture _frameTexture;
 	sf::Time _lastFrameTime;
 
-	TextInput* _widthOfFrame;
-	TextInput* _heightOfFrame;
-	TextInput* _animationsCount;
-	TextInput* _frameCount;
+	std::shared_ptr<TextInput> _widthOfFrame;
+	std::shared_ptr<TextInput> _heightOfFrame;
+	std::shared_ptr<TextInput> _animationsCount;
+	std::shared_ptr<TextInput> _frameCount;
 
-	sf::Text* _widthOfFrameText;
-	sf::Text* _heightOfFrameText;
-	sf::Text* _animationsCountText;
-	sf::Text* _frameCountText;
+	std::unique_ptr<sf::Text> _widthOfFrameText;
+	std::unique_ptr<sf::Text> _heightOfFrameText;
+	std::unique_ptr<sf::Text> _animationsCountText;
+	std::unique_ptr<sf::Text> _frameCountText;
 
 	sf::RectangleShape _rect;
-	ColoredButtonWithText* _confirmBtn;
-	ColoredButtonWithText* _cancelBtn;
+	std::shared_ptr<ColoredButtonWithText> _confirmBtn;
+	std::shared_ptr<ColoredButtonWithText> _cancelBtn;
 
-	std::vector < ElementGUI* > _onTabElements;
+	std::vector<std::shared_ptr<ElementGUI>> _onTabElements;
 	int _currentOnTabElement;
 
 	Dialog_Load_SpriteSheet(std::filesystem::path path);

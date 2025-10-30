@@ -10,29 +10,21 @@ LayerBox::LayerBox(std::shared_ptr<Layer> layer) : ElementGUI() {
 
 	_isActive = false;
 
-	_rect = sf::RectangleShape(sf::Vector2f(160 - 2 * dialog_padding, 32));
-	_rect.setFillColor(sf::Color::Transparent);
+	_rect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(160 - 2 * dialog_padding, 32));
 
-	_visibling = new Checkbox(getTexture(L"tex\\layers\\visible.png"), getTexture(L"tex\\layers\\visible_hover.png"));
+	_visibling = std::make_shared<Checkbox>(getTexture(L"tex\\layers\\visible.png"), getTexture(L"tex\\layers\\visible_hover.png"));
 	_visibling->addValue(getTexture(L"tex\\layers\\unvisible.png"), getTexture(L"tex\\layers\\unvisible_hover.png"));
 	_visibling->setValue(0);
-
-	_textName = new sf::Text(basicFont, layer->_name, 17);
-	_textName->setFillColor(normal_text_color);
-
-	rect_coloring();
 }
 
 LayerBox::~LayerBox() {
-	delete _visibling;
-	delete _textName;
+
 
 }
 
 void LayerBox::setPosition(sf::Vector2i position) {
 	_visibling->setPosition(position);
-	_rect.setPosition(sf::Vector2f(position));
-	_textName->setPosition(sf::Vector2f(position) + sf::Vector2f(32 + dialog_padding, (32.0f / 2.0f - basicFont.getLineSpacing(17) / 2.0f)));
+	_rect.position = position;
 }
 
 void LayerBox::cursorHover() {
@@ -42,7 +34,7 @@ void LayerBox::cursorHover() {
 
 	_visibling->cursorHover();
 
-	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
+	if (_rect.contains(cursor->_worldMousePosition)) {
 		ElementGUI_hovered = this;
 	}
 }
@@ -54,8 +46,8 @@ void LayerBox::handleEvent(const sf::Event& event) {
 
 	_visibling->handleEvent(event);
 
-	if (ElementGUI_pressed != _visibling) {
-		if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
+	if (ElementGUI_pressed != _visibling.get()) {
+		if (_rect.contains(cursor->_worldMousePosition)) {
 			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 				ElementGUI_pressed == this;
 				_onclick_func();
@@ -69,43 +61,40 @@ void LayerBox::handleEvent(const sf::Event& event) {
 
 }
 
-void LayerBox::rect_coloring() {
-	if (_isActive) {
-
-		if (ElementGUI_pressed == this) {
-			_rect.setFillColor(sf::Color(127, 63, 63));
-		}
-		else if (ElementGUI_hovered == this) {
-			_rect.setFillColor(sf::Color(95, 63, 63));
-		}
-		else {
-			_rect.setFillColor(sf::Color(63, 47, 47));
-		}
-
-	}
-	else {
-		if (ElementGUI_pressed == this) {
-			_rect.setFillColor(sf::Color(95, 95, 95));
-		}
-		else if (ElementGUI_hovered == this) {
-			_rect.setFillColor(sf::Color(63, 63, 63));
-		}
-		else {
-			_rect.setFillColor(sf::Color(47, 47, 47));
-		}
-	}
-}
-
 void LayerBox::update() {
 
 	_visibling->update();
-	_textName->setString(_layer->_name);
-	rect_coloring();
 }
 
 void LayerBox::draw() {
-	window->draw(_rect);
+	sf::RectangleShape rect(sf::Vector2f(_rect.size));
+	if (_isActive) {
+		if (ElementGUI_pressed == this)
+			rect.setFillColor(sf::Color(127, 63, 63));
+		else if (ElementGUI_hovered == this)
+			rect.setFillColor(sf::Color(95, 63, 63));
+		else
+			rect.setFillColor(sf::Color(63, 47, 47));
+	}
+	else {
+		if (ElementGUI_pressed == this)
+			rect.setFillColor(sf::Color(95, 95, 95));
+		else if (ElementGUI_hovered == this)
+			rect.setFillColor(sf::Color(63, 63, 63));
+		else
+			rect.setFillColor(sf::Color(47, 47, 47));
+	}
+	rect.setPosition(sf::Vector2f(_rect.position));
+	window->draw(rect);
+
 	_visibling->draw();
+
+	if (_textName == nullptr) {
+		_textName = std::make_unique<sf::Text>(basicFont, _layer->_name, 17);
+		_textName->setFillColor(normal_text_color);
+	}
+	_textName->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32 + dialog_padding, (32.0f / 2.0f - basicFont.getLineSpacing(17) / 2.0f)));
+	
 	window->draw(*_textName);
 }
 
@@ -120,10 +109,6 @@ LayersDialog::~LayersDialog() {}
 
 void LayersDialog::loadLayersFromCurrentFrame() {
 
-	for (auto& layerBox : layersBoxes) {
-		delete layerBox;
-	}
-
 	layersBoxes.clear();
 
 	int current_frame = animation->getCurrentFrameID();
@@ -131,7 +116,7 @@ void LayersDialog::loadLayersFromCurrentFrame() {
 
 
 	for (int i = 0; i < count_layers; i++) {
-		layersBoxes.push_back(new LayerBox(animation->getLayer(i)));
+		layersBoxes.push_back(std::make_shared<LayerBox>(animation->getLayer(i)));
 		layersBoxes.back()->_onclick_func = [this, i]() {
 			layersBoxes[animation->getCurrentLayerID()]->_isActive = false;
 			animation->setCurrentLayerID(i);
@@ -144,9 +129,6 @@ void LayersDialog::loadLayersFromCurrentFrame() {
 	if (id > 0 && id < animation->getLayersCount()) {
 		layersBoxes[id]->_isActive = true;
 	}
-
-	for (auto& l : layersBoxes)
-		l->rect_coloring();
 
 	setPosition(this->getPosition());
 }

@@ -9,18 +9,16 @@ Dialog_Sepia::Dialog_Sepia(std::vector<std::shared_ptr<Layer>> layers) : Dialog(
 
 	_state = SepiaState::Idle;
 
-	_sepia_slider = new Slider(0, 100);
+	_sepia_slider = std::make_shared<Slider>(0, 100);
 	_sepia_slider->setValue(0);
 
-	_sepia_text = new sf::Text(basicFont, L"sepia", 13);
-
-	_reset = new ColoredButtonWithText(L"reset", sf::Vector2i(64, 32));
+	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
 		_sepia_slider->setValue(0);
 		setTheFilter();
 		};
 
-	_confirm = new ColoredButtonWithText(L"confirm", sf::Vector2i(64, 32));
+	_confirm = std::make_shared<ColoredButtonWithText>(L"confirm", sf::Vector2i(64, 32));
 	_confirm->_onclick_func = [this]() {
 		Dialog::_state = DialogState::ToClose;
 		Dialog_Sepia::_state = SepiaState::Edited;
@@ -49,31 +47,10 @@ Dialog_Sepia::~Dialog_Sepia() {
 		layers_dialog->loadLayersFromCurrentFrame();
 	}
 
-	delete _sepia_slider;
-	delete _sepia_text;
-
-	delete _reset;
-	delete _confirm;
 }
 
 void Dialog_Sepia::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
-
-	sf::Vector2f text_pos;
-	text_pos.x = int(position.x) / 8 * 8 + 24;
-	text_pos.y = int(position.y) / 8 * 8 + dialog_title_rect_height / 2 + (160) / 2 - 24;
-	_sepia_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
-
-	sf::Vector2i slider_pos;
-	slider_pos.x = int(position.x) / 8 * 8 + 256 / 2 - 64 / 2;
-	slider_pos.y = int(position.y) / 8 * 8 + dialog_title_rect_height / 2 + (160) / 2 - 24;
-	_sepia_slider->setPosition(slider_pos);
-
-	sf::Vector2i button_pos;
-	button_pos.x = int(position.x) / 8 * 8 + 256 / 2 - 32;
-	button_pos.y = int(position.y) / 8 * 8 + 160 - _confirm->getSize().y - 16;
-	_reset->setPosition(button_pos - sf::Vector2i(48, 0));
-	_confirm->setPosition(button_pos + sf::Vector2i(48, 0));
 }
 
 void Dialog_Sepia::setTheFilter() {
@@ -124,8 +101,26 @@ void Dialog_Sepia::update() {
 void Dialog_Sepia::draw() {
 	Dialog::draw();
 
+	if (_sepia_text == nullptr) {
+		_sepia_text = std::make_unique<sf::Text>(basicFont, L"sepia", 13);
+	}
+	sf::Vector2f text_pos;
+	text_pos.x = _position.x + 24;
+	text_pos.y = _position.y + dialog_title_rect_height / 2 + (160) / 2 - 24;
+	_sepia_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
 	window->draw(*_sepia_text);
+
+	sf::Vector2i slider_pos;
+	slider_pos.x = _position.x + 256 / 2 - 64 / 2;
+	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160) / 2 - 24;
+	_sepia_slider->setPosition(slider_pos);
 	_sepia_slider->draw();
+
+	sf::Vector2i button_pos;
+	button_pos.x = _position.x + 256 / 2 - 32;
+	button_pos.y = _position.y + 160 - _confirm->getSize().y - 16;
+	_reset->setPosition(button_pos - sf::Vector2i(48, 0));
+	_confirm->setPosition(button_pos + sf::Vector2i(48, 0));
 	_reset->draw();
 	_confirm->draw();
 }

@@ -9,9 +9,9 @@
 class LayerBox : public ElementGUI {
 public:
 
-	sf::RectangleShape _rect;			
-	Checkbox* _visibling;				// is Visible or No on Canvas
-	sf::Text* _textName;					// text for name
+	sf::IntRect _rect;			
+	std::shared_ptr<Checkbox> _visibling;				// is Visible or No on Canvas
+	std::unique_ptr<sf::Text> _textName;					// text for name
 
 	std::shared_ptr<Layer> _layer;
 	bool _isActive;						// active to draw
@@ -24,7 +24,6 @@ public:
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);
-	void rect_coloring();
 	void update();
 	void draw();
 };
@@ -32,7 +31,7 @@ public:
 class LayersDialog : public Dialog {
 public:
 
-	std::vector < LayerBox* > layersBoxes;
+	std::vector<std::shared_ptr<LayerBox>> layersBoxes;
 
 	LayersDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(0, 0));
 	~LayersDialog();

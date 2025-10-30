@@ -513,7 +513,6 @@ void MainMenu::importAnimation(std::shared_ptr<Animation> newAnimation) {
 	animation = newAnimation;
 
 	canvas->resize(sf::Vector2i(animation->getLayer(0)->_image.getSize()));
-	frames_dialog->generateText();
 	layers_dialog->loadLayersFromCurrentFrame();
 }
 

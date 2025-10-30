@@ -9,14 +9,14 @@ class Dialog_Brightness_Contrast : public Dialog {
 public:
 	BrightnessContrastState _state;
 
-	sf::Text* _brightness_text;
-	sf::Text* _contrast_text;
+	std::unique_ptr<sf::Text> _brightness_text;
+	std::unique_ptr<sf::Text> _contrast_text;
 	
-	Slider* _brightness_slider;
-	Slider* _contrast_slider;
+	std::shared_ptr<Slider> _brightness_slider;
+	std::shared_ptr<Slider> _contrast_slider;
 
-	ColoredButtonWithText* _reset;
-	ColoredButtonWithText* _confirm;
+	std::shared_ptr<ColoredButtonWithText> _reset;
+	std::shared_ptr<ColoredButtonWithText> _confirm;
 
 	std::vector<std::shared_ptr<Layer>> _original_layers;
 	std::vector<std::shared_ptr<Layer>> _edited_layers;

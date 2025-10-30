@@ -9,17 +9,16 @@ Dialog_Rotation::Dialog_Rotation(std::vector<std::shared_ptr<Layer>> layers) : D
 
 	_state = RotationState::Idle;
 	
-	_rotation_slider = new Slider(0, 359);
+	_rotation_slider = std::make_shared<Slider>(0, 359);
 	_rotation_slider->setValue(0);
-	_rotation_text = new sf::Text(basicFont, L"rotation", 13);
 
-	_reset = new ColoredButtonWithText(L"reset", sf::Vector2i(64, 32));
+	_reset =std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
 		_rotation_slider->setValue(0);
 		setTheFilter();
 		};
 
-	_confirm = new ColoredButtonWithText(L"confirm", sf::Vector2i(64, 32));
+	_confirm = std::make_shared<ColoredButtonWithText>(L"confirm", sf::Vector2i(64, 32));
 	_confirm->_onclick_func = [this]() {
 		Dialog::_state = DialogState::ToClose;
 		Dialog_Rotation::_state = RotationState::Edited;
@@ -49,32 +48,10 @@ Dialog_Rotation::~Dialog_Rotation() {
 		//layers_dialog->loadLayersFromCurrentFrame();
 	}
 
-	delete _rotation_slider;
-	delete _rotation_text;
-
-	delete _reset;
-	delete _confirm;
-
 }
 
 void Dialog_Rotation::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
-
-	sf::Vector2f text_pos;
-	text_pos.x = int(position.x) / 8 * 8 + 24;
-	text_pos.y = int(position.y) / 8 * 8 + dialog_title_rect_height / 2 + (160) / 2 - 24;
-	_rotation_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
-
-	sf::Vector2i slider_pos;
-	slider_pos.x = int(position.x) / 8 * 8 + 256 / 2 - 64 / 2;
-	slider_pos.y = int(position.y) / 8 * 8 + dialog_title_rect_height / 2 + (160) / 2 - 24;
-	_rotation_slider->setPosition(slider_pos);
-
-	sf::Vector2i button_pos;
-	button_pos.x = int(position.x) / 8 * 8 + 256 / 2 - 32;
-	button_pos.y = int(position.y) / 8 * 8 + 160 - _confirm->getSize().y - 16;
-	_reset->setPosition(button_pos - sf::Vector2i(48, 0));
-	_confirm->setPosition(button_pos + sf::Vector2i(48, 0));
 }
 
 void Dialog_Rotation::setTheFilter() {
@@ -124,8 +101,27 @@ void Dialog_Rotation::update() {
 void Dialog_Rotation::draw() {
 	Dialog::draw();
 
+	if(_rotation_text == nullptr){
+		_rotation_text =  std::make_unique<sf::Text>(basicFont, L"rotation", 13);
+	}
+
+	sf::Vector2f text_pos;
+	text_pos.x = _position.x + 24;
+	text_pos.y = _position.y + dialog_title_rect_height / 2 + (160) / 2 - 24;
+	_rotation_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
+
 	window->draw(*_rotation_text);
+	sf::Vector2i slider_pos;
+	slider_pos.x = _position.x + 256 / 2 - 64 / 2;
+	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160) / 2 - 24;
+	_rotation_slider->setPosition(slider_pos);
 	_rotation_slider->draw();
+
+	sf::Vector2i button_pos;
+	button_pos.x = _position.x + 256 / 2 - 32;
+	button_pos.y = _position.y + 160 - _confirm->getSize().y - 16;
+	_reset->setPosition(button_pos - sf::Vector2i(48, 0));
+	_confirm->setPosition(button_pos + sf::Vector2i(48, 0));
 	_reset->draw();
 	_confirm->draw();
 }

@@ -18,15 +18,15 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 	}
 
 	sf::Vector2f size(64, basic_text_rect_height);
-	_widthOfFrame = new TextInput(size, 3, basic_text_size);
-	_heightOfFrame = new TextInput(size, 3, basic_text_size);
-	_animationsCount = new TextInput(size, 3, basic_text_size);
-	_frameCount = new TextInput(size, 3, basic_text_size);
+	_widthOfFrame = std::make_shared<TextInput>(size, 3, basic_text_size);
+	_heightOfFrame = std::make_shared<TextInput>(size, 3, basic_text_size);
+	_animationsCount = std::make_shared<TextInput>(size, 3, basic_text_size);
+	_frameCount = std::make_shared<TextInput>(size, 3, basic_text_size);
 
-	_widthOfFrameText = new sf::Text(basicFont, "Width", basic_text_size);
-	_heightOfFrameText = new sf::Text(basicFont, "Height", basic_text_size);
-	_animationsCountText = new sf::Text(basicFont, "Animations", basic_text_size);
-	_frameCountText = new sf::Text(basicFont, "Frames", basic_text_size);
+	_widthOfFrameText =std::make_unique<sf::Text>(basicFont, "Width", basic_text_size);
+	_heightOfFrameText = std::make_unique<sf::Text>(basicFont, "Height", basic_text_size);
+	_animationsCountText = std::make_unique<sf::Text>(basicFont, "Animations", basic_text_size);
+	_frameCountText = std::make_unique<sf::Text>(basicFont, "Frames", basic_text_size);
 
 	_widthOfFrame->setText(std::to_wstring(34/*canvas->_minSize.x*/));
 	_heightOfFrame->setText(std::to_wstring(53/*canvas->_minSize.y */));
@@ -105,7 +105,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 	_rect = sf::RectangleShape(sf::Vector2f(getContentSize().x, btnSize.y + 2 * dialog_padding));
 	_rect.setFillColor(dialog_content_rect_color_2);
 
-	_confirmBtn = new ColoredButtonWithText(L"Confirm", btnSize);
+	_confirmBtn = std::make_shared<ColoredButtonWithText>(L"Confirm", btnSize);
 	_confirmBtn->setColors(dark_button_select_color, dark_button_normal_color, dark_button_hover_color, dark_button_press_color);
 	_confirmBtn->_onclick_func = [this]() {
 		sf::Vector2i size;
@@ -116,7 +116,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 		_state = DialogState::ToClose;
 		};
 
-	_cancelBtn = new ColoredButtonWithText(L"Cancel", btnSize);
+	_cancelBtn = std::make_shared<ColoredButtonWithText>(L"Cancel", btnSize);
 	_cancelBtn->setColors(dark_button_select_color, dark_button_normal_color, dark_button_hover_color, dark_button_press_color);
 	_cancelBtn->_onclick_func = [this]() {
 		_state = DialogState::ToClose;
@@ -143,49 +143,11 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 }
 
 Dialog_Load_SpriteSheet::~Dialog_Load_SpriteSheet() {
-	delete _widthOfFrame;
-	delete _heightOfFrame;
-	delete _animationsCount;
-	delete _frameCount;
 
-	delete _widthOfFrameText;
-	delete _heightOfFrameText;
-	delete _animationsCountText;
-	delete _frameCountText;
-
-	delete _confirmBtn;
-	delete _cancelBtn;
 }
 
 void Dialog_Load_SpriteSheet::setPosition(sf::Vector2i position) {
-	
 	Dialog::setPosition(position);
-
-
-	sf::Vector2f size(64, basic_text_rect_height);
-	
-	sf::Vector2f center;
-	center.x = getContentPosition().x + getContentSize().x/2;
-	center.y = getContentPosition().y + 128 + dialog_padding + basic_text_rect_height + dialog_padding + 8;
-	float dy = 60;
-	float dx = 48;
-
-	_widthOfFrame->setPosition(center + sf::Vector2f(-dx - size.x / 2, -size.y / 2));
-	_heightOfFrame->setPosition(center + sf::Vector2f(dx - size.x / 2, -size.y / 2));
-	_animationsCount->setPosition(center + sf::Vector2f(-dx - size.x / 2, dy -size.y / 2));
-	_frameCount->setPosition(center + sf::Vector2f(dx - size.x / 2, dy -size.y / 2));
-
-	float dy2 = basic_text_rect_height;
-	_widthOfFrameText->setPosition(_widthOfFrame->getPosition() + sf::Vector2f(size.x/2-_widthOfFrameText->getGlobalBounds().size.x/2, -dy2));
-	_heightOfFrameText->setPosition(_heightOfFrame->getPosition() + sf::Vector2f(size.x/2-_heightOfFrameText->getGlobalBounds().size.x/2, -dy2));
-	_animationsCountText->setPosition(_animationsCount->getPosition() + sf::Vector2f(size.x/2-_animationsCountText->getGlobalBounds().size.x/2, -dy2));
-	_frameCountText->setPosition(_frameCount->getPosition() + sf::Vector2f(size.x/2-_frameCountText->getGlobalBounds().size.x/2, -dy2));
-
-	_rect.setPosition(sf::Vector2f(getContentPosition()) + sf::Vector2f(0, getContentSize().y - _rect.getSize().y));
-
-	float xx = 48;
-	_confirmBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x/2 - xx - _confirmBtn->getSize().x/2, getContentSize().y - _confirmBtn->getSize().y - dialog_padding));
-	_cancelBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x/2 + xx - _cancelBtn->getSize().x/2, getContentSize().y - _cancelBtn->getSize().y - dialog_padding));
 }
 
 void Dialog_Load_SpriteSheet::loadAnimationsByFrameSize(sf::Vector2i frameSize) {
@@ -250,13 +212,13 @@ void Dialog_Load_SpriteSheet::deactivateOnTabElement() {
 	if (_currentOnTabElement < 0)
 		return;
 
-	TextInput* ti = dynamic_cast<TextInput*>(_onTabElements[_currentOnTabElement]);
+	std::shared_ptr<TextInput> ti = std::dynamic_pointer_cast<TextInput>(_onTabElements[_currentOnTabElement]);
 	if (ti != nullptr) {
 		ti->_state = TextInputState::Idle;
 		return;
 	}
 
-	Button* btn = dynamic_cast<Button*>(_onTabElements[_currentOnTabElement]);
+	std::shared_ptr<Button> btn = std::dynamic_pointer_cast<Button>(_onTabElements[_currentOnTabElement]);
 	if (btn != nullptr) {
 		btn->unselect();
 		return;
@@ -277,12 +239,12 @@ void Dialog_Load_SpriteSheet::activateOnTabElement(int id) {
 		_currentOnTabElement = 0;
 
 	if (_currentOnTabElement >= 0) {
-		TextInput* ti = dynamic_cast<TextInput*>(_onTabElements[_currentOnTabElement]);
+		std::shared_ptr<TextInput> ti = std::dynamic_pointer_cast<TextInput>(_onTabElements[_currentOnTabElement]);
 		if (ti != nullptr) {
 			ti->_state = TextInputState::TextEntered;
 		}
 
-		Button* btn = dynamic_cast<Button*>(_onTabElements[_currentOnTabElement]);
+		std::shared_ptr<Button> btn = std::dynamic_pointer_cast<Button>(_onTabElements[_currentOnTabElement]);
 		if (btn != nullptr) {
 			btn->select();
 		}
@@ -344,25 +306,48 @@ void Dialog_Load_SpriteSheet::draw() {
 
 	Dialog::draw();
 
-	// draw frame preview
-	sf::Sprite* _frameSprite = new sf::Sprite(_frameTexture);
-	_frameSprite->setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(_frameTexture.getSize())));
+	sf::Sprite frameSprite(_frameTexture);
+	frameSprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(_frameTexture.getSize())));
 	float scaleFactor = 128.0f / float(std::max(_frameTexture.getSize().x, _frameTexture.getSize().y));
-	_frameSprite->setScale(sf::Vector2f(scaleFactor, scaleFactor));
-	_frameSprite->setPosition(sf::Vector2f(getContentPosition()) + sf::Vector2f((getContentSize().x - _frameSprite->getGlobalBounds().size.x) / 2, (128 - _frameSprite->getGlobalBounds().size.y) / 2 + dialog_padding));
-	window->draw(*_frameSprite);
+	frameSprite.setScale(sf::Vector2f(scaleFactor, scaleFactor));
+	frameSprite.setPosition(sf::Vector2f(getContentPosition()) + sf::Vector2f((getContentSize().x - frameSprite.getGlobalBounds().size.x) / 2, (128 - frameSprite.getGlobalBounds().size.y) / 2 + dialog_padding));
+	window->draw(frameSprite);
 
 	// draw texts inputs
+	sf::Vector2f size(64, basic_text_rect_height);
+	sf::Vector2f center;
+	center.x = getContentPosition().x + getContentSize().x / 2;
+	center.y = getContentPosition().y + 128 + dialog_padding + basic_text_rect_height + dialog_padding + 8;
+	float dy = 60;
+	float dx = 48;
+
+	_widthOfFrame->setPosition(center + sf::Vector2f(-dx - size.x / 2, -size.y / 2));
+	_heightOfFrame->setPosition(center + sf::Vector2f(dx - size.x / 2, -size.y / 2));
+	_animationsCount->setPosition(center + sf::Vector2f(-dx - size.x / 2, dy - size.y / 2));
+	_frameCount->setPosition(center + sf::Vector2f(dx - size.x / 2, dy - size.y / 2));
+
 	_widthOfFrame->draw();
 	_heightOfFrame->draw();
 	_animationsCount->draw();
 	_frameCount->draw();
 
 	// draw texts labels
+	float dy2 = basic_text_rect_height;
+	_widthOfFrameText->setPosition(_widthOfFrame->getPosition() + sf::Vector2f(size.x / 2 - _widthOfFrameText->getGlobalBounds().size.x / 2, -dy2));
+	_heightOfFrameText->setPosition(_heightOfFrame->getPosition() + sf::Vector2f(size.x / 2 - _heightOfFrameText->getGlobalBounds().size.x / 2, -dy2));
+	_animationsCountText->setPosition(_animationsCount->getPosition() + sf::Vector2f(size.x / 2 - _animationsCountText->getGlobalBounds().size.x / 2, -dy2));
+	_frameCountText->setPosition(_frameCount->getPosition() + sf::Vector2f(size.x / 2 - _frameCountText->getGlobalBounds().size.x / 2, -dy2));
+
 	window->draw(*_widthOfFrameText);
 	window->draw(*_heightOfFrameText);
 	window->draw(*_animationsCountText);
 	window->draw(*_frameCountText);
+
+	// draw bottom rect and buttons
+	_rect.setPosition(sf::Vector2f(getContentPosition()) + sf::Vector2f(0, getContentSize().y - _rect.getSize().y));
+	float xx = 48;
+	_confirmBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x / 2 - xx - _confirmBtn->getSize().x / 2, getContentSize().y - _confirmBtn->getSize().y - dialog_padding));
+	_cancelBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x / 2 + xx - _cancelBtn->getSize().x / 2, getContentSize().y - _cancelBtn->getSize().y - dialog_padding));
 
 	window->draw(_rect);
 	_confirmBtn->draw();
