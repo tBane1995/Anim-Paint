@@ -1,0 +1,666 @@
+﻿#include "MainMenu.hpp"
+#include "Theme.hpp"
+#include "Time.hpp"
+#include "Cursor.hpp"
+#include "Window.hpp"
+
+#include "Dialogs/Dialog.hpp"
+#include "Dialogs/FileDialog.hpp"
+#include "Dialogs/Dialog_Save_Project.hpp"
+#include "Dialogs/Dialog_Load_Project.hpp"
+#include "Dialogs/Dialog_Import.hpp"
+#include "Dialogs/Dialog_Export.hpp"
+
+#include "Dialogs/Dialog_Rotation.hpp"
+#include "Dialogs/Dialog_Brightness_Contrast.hpp"
+#include "Dialogs/Dialog_Saturation.hpp"
+#include "Dialogs/Dialog_Sepia.hpp"
+#include "Dialogs/Dialog_Outline.hpp"
+#include "Dialogs/FramesDialog.hpp"
+#include "Dialogs/LayersDialog.hpp"
+#include "Animation/Animation.hpp"
+#include <iostream>
+#include <filesystem>
+#include "Tools/Lasso.hpp"
+#include "Tools/Selection.hpp"
+
+#include "Canvas.hpp"
+#include <fstream>
+
+OptionBox::OptionBox(std::wstring text) : ElementGUI() {
+	_text = std::make_unique<sf::Text>(basicFont, text, menu_font_size);
+	_text->setFillColor(menu_text_color);
+
+	_rect = sf::RectangleShape(sf::Vector2f(_text->getGlobalBounds().size.x + 2 * menu_horizontal_margin, menu_height));
+	_rect.setFillColor(optionbox_idle_color);
+
+	_state = ButtonState::Idle;
+	_onclick_func = { };
+}
+
+OptionBox::~OptionBox() {
+
+}
+
+void OptionBox::setPosition(sf::Vector2i position) {
+	_rect.setPosition(sf::Vector2f(position));
+	_text->setPosition(sf::Vector2f(position) + sf::Vector2f(menu_horizontal_margin, (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
+}
+
+void OptionBox::unclick() {
+	_state = ButtonState::Idle;
+	_rect.setFillColor(optionbox_idle_color);
+}
+
+void OptionBox::hover() {
+	_state = ButtonState::Hover;
+	_rect.setFillColor(optionbox_hover_color);
+
+}
+
+void OptionBox::click() {
+	_state = ButtonState::Pressed;
+	_rect.setFillColor(optionbox_press_color);
+	_clickTime = currentTime;
+}
+
+
+void OptionBox::cursorHover() {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
+		ElementGUI_hovered = this->shared_from_this();
+	}
+}
+
+void OptionBox::handleEvent(const sf::Event& event)
+{
+	if (!_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition)))
+		return;
+
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left)
+	{
+		ElementGUI_pressed = this->shared_from_this();
+	}
+	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left)
+	{
+		if (ElementGUI_pressed.get() == this)
+			click();
+	}
+}
+
+void OptionBox::update() {
+
+	if (_state == ButtonState::Pressed) {
+		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
+			if (_onclick_func) {
+				_onclick_func();
+			}
+			ElementGUI_pressed = nullptr;
+			unclick();
+		}
+	}
+	else if (ElementGUI_hovered.get() == this) {
+		hover();
+	}
+	else
+		unclick();
+}
+
+void OptionBox::draw() {
+	window->draw(_rect);
+	window->draw(*_text);
+}
+
+/////////////////////////////////////////////////////////////////////////
+MenuBox::MenuBox(std::wstring text) : ElementGUI() {
+
+	_text = std::make_unique<sf::Text>(basicFont, text, menu_font_size);
+	_text->setFillColor(menu_text_color);
+	_rect = sf::RectangleShape(sf::Vector2f(_text->getGlobalBounds().size.x + 2 * menu_horizontal_margin, menu_height));
+
+	_isOpen = false;
+	_options.clear();
+}
+
+MenuBox::~MenuBox() {
+
+}
+
+void MenuBox::addOption(std::shared_ptr<OptionBox> option) {
+	_options.push_back(option);
+
+	int max_wdt = 0;
+	for (auto& o : _options) {
+		if (o->_rect.getSize().x > max_wdt)
+			max_wdt = o->_rect.getSize().x;
+	}
+
+	for (auto& o : _options) {
+		o->_rect.setSize(sf::Vector2f(max_wdt, menu_height));
+	}
+
+
+}
+
+void MenuBox::setPosition(sf::Vector2i position) {
+	_rect.setPosition(sf::Vector2f(position));
+	_text->setPosition(sf::Vector2f(position) + sf::Vector2f(menu_horizontal_margin, (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
+
+	for (int i = 0; i < _options.size(); i++) {
+		_options[i]->setPosition(sf::Vector2i(_rect.getPosition()) + sf::Vector2i(0, _rect.getSize().y + i * menu_height));
+	}
+}
+
+void MenuBox::unclick() {
+	_state = ButtonState::Idle;
+	if (_isOpen) {
+		_rect.setFillColor(menubox_open_color);
+	}
+	else {
+		_rect.setFillColor(menubox_idle_color);
+	}
+}
+
+void MenuBox::hover() {
+	_state = ButtonState::Hover;
+	_rect.setFillColor(menubox_hover_color);
+
+}
+
+void MenuBox::click() {
+	_state = ButtonState::Pressed;
+	_rect.setFillColor(menubox_press_color);
+	_clickTime = currentTime;
+}
+
+
+void MenuBox::cursorHover() {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
+		ElementGUI_hovered = this->shared_from_this();
+	}
+
+	if (_isOpen) {
+		for (auto& option : _options)
+			option->cursorHover();
+	}
+}
+
+void MenuBox::handleEvent(const sf::Event& event) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
+
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+			ElementGUI_pressed = this->shared_from_this();
+		}
+		else if (const auto* mbp = event.getIf < sf::Event::MouseButtonReleased > (); mbp && mbp->button == sf::Mouse::Button::Left) {
+			if (ElementGUI_pressed.get() == this) {
+				click();
+			}
+		}
+
+	}
+
+	if (_isOpen) {
+		for (auto& option : _options)
+			option->handleEvent(event);
+	}
+}
+
+void MenuBox::update() {
+
+	if (_state == ButtonState::Pressed) {
+		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
+			if (_onclick_func) {
+				_onclick_func();
+			}
+			ElementGUI_pressed = nullptr;
+			unclick();
+		}
+	}
+	else if (ElementGUI_hovered.get() == this) {
+		hover();
+	}
+	else
+		unclick();
+
+
+	for (auto& option : _options)
+		option->update();
+}
+
+void MenuBox::draw() {
+	window->draw(_rect);
+	window->draw(*_text);
+
+	if (_isOpen) {
+		for (auto& option : _options)
+			option->draw();
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////
+
+MainMenu::MainMenu() : ElementGUI() {
+	_rect = sf::RectangleShape(sf::Vector2f(window->getSize().x, menu_height));
+	_rect.setFillColor(menu_bar_color);
+	_rect.setPosition(sf::Vector2f(0,0));
+
+	_logo = std::make_shared<sf::Sprite>(*getTexture(L"tex\\logo\\small_logo.png")->_texture);
+
+	// FILE
+	std::shared_ptr<MenuBox> file = std::make_shared<MenuBox>(L"file");
+	file->_onclick_func = [this, file]() {
+		if (_open_menu_box != nullptr) {
+			_open_menu_box->_isOpen = false;
+		}
+			
+
+		_open_menu_box = file;
+		_open_menu_box->_isOpen = true;
+		};
+	_menu_boxes.push_back(file);
+
+	std::shared_ptr<OptionBox> file_new = std::make_shared<OptionBox>(L"new file");
+	file_new->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog>(L"new file", sf::Vector2i(200, 200)));
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
+	std::shared_ptr<OptionBox> file_save = std::make_shared<OptionBox>(L"save");
+
+	std::shared_ptr<OptionBox> file_saveAs = std::make_shared<OptionBox>(L"save as");
+	file_saveAs->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Save_Project>());
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
+
+	std::shared_ptr<OptionBox> file_load = std::make_shared<OptionBox>(L"load");
+	file_load->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Load_Project>());
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
+	std::shared_ptr<OptionBox> file_export = std::make_shared<OptionBox>(L"export");
+	file_export->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Export>());
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
+
+	std::shared_ptr<OptionBox> file_import = std::make_shared<OptionBox>(L"import");
+	file_import->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Import>());
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
+
+	file->addOption(file_new);
+	file->addOption(file_save);
+	file->addOption(file_saveAs);
+	file->addOption(file_load);
+	file->addOption(file_export);
+	file->addOption(file_import);
+
+	// EDIT
+	std::shared_ptr<MenuBox> edit = std::make_shared<MenuBox>(L"edit");
+	edit->_onclick_func = [this, edit]() {
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+
+		_open_menu_box = edit;
+		_open_menu_box->_isOpen = true;
+		};
+	_menu_boxes.push_back(edit);
+
+	std::shared_ptr<OptionBox> edit_undo = std::make_shared<OptionBox>(L"undo");
+	std::shared_ptr<OptionBox> edit_redo = std::make_shared<OptionBox>(L"redo");
+	std::shared_ptr<OptionBox> edit_cut = std::make_shared<OptionBox>(L"cut");
+	std::shared_ptr<OptionBox> edit_copy = std::make_shared<OptionBox>(L"copy");
+	std::shared_ptr<OptionBox> edit_paste = std::make_shared<OptionBox>(L"paste");
+	std::shared_ptr<OptionBox> edit_paste_as = std::make_shared<OptionBox>(L"paste as");
+
+	edit->addOption(edit_undo);
+	edit->addOption(edit_redo);
+	edit->addOption(edit_cut);
+	edit->addOption(edit_copy);
+	edit->addOption(edit_paste);
+	edit->addOption(edit_paste_as);
+
+	// IMAGE
+	std::shared_ptr<MenuBox> effects = std::make_shared<MenuBox>(L"effects");
+	effects->_onclick_func = [this, effects]() {
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+
+		_open_menu_box = effects;
+		_open_menu_box->_isOpen = true;
+		};
+	_menu_boxes.push_back(effects);
+
+	std::shared_ptr<OptionBox> effects_resize_scale = std::make_shared<OptionBox>(L"resize/scale");
+	std::shared_ptr<OptionBox> effects_trim = std::make_shared<OptionBox>(L"trim");
+	std::shared_ptr<OptionBox> effects_rotation = std::make_shared<OptionBox>(L"rotation");
+	effects_rotation->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Rotation>(getCurrentAnimation()->getLayers()));
+
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
+	std::shared_ptr<OptionBox> effects_brightness_contrast = std::make_shared<OptionBox>(L"brightness-contrast");
+	effects_brightness_contrast->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Brightness_Contrast>(getCurrentAnimation()->getLayers()));
+
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
+	std::shared_ptr<OptionBox> effects_saturation = std::make_shared<OptionBox>(L"saturation");
+	effects_saturation->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Saturation>(getCurrentAnimation()->getLayers()));
+
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
+
+
+	std::shared_ptr<OptionBox> effects_hue = std::make_shared<OptionBox>(L"hue");
+	std::shared_ptr<OptionBox> effects_gray = std::make_shared<OptionBox>(L"grayscale mode");
+
+	std::shared_ptr<OptionBox> effects_sepia = std::make_shared<OptionBox>(L"sepia");
+	effects_sepia->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Sepia>(getCurrentAnimation()->getLayers()));
+
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
+
+	std::shared_ptr<OptionBox> effects_outline = std::make_shared<OptionBox>(L"outline");
+	effects_outline->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Outline>(getCurrentAnimation()->getLayers()));
+
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_open_menu_box = nullptr;
+		};
+
+	std::shared_ptr<OptionBox> effects_invert = std::make_shared<OptionBox>(L"invert colors");
+
+	effects->addOption(effects_resize_scale);
+	effects->addOption(effects_trim);
+	effects->addOption(effects_rotation);
+	effects->addOption(effects_brightness_contrast);
+	effects->addOption(effects_saturation);
+	effects->addOption(effects_hue);
+	effects->addOption(effects_gray);
+	effects->addOption(effects_sepia);
+	effects->addOption(effects_outline);
+	effects->addOption(effects_invert);
+
+	// SELECT
+	std::shared_ptr<MenuBox> select = std::make_shared<MenuBox>(L"select");
+	select->_onclick_func = [this, select]() {
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+
+		_open_menu_box = select;
+		_open_menu_box->_isOpen = true;
+		};
+	_menu_boxes.push_back(select);
+
+	std::shared_ptr<OptionBox> select_all = std::make_shared<OptionBox>(L"select all");
+	std::shared_ptr<OptionBox> select_none = std::make_shared<OptionBox>(L"none");
+	std::shared_ptr<OptionBox> select_invert = std::make_shared<OptionBox>(L"invert selection");
+	std::shared_ptr<OptionBox> select_align = std::make_shared<OptionBox>(L"align center");
+
+
+	select->addOption(select_all);
+	select->addOption(select_none);
+	select_none->_onclick_func = [this]() {
+		lasso->unselect();
+		};
+	select->addOption(select_invert);
+	select->addOption(select_align);
+	select_align->_onclick_func = [this]() {
+		
+		if (lasso->_image == nullptr)
+			return;
+
+		sf::Vector2i newPosition(getCurrentAnimation()->getCurrentLayer()->_image.getSize()/2u);
+		lasso->_outlineOffset = newPosition - lasso->_rect.size/2;
+		lasso->generateRect();
+
+		};
+
+
+	// SETTINGS
+	std::shared_ptr<MenuBox> settings = std::make_shared<MenuBox>(L"settings");
+	settings->_onclick_func = [this, settings]() {
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+
+		_open_menu_box = settings;
+		_open_menu_box->_isOpen = true;
+		};
+	_menu_boxes.push_back(settings);
+
+
+	// POSITIONING
+	_open_menu_box = nullptr;
+	setPosition(sf::Vector2i(0, 0));
+}
+
+MainMenu::~MainMenu() {
+
+}
+
+sf::Vector2f MainMenu::getSize() {
+	return _rect.getSize();
+}
+
+void MainMenu::setPosition(sf::Vector2i position) {
+	_rect.setPosition(sf::Vector2f(position));
+	_logo->setPosition(sf::Vector2f(0, (menu_height - _logo->getGlobalBounds().size.y) / 2.0f));
+
+	int x = 24;
+	int y = position.y + menu_padding;
+	for (int i = 0; i < _menu_boxes.size(); i++) {
+		_menu_boxes[i]->setPosition(sf::Vector2i(position.x + x, y));
+		x = x + _menu_boxes[i]->_rect.getSize().x;
+	}
+}
+
+void MainMenu::saveProject(const std::filesystem::path& path) {
+	
+	class Saver {
+	public:
+		std::ostream& file;
+
+		Saver(std::ostream& file) : file(file) { }
+
+		void save_string(const std::string& str) {
+			uint16_t str_len = static_cast <uint16_t>(str.size());
+			file.write(reinterpret_cast<const char*>(&str_len), sizeof(str_len));
+			file.write(str.data(), str_len);
+		}
+
+		void save_wstring(const std::wstring& wstr) {
+			uint16_t wstr_len = static_cast<uint16_t>(wstr.size());
+			file.write(reinterpret_cast<const char*>(&wstr_len), sizeof(wstr_len));
+			file.write(reinterpret_cast<const char*>(wstr.data()), wstr_len * sizeof(wchar_t));
+		}
+
+		void save_uint32(uint32_t val) {
+			file.write(reinterpret_cast<const char*>(&val), sizeof(uint32_t));
+		}
+
+		void save_image(const sf::Image& image) {
+
+			sf::Vector2u size = image.getSize();
+
+			save_uint32(size.x);
+			save_uint32(size.y);
+
+			auto encoded = image.saveToMemory("png");
+			if (!encoded) {
+				uint32_t zero = 0;
+				save_uint32(zero);
+				return;
+			}
+
+			const auto& data = *encoded;
+			save_uint32(static_cast<uint32_t>(data.size()));
+			file.write(reinterpret_cast<const char*>(data.data()), data.size());
+		}
+	};
+
+	std::ofstream file(path, std::ios::binary);
+	Saver saver(file);
+
+	saver.save_uint32(getAnimationsCount());
+	for (auto& anim : animations) {
+		saver.save_uint32(anim->getFramesCount());
+		for(auto& frame : anim->getFrames()) {
+			saver.save_uint32(frame->getLayersCount());
+			for (auto& layer : frame->getLayers()) {
+				saver.save_wstring(layer->_name);
+				saver.save_image(layer->_image);
+			}
+		}
+	}
+
+	file.close();
+	
+	std::wcout << L"save " << path.wstring() << "\n";
+}
+
+void MainMenu::loadProject(const std::filesystem::path& path) {
+	std::wcout << "load " << path.wstring() << "\n";
+}
+
+void MainMenu::exportAsFile(const std::filesystem::path& path) {
+
+	sf::RenderTexture tex;
+	sf::Vector2f layerSize;
+	layerSize.x = getCurrentAnimation()->getFrame(0)->getLayers()[0]->_image.getSize().x;
+	layerSize.y = getCurrentAnimation()->getFrame(0)->getLayers()[0]->_image.getSize().y;
+
+	tex.resize(sf::Vector2u(layerSize.x * getCurrentAnimation()->getFramesCount(), layerSize.y));
+	tex.clear(sf::Color::Transparent);
+
+	sf::Vector2f offset(0, 0);
+
+	for (int a = 0; a < animations.size(); a++) {
+		for (int f = 0; f < getAnimation(a)->getFramesCount(); f += 1) {
+			for (int l = 0; l < getAnimation(a)->getLayersCount(); l += 1) {
+				sf::Texture t;
+				t.setSmooth(false);
+				t.setRepeated(false);
+				t.loadFromImage(getAnimation(a)->getFrame(f)->getLayers()[l]->_image);
+
+				sf::Sprite spr(t);
+				spr.setPosition(offset);
+				tex.draw(spr);
+			}
+			offset.x += layerSize.x;
+		}
+		offset.y += layerSize.y;
+	}
+	
+
+	
+	sf::Image finalImage = tex.getTexture().copyToImage();
+	finalImage.flipVertically();
+	std::wstring filename = path.wstring();
+	finalImage.saveToFile(filename);
+
+	std::wcout << "export " << filename << "\n";
+}
+
+void MainMenu::importAnimation(std::vector<std::shared_ptr<Animation>> newAnimations) {
+
+	animations = newAnimations;
+
+	canvas->resize(sf::Vector2i(getAnimation(0)->getLayer(0)->_image.getSize()));
+	layers_dialog->loadLayersFromCurrentFrame();
+}
+
+void MainMenu::cursorHover() {
+
+	if (!dialogs.empty())
+		return;
+
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
+  		ElementGUI_hovered = this->shared_from_this();
+	}
+
+	for (auto& mb : _menu_boxes)
+		mb->cursorHover();
+
+}
+
+void MainMenu::handleEvent(const sf::Event& event) {
+
+	if (!dialogs.empty())
+		return;
+
+	bool clicked_in_menu = false;
+
+	for (auto& mb : _menu_boxes) {
+		mb->handleEvent(event);
+		if (ElementGUI_pressed == mb) {
+			clicked_in_menu = true;
+		}
+
+		if (mb->_isOpen) {
+			for (auto& op : mb->_options) {
+				op->handleEvent(event);
+				if (ElementGUI_pressed == op) {
+					clicked_in_menu = true;
+				}
+			}
+		}
+	}
+
+	
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+		if (!clicked_in_menu) {
+			if (_open_menu_box != nullptr)
+				_open_menu_box->_isOpen = false;
+			_open_menu_box = nullptr;
+		}
+	}
+}
+
+void MainMenu::update() {
+	for (auto& mb : _menu_boxes)
+		mb->update();
+}
+
+void MainMenu::draw() {
+	window->draw(_rect);
+	window->draw(*_logo);
+
+	if (_open_menu_box != nullptr) {
+		if (_open_menu_box->_options.size() > 0) {
+			sf::RectangleShape rect(sf::Vector2f(_open_menu_box->_options.front()->_rect.getSize().x, _open_menu_box->_options.size() * menu_height));
+			rect.setPosition(_open_menu_box->_options.front()->_rect.getPosition());
+			rect.setOutlineThickness(menuoptions_border_width);
+			rect.setOutlineColor(menuoptions_border_color);
+			window->draw(rect);
+		}
+	}
+
+	for (auto& mb : _menu_boxes)
+		mb->draw();
+}
+
+/////////////////////////////////////////////////////////////////////////
+
+std::shared_ptr<MainMenu> main_menu;
