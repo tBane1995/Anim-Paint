@@ -1,7 +1,7 @@
 #pragma once
 #include "Dialog.hpp"
 #include "Animation/Animation.hpp"
-#include "ElementGUI/TextInput.hpp"
+#include "ElementGUI/NumberInput.hpp"
 
 class Dialog_Load_SpriteSheet : public Dialog {
 public:
@@ -11,10 +11,10 @@ public:
 	sf::Texture _frameTexture;
 	sf::Time _lastFrameTime;
 
-	std::shared_ptr<TextInput> _widthOfFrame;
-	std::shared_ptr<TextInput> _heightOfFrame;
-	std::shared_ptr<TextInput> _animationsCount;
-	std::shared_ptr<TextInput> _frameCount;
+	std::shared_ptr<NumberInput> _widthOfFrame;
+	std::shared_ptr<NumberInput> _heightOfFrame;
+	std::shared_ptr<NumberInput> _animationsCount;
+	std::shared_ptr<NumberInput> _frameCount;
 
 	std::unique_ptr<sf::Text> _widthOfFrameText;
 	std::unique_ptr<sf::Text> _heightOfFrameText;

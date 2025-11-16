@@ -12,7 +12,9 @@ public:
 	~NumberInput();
 
 	bool dataIsCorrect();
+	bool isNumeric();
 	void deleteStartZeros();
+	int zerosOnStart();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

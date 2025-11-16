@@ -1,4 +1,4 @@
-#include "Dialogs/Dialog.hpp"
+﻿#include "Dialogs/Dialog.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
 #include "Cursor.hpp"
@@ -91,10 +91,33 @@ void Dialog::deactivateOnTabElement() {
 	}
 
 	std::shared_ptr<NumberInput> ni = std::dynamic_pointer_cast<NumberInput>(_onTabElements[_currentOnTabElement]);
-	if (ni != nullptr) {
+
+	if (ni) {
+		std::wstring text = ni->getText();
+
+		if (ni->dataIsCorrect()) {
+			ni->deleteStartZeros();
+			ni->_previousText = ni->_textStr;
+		}
+		else if (ni->isNumeric() && !text.empty() && text != L"-") {
+			ni->deleteStartZeros();
+
+			int value = std::stoi(ni->_textStr);
+			value = std::clamp(value, ni->_minValue, ni->_maxValue);
+
+			ni->_textStr = std::to_wstring(value);
+		}
+		else {
+			ni->_textStr = ni->_previousText;
+		}
+
+		ni->_cursorPosition = ni->_textStr.length();
+		ni->setText(ni->_textStr);
 		ni->_state = TextInputState::Idle;
 		return;
 	}
+
+	
 
 	std::shared_ptr<TextInput> ti = std::dynamic_pointer_cast<TextInput>(_onTabElements[_currentOnTabElement]);
 	if (ti != nullptr) {
@@ -166,6 +189,8 @@ void Dialog::handleEvent(const sf::Event& event) {
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		_is_moved = false;
+	}else if(const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Escape){
+		_state = DialogState::ToClose;
 	}else if (_onTabElements.size() > 0) {
 		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Tab) {
 

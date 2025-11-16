@@ -6,6 +6,7 @@
 
 NumberInput::NumberInput(sf::Vector2i size, int limitCharacters, int characterSize, int value, int minValue, int maxValue) : TextInput(size, limitCharacters, characterSize) {
 	_previousText = std::to_wstring(value);
+	setText(_previousText);
 	_minValue = minValue;
 	_maxValue = maxValue;
 }
@@ -29,12 +30,35 @@ bool NumberInput::dataIsCorrect() {
 	return true;
 }
 
-void NumberInput::deleteStartZeros() {
+bool NumberInput::isNumeric() {
 	std::wstring text = getText();
-	while (text.size() > 1 && text[0] == L'0') {
-		text.erase(0, 1);
+	for (wchar_t c : text) {
+		if (!(c == '-' || (c >= L'0' && c <= L'9'))) {
+			return false;
+		}
 	}
-	_textStr = text;
+	return true;
+}
+
+void NumberInput::deleteStartZeros() {
+	// Zostaw jedno "0", jeśli cały tekst to same zera
+	if (_textStr.size() == 0) return;
+	if (_textStr == L"0")     return;
+
+	while (_textStr.size() > 1 && _textStr[0] == L'0') {
+		_textStr.erase(0, 1);
+	}
+}
+
+int NumberInput::zerosOnStart() {
+	int count = 0;
+	for (wchar_t c : _textStr) {
+		if (c == L'0')
+			++count;
+		else
+			break;
+	}
+	return count;
 }
 
 void NumberInput::cursorHover() {
@@ -52,10 +76,7 @@ void NumberInput::handleEvent(const sf::Event& event) {
 		}
 		else {
 			_state = TextInputState::Idle;
-			(!dataIsCorrect()) ? _textStr = _previousText : _previousText = _textStr;
-			deleteStartZeros();
-			_cursorPosition = _textStr.length();
-			_text->setString(_textStr);
+			
 		}
 
 		return;
@@ -76,8 +97,16 @@ void NumberInput::handleEvent(const sf::Event& event) {
 			}
 			else if (kp->code == sf::Keyboard::Key::Enter) {
 
-				(!dataIsCorrect())? _textStr = _previousText : _previousText = _textStr;
-				deleteStartZeros();
+				if (dataIsCorrect()) {
+					deleteStartZeros();
+					_previousText = _textStr;
+				}
+				else if (isNumeric()) {
+					_textStr = std::to_wstring(std::clamp(std::stoi(_textStr), _minValue, _maxValue));
+				}
+				else {
+					_textStr = _previousText;
+				}
 				_cursorPosition = _textStr.length();
 				_text->setString(_textStr);
 				if (_onEnteredFunction) {
@@ -109,18 +138,31 @@ void NumberInput::handleEvent(const sf::Event& event) {
 				return;
 			}
 			else if (character >= 32) {
+				if (_textStr.size() >= _limitCharacters)
+					return;
+
 				std::wstring c;
 				c += character;
 				_textStr.insert(_cursorPosition, c);
 				_cursorPosition += 1;
+				
+				int zeros = zerosOnStart();
 
-				if (_textStr.size() > _limitCharacters) {
-					if(dataIsCorrect() && _textStr[0] == L'0')
-						_textStr.erase(0, 1);
-					_textStr.erase(_cursorPosition - 1, 1);
-					_cursorPosition -= 1;
+				if (zeros == _textStr.size()) {
+					_textStr = L"0";
+					_cursorPosition = 1;
+				}
+				else if (zeros > 0) {
+					deleteStartZeros();
+
+					_cursorPosition -= zeros;
+					if (_cursorPosition < 0)
+						_cursorPosition = 0;
 				}
 
+				if (_cursorPosition > _textStr.length())
+					_cursorPosition = _textStr.length();
+				
 				_text->setString(_textStr);
 
 				if (dataIsCorrect() && _onEditedFunction)

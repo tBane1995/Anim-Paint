@@ -211,17 +211,17 @@ Palette::Palette() : Dialog(L"Palette", sf::Vector2i(192 + 24 + 8, dialog_title_
 	_onTabElements.push_back(_green);
 	_onTabElements.push_back(_blue);
 
-	_red->_onClickedFunction = [this]() {activateOnTabElement(0); };
-	_green->_onClickedFunction = [this]() {activateOnTabElement(1); };
-	_blue->_onClickedFunction = [this]() {activateOnTabElement(2); };
+	_red->_onClickedFunction = [this]() {activateOnTabElement(0); loadColorFromRGBInputs(); };
+	_green->_onClickedFunction = [this]() {activateOnTabElement(1); loadColorFromRGBInputs(); };
+	_blue->_onClickedFunction = [this]() {activateOnTabElement(2); loadColorFromRGBInputs(); };
 
 	_red->_onEditedFunction = [this]() {loadColorFromRGBInputs();};
 	_green->_onEditedFunction = [this]() {loadColorFromRGBInputs(); };
 	_blue->_onEditedFunction = [this]() {loadColorFromRGBInputs(); };
 
-	_red->_onEnteredFunction = [this]() {activateOnTabElement(1); };
-	_green->_onEnteredFunction = [this]() {activateOnTabElement(2); };
-	_blue->_onEnteredFunction = [this]() {activateOnTabElement(0); };
+	_red->_onEnteredFunction = [this]() {activateOnTabElement(1); loadColorFromRGBInputs(); };
+	_green->_onEnteredFunction = [this]() {activateOnTabElement(2); loadColorFromRGBInputs(); };
+	_blue->_onEnteredFunction = [this]() {activateOnTabElement(0); loadColorFromRGBInputs(); };
 
 	setPosition(_position);
 

@@ -13,7 +13,7 @@ public:
 	bool _isSelected;
 
 	Button();
-	~Button();
+	virtual ~Button();
 
 	virtual sf::Vector2i getSize();
 	void select();

@@ -150,7 +150,8 @@ void Animation::lastLayer() {
 
 std::vector<std::shared_ptr<Animation>> animations;
 int currentAnimationId;
-
+int maxAnimationsCount = 16;
+int maxFramesCount = 16;
 std::shared_ptr<Animation> getCurrentAnimation() {
 	return animations[currentAnimationId];
 }

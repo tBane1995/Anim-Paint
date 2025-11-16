@@ -6,7 +6,7 @@ class ElementGUI : public std::enable_shared_from_this<ElementGUI> {
 public:
 
 	ElementGUI();
-	~ElementGUI();
+	virtual ~ElementGUI();
 
 	virtual void cursorHover();
 	virtual void handleEvent(const sf::Event& event);

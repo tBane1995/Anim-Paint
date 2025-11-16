@@ -14,24 +14,33 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 	
 	std::wcout << L"Import Animation: " << path << L"\n";
 
+	spriteSheet = sf::Image();
+
 	if (!spriteSheet.loadFromFile(path)) {
 		std::wcout << L"cant open SpriteSheet\n";
-		return;
+	}
+
+	if (spriteSheet.getSize().x == 0 || spriteSheet.getSize().y == 0) {
+		std::wcout << L"SpriteSheet has invalid size\n";
+		spriteSheet = sf::Image();
+	}
+
+	if (spriteSheet.getSize().x > canvas->_maxSize.x*maxFramesCount || spriteSheet.getSize().y > canvas->_maxSize.y * maxAnimationsCount) {
+		std::wcout << L"SpriteSheet is too big (max " + std::to_wstring(canvas->_maxSize.x * maxFramesCount) + L"x" + std::to_wstring(canvas->_maxSize.y * maxAnimationsCount) + L")\n";
+		spriteSheet = sf::Image();
 	}
 
 	sf::Vector2i size(64, basic_text_rect_height);
-	_widthOfFrame = std::make_shared<TextInput>(size, 3, basic_text_size);
-	_heightOfFrame = std::make_shared<TextInput>(size, 3, basic_text_size);
-	_animationsCount = std::make_shared<TextInput>(size, 3, basic_text_size);
-	_frameCount = std::make_shared<TextInput>(size, 3, basic_text_size);
+	_widthOfFrame = std::make_shared<NumberInput>(size, 3, basic_text_size, 64, canvas->_minSize.x, canvas->_maxSize.x);
+	_heightOfFrame = std::make_shared<NumberInput>(size, 3, basic_text_size, 64, canvas->_minSize.y, canvas->_maxSize.y);
+	_animationsCount = std::make_shared<NumberInput>(size, 3, basic_text_size, 0, 0, maxAnimationsCount);
+	_frameCount = std::make_shared<NumberInput>(size, 3, basic_text_size, 0, 0, maxFramesCount);
 
-	_widthOfFrameText =std::make_unique<sf::Text>(basicFont, "Width", basic_text_size);
+	_widthOfFrameText = std::make_unique<sf::Text>(basicFont, "Width", basic_text_size);
 	_heightOfFrameText = std::make_unique<sf::Text>(basicFont, "Height", basic_text_size);
 	_animationsCountText = std::make_unique<sf::Text>(basicFont, "Animations", basic_text_size);
 	_frameCountText = std::make_unique<sf::Text>(basicFont, "Frames", basic_text_size);
 
-	_widthOfFrame->setText(std::to_wstring(64/*canvas->_minSize.x*/));
-	_heightOfFrame->setText(std::to_wstring(64/*canvas->_minSize.y */));
 	int animationsCount = std::ceil(float(spriteSheet.getSize().y) / std::stoi(_heightOfFrame->getText()));
 	int framesCount = std::ceil(float(spriteSheet.getSize().x) / std::stoi(_widthOfFrame->getText()));
 	_animationsCount->setText(std::to_wstring(animationsCount));
@@ -39,69 +48,68 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 
 	_widthOfFrame->_onEditedFunction = [this]() {
 
-		if (datasIsCorrect()) {
-			sf::Vector2i size;
-			size.x = std::stoi(_widthOfFrame->getText());
-			size.y = std::stoi(_heightOfFrame->getText());
+		sf::Vector2i size;
+		size.x = std::stoi(_widthOfFrame->getText());
+		size.y = std::stoi(_heightOfFrame->getText());
 
-			int animationsCount = std::ceil(float(spriteSheet.getSize().y) / float(size.y));
-			int framesCount = std::ceil(float(spriteSheet.getSize().x) / float(size.x));
-			_animationsCount->setText(std::to_wstring(animationsCount));
-			_frameCount->setText(std::to_wstring(framesCount));
+		int animationsCount = std::ceil(float(spriteSheet.getSize().y) / float(size.y));
+		int framesCount = std::ceil(float(spriteSheet.getSize().x) / float(size.x));
+		_animationsCount->setText(std::to_wstring(animationsCount));
+		_frameCount->setText(std::to_wstring(framesCount));
 
+		if (datasIsCorrect())
 			loadAnimationsByFrameSize(size);
-		}
 		};
 
 	_heightOfFrame->_onEditedFunction = [this]() {
 
-		if (datasIsCorrect()) {
-			sf::Vector2i size;
-			size.x = std::stoi(_widthOfFrame->getText());
-			size.y = std::stoi(_heightOfFrame->getText());
+		sf::Vector2i size;
+		size.x = std::stoi(_widthOfFrame->getText());
+		size.y = std::stoi(_heightOfFrame->getText());
 
-			int aniamtionsCount = std::ceil(float(spriteSheet.getSize().y) / float(size.y));
-			int framesCount = std::ceil(float(spriteSheet.getSize().x) / float(size.x));
-			_animationsCount->setText(std::to_wstring(aniamtionsCount));
-			_frameCount->setText(std::to_wstring(framesCount));
+		int aniamtionsCount = std::ceil(float(spriteSheet.getSize().y) / float(size.y));
+		int framesCount = std::ceil(float(spriteSheet.getSize().x) / float(size.x));
+		_animationsCount->setText(std::to_wstring(aniamtionsCount));
+		_frameCount->setText(std::to_wstring(framesCount));
 
+		if (datasIsCorrect())
 			loadAnimationsByFrameSize(size);
-		}
-		};
+		
+	};
 
 	_animationsCount->_onEditedFunction = [this]() {
 
-		if (datasIsCorrect()) {
-			sf::Vector2i size;
-			size.x = std::ceil(float(spriteSheet.getSize().x) / std::stof(_frameCount->getText()));
-			size.y = std::ceil(float(spriteSheet.getSize().y) / std::stof(_animationsCount->getText()));
-			_widthOfFrame->setText(std::to_wstring(size.x));
-			_heightOfFrame->setText(std::to_wstring(size.y));
+		sf::Vector2i size;
+		size.x = std::ceil(float(spriteSheet.getSize().x) / std::stof(_frameCount->getText()));
+		size.y = std::ceil(float(spriteSheet.getSize().y) / std::stof(_animationsCount->getText()));
+		_widthOfFrame->setText(std::to_wstring(size.x));
+		_heightOfFrame->setText(std::to_wstring(size.y));
+
+		if (datasIsCorrect())
 			loadAnimationsByFrameSize(size);
-		}
-		};
+	};
 
 	_frameCount->_onEditedFunction = [this]() {
 
-		if (datasIsCorrect()) {
-			sf::Vector2i size;
-			size.x = std::ceil(float(spriteSheet.getSize().x) / std::stof(_frameCount->getText()));
-			size.y = std::ceil(float(spriteSheet.getSize().y) / std::stof(_animationsCount->getText()));
-			_widthOfFrame->setText(std::to_wstring(size.x));
-			_heightOfFrame->setText(std::to_wstring(size.y));
+		sf::Vector2i size;
+		size.x = std::ceil(float(spriteSheet.getSize().x) / std::stof(_frameCount->getText()));
+		size.y = std::ceil(float(spriteSheet.getSize().y) / std::stof(_animationsCount->getText()));
+		_widthOfFrame->setText(std::to_wstring(size.x));
+		_heightOfFrame->setText(std::to_wstring(size.y));
+		
+		if (datasIsCorrect())
 			loadAnimationsByFrameSize(size);
-		}
-		};
+	};
 
-	_widthOfFrame->_onClickedFunction = [this]() { activateOnTabElement(0); };
-	_heightOfFrame->_onClickedFunction = [this]() { activateOnTabElement(1); };
-	_animationsCount->_onClickedFunction = [this]() { activateOnTabElement(2); };
-	_frameCount->_onClickedFunction = [this]() { activateOnTabElement(3); };
+	_widthOfFrame->_onClickedFunction = [this]() { _widthOfFrame->_onEditedFunction();  activateOnTabElement(0); };
+	_heightOfFrame->_onClickedFunction = [this]() { _heightOfFrame->_onEditedFunction(); activateOnTabElement(1); };
+	_animationsCount->_onClickedFunction = [this]() { _animationsCount->_onEditedFunction(); activateOnTabElement(2); };
+	_frameCount->_onClickedFunction = [this]() { _frameCount->_onEditedFunction(); activateOnTabElement(3); };
 
-	_widthOfFrame->_onEnteredFunction = [this]() { activateOnTabElement(4); };
-	_heightOfFrame->_onEnteredFunction = [this]() { activateOnTabElement(4); };
-	_animationsCount->_onEnteredFunction = [this]() { activateOnTabElement(4); };
-	_frameCount->_onEnteredFunction = [this]() { activateOnTabElement(4); };
+	_widthOfFrame->_onEnteredFunction = [this]() { _widthOfFrame->_onEditedFunction(); activateOnTabElement(4); };
+	_heightOfFrame->_onEnteredFunction = [this]() { _heightOfFrame->_onEditedFunction(); activateOnTabElement(4); };
+	_animationsCount->_onEnteredFunction = [this]() { _animationsCount->_onEditedFunction(); activateOnTabElement(4); };
+	_frameCount->_onEnteredFunction = [this]() { _frameCount->_onEditedFunction(); activateOnTabElement(4); };
 
 	
 	sf::Vector2i btnSize(64, basic_text_rect_height + dialog_padding);
@@ -110,14 +118,16 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 	_confirmBtn = std::make_shared<ColoredButtonWithText>(L"Confirm", btnSize);
 	_confirmBtn->setColors(dark_button_select_color, dark_button_normal_color, dark_button_hover_color, dark_button_press_color);
 	_confirmBtn->_onclick_func = [this]() {
-		sf::Vector2i size;
-		size.x = std::stoi(_widthOfFrame->getText());
-		size.y = std::stoi(_heightOfFrame->getText());
-		loadAnimationsByFrameSize(size);
-		main_menu->importAnimation(_animations);
-		animations_dialog->updateText();
-		frames_dialog->updateText();
-		_state = DialogState::ToClose;
+		if (datasIsCorrect()) {
+			sf::Vector2i size;
+			size.x = std::stoi(_widthOfFrame->getText());
+			size.y = std::stoi(_heightOfFrame->getText());
+			loadAnimationsByFrameSize(size);
+			main_menu->importAnimation(_animations);
+			animations_dialog->updateText();
+			frames_dialog->updateText();
+			_state = DialogState::ToClose;
+		}
 		};
 
 	_cancelBtn = std::make_shared<ColoredButtonWithText>(L"Cancel", btnSize);
@@ -211,27 +221,11 @@ void Dialog_Load_SpriteSheet::loadAnimationsByFrameSize(sf::Vector2i frameSize) 
 }
 
 bool Dialog_Load_SpriteSheet::datasIsCorrect() {
-	if (_widthOfFrame->getText().empty())
-		return false;
-	if (_heightOfFrame->getText().empty())
-		return false;
-	if (_animationsCount->getText().empty())
-		return false;
-	if (_frameCount->getText().empty())
-		return false;
-	if (std::stoi(_widthOfFrame->getText()) < canvas->_minSize.x)
-		return false;
-	if (std::stoi(_heightOfFrame->getText()) < canvas->_minSize.y)
-		return false;
-	if (std::stoi(_widthOfFrame->getText()) > canvas->_maxSize.x)
-		return false;
-	if (std::stoi(_heightOfFrame->getText()) > canvas->_maxSize.y)
-		return false;
-	if (std::stoi(_animationsCount->getText()) <= 0)
-		return false;
-	if (std::stoi(_frameCount->getText()) <= 0)
-		return false;
-	return true;
+	
+	return (this->_widthOfFrame->dataIsCorrect() &&
+		this->_heightOfFrame->dataIsCorrect() &&
+		this->_animationsCount->dataIsCorrect() &&
+		this->_frameCount->dataIsCorrect());
 }
 
 void Dialog_Load_SpriteSheet::loadFrame() {

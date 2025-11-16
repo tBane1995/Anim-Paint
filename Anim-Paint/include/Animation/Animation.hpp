@@ -38,6 +38,8 @@ public:
 
 extern std::vector<std::shared_ptr<Animation>> animations;
 extern int currentAnimationId;
+extern int maxAnimationsCount;
+extern int maxFramesCount;
 
 std::shared_ptr<Animation> getCurrentAnimation();
 int getCurrentAnimationId();
