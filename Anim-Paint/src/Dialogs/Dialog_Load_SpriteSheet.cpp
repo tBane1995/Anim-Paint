@@ -101,15 +101,15 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 			loadAnimationsByFrameSize(size);
 	};
 
-	_widthOfFrame->_onClickedFunction = [this]() { _widthOfFrame->_onEditedFunction();  activateOnTabElement(0); };
-	_heightOfFrame->_onClickedFunction = [this]() { _heightOfFrame->_onEditedFunction(); activateOnTabElement(1); };
-	_animationsCount->_onClickedFunction = [this]() { _animationsCount->_onEditedFunction(); activateOnTabElement(2); };
-	_frameCount->_onClickedFunction = [this]() { _frameCount->_onEditedFunction(); activateOnTabElement(3); };
+	_widthOfFrame->_onClickedFunction = [this]() { activateOnTabElement(0); };
+	_heightOfFrame->_onClickedFunction = [this]() { activateOnTabElement(1); };
+	_animationsCount->_onClickedFunction = [this]() { activateOnTabElement(2); };
+	_frameCount->_onClickedFunction = [this]() { activateOnTabElement(3); };
 
-	_widthOfFrame->_onEnteredFunction = [this]() { _widthOfFrame->_onEditedFunction(); activateOnTabElement(4); };
-	_heightOfFrame->_onEnteredFunction = [this]() { _heightOfFrame->_onEditedFunction(); activateOnTabElement(4); };
-	_animationsCount->_onEnteredFunction = [this]() { _animationsCount->_onEditedFunction(); activateOnTabElement(4); };
-	_frameCount->_onEnteredFunction = [this]() { _frameCount->_onEditedFunction(); activateOnTabElement(4); };
+	_widthOfFrame->_onEnteredFunction = [this]() { activateOnTabElement(4); };
+	_heightOfFrame->_onEnteredFunction = [this]() { activateOnTabElement(4); };
+	_animationsCount->_onEnteredFunction = [this]() { activateOnTabElement(4); };
+	_frameCount->_onEnteredFunction = [this]() { activateOnTabElement(4); };
 
 	
 	sf::Vector2i btnSize(64, basic_text_rect_height + dialog_padding);
@@ -117,6 +117,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 
 	_confirmBtn = std::make_shared<ColoredButtonWithText>(L"Confirm", btnSize);
 	_confirmBtn->setColors(dark_button_select_color, dark_button_normal_color, dark_button_hover_color, dark_button_press_color);
+	_confirmBtn->activateByEnter(true);
 	_confirmBtn->_onclick_func = [this]() {
 		if (datasIsCorrect()) {
 			sf::Vector2i size;
@@ -132,6 +133,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 
 	_cancelBtn = std::make_shared<ColoredButtonWithText>(L"Cancel", btnSize);
 	_cancelBtn->setColors(dark_button_select_color, dark_button_normal_color, dark_button_hover_color, dark_button_press_color);
+	_cancelBtn->activateByEnter(true);
 	_cancelBtn->_onclick_func = [this]() {
 		_state = DialogState::ToClose;
 		};
@@ -257,6 +259,28 @@ void Dialog_Load_SpriteSheet::cursorHover() {
 
 void Dialog_Load_SpriteSheet::handleEvent(const sf::Event& event) {
 	Dialog::handleEvent(event);
+
+	// Handle Enter key for NumberInput elements
+	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Enter) {
+		if (_currentOnTabElement >= 0 && _currentOnTabElement < (int)_onTabElements.size()) {
+			if (auto ni = std::dynamic_pointer_cast<NumberInput>(_onTabElements[_currentOnTabElement])) {
+				ni->handleEvent(event);
+				return;
+			}
+		}
+		
+	}
+
+	// Handle TextEntered event for Enter key (in case of IME input)
+	if (const auto* te = event.getIf<sf::Event::TextEntered>(); te && (te->unicode == 13 || te->unicode == 10)) {
+		if (_currentOnTabElement >= 0 && _currentOnTabElement < (int)_onTabElements.size()) {
+			if (auto ni = std::dynamic_pointer_cast<NumberInput>(_onTabElements[_currentOnTabElement])) {
+				ni->handleEvent(event);
+				return;
+			}
+		}
+		
+	}
 
 	_widthOfFrame->handleEvent(event);
 	_heightOfFrame->handleEvent(event);

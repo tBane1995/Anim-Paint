@@ -30,6 +30,9 @@ void Button::unselect() {
 	_isSelected = false;
 }
 
+void Button::activateByEnter(bool activate) {
+	_activatedByEnter = activate;
+}
 
 void Button::setPosition(sf::Vector2i position) {
 	_rect.position = position;
@@ -113,13 +116,21 @@ void NormalButton::handleEvent(const sf::Event& event) {
 		
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left)	{		
 			ElementGUI_pressed = this->shared_from_this();
+			return;
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			if (ElementGUI_pressed.get() == this) {
 				click();
+				return;
 			}
 		}
+	}
 
+	if (_isSelected && _activatedByEnter) {
+		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Enter) {
+			click();
+			return;
+		}
 	}
 }
 
@@ -258,13 +269,22 @@ void ColoredButtonWithText::handleEvent(const sf::Event& event) {
 	if (_rect.contains(cursor->_worldMousePosition)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this->shared_from_this();
+			return;
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			if (ElementGUI_pressed.get() == this) {
 				click();
+				return;
 			}
 		}
+	}
 
+	if (_isSelected && _activatedByEnter) {
+		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Enter) {
+			ElementGUI_pressed = this->shared_from_this();
+			click();
+			return;
+		}
 	}
 }
 

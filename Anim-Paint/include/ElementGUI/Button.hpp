@@ -11,6 +11,7 @@ public:
 	//sf::RectangleShape _rect;
 	sf::IntRect _rect;
 	bool _isSelected;
+	bool _activatedByEnter;
 
 	Button();
 	virtual ~Button();
@@ -18,6 +19,7 @@ public:
 	virtual sf::Vector2i getSize();
 	void select();
 	void unselect();
+	void activateByEnter(bool activate);
 	virtual void setPosition(sf::Vector2i position);
 	virtual void cursorHover();
 	virtual void handleEvent(const sf::Event& event);

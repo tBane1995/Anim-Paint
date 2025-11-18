@@ -11,6 +11,7 @@ public:
 	~Animation();
 
 	void addEmptyFrame(sf::Vector2i size);
+	void addFrame(std::shared_ptr<Frame> frame);
 
 	std::shared_ptr<Frame> getCurrentFrame();
 	std::vector<std::shared_ptr<Layer>>& getLayers();
@@ -34,6 +35,12 @@ public:
 	void prevFrame();
 	void firstLayer();
 	void lastLayer();
+
+	void addFrame();
+	void subFrame();
+	void moveBackFrame();
+	void moveNextFrame();
+
 };
 
 extern std::vector<std::shared_ptr<Animation>> animations;
@@ -49,3 +56,7 @@ void nextAnimation();
 void prevAnimation();
 void firstAnimation();
 void lastAnimation();
+void addAnimation();
+void deleteAnimation();
+void moveBackAnimation();
+void moveNextAnimation();

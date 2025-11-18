@@ -542,6 +542,139 @@ void MainMenu::saveProject(const std::filesystem::path& path) {
 
 void MainMenu::loadProject(const std::filesystem::path& path) {
 	std::wcout << "load " << path.wstring() << "\n";
+
+	class Reader {
+		std::istream& is;
+
+	public:
+		Reader(std::istream& is) : is(is) {}
+
+		std::string read_string() {
+			uint16_t len;
+			is.read(reinterpret_cast<char*>(&len), sizeof(uint16_t));
+
+			std::string str(len, '\0'); // utwórz pusty string o długości len
+			is.read(&str[0], len);      // bezpieczne wczytanie danych do stringa
+			return str;
+		}
+
+		std::wstring read_wstring() {
+			uint16_t len;
+			is.read(reinterpret_cast<char*>(&len), sizeof(uint16_t));
+			std::wstring wstr(len, L'\0'); // utwórz pusty wstring o długości len
+			is.read(reinterpret_cast<char*>(&wstr[0]), len * sizeof(wchar_t)); // bezpieczne wczytanie danych do wstringa
+			std::wcout << L"read_wstring: len=" << len << L" wstr=\"" << wstr << L"\"\n";
+			return wstr;
+		}
+
+		uint32_t read_uint32() {
+			uint32_t val;
+			is.read(reinterpret_cast<char*>(&val), sizeof(uint32_t));
+			return val;
+		}
+
+		sf::Image read_image() {
+			sf::Image image;
+
+			uint32_t width = read_uint32();
+			uint32_t height = read_uint32();
+			uint32_t data_size = read_uint32();
+
+			std::wcout << L"read_image: width=" << width
+				<< L" height=" << height
+				<< L" data_size=" << data_size << L"\n";
+
+			// plik może zawierać mniej danych niż zadeklarowano w data_size
+			std::streampos cur = is.tellg();
+			is.seekg(0, std::ios::end);
+			std::streampos end = is.tellg();
+			is.seekg(cur);
+
+			const std::uint64_t remaining =
+				static_cast<std::uint64_t>(end - cur);
+
+			if (data_size == 0) {
+				std::wcout << L"read_image: empty image (data_size == 0)\n";
+				return image; // pusty
+			}
+
+			if (data_size > remaining) {
+				std::wcout << L"read_image: data_size > remaining bytes in file! "
+					<< L"data_size=" << data_size
+					<< L" remaining=" << remaining << L"\n";
+				// plik jest uszkodzony / format nie pasuje do tego loadera
+				return sf::Image();
+			}
+
+			std::vector<std::uint8_t> data(data_size);
+			is.read(reinterpret_cast<char*>(data.data()),
+				static_cast<std::streamsize>(data_size));
+
+			if (!is) {
+				std::wcout << L"read_image: read() failed mimo że remaining wystarczało\n";
+				return sf::Image();
+			}
+
+			if (!image.loadFromMemory(data.data(), data.size())) {
+				std::wcout << L"read_image: loadFromMemory() failed\n";
+				return sf::Image();
+			}
+
+			auto loadedSize = image.getSize();
+			if (loadedSize.x != width || loadedSize.y != height) {
+				std::wcout << L"read_image: size mismatch, saved="
+					<< width << L"x" << height
+					<< L" loaded=" << loadedSize.x
+					<< L"x" << loadedSize.y << L"\n";
+			}
+
+			return image;
+		}
+	};
+
+	std::ifstream file(path, std::ios::binary);
+	Reader reader(file);
+	/*
+	saver.save_uint32(getAnimationsCount());
+	for (auto& anim : animations) {
+		saver.save_uint32(anim->getFramesCount());
+		for(auto& frame : anim->getFrames()) {
+			saver.save_uint32(frame->getLayersCount());
+			for (auto& layer : frame->getLayers()) {
+				saver.save_wstring(layer->_name);
+				saver.save_image(layer->_image);
+			}
+		}
+	}
+	*/
+
+	uint32_t animations_count = reader.read_uint32();
+	std::vector<std::shared_ptr<Animation>> new_animations;
+	std::wcout << L"loadProject: animations_count=" << animations_count << L"\n";
+	for (uint32_t a = 0; a < animations_count; a++) {
+
+		std::shared_ptr<Animation> animation = std::make_shared<Animation>();
+		uint32_t frames_count = reader.read_uint32();
+		std::wcout << L" loadProject: animation " << a << L" frames_count=" << frames_count << L"\n";
+		for (uint32_t f = 0; f < frames_count; f++) {
+			
+			std::shared_ptr<Frame> frame = std::make_shared<Frame>();
+			uint32_t layers_count = reader.read_uint32();
+			std::wcout << L"  loadProject: frame " << f << L" layers_count=" << layers_count << L"\n";
+			for (uint32_t l = 0; l < layers_count; l++) {
+
+				std::wstring layer_name = reader.read_wstring();
+				sf::Image image = reader.read_image();
+				std::shared_ptr<Layer> layer = std::make_shared<Layer>(layer_name, image);
+				frame->addLayer(layer);
+			}
+			animation->addFrame(frame);
+		}
+		new_animations.push_back(animation);
+	}
+
+	animations = new_animations;
+	file.close();
 }
 
 void MainMenu::exportAsFile(const std::filesystem::path& path) {

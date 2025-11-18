@@ -1,6 +1,11 @@
 #include "Dialogs/Dialog_Load_Project.hpp"
 #include "MainMenu.hpp"
 #include <iostream>
+#include "Animation/Animation.hpp"
+#include "Canvas.hpp"
+#include "Dialogs/AnimationsDialog.hpp"
+#include "Dialogs/FramesDialog.hpp"
+#include "Dialogs/LayersDialog.hpp"
 
 Dialog_Load_Project::Dialog_Load_Project() : FileDialog(L"Load Project", L"load") {
 
@@ -10,6 +15,17 @@ Dialog_Load_Project::Dialog_Load_Project() : FileDialog(L"Load Project", L"load"
 		//std::wcout << L"Load: " << fullPath << L"\n";
 		main_menu->loadProject(fullPath);
 		_state = DialogState::ToClose;
+
+		firstAnimation();
+		getCurrentAnimation()->firstFrame();
+		getCurrentAnimation()->firstLayer();
+
+		sf::Vector2i newCanvasSize = sf::Vector2i(getCurrentAnimation()->getFrame(0)->getLayers()[0]->_image.getSize());
+		canvas->resize(newCanvasSize);
+
+		animations_dialog->updateText();
+		frames_dialog->updateText();
+		layers_dialog->loadLayersFromCurrentFrame();
 		};
 
 	_onTabElements.push_back(_filenameInput);

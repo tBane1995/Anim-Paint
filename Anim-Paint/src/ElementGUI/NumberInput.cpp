@@ -75,8 +75,23 @@ void NumberInput::handleEvent(const sf::Event& event) {
 				_onClickedFunction();
 		}
 		else {
+
+			if (_state == TextInputState::TextEntered) {
+				if (dataIsCorrect()) {
+					deleteStartZeros();
+					_previousText = _textStr;
+				}
+				else if (!_textStr.empty() && isNumeric()) {
+					_textStr = std::to_wstring(std::clamp(std::stoi(_textStr), _minValue, _maxValue));
+				}
+				else {
+					_textStr = _previousText;
+				}
+
+				setText(_textStr);
+			}
+
 			_state = TextInputState::Idle;
-			
 		}
 
 		return;
@@ -101,14 +116,14 @@ void NumberInput::handleEvent(const sf::Event& event) {
 					deleteStartZeros();
 					_previousText = _textStr;
 				}
-				else if (isNumeric()) {
+				else if (!_textStr.empty() && isNumeric()) {
 					_textStr = std::to_wstring(std::clamp(std::stoi(_textStr), _minValue, _maxValue));
 				}
 				else {
 					_textStr = _previousText;
 				}
 				_cursorPosition = _textStr.length();
-				_text->setString(_textStr);
+				setText(_textStr);
 				if (_onEnteredFunction) {
 					_onEnteredFunction();
 				}

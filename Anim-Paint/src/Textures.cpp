@@ -73,6 +73,17 @@ void loadTextures() {
 	loadTexture(L"tex\\frames\\last.png");
 	loadTexture(L"tex\\frames\\last_hover.png");
 
+	loadTexture(L"tex\\frames\\add_frame.png");
+	loadTexture(L"tex\\frames\\add_frame_hover.png");
+
+	loadTexture(L"tex\\frames\\sub_frame.png");
+	loadTexture(L"tex\\frames\\sub_frame_hover.png");
+
+	loadTexture(L"tex\\frames\\move_next.png");
+	loadTexture(L"tex\\frames\\move_next_hover.png");
+
+	loadTexture(L"tex\\frames\\move_back.png");
+	loadTexture(L"tex\\frames\\move_back_hover.png");
 
 	// dialog - layers
 	loadTexture(L"tex\\layers\\visible.png");

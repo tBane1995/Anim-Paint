@@ -306,9 +306,10 @@ void Palette::handleEvent(const sf::Event& event) {
 		if (_currentOnTabElement >= 0 && _currentOnTabElement < (int)_onTabElements.size()) {
 			if (auto ni = std::dynamic_pointer_cast<NumberInput>(_onTabElements[_currentOnTabElement])) {
 				ni->handleEvent(event);
+				return;
 			}
 		}
-		return;
+		
 	}
 
 	// Handle TextEntered event for Enter key (in case of IME input)
@@ -316,9 +317,10 @@ void Palette::handleEvent(const sf::Event& event) {
 		if (_currentOnTabElement >= 0 && _currentOnTabElement < (int)_onTabElements.size()) {
 			if (auto ni = std::dynamic_pointer_cast<NumberInput>(_onTabElements[_currentOnTabElement])) {
 				ni->handleEvent(event);
+				return;
 			}
 		}
-		return;
+		
 	}
 
 	_red->handleEvent(event);

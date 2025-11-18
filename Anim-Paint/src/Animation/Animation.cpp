@@ -1,5 +1,6 @@
 ﻿#include "Animation/Animation.hpp"
 #include <iostream>
+#include "Canvas.hpp"
 
 Animation::Animation() {
 
@@ -26,6 +27,10 @@ void Animation::addEmptyFrame(sf::Vector2i size) {
 	//std::wcout << "added Empty Frame\n";
 	//std::wcout << L"frames: " << animation->getFrames().size() << L"\n";
 	//std::wcout << L"layers: " << animation->getLayers().size() << L"\n";
+}
+
+void Animation::addFrame(std::shared_ptr<Frame> frame) {
+	_frames.push_back(frame);
 }
 
 std::shared_ptr<Frame> Animation::getCurrentFrame() {
@@ -119,21 +124,16 @@ void Animation::firstFrame() {
 }
 
 void Animation::lastFrame() {
-	_currentFrame = _frames.size() - 1;
+	_currentFrame = getFramesCount() - 1;
 }
 
 void Animation::nextFrame() {
-	_currentFrame += 1;
-
-	if (_currentFrame >= _frames.size())
-		_currentFrame = 0;
+	_currentFrame = (_currentFrame + 1) % getFramesCount();
 }
 
 void Animation::prevFrame() {
-	_currentFrame -= 1;
 
-	if (_currentFrame < 0)
-		_currentFrame = _frames.size() - 1;
+	_currentFrame = (_currentFrame - 1 + getFramesCount()) % getFramesCount();
 }
 
 void Animation::firstLayer() {
@@ -148,10 +148,42 @@ void Animation::lastLayer() {
 	_currentLayer = getCurrentFrame()->_layers.size() - 1;
 }
 
+void Animation::addFrame() {
+	std::shared_ptr<Frame> newFrame = std::make_shared<Frame>();
+	newFrame->addEmptyLayer();
+	_frames.insert(_frames.begin() + getCurrentFrameID() + 1, newFrame);
+}
+
+void Animation::subFrame() {
+	if(getFramesCount() > 1)
+		_frames.erase(_frames.begin() + getCurrentFrameID());
+}
+
+void Animation::moveBackFrame() {
+	std::shared_ptr<Frame> frame = getCurrentFrame();
+	_frames.erase(_frames.begin() + getCurrentFrameID());
+
+	int nextPos = (getCurrentFrameID() - 1 + getFramesCount()) % getFramesCount();
+	_frames.insert(_frames.begin() + nextPos, frame);
+}
+
+void Animation::moveNextFrame() {
+	std::shared_ptr<Frame> frame = getCurrentFrame();
+	_frames.erase(_frames.begin() + getCurrentFrameID());
+
+	int nextPos = (getCurrentFrameID() + 1) % getFramesCount();
+	_frames.insert(_frames.begin() + nextPos, frame);
+}
+
+////////////////////////////////////////////////////////////////////////
+
 std::vector<std::shared_ptr<Animation>> animations;
 int currentAnimationId;
 int maxAnimationsCount = 16;
 int maxFramesCount = 16;
+
+////////////////////////////////////////////////////////////////////////
+
 std::shared_ptr<Animation> getCurrentAnimation() {
 	return animations[currentAnimationId];
 }
@@ -169,19 +201,12 @@ std::shared_ptr<Animation> getAnimation(int id) {
 }
 
 void nextAnimation() {
-
-	currentAnimationId += 1;
-	if (currentAnimationId >= animations.size()) {
-		currentAnimationId = 0;
-	}
+	currentAnimationId = (currentAnimationId + 1) % getAnimationsCount();
 }
 
 void prevAnimation() {
+	currentAnimationId = (currentAnimationId - 1 + getAnimationsCount()) % getAnimationsCount();
 
-	currentAnimationId -= 1;
-	if (currentAnimationId < 0) {
-		currentAnimationId = animations.size() - 1;
-	}
 }
 
 void firstAnimation() {
@@ -191,5 +216,33 @@ void firstAnimation() {
 
 void lastAnimation() {
 
-	currentAnimationId = animations.size() - 1;
+	currentAnimationId = getAnimationsCount() - 1;
 }
+
+void addAnimation() {
+	std::shared_ptr<Animation> newAnim = std::make_shared<Animation>();
+	newAnim->addEmptyFrame(canvas->_size);
+	animations.insert(animations.begin() + currentAnimationId + 1, newAnim);
+}
+
+void deleteAnimation() {
+	if(getAnimationsCount() > 1)
+		animations.erase(animations.begin() + currentAnimationId);
+}
+
+void moveBackAnimation() {
+	std::shared_ptr<Animation> anim = getAnimation(currentAnimationId);
+	animations.erase(animations.begin() + currentAnimationId);
+
+	int nextPos = (currentAnimationId - 1 + getAnimationsCount()) % getAnimationsCount();
+	animations.insert(animations.begin() + nextPos, anim);
+}
+
+void moveNextAnimation() {
+	std::shared_ptr<Animation> anim = getAnimation(currentAnimationId);
+	animations.erase(animations.begin() + currentAnimationId);
+
+	int nextPos = (currentAnimationId + 1) % getAnimationsCount();
+	animations.insert(animations.begin() + nextPos, anim);
+}
+
