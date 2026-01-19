@@ -16,6 +16,7 @@
 #include "Dialogs/Dialog_Saturation.hpp"
 #include "Dialogs/Dialog_Sepia.hpp"
 #include "Dialogs/Dialog_Outline.hpp"
+#include "Dialogs/Dialog_Resize.hpp"
 #include "Dialogs/FramesDialog.hpp"
 #include "Dialogs/LayersDialog.hpp"
 #include "Animation/Animation.hpp"
@@ -401,6 +402,16 @@ MainMenu::MainMenu() : ElementGUI() {
 		_open_menu_box = nullptr;
 		};
 
+	std::shared_ptr<OptionBox> effects_resize = std::make_shared<OptionBox>(L"resize");
+	effects_resize->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Resize>(getCurrentAnimation()->getLayers()));
+
+		if (_open_menu_box != nullptr)
+			_open_menu_box->_isOpen = false;
+		_state = MainMenuStates::Closing;
+		_open_menu_box = nullptr;
+		};
+
 	std::shared_ptr<OptionBox> effects_invert = std::make_shared<OptionBox>(L"invert colors");
 
 	effects->addOption(effects_resize_scale);
@@ -411,6 +422,7 @@ MainMenu::MainMenu() : ElementGUI() {
 	effects->addOption(effects_gray);
 	effects->addOption(effects_sepia);
 	effects->addOption(effects_outline);
+	effects->addOption(effects_resize);
 	effects->addOption(effects_invert);
 
 	// SELECT
