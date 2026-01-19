@@ -15,9 +15,33 @@ Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialo
 
 	_width_input = std::make_shared<NumberInput>(sf::Vector2i(64, basic_text_rect_height), 3, basic_text_size, canvas->_size.x, canvas->_minSize.x, canvas->_maxSize.x);
 	_height_input = std::make_shared<NumberInput>(sf::Vector2i(64, basic_text_rect_height), 3, basic_text_size, canvas->_size.y, canvas->_minSize.y, canvas->_maxSize.y);
-	
 	_width_percent_input = std::make_shared<NumberInput>(sf::Vector2i(64, basic_text_rect_height), 3, basic_text_size, 100, 25, 400);
 	_height_percent_input = std::make_shared<NumberInput>(sf::Vector2i(64, basic_text_rect_height), 3, basic_text_size, 100, 25, 400);
+
+	_width_input->_onEditedFunction = [this]() {
+		int width = _width_input->getValue();
+		_width_percent_input->setValue(int((float(width) / float(canvas->_size.x)) * 100.0f));
+		setTheFilter();
+		};
+
+	_height_input->_onEditedFunction = [this]() {
+		int height = _height_input->getValue();
+		_height_percent_input->setValue(int((float(height) / float(canvas->_size.y)) * 100.0f));
+		setTheFilter();
+		};
+
+	_width_percent_input->_onEditedFunction = [this]() {
+		int width_percent = _width_percent_input->getValue();
+		_width_input->setValue(int((float(width_percent) / 100.0f) * float(canvas->_size.x)));
+		setTheFilter();
+		};
+
+	_height_percent_input->_onEditedFunction = [this]() {
+		int height_percent = _height_percent_input->getValue();
+		_height_input->setValue(int((float(height_percent) / 100.0f) * float(canvas->_size.y)));
+		setTheFilter();
+		};
+
 
 	_width_text = std::make_unique<sf::Text>(basicFont, "Width (px)", basic_text_size);
 	_height_text = std::make_unique<sf::Text>(basicFont, "Height (px)", basic_text_size);
@@ -28,7 +52,10 @@ Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialo
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
-		//_outline_slider->setValue(1);
+		_width_input->setValue(canvas->_size.x);
+		_height_input->setValue(canvas->_size.y);
+		_width_percent_input->setValue(100);
+		_height_percent_input->setValue(100);
 		setTheFilter();
 		};
 
@@ -49,7 +76,10 @@ Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialo
 
 Dialog_Resize::~Dialog_Resize() {
 	if (Dialog_Resize::_state == ResizeState::Idle) {
-		//_outline_slider->setValue(0);
+		_width_input->setValue(canvas->_size.x);
+		_height_input->setValue(canvas->_size.y);
+		_width_percent_input->setValue(100);
+		_height_percent_input->setValue(100);
 		setTheFilter();
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
@@ -105,7 +135,7 @@ void Dialog_Resize::setTheFilter() {
 
 	for (auto& org : _original_layers) {
 		_edited_layers.push_back(std::make_shared<Layer>(org));
-		//set_outline(_edited_layers.back()->_image, float(_outline_slider->getValue()), toolbar->_second_color->_color, toolbar->_first_color->_color);
+		set_resize(_edited_layers.back()->_image, _width_input->getValue(), _height_input->getValue());
 	}
 
 	// TO-DO
@@ -142,12 +172,6 @@ void Dialog_Resize::handleEvent(const sf::Event& event) {
 
 void Dialog_Resize::update() {
 	Dialog::update();
-
-	//_outline_slider->update();
-
-	//if (_outline_slider->_state == SliderState::Changed) {
-	//	setTheFilter();
-	//}
 
 	_width_input->update();
 	_height_input->update();

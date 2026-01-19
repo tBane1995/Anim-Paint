@@ -61,6 +61,22 @@ int NumberInput::zerosOnStart() {
 	return count;
 }
 
+void NumberInput::setValue(int value) {
+	_textStr = std::to_wstring(value);
+	_previousText = _textStr;
+	_cursorPosition = _textStr.length();
+	setText(_textStr);
+}
+
+int NumberInput::getValue() {
+	if (dataIsCorrect()) {
+		return std::stoi(_textStr);
+	}
+	else {
+		return std::stoi(_previousText);
+	}
+}
+
 void NumberInput::cursorHover() {
 	TextInput::cursorHover();
 }

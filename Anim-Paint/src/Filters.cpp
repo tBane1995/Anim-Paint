@@ -258,6 +258,25 @@ std::string outline_shader_source = R"(
     }
 )";
 
+std::string resize_shader_source = R"(
+    uniform sampler2D texture;
+    uniform vec2 originalSize;
+    uniform vec2 targetSize;
+
+    void main() {
+        vec2 uv = gl_TexCoord[0].xy;
+
+        vec2 scale = originalSize / targetSize;
+
+        vec2 centeredUV = uv - vec2(0.5);
+        vec2 scaledUV = centeredUV * scale;
+        vec2 finalUV = scaledUV + vec2(0.5);
+
+        gl_FragColor = texture2D(texture, finalUV);
+    }
+)";
+
+
 void set_rotation(sf::Image& image, float angle, bool set_smooth) {
 
     angle = angle * 3.14159265f / 180.f;
@@ -380,6 +399,27 @@ void set_outline(sf::Image& image, float width, sf::Color backgroundColor, sf::C
     sh.setUniform("threshold", 0.02f);
     sh.setUniform("backgroundColor", sf::Glsl::Vec4(float(backgroundColor.r)/255.0f, float(backgroundColor.g)/255.0f, float(backgroundColor.b)/255.0f, float(backgroundColor.a)/255.0f));
     sh.setUniform("outlineColor", sf::Glsl::Vec4(float(outlineColor.r)/255.0f, float(outlineColor.g)/255.0f, float(outlineColor.b)/255.0f, float(outlineColor.a)/255.0f));
+
+    sf::Sprite spr(tex);
+    rtex.clear(sf::Color::Transparent);
+    rtex.draw(spr, &sh);
+    rtex.display();
+
+    image = rtex.getTexture().copyToImage();
+}
+
+void set_resize(sf::Image& image, float width, float height) {
+
+    sf::Texture tex;
+    tex.loadFromImage(image);
+
+    sf::RenderTexture rtex;
+    rtex.resize(tex.getSize());
+
+    sf::Shader sh;
+    sh.loadFromMemory(resize_shader_source, sf::Shader::Type::Fragment);
+    sh.setUniform("targetSize", sf::Vector2f(width, height));
+    sh.setUniform("originalSize", sf::Vector2f(tex.getSize()));
 
     sf::Sprite spr(tex);
     rtex.clear(sf::Color::Transparent);

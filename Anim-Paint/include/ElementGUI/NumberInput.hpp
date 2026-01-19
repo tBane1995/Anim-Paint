@@ -15,6 +15,8 @@ public:
 	bool isNumeric();
 	void deleteStartZeros();
 	int zerosOnStart();
+	void setValue(int value);
+	int getValue();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);
