@@ -80,7 +80,7 @@ int main() {
 	main_menu = std::make_shared<MainMenu>();
 
 	std::shared_ptr<Animation> animation = std::make_shared<Animation>();
-	animation->addEmptyFrame(sf::Vector2i(64,64));
+	animation->addEmptyFrame(sf::Vector2i(32,32));
 	animations.push_back(animation);
 
 	selection = new Selection();

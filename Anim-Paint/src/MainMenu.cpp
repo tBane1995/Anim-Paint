@@ -456,9 +456,10 @@ MainMenu::MainMenu() : ElementGUI() {
 		if (lasso->_image == nullptr)
 			return;
 
-		sf::Vector2i newPosition(canvas->_size);
-		lasso->_outlineOffset = newPosition - lasso->_rect.size/2;
+		lasso->_outlineOffset = (canvas->_size - lasso->_rect.size) / 2;
 		lasso->generateRect();
+		lasso->generateOutline();
+		lasso->generateMask();
 
 		};
 
