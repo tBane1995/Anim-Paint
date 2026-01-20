@@ -249,59 +249,39 @@ MainMenu::MainMenu() : ElementGUI() {
 	// FILE
 	std::shared_ptr<MenuBox> file = std::make_shared<MenuBox>(L"file");
 	file->_onclick_func = [this, file]() {
-		if (_open_menu_box != nullptr) {
-			_open_menu_box->_isOpen = false;
-		}
-			
-		_state = MainMenuStates::Opened;
-		_open_menu_box = file;
-		_open_menu_box->_isOpen = true;
+		hideMenu();
+		openMenuBox(file);
 		};
 	_menu_boxes.push_back(file);
 
 	std::shared_ptr<OptionBox> file_new = std::make_shared<OptionBox>(L"new file");
 	file_new->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog>(L"new file", sf::Vector2i(200, 200)));
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-		_state = MainMenuStates::Closing;
-		_open_menu_box = nullptr;
+		hideMenu();
 		};
 	std::shared_ptr<OptionBox> file_save = std::make_shared<OptionBox>(L"save");
 
 	std::shared_ptr<OptionBox> file_saveAs = std::make_shared<OptionBox>(L"save as");
 	file_saveAs->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Save_Project>());
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-		_state = MainMenuStates::Closing;
-		_open_menu_box = nullptr;
+		hideMenu();
 		};
 
 	std::shared_ptr<OptionBox> file_load = std::make_shared<OptionBox>(L"load");
 	file_load->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Load_Project>());
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-		_state = MainMenuStates::Closing;
-		_open_menu_box = nullptr;
+		hideMenu();
 		};
 	std::shared_ptr<OptionBox> file_export = std::make_shared<OptionBox>(L"export");
 	file_export->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Export>());
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-		_state = MainMenuStates::Closing;
-		_open_menu_box = nullptr;
+		hideMenu();
 		};
 
 	std::shared_ptr<OptionBox> file_import = std::make_shared<OptionBox>(L"import");
 	file_import->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Import>());
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-		_state = MainMenuStates::Closing;
-		_open_menu_box = nullptr;
+		hideMenu();
 		};
 
 	file->addOption(file_new);
@@ -314,12 +294,8 @@ MainMenu::MainMenu() : ElementGUI() {
 	// EDIT
 	std::shared_ptr<MenuBox> edit = std::make_shared<MenuBox>(L"edit");
 	edit->_onclick_func = [this, edit]() {
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-
-		_state = MainMenuStates::Opened;
-		_open_menu_box = edit;
-		_open_menu_box->_isOpen = true;
+		hideMenu();
+		openMenuBox(edit);
 		};
 	_menu_boxes.push_back(edit);
 
@@ -337,15 +313,11 @@ MainMenu::MainMenu() : ElementGUI() {
 	edit->addOption(edit_paste);
 	edit->addOption(edit_paste_as);
 
-	// IMAGE
+	// EFFECTS
 	std::shared_ptr<MenuBox> effects = std::make_shared<MenuBox>(L"effects");
 	effects->_onclick_func = [this, effects]() {
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-
-		_state = MainMenuStates::Opened;
-		_open_menu_box = effects;
-		_open_menu_box->_isOpen = true;
+		hideMenu();
+		openMenuBox(effects);
 		};
 	_menu_boxes.push_back(effects);
 
@@ -353,29 +325,19 @@ MainMenu::MainMenu() : ElementGUI() {
 	std::shared_ptr<OptionBox> effects_rotation = std::make_shared<OptionBox>(L"rotation");
 	effects_rotation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Rotation>(getCurrentAnimation()->getLayers()));
-
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-		_state = MainMenuStates::Closing;
-		_open_menu_box = nullptr;
+		hideMenu();
 		};
+
 	std::shared_ptr<OptionBox> effects_brightness_contrast = std::make_shared<OptionBox>(L"brightness-contrast");
 	effects_brightness_contrast->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Brightness_Contrast>(getCurrentAnimation()->getLayers()));
-
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-		_state = MainMenuStates::Closing;
-		_open_menu_box = nullptr;
+		hideMenu();
 		};
+
 	std::shared_ptr<OptionBox> effects_saturation = std::make_shared<OptionBox>(L"saturation");
 	effects_saturation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Saturation>(getCurrentAnimation()->getLayers()));
-
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-		_state = MainMenuStates::Closing;
-		_open_menu_box = nullptr;
+		hideMenu();
 		};
 
 
@@ -385,31 +347,19 @@ MainMenu::MainMenu() : ElementGUI() {
 	std::shared_ptr<OptionBox> effects_sepia = std::make_shared<OptionBox>(L"sepia");
 	effects_sepia->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Sepia>(getCurrentAnimation()->getLayers()));
-
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-		_state = MainMenuStates::Closing;
-		_open_menu_box = nullptr;
+		hideMenu();
 		};
 
 	std::shared_ptr<OptionBox> effects_outline = std::make_shared<OptionBox>(L"outline");
 	effects_outline->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Outline>(getCurrentAnimation()->getLayers()));
-
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-		_state = MainMenuStates::Closing;
-		_open_menu_box = nullptr;
+		hideMenu();
 		};
 
 	std::shared_ptr<OptionBox> effects_resize = std::make_shared<OptionBox>(L"resize");
 	effects_resize->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Resize>(getCurrentAnimation()->getLayers()));
-
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-		_state = MainMenuStates::Closing;
-		_open_menu_box = nullptr;
+		hideMenu();
 		};
 
 	std::shared_ptr<OptionBox> effects_invert = std::make_shared<OptionBox>(L"invert colors");
@@ -428,12 +378,8 @@ MainMenu::MainMenu() : ElementGUI() {
 	// SELECT
 	std::shared_ptr<MenuBox> select = std::make_shared<MenuBox>(L"select");
 	select->_onclick_func = [this, select]() {
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-
-		_state = MainMenuStates::Opened;
-		_open_menu_box = select;
-		_open_menu_box->_isOpen = true;
+		hideMenu();
+		openMenuBox(select);
 		};
 	_menu_boxes.push_back(select);
 
@@ -467,11 +413,8 @@ MainMenu::MainMenu() : ElementGUI() {
 	// SETTINGS
 	std::shared_ptr<MenuBox> settings = std::make_shared<MenuBox>(L"settings");
 	settings->_onclick_func = [this, settings]() {
-		if (_open_menu_box != nullptr)
-			_open_menu_box->_isOpen = false;
-		_state = MainMenuStates::Opened;
-		_open_menu_box = settings;
-		_open_menu_box->_isOpen = true;
+		hideMenu();
+		openMenuBox(settings);
 		};
 	_menu_boxes.push_back(settings);
 
@@ -500,6 +443,20 @@ void MainMenu::setPosition(sf::Vector2i position) {
 		_menu_boxes[i]->setPosition(sf::Vector2i(position.x + x, y));
 		x = x + _menu_boxes[i]->_rect.getSize().x;
 	}
+}
+
+void MainMenu::hideMenu() {
+	if (_open_menu_box != nullptr)
+		_open_menu_box->_isOpen = false;
+
+	_state = MainMenuStates::Closing;
+	_open_menu_box = nullptr;
+}
+
+void MainMenu::openMenuBox(std::shared_ptr<MenuBox> menuBox) {
+	_state = MainMenuStates::Opened;
+	_open_menu_box = menuBox;
+	_open_menu_box->_isOpen = true;
 }
 
 void MainMenu::saveProject(const std::filesystem::path& path) {
@@ -779,10 +736,20 @@ void MainMenu::handleEvent(const sf::Event& event) {
 		}
 	}
 
+	if (_state == MainMenuStates::Opened) {
+		
+		std::shared_ptr<MenuBox> hoverBox = std::dynamic_pointer_cast<MenuBox>(ElementGUI_hovered);
+		if (hoverBox != nullptr && _open_menu_box != hoverBox) {
+			hideMenu();
+			openMenuBox(hoverBox);
+			return;
+		}
+	}
+
 	if (_state == MainMenuStates::Closing)
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			if (!clicked_in_menu) {
-				_state = MainMenuStates::Closed;
+				hideMenu();
 				return;
 			}
 
@@ -792,10 +759,7 @@ void MainMenu::handleEvent(const sf::Event& event) {
 	if (_state == MainMenuStates::Opened) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			if (!clicked_in_menu) {
-				if (_open_menu_box != nullptr)
-					_open_menu_box->_isOpen = false;
-				_state = MainMenuStates::Closing;
-				_open_menu_box = nullptr;
+				hideMenu();
 			}
 		}
 	}

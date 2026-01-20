@@ -68,6 +68,8 @@ public:
 
 	sf::Vector2f getSize();
 	void setPosition(sf::Vector2i position);
+	void hideMenu();
+	void openMenuBox(std::shared_ptr<MenuBox> menuBox);
 	void saveProject(const std::filesystem::path& path);
 	void loadProject(const std::filesystem::path& path);
 	void exportAsFile(const std::filesystem::path& path);
