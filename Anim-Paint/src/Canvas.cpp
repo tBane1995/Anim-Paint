@@ -640,6 +640,8 @@ void Canvas::handleEvent(const sf::Event& event) {
 		}
 	}
 
+	
+
 }
 
 float Canvas::clampAxisOverscroll(float v, float content, float viewport, float overscrollRatio) {

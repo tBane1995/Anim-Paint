@@ -110,11 +110,13 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 			loadAnimationsByFrameSize(size);
 	};
 
+	// clicked
 	_widthOfFrame->_onClickedFunction = [this]() { activateOnTabElement(0); };
 	_heightOfFrame->_onClickedFunction = [this]() { activateOnTabElement(1); };
 	_animationsCount->_onClickedFunction = [this]() { activateOnTabElement(2); };
 	_frameCount->_onClickedFunction = [this]() { activateOnTabElement(3); };
 
+	// pressed enter
 	_widthOfFrame->_onEnteredFunction = [this]() { activateOnTabElement(4); };
 	_heightOfFrame->_onEnteredFunction = [this]() { activateOnTabElement(4); };
 	_animationsCount->_onEnteredFunction = [this]() { activateOnTabElement(4); };
@@ -164,7 +166,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 	_onTabElements.push_back(_frameCount);
 	_onTabElements.push_back(_confirmBtn);
 	_onTabElements.push_back(_cancelBtn);
-	_currentOnTabElement = -1;;
+	_currentOnTabElement = -1;
 }
 
 Dialog_Load_SpriteSheet::~Dialog_Load_SpriteSheet() {

@@ -75,7 +75,7 @@ void Dialog::setPosition(sf::Vector2i position) {
 	_titleRect.position = _position;
 	_contentRect.position = _position + sf::Vector2i(dialog_border_width, dialog_border_width + _titleRect.size.y);
 
-	sf::Vector2f pos(sf::Vector2f(_position) + sf::Vector2f(dialog_border_width + (_titleRect.size.y - _titleText->getFont().getLineSpacing(dialog_title_font_size)) / 2.0f, dialog_border_width + (_titleRect.size.y - _titleText->getFont().getLineSpacing(dialog_title_font_size)) / 2.0f));
+	sf::Vector2f pos(sf::Vector2f(_position) + sf::Vector2f(dialog_border_width + 2 + (_titleRect.size.y - _titleText->getFont().getLineSpacing(dialog_title_font_size)) / 2.0f, dialog_border_width + (_titleRect.size.y - _titleText->getFont().getLineSpacing(dialog_title_font_size)) / 2.0f));
 	_titleText->setPosition(pos);
 
 	_closeBtn->setPosition(_position + sf::Vector2i(this->getSize().x - dialog_border_width - 32, dialog_border_width));
