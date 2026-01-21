@@ -165,7 +165,6 @@ int main() {
 
 			for (auto& dialog : dialogs) {
 				dialog->handleEvent(*event);
-				continue;
 			}
 
 			if (event->is<sf::Event::Resized>()) {
