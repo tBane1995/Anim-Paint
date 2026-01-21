@@ -83,6 +83,12 @@ sf::Color tools_button_press_border_color;
 sf::Color normal_text_color;
 int normal_text_font_size;
 
+// Text inputs
+sf::Color textinput_idle_color;
+sf::Color textinput_hover_color;
+sf::Color textinput_textentered_color;
+sf::Color textInput_incorrect_data_color;
+
 // canvas
 sf::Color canvas_color1;
 sf::Color canvas_color2;
@@ -176,6 +182,12 @@ void loadTheme() {
 	// normal text
 	normal_text_color = sf::Color(191, 191, 191);
 	normal_text_font_size = 17;
+
+	// Text inputs
+	textinput_idle_color = sf::Color(63, 63, 63);
+	textinput_hover_color = sf::Color(95, 95, 95);
+	textinput_textentered_color = sf::Color(95, 95, 95);
+	textInput_incorrect_data_color = sf::Color(127, 31, 31);
 
 	// canvas
 	canvas_color1 = sf::Color(63, 63, 63);

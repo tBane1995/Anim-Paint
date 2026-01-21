@@ -3,12 +3,13 @@
 #include "SFML//Graphics.hpp"
 #include <functional>
 
-enum class TextInputState { Idle, TextEntered };
+enum class TextInputState { Idle, Hover, TextEntered };
 
 class TextInput : public ElementGUI {
 public:
 
 	sf::IntRect _rect;
+
 	int _characterSize;
 	int _limitCharacters;
 	std::wstring _textStr;

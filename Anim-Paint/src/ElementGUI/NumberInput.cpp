@@ -213,7 +213,25 @@ void NumberInput::update() {
 void NumberInput::draw() {
 	// draw rect
 	sf::RectangleShape rect(sf::Vector2f(_rect.size));
-	rect.setFillColor((dataIsCorrect()) ? sf::Color(79, 79, 79) : sf::Color(127, 47, 47));
+
+	sf::Color rectColor;
+	switch (_state)
+	{
+	case TextInputState::Idle:
+		rectColor = textinput_idle_color;
+		break;
+	case TextInputState::Hover:
+		rectColor = textinput_hover_color;
+		break;
+	case TextInputState::TextEntered:
+		rectColor = textinput_textentered_color;
+		break;
+	default:
+		rectColor = textinput_idle_color;
+		break;
+	}
+
+	rect.setFillColor((dataIsCorrect()) ? rectColor : textInput_incorrect_data_color);
 	rect.setPosition(sf::Vector2f(_rect.position));
 	window->draw(rect);
 

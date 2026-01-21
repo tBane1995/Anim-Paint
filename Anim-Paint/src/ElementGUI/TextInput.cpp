@@ -145,12 +145,35 @@ void TextInput::handleEvent(const sf::Event& event) {
 
 void TextInput::update() {
 
+	if (_state == TextInputState::TextEntered) {
+
+	}
+	else if (ElementGUI_hovered.get() == this) {
+		_state = TextInputState::Hover;
+	}
+	else {
+		_state = TextInputState::Idle;
+	}
 }
 
 void TextInput::draw() {
 	// draw rect
 	sf::RectangleShape rect(sf::Vector2f(_rect.size));
-	rect.setFillColor(sf::Color(79, 79, 79));
+	switch (_state)
+	{
+	case TextInputState::Idle:
+		rect.setFillColor(textinput_idle_color);
+		break;
+	case TextInputState::Hover:
+		rect.setFillColor(textinput_hover_color);
+		break;
+	case TextInputState::TextEntered:
+		rect.setFillColor(textinput_textentered_color);
+		break;
+	default:
+		rect.setFillColor(textinput_idle_color);
+		break;
+	}
 	rect.setPosition(sf::Vector2f(_rect.position));
 	window->draw(rect);
 

@@ -83,6 +83,12 @@ extern sf::Color tools_button_press_border_color;
 extern sf::Color normal_text_color;
 extern int normal_text_font_size;
 
+// Text inputs
+extern sf::Color textinput_idle_color;
+extern sf::Color textinput_hover_color;
+extern sf::Color textinput_textentered_color;
+extern sf::Color textInput_incorrect_data_color;
+
 // canvas
 extern sf::Color canvas_color1;
 extern sf::Color canvas_color2;
