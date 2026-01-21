@@ -45,9 +45,6 @@ void LayerBox::cursorHover() {
 
 void LayerBox::handleEvent(const sf::Event& event) {
 
-	if (!dialogs.empty())
-		return;
-
 	_visibling->handleEvent(event);
 
 	if (ElementGUI_pressed != _visibling) {
@@ -149,6 +146,10 @@ void LayersDialog::cursorHover() {
 }
 
 void LayersDialog::handleEvent(const sf::Event& event) {
+
+	if (!dialogs.empty())
+		return;
+
 	Dialog::handleEvent(event);
 
 	for (auto& layerbox : layersBoxes) {
