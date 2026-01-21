@@ -397,10 +397,8 @@ MainMenu::MainMenu() : ElementGUI() {
 		};
 	select->addOption(select_invert);
 	select->addOption(select_align);
-	select_align->_onclick_func = [this]() {
-		_state = MainMenuStates::Closing;
-		if (lasso->_image == nullptr)
-			return;
+	select_align->_onclick_func = [this, select]() {
+		hideMenu();
 
 		lasso->_outlineOffset = (canvas->_size - lasso->_rect.size) / 2;
 		lasso->generateRect();
