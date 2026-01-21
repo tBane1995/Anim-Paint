@@ -427,6 +427,10 @@ MainMenu::~MainMenu() {
 
 }
 
+void MainMenu::resize(sf::Vector2i newSize) {
+	_rect.setSize(sf::Vector2f(newSize.x, menu_height));
+}
+
 sf::Vector2f MainMenu::getSize() {
 	return _rect.getSize();
 }

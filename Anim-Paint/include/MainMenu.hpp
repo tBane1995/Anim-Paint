@@ -67,6 +67,7 @@ public:
 	~MainMenu();
 
 	sf::Vector2f getSize();
+	void resize(sf::Vector2i newSize);
 	void setPosition(sf::Vector2i position);
 	void hideMenu();
 	void openMenuBox(std::shared_ptr<MenuBox> menuBox);

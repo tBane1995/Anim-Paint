@@ -169,10 +169,11 @@ int main() {
 
 			if (event->is<sf::Event::Resized>()) {
 				const sf::Event::Resized* resizeEvent = event->getIf<sf::Event::Resized>();
-				sf::Vector2f newSize(resizeEvent->size.x, resizeEvent->size.y);
+				sf::Vector2i newSize(resizeEvent->size.x, resizeEvent->size.y);
 				mainView.setSize(sf::Vector2f(newSize.x, newSize.y));
 				mainView.setCenter(sf::Vector2f(newSize.x / 2.0f, newSize.y / 2.0f));
 				window->setView(mainView);
+				main_menu->resize(newSize);
 			}
 
 			main_menu->handleEvent(*event);
