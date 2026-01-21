@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 project(Anim-Paint VERSION 1.0)
 
-add_executable(${PROJECT_NAME} Anim-Paint/src/main.cpp)
+add_executable(${PROJECT_NAME} 
+    Anim-Paint/src/main.cpp
+    Anim-Paint/ico/app.rc
+)
 
 # SOURCES FILES
 set(SOURCES

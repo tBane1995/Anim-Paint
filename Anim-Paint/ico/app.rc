@@ -1,0 +1,3 @@
+#include "ico.hpp"
+
+IDI_ICON1 ICON "Anim-Paint.ico"
