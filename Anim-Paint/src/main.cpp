@@ -42,6 +42,7 @@
 #include "Dialogs/Dialog_Sepia.hpp"
 
 #include "MainMenu.hpp"
+#include "BottomBar.hpp"
 
 #include "Tools/Selection.hpp"
 #include "Tools/Lasso.hpp"
@@ -79,7 +80,7 @@ int main() {
 
 	cursor = new Cursor();
 	main_menu = std::make_shared<MainMenu>();
-
+	
 	std::shared_ptr<Animation> animation = std::make_shared<Animation>();
 	animation->addEmptyFrame(sf::Vector2i(32,32));
 	animations.push_back(animation);
@@ -90,7 +91,7 @@ int main() {
 	toolbar = std::make_shared<Toolbar>();
 	createDialogs();
 	canvas = std::make_shared<Canvas>();
-
+	bottom_bar = std::make_shared<BottomBar>();
 	// FPS counter
 	sf::Clock fpsClock;
 	float fps = 0.0f;
@@ -157,6 +158,7 @@ int main() {
 		if (palette)
 			palette->update();
 		main_menu->update();
+		bottom_bar->update();
 
 		// handle events
 		while (const std::optional event = window->pollEvent()) {
@@ -206,6 +208,7 @@ int main() {
 			}
 
 			cursor->handleEvent(*event);
+			bottom_bar->handleEvent(*event);
 		}
 		
 		// update
@@ -222,6 +225,7 @@ int main() {
 		layers_dialog->draw();
 		animations_dialog->draw();
 
+		bottom_bar->draw();
 		main_menu->draw();
 
 		for (auto& dialog : dialogs)

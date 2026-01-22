@@ -44,6 +44,7 @@ set(SOURCES
     Anim-Paint/src/Dialogs/Dialog_Outline.cpp
     Anim-Paint/src/Dialogs/Dialog_Resize.cpp
     Anim-Paint/src/MainMenu.cpp
+    Anim-Paint/src/BottomBar.cpp
     Anim-Paint/src/Tools/Selection.cpp
     Anim-Paint/src/Tools/Lasso.cpp
     Anim-Paint/src/Tools/Brush.cpp
@@ -95,6 +96,7 @@ set(HEADERS
     Anim-Paint/include/Dialogs/Dialog_Outline.hpp
     Anim-Paint/include/Dialogs/Dialog_Resize.hpp
     Anim-Paint/include/MainMenu.hpp
+    Anim-Paint/include/BottomBar.hpp
     Anim-Paint/include/Tools/Selection.hpp
     Anim-Paint/include/Tools/Lasso.hpp
     Anim-Paint/include/Tools/Brush.hpp
