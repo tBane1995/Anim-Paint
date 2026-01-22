@@ -69,7 +69,8 @@ public:
 	sf::Vector2f getSize();
 	void resize(sf::Vector2i newSize);
 	void setPosition(sf::Vector2i position);
-	void hideMenu();
+	void hideMenu();	// hide menu - start closing animation - used when opening another menu
+	void closeMenu();	// immediately close menu - used when opening dialogs
 	void openMenuBox(std::shared_ptr<MenuBox> menuBox);
 	void saveProject(const std::filesystem::path& path);
 	void loadProject(const std::filesystem::path& path);

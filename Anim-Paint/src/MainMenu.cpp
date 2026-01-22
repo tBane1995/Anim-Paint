@@ -257,31 +257,31 @@ MainMenu::MainMenu() : ElementGUI() {
 	std::shared_ptr<OptionBox> file_new = std::make_shared<OptionBox>(L"new file");
 	file_new->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog>(L"new file", sf::Vector2i(200, 200)));
-		hideMenu();
+		closeMenu();
 		};
 	std::shared_ptr<OptionBox> file_save = std::make_shared<OptionBox>(L"save");
 
 	std::shared_ptr<OptionBox> file_saveAs = std::make_shared<OptionBox>(L"save as");
 	file_saveAs->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Save_Project>());
-		hideMenu();
+		closeMenu();
 		};
 
 	std::shared_ptr<OptionBox> file_load = std::make_shared<OptionBox>(L"load");
 	file_load->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Load_Project>());
-		hideMenu();
+		closeMenu();
 		};
 	std::shared_ptr<OptionBox> file_export = std::make_shared<OptionBox>(L"export");
 	file_export->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Export>());
-		hideMenu();
+		closeMenu();
 		};
 
 	std::shared_ptr<OptionBox> file_import = std::make_shared<OptionBox>(L"import");
 	file_import->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Import>());
-		hideMenu();
+		closeMenu();
 		};
 
 	file->addOption(file_new);
@@ -325,19 +325,19 @@ MainMenu::MainMenu() : ElementGUI() {
 	std::shared_ptr<OptionBox> effects_rotation = std::make_shared<OptionBox>(L"rotation");
 	effects_rotation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Rotation>(getCurrentAnimation()->getLayers()));
-		hideMenu();
+		closeMenu();
 		};
 
 	std::shared_ptr<OptionBox> effects_brightness_contrast = std::make_shared<OptionBox>(L"brightness-contrast");
 	effects_brightness_contrast->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Brightness_Contrast>(getCurrentAnimation()->getLayers()));
-		hideMenu();
+		closeMenu();
 		};
 
 	std::shared_ptr<OptionBox> effects_saturation = std::make_shared<OptionBox>(L"saturation");
 	effects_saturation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Saturation>(getCurrentAnimation()->getLayers()));
-		hideMenu();
+		closeMenu();
 		};
 
 
@@ -347,19 +347,19 @@ MainMenu::MainMenu() : ElementGUI() {
 	std::shared_ptr<OptionBox> effects_sepia = std::make_shared<OptionBox>(L"sepia");
 	effects_sepia->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Sepia>(getCurrentAnimation()->getLayers()));
-		hideMenu();
+		closeMenu();
 		};
 
 	std::shared_ptr<OptionBox> effects_outline = std::make_shared<OptionBox>(L"outline");
 	effects_outline->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Outline>(getCurrentAnimation()->getLayers()));
-		hideMenu();
+		closeMenu();
 		};
 
 	std::shared_ptr<OptionBox> effects_resize = std::make_shared<OptionBox>(L"resize");
 	effects_resize->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Resize>(getCurrentAnimation()->getLayers()));
-		hideMenu();
+		closeMenu();
 		};
 
 	std::shared_ptr<OptionBox> effects_invert = std::make_shared<OptionBox>(L"invert colors");
@@ -392,19 +392,17 @@ MainMenu::MainMenu() : ElementGUI() {
 	select->addOption(select_all);
 	select->addOption(select_none);
 	select_none->_onclick_func = [this]() {
-		hideMenu();
 		lasso->unselect();
+		closeMenu();
 		};
 	select->addOption(select_invert);
 	select->addOption(select_align);
 	select_align->_onclick_func = [this, select]() {
-		hideMenu();
-
 		lasso->_outlineOffset = (canvas->_size - lasso->_rect.size) / 2;
 		lasso->generateRect();
 		lasso->generateOutline();
 		lasso->generateMask();
-
+		closeMenu();
 		};
 
 
@@ -454,6 +452,15 @@ void MainMenu::hideMenu() {
 	_state = MainMenuStates::Closing;
 	_open_menu_box = nullptr;
 }
+
+void MainMenu::closeMenu() {
+	if (_open_menu_box != nullptr)
+		_open_menu_box->_isOpen = false;
+
+	_state = MainMenuStates::Closed;
+	_open_menu_box = nullptr;
+}
+
 
 void MainMenu::openMenuBox(std::shared_ptr<MenuBox> menuBox) {
 	_state = MainMenuStates::Opened;
