@@ -75,6 +75,7 @@ int main() {
 
 	window->setFramerateLimit(120);
 	window->setView(mainView);
+	window->setMinimumSize(sf::Vector2u(mainView.getSize().x, mainView.getSize().y));
 
 	cursor = new Cursor();
 	main_menu = std::make_shared<MainMenu>();
