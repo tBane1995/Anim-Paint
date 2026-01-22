@@ -392,7 +392,7 @@ MainMenu::MainMenu() : ElementGUI() {
 	select->addOption(select_all);
 	select->addOption(select_none);
 	select_none->_onclick_func = [this]() {
-		_state = MainMenuStates::Closing;
+		hideMenu();
 		lasso->unselect();
 		};
 	select->addOption(select_invert);
@@ -748,18 +748,31 @@ void MainMenu::handleEvent(const sf::Event& event) {
 		}
 	}
 
-	if (_state == MainMenuStates::Closing)
+	if (_state == MainMenuStates::Closing) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+			if (!clicked_in_menu) {
+				hideMenu();
+				return;
+			}
+		}
+
+		if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>(); mws && mws->delta != 0) {
 			if (!clicked_in_menu) {
 				hideMenu();
 				return;
 			}
 
 		}
-
+	}
 	
 	if (_state == MainMenuStates::Opened) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+			if (!clicked_in_menu) {
+				hideMenu();
+			}
+		}
+
+		if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>(); mws && mws->delta != 0) {
 			if (!clicked_in_menu) {
 				hideMenu();
 			}
@@ -769,6 +782,10 @@ void MainMenu::handleEvent(const sf::Event& event) {
 	
 
 	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+		_state = MainMenuStates::Closed;
+	}
+
+	if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>(); mws && mws->delta != 0) {
 		_state = MainMenuStates::Closed;
 	}
 		
