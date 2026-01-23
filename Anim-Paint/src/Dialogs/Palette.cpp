@@ -274,16 +274,6 @@ void Palette::setPosition(sf::Vector2i position) {
 	_b->setPosition(sf::Vector2f(_blue->_text->getPosition()) - sf::Vector2f(16, 0));
 }
 
-void Palette::clampPosition() {
-	sf::Vector2i paletteNewPos = palette->_position;
-	paletteNewPos.x = std::clamp(paletteNewPos.x, dialog_margin, int(mainView.getSize().x) - getSize().x - dialog_margin);
-	paletteNewPos.y = std::clamp(paletteNewPos.y,
-		getSize().y - int(main_menu->getSize().y) - toolbar->getSize().y - dialog_margin,
-		int(mainView.getSize().y) - getSize().y - bottom_bar->getSize().y - dialog_margin
-);
-	setPosition(paletteNewPos);
-}
-
 void Palette::cursorHover() {
 	if (!dialogs.empty())
 		return;

@@ -51,7 +51,6 @@ public:
 	void setColorInRGBInputs(sf::Color color);
 	void loadColorFromRGBInputs();
 	void setPosition(sf::Vector2i position);
-	void clampPosition();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

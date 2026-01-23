@@ -4,6 +4,9 @@
 #include "Cursor.hpp"
 #include "ElementGUI/TextInput.hpp"
 #include "ElementGUI/NumberInput.hpp"
+#include "MainMenu.hpp"
+#include "Tools/Toolbar.hpp"
+#include "Bottombar.hpp"
 
 Dialog::Dialog() : Dialog(L"Dialog", sf::Vector2i(128, 128)) {
 	
@@ -71,6 +74,7 @@ sf::Vector2i Dialog::getContentSize() {
 void Dialog::setPosition(sf::Vector2i position) {
 
 	_position = position;
+
 	_rect.position = _position;
 	_titleRect.position = _position;
 	_contentRect.position = _position + sf::Vector2i(dialog_border_width, dialog_border_width + _titleRect.size.y);
@@ -79,6 +83,16 @@ void Dialog::setPosition(sf::Vector2i position) {
 	_titleText->setPosition(pos);
 
 	_closeBtn->setPosition(_position + sf::Vector2i(this->getSize().x - dialog_border_width - 32, dialog_border_width));
+}
+
+void Dialog::clampPosition() {
+	sf::Vector2i newPos = _position;
+	newPos.x = std::clamp(newPos.x, dialog_margin, int(mainView.getSize().x) - getSize().x - dialog_margin);
+	newPos.y = std::clamp(newPos.y,
+		int(main_menu->getSize().y) + toolbar->getSize().y + dialog_margin,
+		int(mainView.getSize().y) - getSize().y - bottom_bar->getSize().y - dialog_margin
+	);
+	setPosition(newPos);
 }
 
 void Dialog::deactivateOnTabElement() {
@@ -204,6 +218,9 @@ void Dialog::handleEvent(const sf::Event& event) {
 void Dialog::update() {
 	if (_is_moved) {
 		setPosition(cursor->_worldMousePosition + _offset);
+	}
+	else {
+		clampPosition();
 	}
 
 	_closeBtn->update();

@@ -33,6 +33,7 @@ public:
 	sf::Vector2i getContentPosition();
 	sf::Vector2i getContentSize();
 	virtual void setPosition(sf::Vector2i position);
+	void clampPosition();
 	void deactivateOnTabElement();
 	void activateOnTabElement(int id);
 
