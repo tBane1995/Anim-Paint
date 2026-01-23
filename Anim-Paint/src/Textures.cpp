@@ -144,4 +144,10 @@ void loadTextures() {
 
 	loadTexture(L"tex\\tools\\btn_palette_colors.png");
 	loadTexture(L"tex\\tools\\btn_palette_colors_hover.png");
+
+	// bottom bar
+	loadTexture(L"tex\\bottom_bar\\cursor_position.png");
+	loadTexture(L"tex\\bottom_bar\\canvas_size.png");
+	loadTexture(L"tex\\bottom_bar\\selection_size.png");
+
 }

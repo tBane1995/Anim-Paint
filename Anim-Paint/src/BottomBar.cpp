@@ -6,7 +6,7 @@
 #include "Cursor.hpp"
 
 BottomBar::BottomBar() : ElementGUI() {
-	_rect = sf::IntRect(sf::Vector2i(0,mainView.getSize().y - menu_height), sf::Vector2i(256, menu_height));
+	_rect = sf::IntRect(sf::Vector2i(0,mainView.getSize().y - menu_height), sf::Vector2i(256+128, menu_height));
 	
 	_textCursorPosition = std::make_unique<sf::Text>(basicFont, L"0 x 0", menu_font_size);
 	_textCursorPosition->setPosition(sf::Vector2f(32, mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
@@ -14,8 +14,13 @@ BottomBar::BottomBar() : ElementGUI() {
 
 	std::wstring csize = std::to_wstring(canvas->_size.x) + L" x " + std::to_wstring(canvas->_size.y);
 	_textCanvasSize = std::make_unique<sf::Text>(basicFont, csize, menu_font_size);
-	_textCanvasSize->setPosition(sf::Vector2f(160, mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
+	_textCanvasSize->setPosition(sf::Vector2f(128 +32, mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
 	_textCanvasSize->setFillColor(normal_text_color);
+
+	std::wstring ssize = L"";
+	_textSelectionSize = std::make_unique<sf::Text>(basicFont, ssize, menu_font_size);
+	_textSelectionSize->setPosition(sf::Vector2f(256 + 32, mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
+	_textSelectionSize->setFillColor(normal_text_color);
 }
 
 BottomBar::~BottomBar() {
@@ -49,6 +54,14 @@ void BottomBar::handleEvent(const sf::Event& event) {
 		_textCanvasSize->setString(std::to_wstring(canvas->_size.x) + L" x " + std::to_wstring(canvas->_size.y));
 	}
 
+	if (lasso->_state != LassoState::None) {
+		std::wstring ssize = std::to_wstring(lasso->_rect.size.x) + L" x " + std::to_wstring(lasso->_rect.size.y);
+		_textSelectionSize->setString(ssize);
+	}
+	else {
+		_textSelectionSize->setString(L"");
+	}
+
 }
 
 void BottomBar::update() {
@@ -62,8 +75,21 @@ void BottomBar::draw() {
 	rect.setFillColor(tools_bar_color);
 	window->draw(rect);
 
+	sf::Sprite cursorPositionIcon(*getTexture(L"tex\\bottom_bar\\cursor_position.png")->_texture);
+	cursorPositionIcon.setPosition(sf::Vector2f(0, mainView.getSize().y - menu_height + (menu_height - cursorPositionIcon.getGlobalBounds().size.y) / 2));
+	window->draw(cursorPositionIcon);
+
 	window->draw(*_textCursorPosition);
+
+	sf::Sprite canvasSizeIcon(*getTexture(L"tex\\bottom_bar\\canvas_size.png")->_texture);
+	canvasSizeIcon.setPosition(sf::Vector2f(128, mainView.getSize().y - menu_height + (menu_height - canvasSizeIcon.getGlobalBounds().size.y) / 2));
+	window->draw(canvasSizeIcon);
 	window->draw(*_textCanvasSize);
+
+	sf::Sprite selectionSizeIcon(*getTexture(L"tex\\bottom_bar\\selection_size.png")->_texture);
+	selectionSizeIcon.setPosition(sf::Vector2f(256, mainView.getSize().y - menu_height + (menu_height - selectionSizeIcon.getGlobalBounds().size.y) / 2));
+	window->draw(selectionSizeIcon);
+	window->draw(*_textSelectionSize);
 
 
 }

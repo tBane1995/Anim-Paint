@@ -177,8 +177,7 @@ int main() {
 				dialog->handleEvent(*event);
 			}
 
-			if (const auto* resized = event->getIf<sf::Event::Resized>())
-			{
+			if (const auto* resized = event->getIf<sf::Event::Resized>()) {
 				sf::Vector2f newSize(resized->size);
 				mainView.setSize(newSize);
 				mainView.setCenter(newSize / 2.f);

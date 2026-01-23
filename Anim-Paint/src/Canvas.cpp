@@ -541,8 +541,10 @@ void Canvas::handleEvent(const sf::Event& event) {
 		}
 		else if (toolbar->_toolType == ToolType::Lasso) {
 			if (lasso->_state == LassoState::Selecting) {
-
-				lasso->_state = LassoState::Selected;
+				if(lasso->_rect.size.x == 0 || lasso->_rect.size.y == 0)
+					lasso->_state = LassoState::None;
+				else
+					lasso->_state = LassoState::Selected;
 			}
 			else if (lasso->_state == LassoState::Moving) {
 				lasso->_state = LassoState::Selected;
