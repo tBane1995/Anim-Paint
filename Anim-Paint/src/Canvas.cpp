@@ -79,7 +79,7 @@ Canvas::Canvas() : ElementGUI() {
 	float sides = std::max(_size.x, _size.y);
 	this->_zoom_delta = 16.0f;
 	this->_min_zoom = 0.125f;
-	this->_max_zoom = 0.5f;
+	this->_max_zoom = 1.0f;
 	this->_zoom = targetSize / (sides * 4.0f);
 
 	this->_size = sf::Vector2i(targetSize, targetSize);  
