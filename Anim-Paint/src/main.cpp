@@ -54,16 +54,23 @@ void createDialogs() {
 	
 	animations_dialog = std::make_shared<AnimationsDialog>(L"Animations",
 		sf::Vector2i(192, dialog_title_rect_height + 32 + 32 + dialog_padding * 2),
-		sf::Vector2i(window->getSize().x - 192 - dialog_margin, main_menu->getSize().y + toolbar->_rect.size.y + dialog_margin));
+		sf::Vector2i(mainView.getSize().x - 192 - dialog_margin, main_menu->getSize().y + toolbar->_rect.size.y + dialog_margin));
 
 	frames_dialog = std::make_shared<FramesDialog>(L"Frames",
 		sf::Vector2i(192, dialog_title_rect_height + 32 + 32 + dialog_padding * 2),
-		sf::Vector2i(window->getSize().x - 192 - dialog_margin, animations_dialog->getPosition().y + animations_dialog->getSize().y + dialog_margin));
+		sf::Vector2i(mainView.getSize().x - 192 - dialog_margin, animations_dialog->getPosition().y + animations_dialog->getSize().y + dialog_margin));
 
 	layers_dialog = std::make_shared<LayersDialog>(L"Layers", 
 		sf::Vector2i(160, dialog_title_rect_height + 4 * 32 + 32 + dialog_padding * 2),
-		sf::Vector2i(window->getSize().x - 160 - dialog_margin, frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin));
+		sf::Vector2i(mainView.getSize().x - 160 - dialog_margin, frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin));
 	
+}
+
+void resize() {
+	main_menu->resize(sf::Vector2i(mainView.getSize().x, main_menu->getSize().y));
+	frames_dialog->setPosition(sf::Vector2i(mainView.getSize().x - 192 - dialog_margin, main_menu->getSize().y + toolbar->_rect.size.y + dialog_margin));
+	animations_dialog->setPosition(sf::Vector2i(mainView.getSize().x - 192 - dialog_margin, frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin));
+	layers_dialog->setPosition(sf::Vector2i(mainView.getSize().x - 160 - dialog_margin, animations_dialog->getPosition().y + animations_dialog->getSize().y + dialog_margin));
 }
 
 int main() {
@@ -170,13 +177,13 @@ int main() {
 				dialog->handleEvent(*event);
 			}
 
-			if (event->is<sf::Event::Resized>()) {
-				const sf::Event::Resized* resizeEvent = event->getIf<sf::Event::Resized>();
-				sf::Vector2i newSize(resizeEvent->size.x, resizeEvent->size.y);
-				mainView.setSize(sf::Vector2f(newSize.x, newSize.y));
-				mainView.setCenter(sf::Vector2f(newSize.x / 2.0f, newSize.y / 2.0f));
+			if (const auto* resized = event->getIf<sf::Event::Resized>())
+			{
+				sf::Vector2f newSize(resized->size);
+				mainView.setSize(newSize);
+				mainView.setCenter(newSize / 2.f);
 				window->setView(mainView);
-				main_menu->resize(newSize);
+				resize();
 			}
 
 			main_menu->handleEvent(*event);
