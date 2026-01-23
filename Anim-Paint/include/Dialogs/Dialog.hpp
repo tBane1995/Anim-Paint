@@ -17,6 +17,8 @@ public:
 
 	DialogState _state;
 
+	bool _absolutePositioning;
+
 	bool _is_moved;
 	sf::Vector2i _offset;
 
@@ -24,7 +26,7 @@ public:
 	int _currentOnTabElement;
 
 	Dialog();
-	Dialog(std::wstring title, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(-1, -1));
+	Dialog(std::wstring title, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(-1, -1), bool absolutePositioning = false);
 	virtual ~Dialog();
 
 	sf::Vector2i getPosition();

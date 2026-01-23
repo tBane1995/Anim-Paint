@@ -10,14 +10,16 @@
 
 Dialog::Dialog() : Dialog(L"Dialog", sf::Vector2i(128, 128)) {
 	
-	
+	_absolutePositioning = true;
 }
 
-Dialog::Dialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : ElementGUI() {
+Dialog::Dialog(std::wstring title, sf::Vector2i size, sf::Vector2i position, bool absolutePositioning) : ElementGUI() {
 
 	_title = title;
 
 	_state = DialogState::Idle;
+	
+	_absolutePositioning = absolutePositioning;
 
 	_rect  = sf::IntRect(position, size);
 	_titleRect = sf::IntRect(position, sf::Vector2i(size.x - 2 * dialog_border_width, dialog_title_rect_height));
@@ -88,10 +90,19 @@ void Dialog::setPosition(sf::Vector2i position) {
 void Dialog::clampPosition() {
 	sf::Vector2i newPos = _position;
 	newPos.x = std::clamp(newPos.x, dialog_margin, int(mainView.getSize().x) - getSize().x - dialog_margin);
-	newPos.y = std::clamp(newPos.y,
-		int(main_menu->getSize().y) + toolbar->getSize().y + dialog_margin,
-		int(mainView.getSize().y) - getSize().y - bottom_bar->getSize().y - dialog_margin
-	);
+
+	if (_absolutePositioning == true) {
+		newPos.y = std::clamp(newPos.y,
+			dialog_margin,
+			int(mainView.getSize().y) - getSize().y - dialog_margin
+		);
+	}
+	else {
+		newPos.y = std::clamp(newPos.y,
+			int(main_menu->getSize().y) + toolbar->getSize().y + dialog_margin,
+			int(mainView.getSize().y) - getSize().y - bottom_bar->getSize().y - dialog_margin
+		);
+	}
 	setPosition(newPos);
 }
 

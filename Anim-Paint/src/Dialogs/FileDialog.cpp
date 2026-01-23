@@ -605,7 +605,7 @@ void FileRect::draw() {
 
 //////////////////////////////////////////////////////////////////////////////
 
-FileDialog::FileDialog(std::wstring dialogName, std::wstring selectButtonText) : Dialog(dialogName, sf::Vector2i(400, 284), sf::Vector2i(8, 120)) {
+FileDialog::FileDialog(std::wstring dialogName, std::wstring selectButtonText) : Dialog(dialogName, sf::Vector2i(400, 284), sf::Vector2i(8, 120), true) {
 
 	_files.clear();
 	
