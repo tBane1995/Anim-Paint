@@ -70,6 +70,12 @@ void resize() {
 
 	main_menu->resize();
 	bottom_bar->resize();
+	canvas->setCenter();
+
+	if (palette != nullptr) {
+		palette->clampPosition();
+	}
+	
 	frames_dialog->setPosition(sf::Vector2i(mainView.getSize().x - 192 - dialog_margin, main_menu->getSize().y + toolbar->_rect.size.y + dialog_margin));
 	animations_dialog->setPosition(sf::Vector2i(mainView.getSize().x - 192 - dialog_margin, frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin));
 	layers_dialog->setPosition(sf::Vector2i(mainView.getSize().x - 160 - dialog_margin, animations_dialog->getPosition().y + animations_dialog->getSize().y + dialog_margin));

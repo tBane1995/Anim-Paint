@@ -67,6 +67,7 @@ public:
 	void generateBackground(sf::Vector2i size);
 	void generateEdgePoints();
 	void setPosition(sf::Vector2i position);
+	void setCenter();
 	void setZoom(float mouseWheelScrolllDelta);
 	void drawPixels(sf::Color color);
 	void fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords);

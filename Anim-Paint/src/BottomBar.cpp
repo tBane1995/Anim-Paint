@@ -27,6 +27,10 @@ BottomBar::~BottomBar() {
 
 }
 
+sf::Vector2i BottomBar::getSize() {
+	return _rect.size;
+}
+
 void BottomBar::resize() {
 	_rect.position = sf::Vector2i(0, mainView.getSize().y - _rect.size.y);
 	_textCanvasSize->setPosition(sf::Vector2f(128 + 32, mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));

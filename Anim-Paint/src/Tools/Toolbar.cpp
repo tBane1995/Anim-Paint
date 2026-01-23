@@ -366,6 +366,10 @@ Toolbar::~Toolbar() {
 
 }
 
+sf::Vector2i Toolbar::getSize() {
+	return _rect.size;
+}
+
 void Toolbar::setPosition(sf::Vector2i position) {
 	_rect.position = position;
 

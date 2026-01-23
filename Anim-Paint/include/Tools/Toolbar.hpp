@@ -99,9 +99,11 @@ public:
 	Toolbar();
 	~Toolbar();
 
+	sf::Vector2i getSize();
 	void setPosition(sf::Vector2i position);
 	void selectToolButton(std::shared_ptr<Button> toolButton);
 	void selectColorButton(std::shared_ptr<LargeColorButton> colorButton);
+	
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

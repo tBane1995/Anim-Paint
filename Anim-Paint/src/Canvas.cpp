@@ -180,7 +180,10 @@ void Canvas::setPosition(sf::Vector2i position) {
 	_point_left_bottom->setPosition(_position + sf::Vector2i(0, getZoomedSize(_size).y));
 	_point_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x / 2.0f, getZoomedSize(_size).y));
 	_point_right_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y));
+}
 
+void Canvas::setCenter() {
+	setPosition((sf::Vector2i(window->getSize()) - sf::Vector2i(getZoomedSize(_size))) / 2);
 }
 
 

@@ -12,6 +12,7 @@ public:
 	BottomBar();
 	~BottomBar();
 
+	sf::Vector2i getSize();
 	void resize();
 
 	void cursorHover();
