@@ -12,6 +12,8 @@ public:
 	BottomBar();
 	~BottomBar();
 
+	void resize();
+
 	void cursorHover();
 	void handleEvent(const sf::Event& event);
 	void update();

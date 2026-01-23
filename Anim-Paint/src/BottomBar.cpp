@@ -27,6 +27,13 @@ BottomBar::~BottomBar() {
 
 }
 
+void BottomBar::resize() {
+	_rect.position = sf::Vector2i(0, mainView.getSize().y - _rect.size.y);
+	_textCanvasSize->setPosition(sf::Vector2f(128 + 32, mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
+	_textCursorPosition->setPosition(sf::Vector2f(32, mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
+	_textSelectionSize->setPosition(sf::Vector2f(256 + 32, mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
+}
+
 void BottomBar::cursorHover() {
 
 }
@@ -49,7 +56,7 @@ void BottomBar::handleEvent(const sf::Event& event) {
 		_textCanvasSize->setString(std::to_wstring(canvas->_size.x) + L" x " + std::to_wstring(canvas->_size.y));
 	}
 
-	if (canvas->_clickedEdgePoint != nullptr) {
+	if (canvas->_state == CanvasState::Resizing) {
 		_textCursorPosition->setString(L"");
 		_textCanvasSize->setString(std::to_wstring(canvas->_size.x) + L" x " + std::to_wstring(canvas->_size.y));
 	}

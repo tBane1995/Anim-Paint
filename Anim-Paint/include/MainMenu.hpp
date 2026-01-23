@@ -67,7 +67,7 @@ public:
 	~MainMenu();
 
 	sf::Vector2f getSize();
-	void resize(sf::Vector2i newSize);
+	void resize();
 	void setPosition(sf::Vector2i position);
 	void hideMenu();	// hide menu - start closing animation - used when opening another menu
 	void closeMenu();	// immediately close menu - used when opening dialogs
