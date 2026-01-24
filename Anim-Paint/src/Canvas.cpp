@@ -386,11 +386,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 					}
 					else if (toolbar->_toolType == ToolType::Selector) {
 
-						if (selection->_state == SelectionState::None) {
-							sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
-							selection->_state = SelectionState::Selecting;
-							selection->_rect = sf::IntRect({ tile.x, tile.y }, { 0, 0 });
-						}
+						// TO-DO - selection
 					}
 					else if (toolbar->_toolType == ToolType::Lasso) {
 
@@ -481,18 +477,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 
 	if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv!=nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 		if (toolbar->_toolType == ToolType::Selector) {
-			if (selection->_state == SelectionState::Moving) {
-				sf::Vector2i tile = selectionToTile(cursor->_worldMousePosition, _position, _size, selection->_rect.size, selection->_offset, _zoom, _zoom_delta);
-				sf::Vector2i dst = tile - selection->_offset;
-				selection->_rect.position.x = dst.x;
-				selection->_rect.position.y = dst.y;
-			}
-			else if (selection->_state == SelectionState::Selecting) {
-				sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
-				selection->_rect.size.x = tile.x - selection->_rect.position.x;
-				selection->_rect.size.y = tile.y - selection->_rect.position.y;
-			}
-
+			// TO-DO - selection
 		}
 		else if (toolbar->_toolType == ToolType::Lasso) {
 			if (lasso->_state == LassoState::Moving) {
@@ -527,20 +512,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		if (toolbar->_toolType == ToolType::Selector) {
-			if (selection->_state == SelectionState::Selecting) {
-				sf::IntRect norm = selection->normalizeRect();
-				if (norm.size.x <= 0 || norm.size.y <= 0) {
-					selection->_state = SelectionState::None;
-				}
-				else {
-					selection->_rect = norm;
-					selection->_state = SelectionState::Selected;
-				}
-			}
-			else if (selection->_state == SelectionState::Moving) {
-				selection->_rect = selection->normalizeRect();
-				selection->_state = SelectionState::Selected;
-			}
+			// TO-DO - selection
 		}
 		else if (toolbar->_toolType == ToolType::Lasso) {
 			if (lasso->_state == LassoState::Selecting) {
@@ -558,38 +530,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 
 		if (ElementGUI_pressed.get() == nullptr || ElementGUI_pressed.get() == this) {
 			if (toolbar->_toolType == ToolType::Selector) {
-				sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
-				sf::IntRect norm = selection->normalizeRect();
-
-				if (selection->clickOnSelection(tile)) {
-					selection->_offset = tile - sf::Vector2i(norm.position.x, norm.position.y);
-					selection->_state = SelectionState::Moving;
-
-					if (selection->_img == nullptr) {
-						selection->_img = new sf::Image();
-						selection->_img->resize(sf::Vector2u(norm.size), sf::Color::Transparent);
-						copyImage(*selection->_img, getCurrentAnimation()->getCurrentLayer()->_image, selection->normalizeRect(), toolbar->_second_color->_color);
-						removeImage(getCurrentAnimation()->getCurrentLayer()->_image, norm, toolbar->_second_color->_color);
-					}
-				}
-				else if (_rect.contains(cursor->_worldMousePosition)) {
-					if (selection->_img != nullptr) {
-						pasteImage(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_img, norm.position.x, norm.position.y, toolbar->_second_color->_color);
-						selection->_img = nullptr;
-					}
-
-					selection->_state = SelectionState::Selecting;
-					selection->_rect = sf::IntRect({ tile.x, tile.y }, { 0, 0 });
-				}
-				else {
-					if (selection->_img != nullptr) {
-						pasteImage(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_img, norm.position.x, norm.position.y, toolbar->_second_color->_color);
-						selection->_img = nullptr;
-					}
-
-					selection->_state = SelectionState::None;
-					selection->_rect = sf::IntRect({ 0, 0 }, { 0, 0 });
-				}
+				// TO-DO - selection
 			}
 			else if (toolbar->_toolType == ToolType::Lasso) {
 
@@ -863,7 +804,6 @@ void Canvas::draw() {
 	}
 	
 
-	selection->draw(_rect.position, _size, _zoom * _zoom_delta);
 	lasso->draw(_rect.position, _size, _zoom * _zoom_delta, toolbar->_second_color->_color);
 
 	

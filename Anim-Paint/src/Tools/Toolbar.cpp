@@ -210,27 +210,23 @@ Toolbar::Toolbar() : ElementGUI() {
 	_btn_brush->_onclick_func = [this]() {
 		_toolType = ToolType::Brush;
 		brush->setBrushType(BrushType::Circle);
-		selection->_state = SelectionState::None;
 		selectToolButton(_btn_brush);
 		};
 	_btn_picker = std::make_shared<NormalButton>(getTexture(L"tex\\tools\\btn_picker.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"));
 	_btn_picker->_onclick_func = [this]() {
 		_toolType = ToolType::Picker;
 		brush->setBrushType(BrushType::Circle);
-		selection->_state = SelectionState::None;
 		selectToolButton(_btn_picker);
 		};
 	_btn_fill = std::make_shared<NormalButton>(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"));
 	_btn_fill->_onclick_func = [this]() {
 		_toolType = ToolType::Fill;
-		selection->_state = SelectionState::None;
 		selectToolButton(_btn_fill);
 		};
 	_btn_eraser = std::make_shared<NormalButton>(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"));
 	_btn_eraser->_onclick_func = [this]() {
 		_toolType = ToolType::Eraser;
 		brush->setBrushType(BrushType::Square);
-		selection->_state = SelectionState::None;
 		selectToolButton(_btn_eraser);
 		};
 

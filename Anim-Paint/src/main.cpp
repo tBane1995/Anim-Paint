@@ -100,7 +100,6 @@ int main() {
 	animation->addEmptyFrame(sf::Vector2i(32,32));
 	animations.push_back(animation);
 
-	selection = new Selection();
 	lasso = std::make_shared<Lasso>();
 	brush = std::make_shared<Brush>(2);
 	toolbar = std::make_shared<Toolbar>();
