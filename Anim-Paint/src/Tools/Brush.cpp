@@ -133,6 +133,7 @@ std::vector<std::vector<std::vector<bool>>> square_brushes = {
 Brush::Brush(int size) {
     _type = BrushType::Circle;
     setSize(size);
+    _lastPosition = sf::Vector2i(-1, -1);
     _position = sf::Vector2i(0, 0);
 }
 
@@ -161,6 +162,7 @@ void Brush::increase() {
 }
 
 void Brush::setPosition(sf::Vector2i position) {
+	_lastPosition = _position;
     _position = position;
 }
 

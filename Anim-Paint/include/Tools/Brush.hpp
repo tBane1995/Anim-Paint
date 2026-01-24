@@ -7,7 +7,7 @@ class Brush {
 public:
     BrushType _type;
     int _size;
-    sf::Vector2i _position;
+    sf::Vector2i _lastPosition, _position;
 
     Brush(int size);
     ~Brush();

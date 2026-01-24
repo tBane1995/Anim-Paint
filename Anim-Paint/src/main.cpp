@@ -89,7 +89,7 @@ int main() {
 	loadTextures();
 	loadTheme();
 
-	window->setFramerateLimit(120);
+	//window->setFramerateLimit(120);
 	window->setView(mainView);
 	window->setMinimumSize(sf::Vector2u(mainView.getSize().x, mainView.getSize().y));
 

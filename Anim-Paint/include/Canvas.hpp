@@ -63,6 +63,7 @@ public:
 	~Canvas();
 
 	void resize(sf::Vector2i size);
+	bool pointInCanvas(sf::Vector2i point);
 	sf::Vector2i getZoomedSize(sf::Vector2i size);
 	void generateBackground(sf::Vector2i size);
 	void generateEdgePoints();
@@ -72,6 +73,7 @@ public:
 	void drawPixels(sf::Color color);
 	void fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords);
 	void fillPixels(sf::Color color);
+	void pickPixel();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

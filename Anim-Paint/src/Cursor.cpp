@@ -1,4 +1,4 @@
-﻿#include "Cursor.hpp"
+﻿ #include "Cursor.hpp"
 #include "SFML/Graphics.hpp"
 #include "Dialogs/FileDialog.hpp"
 #include "Canvas.hpp"
@@ -38,6 +38,9 @@ void Cursor::update() {
 }
 
 void Cursor::handleEvent(const sf::Event& event) {
+
+	brush->setPosition(worldToTile(_worldMousePosition, canvas->_position, canvas->_zoom, canvas->_zoom_delta));
+
 
 	if (_hoveredElementGUI != canvas && _hoveredElementGUI == ElementGUI_hovered)
 		return;
@@ -194,14 +197,12 @@ void Cursor::handleEvent(const sf::Event& event) {
 			_ico = getTexture(L"tex\\cursor\\brush.png");
 			_offset = sf::Vector2i(7, 7);
 			_brushIsVisible = true;
-			brush->setPosition(worldToTile(_worldMousePosition, canvas->_position, canvas->_zoom, canvas->_zoom_delta));
 		}
 		else if (toolbar->_toolType == ToolType::Eraser) {
 			window->setMouseCursorVisible(false);
 			_ico = getTexture(L"tex\\cursor\\brush.png");
 			_offset = sf::Vector2i(7, 7);
 			_brushIsVisible = true;
-			brush->setPosition(worldToTile(_worldMousePosition, canvas->_position, canvas->_zoom, canvas->_zoom_delta));
 		}
 		else if (toolbar->_toolType == ToolType::Fill) {
 			window->setMouseCursorVisible(true);
