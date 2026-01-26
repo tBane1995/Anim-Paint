@@ -33,6 +33,8 @@ Lasso::Lasso() {
 	_rect = sf::IntRect( sf::Vector2i( 0,0), sf::Vector2i(0,0));
 	_outlineOffset = sf::Vector2i(0, 0);
 
+	generateMask();
+
 	_shader.loadFromMemory(shader_source, sf::Shader::Type::Fragment);
 
 
@@ -66,22 +68,18 @@ void Lasso::shiftOriginIfNeeded(sf::Vector2i& point)
 	}
 }
 
-void Lasso::addPoint(sf::Vector2i point)   // tile = globalny punkt w kafelkach
-{
-	point = point - _outlineOffset;
-
+void Lasso::addPoint(sf::Vector2i point) {
+	point -= _outlineOffset;
 	shiftOriginIfNeeded(point);
 
-	if (_points.empty() || std::hypot(float(_points.back().x - point.x), float(_points.back().y - point.y)) > 0.0f)
-	{
-		for (auto& p : _points) {
-			if (p == point) {
-				return;
-			}
-		}
+	if (_points.empty()) {
 		_points.push_back(point);
-		// std::cout << "add point local: " << point.x << ", " << point.y << "\n";
+		return;
 	}
+
+	if (_points.back() == point) return;
+
+	_points.push_back(point);
 }
 
 void Lasso::unselect() {
@@ -127,7 +125,7 @@ void Lasso::copy(sf::Image& canvas, sf::Color emptyColor)
 	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
 	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
 	
-	pasteImage(canvas, *_image, r.position.x, r.position.y, generateMask(), emptyColor);
+	pasteImage(canvas, *_image, r.position.x, r.position.y, _maskImage, emptyColor);
 	copyImage(*lasso->_image, canvas, _rect, emptyColor);
 
 	sf::IntRect canvasRect(sf::Vector2i(0,0), sf::Vector2i(canvas.getSize()));
@@ -140,7 +138,7 @@ void Lasso::copy(sf::Image& canvas, sf::Color emptyColor)
 	if (s.size.x <= 0 || s.size.y<= 0)
 		return;
 
-	sf::Image maskImg = generateMask();
+	generateMask();
 
 	sf::Image copiedImage = sf::Image();
 	copiedImage.resize(sf::Vector2u(s.size), sf::Color::Transparent);
@@ -148,7 +146,7 @@ void Lasso::copy(sf::Image& canvas, sf::Color emptyColor)
 	for (int y = 0; y < s.size.y; ++y)
 		for (int x = 0; x < s.size.x; ++x) {
 
-			if (maskImg.getPixel(sf::Vector2u(x, y)) != sf::Color::White)
+			if (_maskImage.getPixel(sf::Vector2u(x, y)) != sf::Color::White)
 				copiedImage.setPixel(sf::Vector2u(x, y), sf::Color::Transparent);
 			else {
 
@@ -226,7 +224,7 @@ void Lasso::paste(sf::Image& canvas, sf::Color emptyColor)
 {
 
 	if (_image != nullptr) {
-		paste(canvas, *_image, _rect.position.x, _rect.position.y, generateMask(), emptyColor);
+		paste(canvas, *_image, _rect.position.x, _rect.position.y, _maskImage, emptyColor);
 	}
 	else {
 		_image = new sf::Image();   
@@ -312,52 +310,45 @@ bool Lasso::pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b)
 
 bool Lasso::isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly)
 {
-	size_t n = poly.size();
-	if (n < 3) 
-		return false;
+	if (poly.size() < 3) return false;
 
-	bool inside = false;
-	for (size_t i = 0, j = n - 1; i < n; j = i++) {
-		sf::Vector2i& a = poly[j];
-		sf::Vector2i& b = poly[i];
+	int j = poly.size() - 1;
+	float epsilon = 1e-6f;
 
-		if (pointOnSegment(p, a, b)) 
+	for (int i = 0; i < poly.size(); ++i) {
+		// Sprawdzamy, czy punkt leży dokładnie na krawędzi
+		if (pointOnSegment(p, poly[i], poly[(i + 1) % poly.size()])) {
 			return true;
+		}
 
-		bool crossesY = ((a.y > p.y) != (b.y > p.y));
-		if (!crossesY) 
-			continue;
-
-		int dy = b.y - a.y;
-		int lhs = (p.x - a.x) * dy;
-		int rhs = (b.x - a.x) * (p.y - a.y);
-
-		bool hit = (dy > 0) ? (lhs < rhs) : (lhs > rhs);
-		if (hit) inside = !inside;
+		// Ray casting z poprawką na precyzję float
+		if (((poly[i].y > p.y) != (poly[j].y > p.y)) &&
+			(p.x < (poly[j].x - poly[i].x) * (p.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x + epsilon)) {
+			return true;
+		}
+		j = i;
 	}
-	return inside;
+	return false; 
 }
 
-sf::Image Lasso::generateMask() {
+void Lasso::generateMask() {
 
-	sf::Image maskImage = sf::Image();
+	_maskImage = sf::Image();
 
-	if (!_image) return maskImage;
-	if (_image->getSize().x == 0 || _image->getSize().y == 0) return maskImage;
+	if (!_image) return;
+	if (_image->getSize().x == 0 || _image->getSize().y == 0) return;
 
 	sf::Vector2u size = _image->getSize();
-	maskImage.resize(size, sf::Color::Transparent);
+	_maskImage.resize(size, sf::Color::Transparent);
 
 	for (unsigned int y = 0; y < size.y; ++y) {
 		for (unsigned int x = 0; x < size.x; ++x) {
 			if (isPointInPolygon(sf::Vector2i(x,y), _points)) {
 				//std::wcout << x << L", " << y << L": is inside\n";
-				maskImage.setPixel(sf::Vector2u(x, y), sf::Color::White);
+				_maskImage.setPixel(sf::Vector2u(x, y), sf::Color::White);
 			}
 		}
 	}
-
-	return maskImage;
 }
 
 void Lasso::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask) {
@@ -385,7 +376,7 @@ void Lasso::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, floa
 
 	sf::Image maskImage;
 	if (useMask) {
-		maskImage = generateMask();
+		maskImage = _maskImage;
 	}
 	else {
 		maskImage = sf::Image();
@@ -448,7 +439,6 @@ void Lasso::draw(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float sca
 			drawImage(canvasPosition, canvasSize, scale, alphaColor, false);
 			generateOutline(false);
 			drawOutline(canvasPosition, scale);
-
 		}
 
 		if (_state == LassoState::Selected || _state == LassoState::Moving) {

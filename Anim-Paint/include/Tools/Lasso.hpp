@@ -25,6 +25,9 @@ public:
 	// outside rect
 	sf::IntRect _rect;
 
+	// mask
+	sf::Image _maskImage;
+
 	// shader
 	sf::Shader _shader;
 
@@ -43,7 +46,7 @@ public:
 	void generateOutline(bool selectionComplete = false);
 	bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
 	bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
-	sf::Image generateMask();
+	void generateMask();
 	void drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask = false);
 	void drawOutline(sf::Vector2i canvasPosition, float scale);
 	void drawRect(sf::Vector2i canvasPosition, float scale);
