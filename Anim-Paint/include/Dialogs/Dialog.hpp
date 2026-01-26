@@ -3,6 +3,7 @@
 #include "ElementGUI/Button.hpp"
 
 enum class DialogState { Idle, ToClose };
+enum class DialogClickArea { Inside, OutSide };
 
 class Dialog : public ElementGUI {
 public:
@@ -16,8 +17,13 @@ public:
 	std::shared_ptr<NormalButton> _closeBtn;
 
 	DialogState _state;
-
 	bool _absolutePositioning;
+
+	// if cursor is inside dialog or outside
+	DialogClickArea _clickArea;
+	sf::Time _startFlashTime;
+
+	
 
 	bool _is_moved;
 	sf::Vector2i _offset;

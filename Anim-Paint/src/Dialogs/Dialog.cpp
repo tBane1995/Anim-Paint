@@ -7,6 +7,7 @@
 #include "MainMenu.hpp"
 #include "Tools/Toolbar.hpp"
 #include "Bottombar.hpp"
+#include "Time.hpp"
 
 Dialog::Dialog() : Dialog(L"Dialog", sf::Vector2i(128, 128)) {
 	
@@ -206,6 +207,14 @@ void Dialog::cursorHover() {
 }
 
 void Dialog::handleEvent(const sf::Event& event) {
+
+	if (_rect.contains(cursor->_worldMousePosition)) {
+		_clickArea = DialogClickArea::Inside;
+		_startFlashTime = currentTime;
+	} else {
+		_clickArea = DialogClickArea::OutSide;
+	 }
+
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (ElementGUI_hovered.get() == this && _titleRect.contains(cursor->_worldMousePosition)) {
 			_is_moved = true;
@@ -245,7 +254,16 @@ void Dialog::draw() {
 	window->draw(dialogRect);
 
 	sf::RectangleShape titleRect(sf::Vector2f(_titleRect.size));
-	titleRect.setFillColor(dialog_title_rect_color);
+	sf::Color titleRectColor;
+	if (_absolutePositioning == true && _clickArea == DialogClickArea::OutSide) {
+		int time = int(((currentTime- _startFlashTime).asSeconds()) * 2.5f) % 2;
+		int c = 15 * time;
+		titleRectColor = dialog_title_rect_color + sf::Color(47 * time, c, c);
+	}
+	else {
+		titleRectColor = dialog_title_rect_color;
+	}
+	titleRect.setFillColor(titleRectColor);
 	titleRect.setPosition(sf::Vector2f(_position.x + dialog_border_width, _position.y + dialog_border_width));
 	window->draw(titleRect);
 

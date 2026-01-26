@@ -200,8 +200,8 @@ void Dialog_Load_SpriteSheet::setPosition(sf::Vector2i position) {
 	// bottom buttons
 	_bottomRect.position = sf::Vector2i(getContentPosition()) + sf::Vector2i(0, getContentSize().y - _bottomRect.size.y);
 	float xx = 48;
-	_confirmBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x / 2 - xx - _confirmBtn->getSize().x / 2, getContentSize().y - _confirmBtn->getSize().y - dialog_padding));
-	_cancelBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x / 2 + xx - _cancelBtn->getSize().x / 2, getContentSize().y - _cancelBtn->getSize().y - dialog_padding));
+	_cancelBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x / 2 - xx - _cancelBtn->getSize().x / 2, getContentSize().y - _cancelBtn->getSize().y - dialog_padding));
+	_confirmBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x / 2 + xx - _confirmBtn->getSize().x / 2, getContentSize().y - _confirmBtn->getSize().y - dialog_padding));
 
 }
 
