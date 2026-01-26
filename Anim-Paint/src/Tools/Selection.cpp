@@ -27,6 +27,8 @@ void removeImage(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf::Color 
 	if (rect.size.x <= 0 || rect.size.y <= 0)
 		return;
 
+	if (mask.getSize().x <= 0 || mask.getSize().y <= 0) return;
+
 	sf::Image backgroundImage;
 	backgroundImage.resize(sf::Vector2u(rect.size), alphaColor);
 

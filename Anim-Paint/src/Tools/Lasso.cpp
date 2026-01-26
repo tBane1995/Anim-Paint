@@ -85,30 +85,37 @@ void Lasso::addPoint(sf::Vector2i point) {
 void Lasso::unselect() {
 	_points.clear();
 	_outlineOffset = sf::Vector2i(0, 0);
-	generateRect();
 }
 
 void Lasso::generateRect() {
-	if (_points.size() < 3) {
-		_rect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(0,0));
+
+	if (_points.empty()) {
+		_rect = sf::IntRect({ 0,0 }, { 0,0 });
 		return;
 	}
 
+	int minX = std::numeric_limits<int>::max();
+	int minY = std::numeric_limits<int>::max();
 	int maxX = std::numeric_limits<int>::min();
 	int maxY = std::numeric_limits<int>::min();
 
 	for (auto& p : _points) {
+		minX = std::min(minX, p.x);
+		minY = std::min(minY, p.y);
 		maxX = std::max(maxX, p.x);
 		maxY = std::max(maxY, p.y);
 	}
 
-	int width = maxX + 1;
-	int height = maxY + 1;
-
-	_rect = sf::IntRect(_outlineOffset, sf::Vector2i(width, height));
+	_rect = sf::IntRect(
+		_outlineOffset + sf::Vector2i(minX, minY),
+		sf::Vector2i(maxX - minX + 1, maxY - minY + 1)
+	);
 }
 
 bool Lasso::clickOnSelection(sf::Vector2i point) {
+
+	if (_rect.size.x <= 1 || _rect.size.y <= 1)
+		return false;
 
 	return _rect.contains(point);
 }
@@ -262,13 +269,13 @@ void Lasso::cut(sf::Image& canvas, sf::Color emptyColor) {
 
 void Lasso::generateOutline(bool selectionComplete) {
 	//std::vector <sf::Vector2i> _points
-	if (_points.size() < 3) return;
+	if (_points.size() < 1) return;
 
 	if (_rect.size.x <= 0 || _rect.size.y <= 0)
 		return;
 
 	
-	_outlineRenderTexture.resize(sf::Vector2u(_image->getSize()));
+	_outlineRenderTexture.resize(sf::Vector2u(_rect.size));
 	_outlineRenderTexture.clear(sf::Color(0, 0, 0, 0));
 
 	sf::Color lassoColor = sf::Color(47, 127, 127, 255);
@@ -293,42 +300,49 @@ void Lasso::generateOutline(bool selectionComplete) {
 	_outlineRenderTexture.draw(p, rs);
 	_outlineRenderTexture.display();
 }
-bool Lasso::pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b)
+bool Lasso::pointOnSegment( sf::Vector2i p, sf::Vector2i a, sf::Vector2i b )
 {
-	int cross = 1LL * (b.x - a.x) * (p.y - a.y) - 1LL * (b.y - a.y) * (p.x - a.x);
-	
-	if (cross != 0) 
-		return false;
-
-	int minx = std::min(a.x, b.x);
-	int maxx = std::max(a.x, b.x);
-	int miny = std::min(a.y, b.y);
-	int maxy = std::max(a.y, b.y);
-
-	return (p.x >= minx && p.x <= maxx && p.y >= miny && p.y <= maxy);
+    int cross = 1LL *( b.x - a.x ) *( p.y - a.y ) - 1LL *( b.y - a.y ) *( p.x - a.x );
+   
+    if( cross != 0 )
+         return false;
+   
+    int minx = std::min( a.x, b.x );
+    int maxx = std::max( a.x, b.x );
+    int miny = std::min( a.y, b.y );
+    int maxy = std::max( a.y, b.y );
+   
+    return( p.x >= minx && p.x <= maxx && p.y >= miny && p.y <= maxy );
 }
 
-bool Lasso::isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly)
+bool Lasso::isPointInPolygon( sf::Vector2i p, std::vector < sf::Vector2i > & poly )
 {
-	if (poly.size() < 3) return false;
-
-	int j = poly.size() - 1;
-	float epsilon = 1e-6f;
-
-	for (int i = 0; i < poly.size(); ++i) {
-		// Sprawdzamy, czy punkt leży dokładnie na krawędzi
-		if (pointOnSegment(p, poly[i], poly[(i + 1) % poly.size()])) {
-			return true;
-		}
-
-		// Ray casting z poprawką na precyzję float
-		if (((poly[i].y > p.y) != (poly[j].y > p.y)) &&
-			(p.x < (poly[j].x - poly[i].x) * (p.y - poly[i].y) / (poly[j].y - poly[i].y) + poly[i].x + epsilon)) {
-			return true;
-		}
-		j = i;
-	}
-	return false; 
+    size_t n = poly.size();
+    if( n < 3 )
+         return false;
+   
+    bool inside = false;
+    for( size_t i = 0, j = n - 1; i < n; j = i++ ) {
+        sf::Vector2i & a = poly[ j ];
+        sf::Vector2i & b = poly[ i ];
+       
+        if( pointOnSegment( p, a, b ) )
+             return true;
+       
+        bool crossesY =(( a.y > p.y ) !=( b.y > p.y ) );
+        if( !crossesY )
+             continue;
+       
+        int dy = b.y - a.y;
+        int lhs =( p.x - a.x ) * dy;
+        int rhs =( b.x - a.x ) *( p.y - a.y );
+       
+        bool hit =( dy > 0 ) ?( lhs < rhs )
+            :( lhs > rhs );
+        if( hit ) inside = !inside;
+       
+    }
+    return inside;
 }
 
 void Lasso::generateMask() {
@@ -336,10 +350,19 @@ void Lasso::generateMask() {
 	_maskImage = sf::Image();
 
 	if (!_image) return;
-	if (_image->getSize().x == 0 || _image->getSize().y == 0) return;
+	if (_rect.size.x <= 1 || _rect.size.y <= 1) return;
+	if (_image->getSize().x <= 1 || _image->getSize().y <= 1) return;
 
 	sf::Vector2u size = _image->getSize();
 	_maskImage.resize(size, sf::Color::Transparent);
+
+	if (_points.size() < 3) {
+		for (auto& p : _points) {
+			_maskImage.setPixel(sf::Vector2u(p), sf::Color::White);
+		}
+		return;
+	}
+	
 
 	for (unsigned int y = 0; y < size.y; ++y) {
 		for (unsigned int x = 0; x < size.x; ++x) {
@@ -354,8 +377,10 @@ void Lasso::generateMask() {
 void Lasso::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask) {
 	if (!_image) return;
 	if (_image->getSize().x < 1 || _image->getSize().y < 1) return;
+	
 	generateRect();
-	if (_rect.size.x < 2 || _rect.size.y < 2) return;
+
+	if (_rect.size.x < 1 || _rect.size.y < 1) return;
 
 	sf::IntRect canvasRect(sf::Vector2i(0, 0), canvasSize);
 	
@@ -434,14 +459,17 @@ void Lasso::drawRect(sf::Vector2i canvasPosition, float scale) {
 
 void Lasso::draw(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor) {
 
-	if (_points.size() >= 3) {
-		if (_state == LassoState::Selecting) {
+	if (_state == LassoState::Selecting) {
+		if (_points.size() >= 1) {
 			drawImage(canvasPosition, canvasSize, scale, alphaColor, false);
 			generateOutline(false);
 			drawOutline(canvasPosition, scale);
 		}
+		
+	}
 
-		if (_state == LassoState::Selected || _state == LassoState::Moving) {
+	if (_state == LassoState::Selected || _state == LassoState::Moving) {
+		if (_points.size() >= 3) {
 			drawImage(canvasPosition, canvasSize, scale, alphaColor, true);
 			drawRect(canvasPosition, scale);
 			//generateOutline(true);

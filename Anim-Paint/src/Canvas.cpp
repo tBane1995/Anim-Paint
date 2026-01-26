@@ -419,8 +419,11 @@ void Canvas::handleEvent(const sf::Event& event) {
 						lasso->_state = LassoState::Selecting;
 						lasso->_image = new sf::Image();
 						lasso->_image->resize(sf::Vector2u(1, 1));
+						lasso->unselect();
 						lasso->_outlineOffset = tile;
+						
 						lasso->addPoint(tile);
+						lasso->generateRect();
 					}
 				}
 			}
@@ -504,7 +507,6 @@ void Canvas::handleEvent(const sf::Event& event) {
 				sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
 
 				if (lasso->_image != nullptr) {
-					lasso->generateRect();
 					lasso->_image = nullptr;
 				}
 
@@ -513,7 +515,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 
 				lasso->_image = new sf::Image();
 				lasso->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
-				if (lasso->_rect.size.x > 1 && lasso->_rect.size.y > 1) {
+				if (lasso->_rect.size.x >= 1 && lasso->_rect.size.y >= 1) {
 					lasso->_image->resize(sf::Vector2u(lasso->_rect.size), sf::Color::Transparent);
 				}
 				
@@ -526,14 +528,18 @@ void Canvas::handleEvent(const sf::Event& event) {
 		}
 		else if (toolbar->_toolType == ToolType::Lasso) {
 			if (lasso->_state == LassoState::Selecting) {
-				if (lasso->_rect.size.x == 0 || lasso->_rect.size.y == 0) {
-					lasso->generateMask();
+				if (lasso->_rect.size.x <= 1 || lasso->_rect.size.y <= 1) {
 					lasso->_state = LassoState::None;
+
+					
 				}
 				else {
+					lasso->generateRect();
 					lasso->generateMask();
-					copyImage(*lasso->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, lasso->_rect.position.x, lasso->_rect.position.y, lasso->_maskImage, toolbar->_second_color->_color);
-					removeImage(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, lasso->_maskImage, toolbar->_second_color->_color);
+					if (lasso->_image != nullptr) {
+						copyImage(*lasso->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, lasso->_rect.position.x, lasso->_rect.position.y, lasso->_maskImage, toolbar->_second_color->_color);
+						removeImage(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, lasso->_maskImage, toolbar->_second_color->_color);
+					}
 					lasso->_state = LassoState::Selected;
 				}
 					

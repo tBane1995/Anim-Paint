@@ -13,9 +13,23 @@ public:
 	bool _isSelected;
 	bool _activatedByEnter;
 
+	sf::Color _rectIdleColor;
+	sf::Color _rectHoverColor;
+	sf::Color _rectPressColor;
+	sf::Color _rectSelectColor;
+
+	int _rectBorderWidth;
+	sf::Color _rectIdleBorderColor;
+	sf::Color _rectHoverBorderColor;
+	sf::Color _rectPressBorderColor;
+	sf::Color _rectSelectBorderColor;
+
 	Button();
 	virtual ~Button();
 
+	void setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor);
+	void setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor,
+		int borderWidth, sf::Color idleBorderColor, sf::Color hoverBorderColor, sf::Color pressBorderColor, sf::Color selectBorderColor);
 	virtual sf::Vector2i getSize();
 	void select();
 	void unselect();
@@ -31,6 +45,8 @@ public:
 class NormalButton : public Button {
 public:
 	
+	
+
 	std::shared_ptr<Texture> _texture;
 	std::shared_ptr<Texture> _hoverTexture;
 	
@@ -60,10 +76,6 @@ class ColoredButtonWithText : public Button {
 public:
 
 	std::unique_ptr < sf::Text > _text;
-	sf::Color _selectColor;
-	sf::Color _idleColor;
-	sf::Color _hoverColor;
-	sf::Color _pressColor;
 
 	ButtonState _state;
 	std::function<void()> _hover_func;
@@ -76,7 +88,6 @@ public:
 
 	sf::Vector2i getSize();
 	void setPosition(sf::Vector2i position);
-	void setColors(sf::Color selectColor, sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor);
 	void unclick();
 	void hover();
 	void click();
@@ -91,7 +102,6 @@ public:
 
 class ButtonWithBottomText : public Button {
 public:
-	sf::Color _rectColor;
 	sf::Color _textColor;
 	sf::Color _hoverTextColor;
 	std::shared_ptr<Texture> _texture;
@@ -136,7 +146,7 @@ public:
 	sf::Time _clickTime;
 
 
-	ButtonWithRightText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
+	ButtonWithRightText(std::wstring text, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithRightText();
 
 	sf::Vector2i getSize();
@@ -200,7 +210,7 @@ public:
 	std::vector<std::shared_ptr<Option>> _options;
 	bool _isOpen;
 
-	ButtonWithTopTextAndList(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, sf::Vector2i position = sf::Vector2i(0, 0));
+	ButtonWithTopTextAndList(std::wstring text, sf::Color textColor, sf::Color hoverTextColor, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithTopTextAndList();
 
 	sf::Vector2i getSize();

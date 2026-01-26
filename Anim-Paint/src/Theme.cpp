@@ -169,7 +169,7 @@ void loadTheme() {
 	tools_text_color = sf::Color(127, 127, 127);
 	tools_text_hover_color = sf::Color(163, 163, 163);
 
-	tools_border_width = 1.0f;
+	tools_border_width = 1;
 	tools_button_select_color = sf::Color(79, 47, 47);
 	tools_button_idle_color = sf::Color::Transparent;
 	tools_button_hover_color = sf::Color(95,47,47);

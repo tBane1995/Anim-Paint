@@ -127,7 +127,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 	_bottomRect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(getContentSize().x, btnSize.y + 2 * dialog_padding));
 
 	_confirmBtn = std::make_shared<ColoredButtonWithText>(L"Confirm", btnSize);
-	_confirmBtn->setColors(dark_button_select_color, dark_button_normal_color, dark_button_hover_color, dark_button_press_color);
+	_confirmBtn->setRectColors(dark_button_select_color, dark_button_normal_color, dark_button_hover_color, dark_button_press_color);
 	_confirmBtn->activateByEnter(true);
 	_confirmBtn->_onclick_func = [this]() {
 		if (datasIsCorrect()) {
@@ -143,7 +143,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 		};
 
 	_cancelBtn = std::make_shared<ColoredButtonWithText>(L"Cancel", btnSize);
-	_cancelBtn->setColors(dark_button_select_color, dark_button_normal_color, dark_button_hover_color, dark_button_press_color);
+	_cancelBtn->setRectColors(dark_button_select_color, dark_button_normal_color, dark_button_hover_color, dark_button_press_color);
 	_cancelBtn->activateByEnter(true);
 	_cancelBtn->_onclick_func = [this]() {
 		_state = DialogState::ToClose;
