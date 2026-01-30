@@ -278,6 +278,7 @@ void Dialog::draw() {
 	sf::Vector2f contentRectSize;
 	contentRectSize.x = float(_rect.size.x - 2 * dialog_border_width);
 	contentRectSize.y = float(_rect.size.y - 2 * dialog_border_width - _titleRect.size.y);
+
 	sf::RectangleShape contentRect(contentRectSize);
 
 	contentRect.setFillColor(dialog_content_rect_color);

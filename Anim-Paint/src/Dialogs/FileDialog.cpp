@@ -140,7 +140,7 @@ void LocationRect::setSize(sf::Vector2i size) {
 }
 
 float LocationRect::getTotalHeight() {
-	float h = _rect.size.y;
+	float h = (float)_rect.size.y;
 
 	if (_isOpen) {
 		for (auto& child : _children) {
@@ -157,10 +157,11 @@ void LocationRect::setPosition(sf::Vector2i position) {
 
 	if (_isOpen && !_children.empty()) {
 
-		float cursorY = position.y + _rect.size.y;
+		float cursorY = (float)(position.y + _rect.size.y);
 
 		for(auto& child : _children) {
-			child->setPosition(sf::Vector2i(position.x, cursorY));
+			sf::Vector2i childPosition = sf::Vector2i(position.x, (int)(cursorY));
+			child->setPosition(childPosition);
 			cursorY += child->getTotalHeight();
 		}
 	}
@@ -396,6 +397,7 @@ void LocationRect::draw() {
 
 LocationAndFilesSeparator::LocationAndFilesSeparator(int linesCount) : ElementGUI() {
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(file_dialog_separator_width, linesCount * basic_text_rect_height));
+	_minX = _maxX = 0;
 	_state = LocationAndFilesSeparatorState::Idle;
 }
 
@@ -415,7 +417,7 @@ sf::Vector2i LocationAndFilesSeparator::getPosition() {
 	return _rect.position;
 }
 
-void LocationAndFilesSeparator::setRange(float minX, float maxX) {
+void LocationAndFilesSeparator::setRange(int minX, int maxX) {
 	_minX = minX;
 	_maxX = maxX;
 }
@@ -616,6 +618,9 @@ FileDialog::FileDialog(std::wstring dialogName, std::wstring selectButtonText) :
 		currentPath = userProfile;
 		currentPath += L"\\Desktop";
 	}
+	else {
+		currentPath = L"C:\\";
+	}
 	
 	//std::wcout << L"Current path: " << currentPath << std::endl;
 	createLeftPanel(9);
@@ -664,7 +669,8 @@ float FileDialog::calculateLeftScrollbarHeight() {
 
 void FileDialog::createLeftPanel(int dictionariesCount) {
 
-	_leftRect = std::make_shared<sf::IntRect>(sf::Vector2i(0,0), sf::Vector2i(100.0f, (dictionariesCount)*basic_text_rect_height));
+	sf::Vector2i rectSize = sf::Vector2i(100, dictionariesCount * basic_text_rect_height);
+	_leftRect = std::make_shared<sf::IntRect>(sf::Vector2i(0,0), rectSize);
 
 	const wchar_t* userProfile = _wgetenv(L"USERPROFILE");
 	std::wstring up(userProfile);
@@ -693,7 +699,7 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 		_locations[i]->_onclick_location_func = [this, i]() {
 			currentPath = _locations[i]->_path.wstring();
 			loadDirectory();
-			_rightScrollbar->setMax((_filesPaths.size() - _files.size() + 1) * basic_text_rect_height);
+			_rightScrollbar->setMax((int)(_filesPaths.size() - _files.size() + 1) * basic_text_rect_height);
 			_rightScrollbar->setValue(0);
 			setTheFiles();
 			setPosition(_position);
@@ -712,7 +718,7 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 				node->open([this](const std::wstring& newPath) {
 					currentPath = newPath;
 					loadDirectory();
-					_rightScrollbar->setMax((_filesPaths.size() - _files.size() + 1) * basic_text_rect_height);
+					_rightScrollbar->setMax((int)(_filesPaths.size() - _files.size() + 1) * basic_text_rect_height);
 					_rightScrollbar->setValue(0);
 					setTheFiles();
 					setPosition(_position);
@@ -720,18 +726,21 @@ void FileDialog::createLeftPanel(int dictionariesCount) {
 			}
 
 			// odśwież lewy panel (wysokość + pozycje)
-			_leftScrollbar->setMax(calculateLeftScrollbarHeight());
+			_leftScrollbar->setMax((int)calculateLeftScrollbarHeight());
 			_leftScrollbar->setValue(_leftScrollbar->_value); // clamp
 			setPosition(_position);
 			};
 	}
 
 	// scrollbar
-	sf::Vector2f scrollbarPos = sf::Vector2f(_leftRect->position.x + _leftRect->size.x + dialog_padding, getContentPosition().y);
-	sf::Vector2f scrollbarSize = sf::Vector2f(16, _leftRect->size.y);
+	sf::Vector2i scrollbarPos;
+	scrollbarPos.x = _leftRect->position.x + _leftRect->size.x + dialog_padding;
+	scrollbarPos.y = getContentPosition().y;
 
-	float scrollbarMax = calculateLeftScrollbarHeight();
-	float scrollbarSliderSize = (dictionariesCount - 1) * basic_text_rect_height;
+	sf::Vector2i scrollbarSize = sf::Vector2i(16, _leftRect->size.y);
+
+	int scrollbarMax = (int)calculateLeftScrollbarHeight();
+	int scrollbarSliderSize = (dictionariesCount - 1) * basic_text_rect_height;
 
 	_leftScrollbar = std::make_shared<Scrollbar>(scrollbarPos.x, scrollbarPos.y, scrollbarSize.x, scrollbarSize.y, 0, scrollbarMax, scrollbarSliderSize, 0);
 	_leftScrollbar->_func = [this]() { 
@@ -761,8 +770,9 @@ void FileDialog::createSeparator(int linesCount) {
 
 void FileDialog::createRightPanel(int linesCount) {
 	
-	float w = getContentSize().x - _leftRect->size.x - 2 * 16 - _separator->getSize().x - 3*dialog_padding;
-	_rightRect = std::make_shared<sf::IntRect>(sf::Vector2i(0, 0), sf::Vector2i(w, linesCount * basic_text_rect_height));
+	int w = getContentSize().x - _leftRect->size.x - 2 * 16 - _separator->getSize().x - 3*dialog_padding;
+	sf::Vector2i rectSize = sf::Vector2i(w, linesCount * basic_text_rect_height);
+	_rightRect = std::make_shared<sf::IntRect>(sf::Vector2i(0, 0), rectSize);
 
 	// files
 	for (int i = 0; i < linesCount+1; i++) {
@@ -772,11 +782,11 @@ void FileDialog::createRightPanel(int linesCount) {
 	}
 
 	// scrollbar
-	sf::Vector2f scrollbarPos = sf::Vector2f(_position.x + getContentSize().x - 16 - dialog_padding, getContentPosition().y);
-	sf::Vector2f scrollbarSize = sf::Vector2f(16, _rightRect->size.y);
-	float minValue = 0;
-	float maxValue = (_filesPaths.size() - _files.size()) * basic_text_rect_height;
-	float sliderSize = (_files.size() - 1) * basic_text_rect_height;
+	sf::Vector2i scrollbarPos = sf::Vector2i(_position.x + getContentSize().x - 16 - dialog_padding, getContentPosition().y);
+	sf::Vector2i scrollbarSize = sf::Vector2i(16, _rightRect->size.y);
+	int minValue = 0;
+	int maxValue = (int)(_filesPaths.size() - _files.size()) * basic_text_rect_height;
+	int sliderSize = (int)(_files.size() - 1) * basic_text_rect_height;
 
 	_rightScrollbar = std::make_shared<Scrollbar>(scrollbarPos.x, scrollbarPos.y, scrollbarSize.x, scrollbarSize.y, minValue, maxValue, sliderSize, 0);
 	_rightScrollbar->_func = [this]() { 
@@ -816,7 +826,7 @@ void FileDialog::loadDirectory() {
 
 	//std::wcout << L"Total files: " << _paths.size() << std::endl;
 	
-	_rightScrollbar->setMax((_filesPaths.size() - _files.size()+1)* basic_text_rect_height);
+	_rightScrollbar->setMax((int)(_filesPaths.size() - _files.size()+1)* basic_text_rect_height);
 	
 }
 
@@ -843,7 +853,7 @@ void FileDialog::setTheFiles() {
 					currentPath = path.wstring();
 					loadDirectory();
 
-					_rightScrollbar->setMax((_filesPaths.size() - _files.size()+1)* basic_text_rect_height);
+					_rightScrollbar->setMax((int)(_filesPaths.size() - _files.size()+1)* basic_text_rect_height);
 					_rightScrollbar->setValue(0);
 					setTheFiles();
 					setPosition(_position);
@@ -870,9 +880,9 @@ void FileDialog::setPosition(sf::Vector2i position) {
 
 	// remember old positions for separator
 	sf::Vector2i oldPos = getContentPosition();
-	float oldAbsRangeMinX = _separator->_minX - getContentPosition().x;
-	float oldAbsRangeMaxX = _separator->_maxX - getContentPosition().x;
-	sf::Vector2i oldAbsSeparatorPos = sf::Vector2i(_separator->getPosition() - oldPos);
+	int oldAbsRangeMinX = _separator->_minX - getContentPosition().x;
+	int oldAbsRangeMaxX = _separator->_maxX - getContentPosition().x;
+	sf::Vector2i oldAbsSeparatorPos = _separator->getPosition() - oldPos;
 
 	// set the position
 	Dialog::setPosition(position);
@@ -881,10 +891,10 @@ void FileDialog::setPosition(sf::Vector2i position) {
 	_leftRect->position = sf::Vector2i(getContentPosition().x + dialog_padding, getContentPosition().y);
 	_rightRect->position = sf::Vector2i(getContentPosition().x + getContentSize().x - _rightRect->size.x - 3 * dialog_padding, getContentPosition().y);
 	
-	sf::Vector2f bottomRectPos;
+	sf::Vector2i bottomRectPos;
 	bottomRectPos.x = getContentPosition().x;
 	bottomRectPos.y = std::max(_rightRect->position.y + _rightRect->size.y, _leftRect->position.y + _leftRect->size.y);
-	_bottomRect.position = sf::Vector2i(bottomRectPos);
+	_bottomRect.position = bottomRectPos;
 
 	// separator
 	_separator->setPosition(getContentPosition() + oldAbsSeparatorPos);
@@ -895,13 +905,13 @@ void FileDialog::setPosition(sf::Vector2i position) {
 void FileDialog::drawLeftPanel() {
 
 	sf::View view(sf::FloatRect(
-		sf::Vector2f(_leftRect->position.x, _leftRect->position.y),
-		sf::Vector2f(_leftRect->size.x, _leftRect->size.y)
+		sf::Vector2f((float)_leftRect->position.x, (float)_leftRect->position.y),
+		sf::Vector2f((float)_leftRect->size.x, (float)_leftRect->size.y)
 	));
 
 	sf::FloatRect vp(
-		sf::Vector2f(_leftRect->position.x / mainView.getSize().x, _leftRect->position.y / mainView.getSize().y),
-		sf::Vector2f(_leftRect->size.x / mainView.getSize().x, _leftRect->size.y / mainView.getSize().y)
+		sf::Vector2f((float)_leftRect->position.x / mainView.getSize().x, (float)_leftRect->position.y / mainView.getSize().y),
+		sf::Vector2f((float)_leftRect->size.x / mainView.getSize().x, (float)_leftRect->size.y / mainView.getSize().y)
 	);
 
 	view.setViewport(vp);
@@ -919,7 +929,7 @@ void FileDialog::drawLeftPanel() {
 	pos.y = getContentPosition().y - _leftScrollbar->getValue();
 	for (int i = 0; i < _locations.size(); i++) {
 		_locations[i]->setPosition(pos);
-		pos.y += _locations[i]->getTotalHeight();
+		pos.y += (int)_locations[i]->getTotalHeight();
 	}
 
 	for (auto& fav : _locations)
@@ -931,13 +941,13 @@ void FileDialog::drawLeftPanel() {
 void FileDialog::drawRightPanel() {
 
 	sf::View view(sf::FloatRect(
-		sf::Vector2f(_rightRect->position.x, _rightRect->position.y),
-		sf::Vector2f(_rightRect->size.x, _rightRect->size.y)
+		sf::Vector2f((float)_rightRect->position.x, (float)_rightRect->position.y),
+		sf::Vector2f((float)_rightRect->size.x, (float)_rightRect->size.y)
 	));
 
 	sf::FloatRect vp(
-		sf::Vector2f(_rightRect->position.x / mainView.getSize().x, _rightRect->position.y / mainView.getSize().y),
-		sf::Vector2f(_rightRect->size.x / mainView.getSize().x, _rightRect->size.y / mainView.getSize().y)
+		sf::Vector2f((float)_rightRect->position.x / mainView.getSize().x, (float)_rightRect->position.y / mainView.getSize().y),
+		sf::Vector2f((float)_rightRect->size.x / mainView.getSize().x, (float)_rightRect->size.y / mainView.getSize().y)
 	);
 
 	view.setViewport(vp);
@@ -954,7 +964,7 @@ void FileDialog::drawRightPanel() {
 		sf::Vector2i pos;
 		pos.x = _separator->getPosition().x + _separator->getSize().x + dialog_padding;
 		pos.x = _rightRect->position.x;
-		pos.y = getContentPosition().y + (i * basic_text_rect_height) - _rightScrollbar->getValue() % int(basic_text_rect_height);
+		pos.y = getContentPosition().y + (i * basic_text_rect_height) - _rightScrollbar->getValue() % basic_text_rect_height;
 		//std::wcout << rightScrollbar->getValue() << " : " << pos.y << L"\n";
 		_files[i]->setPosition(pos);
 	}
@@ -968,13 +978,13 @@ void FileDialog::drawRightPanel() {
 void FileDialog::drawBottomPanel() {
 
 	sf::View view(sf::FloatRect(
-		sf::Vector2f(_bottomRect.position.x, _bottomRect.position.y),
-		sf::Vector2f(_bottomRect.size.x, _bottomRect.size.y)
+		sf::Vector2f((float)_bottomRect.position.x, (float)_bottomRect.position.y),
+		sf::Vector2f((float)_bottomRect.size.x, (float)_bottomRect.size.y)
 	));
 
 	sf::FloatRect vp(
-		sf::Vector2f(_bottomRect.position.x / mainView.getSize().x, _bottomRect.position.y / mainView.getSize().y),
-		sf::Vector2f(_bottomRect.size.x / mainView.getSize().x, _bottomRect.size.y / mainView.getSize().y)
+		sf::Vector2f((float)_bottomRect.position.x / mainView.getSize().x, (float)_bottomRect.position.y / mainView.getSize().y),
+		sf::Vector2f((float)_bottomRect.size.x / mainView.getSize().x, (float)_bottomRect.size.y / mainView.getSize().y)
 	);
 
 	view.setViewport(vp);
@@ -991,11 +1001,16 @@ void FileDialog::drawBottomPanel() {
 		_filenameText = std::make_unique<sf::Text>(basicFont, L"File name", basic_text_size);
 		_filenameText->setFillColor(basic_text_color);
 	}
-	_filenameText->setPosition(sf::Vector2f(_bottomRect.position.x + dialog_padding, _bottomRect.position.y + dialog_padding));
+	sf::Vector2f filenameTextPos;
+	filenameTextPos.x = (float)(_bottomRect.position.x + dialog_padding);
+	filenameTextPos.y = (float)(_bottomRect.position.y + dialog_padding);
+	_filenameText->setPosition(filenameTextPos);
 	window->draw(*_filenameText);
 
 	// filename input
-	sf::Vector2i filenameInputPos(sf::Vector2f(getContentPosition().x + _filenameTextWidth + 2 * dialog_padding, _rightRect->position.y + _rightRect->size.y + dialog_padding));
+	sf::Vector2i filenameInputPos;
+	filenameInputPos.x = getContentPosition().x + _filenameTextWidth + 2 * dialog_padding;
+	filenameInputPos.y = getContentPosition().y + _rightRect->position.y + _rightRect->size.y + dialog_padding;
 	_filenameInput->setPosition(filenameInputPos);
 	_filenameInput->draw();
 
@@ -1110,7 +1125,7 @@ void FileDialog::update() {
 	}
 
 	// DODAJ TO (odśwież max i clamp wartości po ewentualnym expand/collapse):
-	_leftScrollbar->setMax(calculateLeftScrollbarHeight());
+	_leftScrollbar->setMax((int)calculateLeftScrollbarHeight());
 	_leftScrollbar->setValue(_leftScrollbar->_value); // clamp
 
 	_leftScrollbar->update();
