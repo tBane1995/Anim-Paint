@@ -36,10 +36,10 @@ int Slider::getValue() {
 }
 
 sf::Vector2i Slider::getSliderPosition() {
-	float line_length = _barRect.size.x - 16;
+	int line_length = _barRect.size.x - 16;
 
 	sf::Vector2i result;
-	result.x = _barRect.position.x + float(_current_value - _min_value) * line_length / float(_max_value - _min_value);
+	result.x = _barRect.position.x + int(float(_current_value - _min_value) * float(line_length) / float(_max_value - _min_value));
 	result.y = _barRect.position.y - 4;
 	return result;
 }
