@@ -62,7 +62,7 @@ void Scrollbar::updateSliderSize() {
 		return;
 	}
 
-	float sizeY = slider.y * ((float)_slider_size / ((float)range + (float)_slider_size));
+	int sizeY = int((float)slider.y * ((float)_slider_size / ((float)range + (float)_slider_size)));
 
 	_slider.size = sf::Vector2i(slider.x, sizeY);
 }
@@ -77,7 +77,7 @@ void Scrollbar::updateSliderPosition() {
 		return;
 	}
 
-	pos.y += ((float)(_value - _min_value) / (float)range) * float(_rect.size.y - _slider.size.y);
+	pos.y += int(((float)(_value - _min_value) / (float)range) * float(_rect.size.y - _slider.size.y));
 
 	_slider.position = pos;
 }
@@ -117,7 +117,7 @@ void Scrollbar::handleEvent(const sf::Event& event) {
 	else if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>(); mws) {
 		if (_rect.contains(cursor->_worldMousePosition) || _scrollArea->contains(cursor->_worldMousePosition)) {
 			_state = ScrollbarState::Scrolled;
-			_deltaScroll = -mws->delta;
+			_deltaScroll = -(int)mws->delta;
 		}
 	}
 	
@@ -126,7 +126,9 @@ void Scrollbar::handleEvent(const sf::Event& event) {
 
 void Scrollbar::update() {
 	if (_state == ScrollbarState::Dragging) {
-		sf::Vector2f position = sf::Vector2f(_slider.position.x, cursor->_worldMousePosition.y - _dragOffset.y);
+		sf::Vector2f position;
+		position.x = float(_slider.position.x);
+		position.y = float(cursor->_worldMousePosition.y - _dragOffset.y);
 		position.y = std::clamp(position.y, float(_rect.position.y), float(_rect.position.y + _rect.size.y - _slider.size.y));
 		int val = (int)(((position.y - _rect.position.y) / (_rect.size.y - _slider.size.y)) * (_max_value - _min_value)) + _min_value;
 
@@ -138,7 +140,7 @@ void Scrollbar::update() {
 	}
 
 	if (_state == ScrollbarState::Scrolled) {
-		setValue(_value + float(_deltaScroll)*_scrollStep);
+		setValue(_value + int((float)_deltaScroll*_scrollStep));
 		_func();
 		_state = ScrollbarState::Idle;
 	}
