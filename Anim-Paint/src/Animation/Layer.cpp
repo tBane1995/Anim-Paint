@@ -1,4 +1,5 @@
 #include "Animation/Layer.hpp"
+#include "DebugLog.hpp"
 
 Layer::Layer(std::wstring name, sf::Vector2i size) {
 	_name = name;
@@ -18,7 +19,12 @@ Layer::Layer(std::shared_ptr<Layer> layer) {
 
 	_image = sf::Image();
 	_image.resize(layer->_image.getSize());
-	_image.copy(layer->_image, sf::Vector2u(0, 0));
+
+	if (!_image.copy(layer->_image, sf::Vector2u(0, 0))) {
+		DebugError(L"Failed to copy Image in Layer constructor.");
+		exit(0);
+	}
+	
 }
 
 Layer::~Layer() {
