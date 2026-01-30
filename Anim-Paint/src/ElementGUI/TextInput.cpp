@@ -38,7 +38,7 @@ void TextInput::setPosition(sf::Vector2i position) {
 
 void TextInput::setText(std::wstring text) {
 	_textStr = text.substr(0, _limitCharacters);
-	_cursorPosition = _textStr.length();
+	_cursorPosition = (int)_textStr.length();
 	_text->setString(_textStr.substr(0, _limitCharacters));
 }
 
@@ -107,7 +107,7 @@ void TextInput::handleEvent(const sf::Event& event) {
 		}
 		else if (const auto* te = event.getIf<sf::Event::TextEntered>(); te) {
 
-				char32_t character = te->unicode;
+				wchar_t character = (wchar_t)te->unicode;
 
 				if (character == 8) {
 					// BACKSPACE
