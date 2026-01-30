@@ -8,7 +8,7 @@ public:
 	std::wstring _path;
 	std::shared_ptr<sf::Texture> _texture;
 
-	Texture(std::wstring path);
+	Texture(std::wstring path, bool& loadingStatus);
 	~Texture();
 };
 
