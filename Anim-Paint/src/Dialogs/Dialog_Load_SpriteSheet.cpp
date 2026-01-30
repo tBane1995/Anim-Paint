@@ -9,6 +9,7 @@
 #include "Canvas.hpp"
 #include "Dialogs/FramesDialog.hpp"
 #include "Dialogs/AnimationsDialog.hpp"
+#include "DebugLog.hpp"
 
 Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : Dialog(L"Import Animation", sf::Vector2i(256+16, 256+16+80)) {
 	
@@ -25,7 +26,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 		spriteSheet = sf::Image();
 	}
 
-	if (spriteSheet.getSize().x > canvas->_maxSize.x*maxFramesCount || spriteSheet.getSize().y > canvas->_maxSize.y * maxAnimationsCount) {
+	if ((int)spriteSheet.getSize().x > canvas->_maxSize.x*maxFramesCount || (int)spriteSheet.getSize().y > canvas->_maxSize.y * maxAnimationsCount) {
 		std::wcout << L"SpriteSheet is too big (max " + std::to_wstring(canvas->_maxSize.x * maxFramesCount) + L"x" + std::to_wstring(canvas->_maxSize.y * maxAnimationsCount) + L")\n";
 		spriteSheet = sf::Image();
 	}
@@ -48,8 +49,8 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 	_animationsCountText = std::make_unique<sf::Text>(basicFont, "Animations", basic_text_size);
 	_frameCountText = std::make_unique<sf::Text>(basicFont, "Frames", basic_text_size);
 
-	int animationsCount = std::ceil(float(spriteSheet.getSize().y) / std::stoi(_heightOfFrame->getText()));
-	int framesCount = std::ceil(float(spriteSheet.getSize().x) / std::stoi(_widthOfFrame->getText()));
+	int animationsCount = (int)(std::ceil(float(spriteSheet.getSize().y) / std::stoi(_heightOfFrame->getText())));
+	int framesCount = (int)(std::ceil(float(spriteSheet.getSize().x) / std::stoi(_widthOfFrame->getText())));
 	_animationsCount->setText(std::to_wstring(animationsCount));
 	_frameCount->setText(std::to_wstring(framesCount));
 
@@ -61,8 +62,8 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 		size.x = std::stoi(_widthOfFrame->getText());
 		size.y = std::stoi(_heightOfFrame->getText());
 
-		int animationsCount = std::ceil(float(spriteSheet.getSize().y) / float(size.y));
-		int framesCount = std::ceil(float(spriteSheet.getSize().x) / float(size.x));
+		int animationsCount = (int)(std::ceil(float(spriteSheet.getSize().y) / float(size.y)));
+		int framesCount = (int)(std::ceil(float(spriteSheet.getSize().x) / float(size.x)));
 		_animationsCount->setText(std::to_wstring(animationsCount));
 		_frameCount->setText(std::to_wstring(framesCount));
 
@@ -76,9 +77,9 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 		size.x = std::stoi(_widthOfFrame->getText());
 		size.y = std::stoi(_heightOfFrame->getText());
 
-		int aniamtionsCount = std::ceil(float(spriteSheet.getSize().y) / float(size.y));
-		int framesCount = std::ceil(float(spriteSheet.getSize().x) / float(size.x));
-		_animationsCount->setText(std::to_wstring(aniamtionsCount));
+		int animationsCount = (int)(std::ceil(float(spriteSheet.getSize().y) / float(size.y)));
+		int framesCount = (int)(std::ceil(float(spriteSheet.getSize().x) / float(size.x)));
+		_animationsCount->setText(std::to_wstring(animationsCount));
 		_frameCount->setText(std::to_wstring(framesCount));
 
 		if (datasIsCorrect())
@@ -89,8 +90,8 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 	_animationsCount->_onEditedFunction = [this]() {
 
 		sf::Vector2i size;
-		size.x = std::ceil(float(spriteSheet.getSize().x) / std::stof(_frameCount->getText()));
-		size.y = std::ceil(float(spriteSheet.getSize().y) / std::stof(_animationsCount->getText()));
+		size.x = (int)(std::ceil(float(spriteSheet.getSize().x) / std::stof(_frameCount->getText())));
+		size.y = (int)(std::ceil(float(spriteSheet.getSize().y) / std::stof(_animationsCount->getText())));
 		_widthOfFrame->setText(std::to_wstring(size.x));
 		_heightOfFrame->setText(std::to_wstring(size.y));
 
@@ -101,8 +102,8 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 	_frameCount->_onEditedFunction = [this]() {
 
 		sf::Vector2i size;
-		size.x = std::ceil(float(spriteSheet.getSize().x) / std::stof(_frameCount->getText()));
-		size.y = std::ceil(float(spriteSheet.getSize().y) / std::stof(_animationsCount->getText()));
+		size.x = (int)(std::ceil(float(spriteSheet.getSize().x) / std::stof(_frameCount->getText())));
+		size.y = (int)(std::ceil(float(spriteSheet.getSize().y) / std::stof(_animationsCount->getText())));
 		_widthOfFrame->setText(std::to_wstring(size.x));
 		_heightOfFrame->setText(std::to_wstring(size.y));
 		
@@ -181,25 +182,35 @@ void Dialog_Load_SpriteSheet::setPosition(sf::Vector2i position) {
 	sf::Vector2i center;
 	center.x = getContentPosition().x + getContentSize().x / 2;
 	center.y = getContentPosition().y + 128 + dialog_padding + basic_text_rect_height + dialog_padding + 8;
-	float dy = 60;
-	float dx = 48;
+	int dy = 60;
+	int dx = 48;
 
-	_widthOfFrame->setPosition(center + sf::Vector2i(-dx - size.x / 2, -size.y / 2));
-	_heightOfFrame->setPosition(center + sf::Vector2i(dx - size.x / 2, -size.y / 2));
-	_animationsCount->setPosition(center + sf::Vector2i(-dx - size.x / 2, dy - size.y / 2));
-	_frameCount->setPosition(center + sf::Vector2i(dx - size.x / 2, dy - size.y / 2));
+	sf::Vector2i widthOfFramePosition = center + sf::Vector2i(-dx - size.x / 2, -size.y / 2);
+	sf::Vector2i heightOfFramePosition = center + sf::Vector2i(dx - size.x / 2, -size.y / 2);
+	sf::Vector2i animationsCountPosition = center + sf::Vector2i(-dx - size.x / 2, dy - size.y / 2);
+	sf::Vector2i frameCountPosition = center + sf::Vector2i(dx - size.x / 2, dy - size.y / 2);
+
+	_widthOfFrame->setPosition(widthOfFramePosition);
+	_heightOfFrame->setPosition(heightOfFramePosition);
+	_animationsCount->setPosition(animationsCountPosition);
+	_frameCount->setPosition(frameCountPosition);
 
 	// draw texts labels
-	float dy2 = basic_text_rect_height;
-	_widthOfFrameText->setPosition(sf::Vector2f(_widthOfFrame->getPosition()) + sf::Vector2f(size.x / 2 - _widthOfFrameText->getGlobalBounds().size.x / 2, -dy2));
-	_heightOfFrameText->setPosition(sf::Vector2f(_heightOfFrame->getPosition()) + sf::Vector2f(size.x / 2 - _heightOfFrameText->getGlobalBounds().size.x / 2, -dy2));
-	_animationsCountText->setPosition(sf::Vector2f(_animationsCount->getPosition()) + sf::Vector2f(size.x / 2 - _animationsCountText->getGlobalBounds().size.x / 2, -dy2));
-	_frameCountText->setPosition(sf::Vector2f(_frameCount->getPosition()) + sf::Vector2f(size.x / 2 - _frameCountText->getGlobalBounds().size.x / 2, -dy2));
+	float dy2 = (float)basic_text_rect_height;
+	sf::Vector2f widthOfFrameTextPosition = sf::Vector2f(widthOfFramePosition) + sf::Vector2f(float(size.x / 2) - _widthOfFrameText->getGlobalBounds().size.x / 2.0f, -dy2);
+	sf::Vector2f heightOfFrameTextPosition = sf::Vector2f(heightOfFramePosition) + sf::Vector2f(float(size.x / 2) - _heightOfFrameText->getGlobalBounds().size.x / 2.0f, -dy2);
+	sf::Vector2f animationsCountTextPosition = sf::Vector2f(animationsCountPosition) + sf::Vector2f(float(size.x / 2) - _animationsCountText->getGlobalBounds().size.x / 2.0f, -dy2);
+	sf::Vector2f frameCountTextPosition = sf::Vector2f(frameCountPosition) + sf::Vector2f(float(size.x / 2) - _frameCountText->getGlobalBounds().size.x / 2.0f, -dy2);
+
+	_widthOfFrameText->setPosition(widthOfFrameTextPosition);
+	_heightOfFrameText->setPosition(heightOfFrameTextPosition);
+	_animationsCountText->setPosition(animationsCountTextPosition);
+	_frameCountText->setPosition(frameCountTextPosition);
 
 
 	// bottom buttons
 	_bottomRect.position = sf::Vector2i(getContentPosition()) + sf::Vector2i(0, getContentSize().y - _bottomRect.size.y);
-	float xx = 48;
+	int xx = 48;
 	_cancelBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x / 2 - xx - _cancelBtn->getSize().x / 2, getContentSize().y - _cancelBtn->getSize().y - dialog_padding));
 	_confirmBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x / 2 + xx - _confirmBtn->getSize().x / 2, getContentSize().y - _confirmBtn->getSize().y - dialog_padding));
 
@@ -399,19 +410,23 @@ void Dialog_Load_SpriteSheet::loadAnimationsByFrameSize(sf::Vector2i frameSize) 
 
 	sf::Vector2u spriteSheetSize = spriteSheet.getSize();
 
-	for (int y = 0, id=1; y < spriteSheetSize.y; y+= frameSize.y, id+=1) {
+	for (int y = 0, id=1; y < (int)spriteSheetSize.y; y+= frameSize.y, id+=1) {
 		//std::wcout << L"load the anim: " << id << "\n";
 		std::shared_ptr animation = std::make_shared<Animation>();
 
-		for (int x = 0; x < spriteSheetSize.x; x += frameSize.x) {
+		for (int x = 0; x < (int)spriteSheetSize.x; x += frameSize.x) {
+
 			std::shared_ptr<Frame> frame = std::make_shared<Frame>();
 			sf::Image img;
 			img.resize(sf::Vector2u(frameSize), sf::Color::White);
-			if (img.copy(spriteSheet, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(x, y), frameSize), true)) {
-				
-				frame->_layers.push_back(std::make_shared<Layer>(L"sprite", img));
-				animation->_frames.push_back(frame);
+			
+			if (!img.copy(spriteSheet, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(x, y), frameSize), true)) {
+				DebugError(L"Dialog_Load_SpriteSheet::loadAnimationsByFrameSize: cant copy image from spritesheet");
+				exit(0);
 			}
+
+			frame->_layers.push_back(std::make_shared<Layer>(L"sprite", img));
+			animation->_frames.push_back(frame);
 		}
 
 		_animations.push_back(animation);
@@ -429,14 +444,24 @@ bool Dialog_Load_SpriteSheet::datasIsCorrect() {
 void Dialog_Load_SpriteSheet::loadFrame() {
 
 	std::shared_ptr<Frame> currentFrame = _animations[0]->getCurrentFrame();
-	if (currentFrame != nullptr) {
-		std::shared_ptr<Layer> currentLayer = currentFrame->getLayer(0);
-
-		if (currentLayer != nullptr) {
-			sf::Image& img = currentLayer->_image;
-			_frameTexture.loadFromImage(img);
-		}
+	if (currentFrame == nullptr) {
+		DebugError(L"Dialog_Load_SpriteSheet::loadFrame: currentFrame is nullptr");
+		exit(0);
 	}
+	
+	std::shared_ptr<Layer> currentLayer = currentFrame->getLayer(0);
+
+	if (currentLayer == nullptr) {
+		DebugError(L"Dialog_Load_SpriteSheet::loadFrame: currentLayer is nullptr");
+		exit(0);
+	}
+
+	sf::Image& img = currentLayer->_image;
+	if (!_frameTexture.loadFromImage(img)) {
+		DebugError(L"Dialog_Load_SpriteSheet::loadFrame: cant load texture from image");
+		exit(0);
+	}
+
 }
 
 

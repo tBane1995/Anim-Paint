@@ -891,10 +891,10 @@ void FileDialog::setPosition(sf::Vector2i position) {
 	_leftRect->position = sf::Vector2i(getContentPosition().x + dialog_padding, getContentPosition().y);
 	_rightRect->position = sf::Vector2i(getContentPosition().x + getContentSize().x - _rightRect->size.x - 3 * dialog_padding, getContentPosition().y);
 	
-	sf::Vector2i bottomRectPos;
-	bottomRectPos.x = getContentPosition().x;
-	bottomRectPos.y = std::max(_rightRect->position.y + _rightRect->size.y, _leftRect->position.y + _leftRect->size.y);
-	_bottomRect.position = bottomRectPos;
+	_bottomRect.position.x = getContentPosition().x;
+	_bottomRect.position.y = getContentPosition().y +
+		std::max(_rightRect->size.y, _leftRect->size.y);
+
 
 	// separator
 	_separator->setPosition(getContentPosition() + oldAbsSeparatorPos);
@@ -1010,7 +1010,7 @@ void FileDialog::drawBottomPanel() {
 	// filename input
 	sf::Vector2i filenameInputPos;
 	filenameInputPos.x = getContentPosition().x + _filenameTextWidth + 2 * dialog_padding;
-	filenameInputPos.y = getContentPosition().y + _rightRect->position.y + _rightRect->size.y + dialog_padding;
+	filenameInputPos.y = _bottomRect.position.y + dialog_padding;
 	_filenameInput->setPosition(filenameInputPos);
 	_filenameInput->draw();
 
