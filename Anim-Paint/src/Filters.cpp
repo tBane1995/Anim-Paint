@@ -1,4 +1,5 @@
 ﻿#include "Filters.hpp"
+#include "DebugLog.hpp"
 
 std::string palette_button_shader_source = R"(
     uniform float iTime;            // ustawiane z C++
@@ -282,13 +283,23 @@ void set_rotation(sf::Image& image, float angle, bool set_smooth) {
     angle = angle * 3.14159265f / 180.f;
 
     sf::Texture tex;
-    tex.loadFromImage(image);
+    if (!tex.loadFromImage(image)) {
+		DebugError(L"Filter set_rotation: failed to load texture from image.");
+        exit(0);
+    }
 
     sf::RenderTexture rtex;
-    rtex.resize(tex.getSize());
+    if (!rtex.resize(tex.getSize())) {
+		DebugError(L"Filter set_rotation: failed to resize render texture.");
+        exit(0);
+    }
 
     sf::Shader sh;
-    sh.loadFromMemory(rotation_shader_source, sf::Shader::Type::Fragment);
+    if (!sh.loadFromMemory(rotation_shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"Filter set_rotation: failed to load shader from memory.");
+        exit(0);
+    }
+
     sh.setUniform("angle", angle);
 
     tex.setSmooth(set_smooth);
@@ -304,13 +315,23 @@ void set_rotation(sf::Image& image, float angle, bool set_smooth) {
 void set_brightness(sf::Image& image, float value) {
 
     sf::Texture tex;
-    tex.loadFromImage(image);
+    if (!tex.loadFromImage(image)) {
+		DebugError(L"Filter set_brightness: failed to load texture from image.");
+        exit(0);
+    }
 
     sf::RenderTexture rtex;
-    rtex.resize(tex.getSize());
+    if (!rtex.resize(tex.getSize())) {
+		DebugError(L"Filter set_brightness: failed to resize render texture.");
+        exit(0);
+    }
 
     sf::Shader sh;
-    sh.loadFromMemory(brightness_shader_source, sf::Shader::Type::Fragment);
+    if (!sh.loadFromMemory(brightness_shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"Filter set_brightness: failed to load shader from memory.");
+        exit(0);
+    }
+
     sh.setUniform("brightness", value);
 
     sf::Sprite spr(tex);
@@ -326,13 +347,23 @@ void set_contrast(sf::Image& image, float value) {
     value = 1.0f + value;
 
     sf::Texture tex;
-    tex.loadFromImage(image);
+    if (!tex.loadFromImage(image)) {
+		DebugError(L"Filter set_contrast: failed to load texture from image.");
+        exit(0);
+    }
 
     sf::RenderTexture rtex;
-    rtex.resize(tex.getSize());
+    if (!rtex.resize(tex.getSize())) {
+		DebugError(L"Filter set_contrast: failed to resize render texture.");
+        exit(0);
+    }
 
     sf::Shader sh;
-    sh.loadFromMemory(contrast_shader_source, sf::Shader::Type::Fragment);
+    if (!sh.loadFromMemory(contrast_shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"Filter set_contrast: failed to load shader from memory.");
+        exit(0);
+    }
+
     sh.setUniform("contrast", value);
 
     sf::Sprite spr(tex);
@@ -346,13 +377,22 @@ void set_contrast(sf::Image& image, float value) {
 void set_saturation(sf::Image& image, float value) {
 
     sf::Texture tex;
-    tex.loadFromImage(image);
+    if (!tex.loadFromImage(image)) {
+		DebugError(L"Filter set_saturation: failed to load texture from image.");
+        exit(0);
+    }
 
     sf::RenderTexture rtex;
-    rtex.resize(tex.getSize());
+    if (!rtex.resize(tex.getSize())) {
+		DebugError(L"Filter set_saturation: failed to resize render texture.");
+        exit(0);
+    }
 
     sf::Shader sh;
-    sh.loadFromMemory(saturation_shader_source, sf::Shader::Type::Fragment);
+    if (!sh.loadFromMemory(saturation_shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"Filter set_saturation: failed to load shader from memory.");
+        exit(0);
+    }
     sh.setUniform("saturation", value);
 
     sf::Sprite spr(tex);
@@ -366,13 +406,22 @@ void set_saturation(sf::Image& image, float value) {
 void set_sepia(sf::Image& image, float value) {
 
     sf::Texture tex;
-    tex.loadFromImage(image);
+    if (!tex.loadFromImage(image)) {
+		DebugError(L"Filter set_sepia: failed to load texture from image.");
+        exit(0);
+    }
 
     sf::RenderTexture rtex;
-    rtex.resize(tex.getSize());
+    if (!rtex.resize(tex.getSize())) {
+		DebugError(L"Filter set_sepia: failed to resize render texture.");
+        exit(0);
+    }
 
     sf::Shader sh;
-    sh.loadFromMemory(sepia_shader_source, sf::Shader::Type::Fragment);
+    if (!sh.loadFromMemory(sepia_shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"Filter set_sepia: failed to load shader from memory.");
+        exit(0);
+    }
     sh.setUniform("sepia", value);
 
     sf::Sprite spr(tex);
@@ -387,13 +436,23 @@ void set_outline(sf::Image& image, float width, sf::Color backgroundColor, sf::C
     // value 0 - 8
 
     sf::Texture tex;
-    tex.loadFromImage(image);
+    if (!tex.loadFromImage(image)) {
+		DebugError(L"Filter set_outline: failed to load texture from image.");
+        exit(0);
+	}
 
     sf::RenderTexture rtex;
-    rtex.resize(tex.getSize());
+    if (!rtex.resize(tex.getSize())) {
+		DebugError(L"Filter set_outline: failed to resize render texture.");
+        exit(0);
+	}
 
     sf::Shader sh;
-    sh.loadFromMemory(outline_shader_source, sf::Shader::Type::Fragment);
+    if (!sh.loadFromMemory(outline_shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"Filter set_outline: failed to load shader from memory.");
+        exit(0);
+	}
+
     sh.setUniform("outlineWidth", width);
     sh.setUniform("texelSize", sf::Vector2f(1.0f / float(image.getSize().x), 1.0f / float(image.getSize().y)));
     sh.setUniform("threshold", 0.02f);
@@ -411,13 +470,23 @@ void set_outline(sf::Image& image, float width, sf::Color backgroundColor, sf::C
 void set_resize(sf::Image& image, float width, float height) {
 
     sf::Texture tex;
-    tex.loadFromImage(image);
+    if (!tex.loadFromImage(image)) {
+		DebugError(L"Filter set_resize: failed to load texture from image.");
+        exit(0);
+	}
 
     sf::RenderTexture rtex;
-    rtex.resize(tex.getSize());
+    if (!rtex.resize(tex.getSize())) {
+		DebugError(L"Filter set_resize: failed to resize render texture.");
+        exit(0);
+	}
 
     sf::Shader sh;
-    sh.loadFromMemory(resize_shader_source, sf::Shader::Type::Fragment);
+    if (!sh.loadFromMemory(resize_shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"Filter set_resize: failed to load shader from memory.");
+        exit(0);
+	}
+
     sh.setUniform("targetSize", sf::Vector2f(width, height));
     sh.setUniform("originalSize", sf::Vector2f(tex.getSize()));
 
