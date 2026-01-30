@@ -137,7 +137,7 @@ void Dialog::deactivateOnTabElement() {
 			ni->_textStr = ni->_previousText;
 		}
 
-		ni->_cursorPosition = ni->_textStr.length();
+		ni->_cursorPosition = (int)ni->_textStr.length();
 		ni->setText(ni->_textStr);
 		ni->_state = TextInputState::Idle;
 		return;
@@ -264,15 +264,29 @@ void Dialog::draw() {
 		titleRectColor = dialog_title_rect_color;
 	}
 	titleRect.setFillColor(titleRectColor);
-	titleRect.setPosition(sf::Vector2f(_position.x + dialog_border_width, _position.y + dialog_border_width));
+
+	sf::Vector2f titleRectPosition;
+	titleRectPosition.x = float(_position.x + dialog_border_width);
+	titleRectPosition.y = float(_position.y + dialog_border_width);
+	titleRect.setPosition(titleRectPosition);
+
 	window->draw(titleRect);
 
 	window->draw(*_titleText);
 	_closeBtn->draw();
 
-	sf::RectangleShape contentRect(sf::Vector2f(_rect.size.x - 2 * dialog_border_width, _rect.size.y - 2 * dialog_border_width - _titleRect.size.y));
+	sf::Vector2f contentRectSize;
+	contentRectSize.x = float(_rect.size.x - 2 * dialog_border_width);
+	contentRectSize.y = float(_rect.size.y - 2 * dialog_border_width - _titleRect.size.y);
+	sf::RectangleShape contentRect(contentRectSize);
+
 	contentRect.setFillColor(dialog_content_rect_color);
-	contentRect.setPosition(sf::Vector2f(_position) + sf::Vector2f(dialog_border_width, dialog_border_width + _titleRect.size.y));
+
+	sf::Vector2f contentRectPosition;
+	contentRectPosition.x = float(_position.x + dialog_border_width);
+	contentRectPosition.y = float(_position.y + dialog_border_width + _titleRect.size.y);
+	contentRect.setPosition(contentRectPosition);
+
 	window->draw(contentRect);
 }
 
