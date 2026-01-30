@@ -23,6 +23,8 @@ Button::Button() : ElementGUI() {
 	_rectHoverBorderColor = sf::Color::Transparent;
 	_rectPressBorderColor = sf::Color::Transparent;
 	_rectSelectBorderColor = sf::Color::Transparent;
+
+	_activatedByEnter = false;
 }
 
 
@@ -187,33 +189,41 @@ void NormalButton::update() {
 }
 
 void NormalButton::draw() {
-	sf::RectangleShape rect(sf::Vector2f(_rect.size.x - 2*_rectBorderWidth, _rect.size.y - 2*_rectBorderWidth));
+
+	sf::Vector2f rectSize;
+	rectSize.x = float(_rect.size.x - 2 * _rectBorderWidth);
+	rectSize.y = float(_rect.size.y - 2 * _rectBorderWidth);
+
+	sf::RectangleShape rect(rectSize);
 	switch (_state) {
 	case ButtonState::Pressed:
 		rect.setFillColor(_rectPressColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)_rectBorderWidth);
 		rect.setOutlineColor(_rectPressBorderColor);
 		break;
 	case ButtonState::Hover:
 		rect.setFillColor(_rectHoverColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)_rectBorderWidth);
 		rect.setOutlineColor(_rectHoverBorderColor);
 		break;
 	case ButtonState::Idle:
 		if (_isSelected) {
 			rect.setFillColor(_rectSelectColor);
-			rect.setOutlineThickness(_rectBorderWidth);
+			rect.setOutlineThickness((float)_rectBorderWidth);
 			rect.setOutlineColor(_rectSelectBorderColor);
 		}
 		else {
 			rect.setFillColor(_rectIdleColor);
-			rect.setOutlineThickness(_rectBorderWidth);
+			rect.setOutlineThickness((float)_rectBorderWidth);
 			rect.setOutlineColor(_rectIdleBorderColor);
 		};
 		break;
 	};
 
-	rect.setPosition(sf::Vector2f(_rect.position.x + _rectBorderWidth, _rect.position.y + _rectBorderWidth));
+	sf::Vector2f rectPosition;
+	rectPosition.x = float(_rect.position.x + _rectBorderWidth);
+	rectPosition.y = float(_rect.position.y + _rectBorderWidth);
+	rect.setPosition(rectPosition);
 	window->draw(rect);
 
 	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
@@ -342,32 +352,40 @@ void ColoredButtonWithText::update() {
 
 void ColoredButtonWithText::draw() {
 
-	sf::RectangleShape rect(sf::Vector2f(_rect.size.x - 2 * _rectBorderWidth, _rect.size.y - 2 * _rectBorderWidth));
+	sf::Vector2f rectSize;
+	rectSize.x = float(_rect.size.x - 2 * _rectBorderWidth);
+	rectSize.y = float(_rect.size.y - 2 * _rectBorderWidth);
+
+	sf::RectangleShape rect(rectSize);
 	switch (_state) {
 	case ButtonState::Pressed:
 		rect.setFillColor(_rectPressColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)_rectBorderWidth);
 		rect.setOutlineColor(_rectPressBorderColor);
 		break;
 	case ButtonState::Hover:
 		rect.setFillColor(_rectHoverColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)_rectBorderWidth);
 		rect.setOutlineColor(_rectHoverBorderColor);
 		break;
 	case ButtonState::Idle:
 		if (_isSelected) {
 			rect.setFillColor(_rectSelectColor);
-			rect.setOutlineThickness(_rectBorderWidth);
+			rect.setOutlineThickness((float)_rectBorderWidth);
 			rect.setOutlineColor(_rectSelectBorderColor);
 		}
 		else {
 			rect.setFillColor(_rectIdleColor);
-			rect.setOutlineThickness(_rectBorderWidth);
+			rect.setOutlineThickness((float)_rectBorderWidth);
 			rect.setOutlineColor(_rectIdleBorderColor);
 		};
 		break;
 	};
-	rect.setPosition(sf::Vector2f(_rect.position.x + _rectBorderWidth, _rect.position.y + _rectBorderWidth));
+
+	sf::Vector2f rectPosition;
+	rectPosition.x = float(_rect.position.x + _rectBorderWidth);
+	rectPosition.y = float(_rect.position.y + _rectBorderWidth);
+	rect.setPosition(rectPosition);
 	window->draw(rect);
 
 	window->draw(*_text);
@@ -485,32 +503,41 @@ void ButtonWithBottomText::update() {
 
 void ButtonWithBottomText::draw() {
 
-	sf::RectangleShape rect(sf::Vector2f(_rect.size.x - 2*tools_border_width, _rect.size.y - 2*tools_border_width));
+	sf::Vector2f rectSize;
+	rectSize.x = float(_rect.size.x - 2 * tools_border_width);
+	rectSize.y = float(_rect.size.y - 2 * tools_border_width);
+
+	sf::RectangleShape rect(rectSize);
+
 	switch (_state) {
 	case ButtonState::Pressed:
 		rect.setFillColor(_rectPressColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)_rectBorderWidth);
 		rect.setOutlineColor(_rectPressBorderColor);
 		break;
 	case ButtonState::Hover:
 		rect.setFillColor(_rectHoverColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)_rectBorderWidth);
 		rect.setOutlineColor(_rectHoverBorderColor);
 		break;
 	case ButtonState::Idle:
 		if (_isSelected) {
 			rect.setFillColor(_rectSelectColor);
-			rect.setOutlineThickness(_rectBorderWidth);
+			rect.setOutlineThickness((float)_rectBorderWidth);
 			rect.setOutlineColor(_rectSelectBorderColor);
 		}
 		else {
 			rect.setFillColor(_rectIdleColor);
-			rect.setOutlineThickness(_rectBorderWidth);
+			rect.setOutlineThickness((float)_rectBorderWidth);
 			rect.setOutlineColor(_rectIdleBorderColor);
 		};
 		break;
 	};
-	rect.setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(_rectBorderWidth, _rectBorderWidth));
+
+	sf::Vector2f rectPosition;
+	rectPosition.x = float(_rect.position.x + _rectBorderWidth);
+	rectPosition.y = float(_rect.position.y + _rectBorderWidth);
+	rect.setPosition(rectPosition);
 	window->draw(rect);
 
 	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
@@ -630,32 +657,40 @@ void ButtonWithRightText::update() {
 
 void ButtonWithRightText::draw() {
 
-	sf::RectangleShape rect(sf::Vector2f(_rect.size.x - 2 * _rectBorderWidth, _rect.size.y - 2 * _rectBorderWidth));
+	sf::Vector2f rectSize;
+	rectSize.x = float(_rect.size.x - 2 * _rectBorderWidth);
+	rectSize.y = float(_rect.size.y - 2 * _rectBorderWidth);
+
+	sf::RectangleShape rect(rectSize);
 	switch (_state) {
 	case ButtonState::Pressed:
 		rect.setFillColor(_rectPressColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)_rectBorderWidth);
 		rect.setOutlineColor(_rectPressBorderColor);
 		break;
 	case ButtonState::Hover:
 		rect.setFillColor(_rectHoverColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)_rectBorderWidth);
 		rect.setOutlineColor(_rectHoverBorderColor);
 		break;
 	case ButtonState::Idle:
 		if (_isSelected) {
 			rect.setFillColor(_rectSelectColor);
-			rect.setOutlineThickness(_rectBorderWidth);
+			rect.setOutlineThickness((float)_rectBorderWidth);
 			rect.setOutlineColor(_rectSelectBorderColor);
 		}
 		else {
 			rect.setFillColor(_rectIdleColor);
-			rect.setOutlineThickness(_rectBorderWidth);
+			rect.setOutlineThickness((float)_rectBorderWidth);
 			rect.setOutlineColor(_rectIdleBorderColor);
 		};
 		break;
 	};
-	rect.setPosition(sf::Vector2f(_rect.position.x + _rectBorderWidth, _rect.position.y + _rectBorderWidth));
+
+	sf::Vector2f rectPosition;
+	rectPosition.x = float(_rect.position.x + _rectBorderWidth);
+	rectPosition.y = float(_rect.position.y + _rectBorderWidth);
+	rect.setPosition(rectPosition);
 	window->draw(rect);
 
 	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
@@ -681,7 +716,7 @@ Option::Option(std::wstring text, std::shared_ptr<Texture> texture, std::shared_
 	_text = std::make_unique<sf::Text>(basicFont, text, 13);
 	_text->setFillColor(menu_text_color);
 
-	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32 + _text->getGlobalBounds().size.x + 8, 32));
+	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32 + (int)_text->getGlobalBounds().size.x + 8, 32));
 
 	setPosition(position);
 
@@ -702,7 +737,7 @@ sf::Vector2i Option::getSize() {
 
 void Option::setPosition(sf::Vector2i position) {
 	_rect.position = sf::Vector2i(position);
-	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32, 24 - basicFont.getLineSpacing(13)));
+	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32, (32 - basicFont.getLineSpacing(13))/2-1));
 
 }
 
@@ -764,7 +799,10 @@ void Option::update() {
 void Option::draw() {
 
 	// draw rectangle
-	sf::RectangleShape rect(sf::Vector2f(_rect.size.x - 2 * _rectBorderWidth, _rect.size.y - 2 * _rectBorderWidth));
+	sf::Vector2f rectSize;
+	rectSize.x = float(_rect.size.x - 2 * _rectBorderWidth);
+	rectSize.y = float(_rect.size.y - 2 * _rectBorderWidth);
+	sf::RectangleShape rect(rectSize);
 	switch (_state) {
 	case ButtonState::Pressed:
 		rect.setFillColor(_rectPressColor);
@@ -781,7 +819,10 @@ void Option::draw() {
 		};
 		break;
 	};
-	rect.setPosition(sf::Vector2f(_rect.position.x + _rectBorderWidth, _rect.position.y + _rectBorderWidth));
+	sf::Vector2f rectPosition;
+	rectPosition.x = float(_rect.position.x + _rectBorderWidth);
+	rectPosition.y = float(_rect.position.y + _rectBorderWidth);
+	rect.setPosition(rectPosition);
 	window->draw(rect);
 
 	// Draw sprite
@@ -852,13 +893,18 @@ void ButtonWithTopTextAndList::addOption(std::wstring text) {
 
 	if (_options.size() == 0) {
 		_options.push_back(o);
-		_list_rect.setSize(sf::Vector2f(0, o->_rect.size.y + menuoptions_border_width));
+		sf::Vector2f rectSize;
+		rectSize.x = 0;
+		rectSize.y = float(o->_rect.size.y + menuoptions_border_width);
+		_list_rect.setSize(rectSize);
 		return;
 	}
 
 	int wdt = (_options.back()->_rect.size.x > o->_rect.size.x) ? _options.back()->_rect.size.x : o->_rect.size.x;
-
-	_list_rect.setSize(sf::Vector2f(wdt + 2 * menuoptions_border_width, _list_rect.getSize().y + o->_rect.size.y));
+	sf::Vector2f rectSize;
+	rectSize.x = float(wdt + 2 * menuoptions_border_width);
+	rectSize.y = float(_list_rect.getSize().y + o->_rect.size.y);
+	_list_rect.setSize(rectSize);
 
 	_options.push_back(o);
 	for (auto& o : _options) {
@@ -872,12 +918,16 @@ void ButtonWithTopTextAndList::setPosition(sf::Vector2i position) {
 
 	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(48 / 2 - _text->getGlobalBounds().size.x / 2.0f, 0));
 
-	sf::Vector2i pos = _rect.position + sf::Vector2i(0, _rect.size.y);
+	sf::Vector2i ipos = _rect.position + sf::Vector2i(0, _rect.size.y);
 
-	_list_rect.setPosition(sf::Vector2f(pos.x - menuoptions_border_width, pos.y));
+	sf::Vector2f rectPos;
+	rectPos.x = float(ipos.x - menuoptions_border_width);
+	rectPos.y = float(ipos.y);
+
+	_list_rect.setPosition(rectPos);
 	for (auto& o : _options) {
-		o->setPosition(pos);
-		pos.y += 32;
+		o->setPosition(ipos);
+		ipos.y += 32;
 	}
 }
 
@@ -971,27 +1021,30 @@ void ButtonWithTopTextAndList::update() {
 void ButtonWithTopTextAndList::draw() {
 
 	// draw rect
-	sf::RectangleShape rect(sf::Vector2f(_rect.size - sf::Vector2i(2*_rectBorderWidth, 2*_rectBorderWidth)));
+	sf::Vector2f rectSize;
+	rectSize.x = float(_rect.size.x - 2 * _rectBorderWidth);
+	rectSize.y = float(_rect.size.y - 2 * _rectBorderWidth);
+	sf::RectangleShape rect(rectSize);
 	switch (_state) {
 	case ButtonState::Pressed:
 		rect.setFillColor(_rectPressColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)_rectBorderWidth);
 		rect.setOutlineColor(_rectPressBorderColor);
 		break;
 	case ButtonState::Hover:
 		rect.setFillColor(_rectHoverColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)_rectBorderWidth);
 		rect.setOutlineColor(_rectHoverBorderColor);
 		break;
 	case ButtonState::Idle:
 		if (_isSelected) {
 			rect.setFillColor(_rectSelectColor);
-			rect.setOutlineThickness(_rectBorderWidth);
+			rect.setOutlineThickness((float)_rectBorderWidth);
 			rect.setOutlineColor(_rectSelectBorderColor);
 		}
 		else {
 			rect.setFillColor(_rectIdleColor);
-			rect.setOutlineThickness(_rectBorderWidth);
+			rect.setOutlineThickness((float)_rectBorderWidth);
 			rect.setOutlineColor(_rectIdleBorderColor);
 		};
 		break;
@@ -999,16 +1052,19 @@ void ButtonWithTopTextAndList::draw() {
 
 	if (_isOpen) {
 		rect.setFillColor(_rectPressColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)_rectBorderWidth);
 		rect.setOutlineColor(_rectPressBorderColor);
 	}
 
-	rect.setPosition(sf::Vector2f(_rect.position.x + _rectBorderWidth, _rect.position.y + _rectBorderWidth));
+	sf::Vector2f rectPosition;
+	rectPosition.x = float(_rect.position.x + _rectBorderWidth);
+	rectPosition.y = float(_rect.position.y + _rectBorderWidth);
+	rect.setPosition(rectPosition);
 	window->draw(rect);
 
 	// draw sprite
 	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
-	sprite.setPosition(sf::Vector2f(_rect.position.x, _rect.position.y + 16));
+	sprite.setPosition(rectPosition + sf::Vector2f(0,16.0f));
 	window->draw(sprite);
 
 	// draw text
