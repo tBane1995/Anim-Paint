@@ -12,18 +12,18 @@ std::vector<std::shared_ptr<Layer>>& Frame::getLayers() {
 }
 
 void Frame::addEmptyLayer() {
-	_layers.push_back(std::make_shared<Layer>(L"Layer 0", canvas->_size));
+	_layers.push_back(std::make_shared<Layer>(L"Layer "+std::to_wstring(_layers.size()+1), canvas->_size));
 }
 
 std::shared_ptr<Layer> Frame::getLayer(int id) {
 	if (id < 0) return nullptr;
-	if (id >= _layers.size()) return nullptr;
+	if (id >= (int)_layers.size()) return nullptr;
 
 	return _layers[id];
 }
 
 int Frame::getLayersCount() {
-	return _layers.size();
+	return (int)_layers.size();
 }
 
 void Frame::addLayer(std::shared_ptr<Layer> layer) {
