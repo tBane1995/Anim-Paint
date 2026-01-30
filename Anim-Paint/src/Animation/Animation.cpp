@@ -46,8 +46,11 @@ std::shared_ptr<Frame> Animation::getCurrentFrame() {
 
 std::vector<std::shared_ptr<Layer>>& Animation::getLayers() {
 	// return current Layers
+
+	static std::vector<std::shared_ptr<Layer>> emptyLayers;
+
 	if (_frames.empty())
-		return std::vector<std::shared_ptr<Layer>>();
+		return emptyLayers;
 
 	return getCurrentFrame()->getLayers();
 }
@@ -101,12 +104,12 @@ int Animation::getCurrentLayerID() {
 
 int Animation::getFramesCount() {
 	// return Frames size
-	return _frames.size();
+	return (int)_frames.size();
 }
 
 int Animation::getLayersCount() {
 	// return current Layers size
-	return getCurrentFrame()->_layers.size();
+	return (int)getCurrentFrame()->_layers.size();
 }
 
 void Animation::setCurrentFrameID(int id) {
@@ -145,7 +148,7 @@ void Animation::lastLayer() {
 		_currentLayer = 0;
 		return;
 	}
-	_currentLayer = getCurrentFrame()->_layers.size() - 1;
+	_currentLayer = (int)getCurrentFrame()->_layers.size() - 1;
 }
 
 void Animation::addFrame() {
@@ -193,7 +196,7 @@ int getCurrentAnimationId() {
 }
 
 int getAnimationsCount() {
-	return animations.size();
+	return (int)animations.size();
 }
 
 std::shared_ptr<Animation> getAnimation(int id) {
