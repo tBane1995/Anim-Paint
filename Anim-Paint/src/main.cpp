@@ -52,17 +52,42 @@
 
 void createDialogs() {
 	
-	animations_dialog = std::make_shared<AnimationsDialog>(L"Animations",
-		sf::Vector2i(192, dialog_title_rect_height + 32 + 32 + dialog_padding * 2),
-		sf::Vector2i(mainView.getSize().x - 192 - dialog_margin, main_menu->getSize().y + toolbar->_rect.size.y + dialog_margin));
+	{
+		sf::Vector2i size;
+		size.x = 192;
+		size.y = dialog_title_rect_height + 32 + 32 + dialog_padding * 2;
 
-	frames_dialog = std::make_shared<FramesDialog>(L"Frames",
-		sf::Vector2i(192, dialog_title_rect_height + 32 + 32 + dialog_padding * 2),
-		sf::Vector2i(mainView.getSize().x - 192 - dialog_margin, animations_dialog->getPosition().y + animations_dialog->getSize().y + dialog_margin));
+		sf::Vector2i position;
+		position.x = int(mainView.getSize().x) - 192 - dialog_margin;
+		position.y = int(main_menu->getSize().y) + toolbar->_rect.size.y + dialog_margin;
 
-	layers_dialog = std::make_shared<LayersDialog>(L"Layers", 
-		sf::Vector2i(160, dialog_title_rect_height + 4 * 32 + 32 + dialog_padding * 2),
-		sf::Vector2i(mainView.getSize().x - 160 - dialog_margin, frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin));
+		animations_dialog = std::make_shared<AnimationsDialog>(L"Animations", size, position);
+	}
+
+	{
+		sf::Vector2i size;
+		size.x = 192;
+		size.y = dialog_title_rect_height + 32 + 32 + dialog_padding * 2;
+		
+		sf::Vector2i position;
+		position.x = int(mainView.getSize().x) - 192 - dialog_margin;
+		position.y = animations_dialog->getPosition().y + animations_dialog->getSize().y + dialog_margin;
+		
+		frames_dialog = std::make_shared<FramesDialog>(L"Frames", size, position);
+	}
+
+	{
+		sf::Vector2i size;
+		size.x = 160;
+		size.y = dialog_title_rect_height + 4 * 32 + 32 + dialog_padding * 2;
+
+		sf::Vector2i position;
+		position.x = int(mainView.getSize().x) - 160 - dialog_margin;
+		position.y = frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin;
+
+		layers_dialog = std::make_shared<LayersDialog>(L"Layers", size, position);
+	}
+
 	
 }
 
@@ -76,14 +101,32 @@ void resize() {
 		palette->clampPosition();
 	}
 	
-	frames_dialog->setPosition(sf::Vector2i(mainView.getSize().x - 192 - dialog_margin, main_menu->getSize().y + toolbar->_rect.size.y + dialog_margin));
-	animations_dialog->setPosition(sf::Vector2i(mainView.getSize().x - 192 - dialog_margin, frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin));
-	layers_dialog->setPosition(sf::Vector2i(mainView.getSize().x - 160 - dialog_margin, animations_dialog->getPosition().y + animations_dialog->getSize().y + dialog_margin));
+	{
+		sf::Vector2i position;
+		position.x = int(mainView.getSize().x) - 192 - dialog_margin;
+		position.y = int(main_menu->getSize().y) + toolbar->_rect.size.y + dialog_margin;
+		animations_dialog->setPosition(position);
+	}
+
+	{
+		sf::Vector2i position;
+		position.x = int(mainView.getSize().x) - 192 - dialog_margin;
+		position.y = animations_dialog->getPosition().y + animations_dialog->getSize().y + dialog_margin;
+		frames_dialog->setPosition(position);
+	}
+
+	{
+		sf::Vector2i position;
+		position.x = int(mainView.getSize().x) - 160 - dialog_margin;
+		position.y = frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin;
+		layers_dialog->setPosition(position);
+	}
+	
 }
 
 int main() {
 	_setmode(_fileno(stdout), _O_U16TEXT); // wide char UTF-16 output
-	window = std::make_unique<sf::RenderWindow>(sf::VideoMode(sf::Vector2u(mainView.getSize().x, mainView.getSize().y)), "Anim Paint", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+	window = std::make_unique<sf::RenderWindow>(sf::VideoMode(sf::Vector2u(mainView.getSize())), "Anim Paint", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
 	
 	//window->setKeyRepeatEnabled(false);
 	loadTextures();
@@ -91,7 +134,7 @@ int main() {
 
 	//window->setFramerateLimit(120);
 	window->setView(mainView);
-	window->setMinimumSize(sf::Vector2u(mainView.getSize().x, mainView.getSize().y));
+	window->setMinimumSize(sf::Vector2u(mainView.getSize()));
 
 	cursor = new Cursor();
 	main_menu = std::make_shared<MainMenu>();
