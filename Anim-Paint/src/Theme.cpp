@@ -1,5 +1,6 @@
 ﻿#include "Theme.hpp"
 #include "SFML/Graphics.hpp"
+#include "DebugLog.hpp"
 
 sf::Font basicFont;
 
@@ -98,7 +99,11 @@ int colors_dialog_margin;
 
 void loadTheme() {
 
-	basicFont.openFromFile("C:/Windows/Fonts/arial.ttf");
+	if (!basicFont.openFromFile("C:/Windows/Fonts/arial.ttf")) {
+		DebugError(L"Failed to load basic font");
+		exit(0);
+	}
+	
 
 	// dialogs
 	dialog_margin = 8;
@@ -117,7 +122,7 @@ void loadTheme() {
 	// textE
 	basic_text_size = 13;
 	basic_text_color = sf::Color(191, 191, 191);
-	basic_text_rect_height = 20.0f;
+	basic_text_rect_height = 20;
 
 	// file dialogs
 	file_dialog_file_rect_idle_color = sf::Color::Transparent;
@@ -153,7 +158,7 @@ void loadTheme() {
 	menubox_hover_color = sf::Color(47, 47, 47);
 	menubox_press_color = sf::Color(39, 39, 39);
 
-	menuoptions_border_width = 2.0f;
+	menuoptions_border_width = 2;
 	menuoptions_border_color = sf::Color(63, 63, 63);
 
 	optionbox_select_color = sf::Color(79, 31, 31);
