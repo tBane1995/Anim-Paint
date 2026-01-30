@@ -2,18 +2,16 @@
 #include "DebugLog.hpp"
 
 std::string palette_button_shader_source = R"(
-    uniform float iTime;            // ustawiane z C++
-    uniform sampler2D texture;      // SFML podstawi teksturę sprite'a
-    uniform vec4 texRectUV;         // (u0, v0, u1, v1) – NORMALIZOWANE granice wycinka
+    uniform float iTime;
+    uniform sampler2D texture;
+    uniform vec4 texRectUV;
 
-    // --- HSV -> RGB (oficjalne) ---
     vec3 hsv2rgb(in vec3 c)
     {
         vec3 rgb = clamp(abs(mod(c.x*6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
         return c.z * mix(vec3(1.0), rgb, c.y);
     }
 
-    // --- HSV -> RGB (wygładzone) ---
     vec3 hsv2rgb_smooth(in vec3 c)
     {
         vec3 rgb = clamp(abs(mod(c.x*6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
@@ -23,17 +21,16 @@ std::string palette_button_shader_source = R"(
 
     void main()
     {
-        // oryginalne współrzędne tekstury (pod-wycinek atlasu)
         vec2 uvAtlas = gl_TexCoord[0].xy;
 
-        // przeskaluj do zakresu lokalnego [0..1] w obrębie sprite'a
+        // scalling to [0..1]
         vec2 uv = (uvAtlas - texRectUV.xy) / (texRectUV.zw - texRectUV.xy);
 
-        // przesunięcie koloru w lewo w czasie
-        float hueShift = -iTime * 0.1;  // prędkość przesuwania w lewo (0.1 to tempo)
+        // moved color by time
+        float hueShift = -iTime * 0.1;
         float hue = fract(uv.x + hueShift);
 
-        // paleta: H = X przesunięty, S = 1, V = Y
+        // palette: H = X, S = 1, V = Y
         vec3 hsv = vec3(hue, 1.0, uv.y);
 
         vec3 rgb_o = hsv2rgb(hsv);
@@ -42,13 +39,12 @@ std::string palette_button_shader_source = R"(
         float t = smoothstep(-0.2, 0.2, sin(2.0 * iTime));
         vec3 hsvRgb = mix(rgb_o, rgb_s, t);
 
-        // kolor z tekstury
         vec4 base = texture2D(texture, uvAtlas);
 
-        // białe piksele (dokładnie 1.0)
+        // white pixels
         float whiteMask = float(base.r == 1.0 && base.g == 1.0 && base.b == 1.0);
 
-        // białe → HSV, pozostałe → tekstura
+        // white -> HSV, other -> texture
         vec3 outRgb = mix(base.rgb, hsvRgb, whiteMask);
 
         gl_FragColor = vec4(outRgb, base.a);
@@ -56,16 +52,14 @@ std::string palette_button_shader_source = R"(
 )";
 
 std::string palette_colors_shader_source = R"(
-    uniform sampler2D texture;      // SFML podstawi teksturę sprite'a
-    uniform vec4 texRectUV;         // (u0, v0, u1, v1) – NORMALIZOWANE granice wycinka
+    uniform sampler2D texture;
+    uniform vec4 texRectUV;
 
-    // --- HSV -> RGB (oficjalne) ---
     vec3 hsv2rgb(in vec3 c) {
         vec3 rgb = clamp(abs(mod(c.x*6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
         return c.z * mix(vec3(1.0), rgb, c.y);
     }
 
-    // --- HSV -> RGB (wygładzone) ---
     vec3 hsv2rgb_smooth(in vec3 c) {
         vec3 rgb = clamp(abs(mod(c.x*6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
         rgb = rgb * rgb * (3.0 - 2.0 * rgb);
@@ -74,7 +68,6 @@ std::string palette_colors_shader_source = R"(
 
     void main() {
         vec2 uvAtlas = gl_TexCoord[0].xy;
-
         vec2 uv = (uvAtlas - texRectUV.xy) / (texRectUV.zw - texRectUV.xy);
 
         float hue = fract(uv.x);
@@ -86,25 +79,18 @@ std::string palette_colors_shader_source = R"(
 )";
 
 std::string palette_values_shader_source = R"(
-    uniform float iTime;            // ustawiane z C++
-    uniform sampler2D texture;      // SFML podstawi teksturę sprite'a
-    uniform vec4 texRectUV;         // (u0, v0, u1, v1) – NORMALIZOWANE granice wycinka
+    uniform float iTime;
+    uniform sampler2D texture;
+    uniform vec4 texRectUV;
 
     void main()
     {
-        // współrzędne atlasu
         vec2 uvAtlas = gl_TexCoord[0].xy;
 
-        // przeskalowanie do [0..1] lokalnie w obrębie sprite’a
         vec2 uv = (uvAtlas - texRectUV.xy) / (texRectUV.zw - texRectUV.xy);
-
-        // pobierz kolor bazowy z tekstury (np. z palety barw)
         vec4 base = texture2D(texture, uvAtlas);
-
-        // współczynnik przejścia: 0.0 (lewa) → 1.0 (prawa)
         float t = uv.y;
 
-        // im dalej w prawo, tym bardziej czarny
         vec3 color = mix(base.rgb, vec3(0.0), t);
 
         gl_FragColor = vec4(color, base.a);
@@ -185,7 +171,7 @@ std::string saturation_shader_source = R"(
 
 std::string sepia_shader_source = R"(
     uniform sampler2D texture;
-    uniform float sepia; // 0 - brak efektu, 100 - pełna sepia
+    uniform float sepia; // 0 - no effect, 100 - max sepia
 
     void main() {
         vec2 uv = gl_TexCoord[0].xy;
@@ -198,12 +184,10 @@ std::string sepia_shader_source = R"(
 
         vec3 sepiaColor = vec3(red, green, blue);
 
-        // mocniejszy czerwony odcień
-        sepiaColor.r *= 1.4;   // +40% czerwonego
-        sepiaColor.g *= 0.4;   // -60% zielonego
-        sepiaColor.b *= 0.4;   // -60% niebieskiego
+        sepiaColor.r *= 1.4;   // +40% red
+        sepiaColor.g *= 0.4;   // -60% green
+        sepiaColor.b *= 0.4;   // -60% blue
 
-        // interpolacja między oryginalnym a sepią
         vec3 finalColor = mix(color.rgb, sepiaColor, sepia);
 
         gl_FragColor = vec4(finalColor, color.a);
@@ -214,9 +198,9 @@ std::string outline_shader_source = R"(
     uniform sampler2D u_tex;
     uniform vec2  texelSize;           // 1.0 / textureSize
     uniform float outlineWidth;        // 0..8 px
-    uniform vec4  backgroundColor;     // kolor tła (color key)
-    uniform vec4  outlineColor;        // kolor obrysu (rgb) + siła a [0..1]
-    uniform float threshold;           // tolerancja podobieństwa do tła (0.02..0.08)
+    uniform vec4  backgroundColor;
+    uniform vec4  outlineColor;        // color (rgb) + power (a) [0..1]
+    uniform float threshold;           // background similarity tolerance (0.02..0.08)
 
     float colorDistance(vec3 a, vec3 b) { return length(a - b); }
 
@@ -224,20 +208,17 @@ std::string outline_shader_source = R"(
         vec2 uv   = gl_TexCoord[0].xy;
         vec4 base = texture2D(u_tex, uv);
 
-        // bieżący piksel to tło?
         float isBg = step(colorDistance(base.rgb, backgroundColor.rgb), threshold);
 
-        // promień próbkowania (max 8)
         int r = int(ceil(clamp(outlineWidth, 0.0, 8.0)));
 
-        // wykryj, czy w sąsiedztwie jest piksel NIE-będący tłem (czyli „obiekt”)
         float hasNonBgNeighbor = 0.0;
         if (r > 0) {
             for (int dy = -outlineWidth; dy <= outlineWidth; dy++) {
                 for (int dx = -outlineWidth; dx <= outlineWidth; dx++) {
                     if (abs(dx) > r || abs(dy) > r) continue;
-                    if (dx*dx + dy*dy > r*r)       continue; // koło
-                    if (dx == 0 && dy == 0)        continue; // pomijamy siebie
+                    if (dx*dx + dy*dy > r*r)       continue; // circle check
+                    if (dx == 0 && dy == 0)        continue; // skip self
 
                     vec2 o = vec2(float(dx), float(dy)) * texelSize;
                     vec3 c = texture2D(u_tex, uv + o).rgb;
@@ -248,10 +229,8 @@ std::string outline_shader_source = R"(
             }
         }
 
-        // malujemy TYLKO na pikselach tła stykających się z obiektem (zewnętrzny obrys)
         float edge = isBg * hasNonBgNeighbor;
 
-        // kolorujemy tło na krawędzi; piksele obiektu zostają nietknięte; alfa bez zmian
         vec3  rgbOut = mix(base.rgb, outlineColor.rgb, edge * outlineColor.a);
         float aOut   = base.a;
 
