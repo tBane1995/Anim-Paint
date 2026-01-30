@@ -242,7 +242,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 
 void Cursor::draw() {
 
-	if (_mousePosition.x < 0 || _mousePosition.y < 0 || _mousePosition.x >= window->getSize().x || _mousePosition.y >= window->getSize().y) {
+	if (_mousePosition.x < 0 || _mousePosition.y < 0 || _mousePosition.x >= int(window->getSize().x) || _mousePosition.y >= int(window->getSize().y)) {
 		return;
 	}
 
