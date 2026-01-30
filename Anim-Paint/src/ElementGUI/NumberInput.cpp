@@ -64,7 +64,7 @@ int NumberInput::zerosOnStart() {
 void NumberInput::setValue(int value) {
 	_textStr = std::to_wstring(value);
 	_previousText = _textStr;
-	_cursorPosition = _textStr.length();
+	_cursorPosition = (int)_textStr.length();
 	setText(_textStr);
 }
 
@@ -138,7 +138,7 @@ void NumberInput::handleEvent(const sf::Event& event) {
 				else {
 					_textStr = _previousText;
 				}
-				_cursorPosition = _textStr.length();
+				_cursorPosition = (int)_textStr.length();
 				setText(_textStr);
 				if (_onEnteredFunction) {
 					_onEnteredFunction();
@@ -149,7 +149,7 @@ void NumberInput::handleEvent(const sf::Event& event) {
 		}
 		else if (const auto* te = event.getIf<sf::Event::TextEntered>(); te) {
 
-			char32_t character = te->unicode;
+			wchar_t character = (wchar_t)te->unicode;
 
 			if (character == 8) {
 				// BACKSPACE
@@ -191,8 +191,8 @@ void NumberInput::handleEvent(const sf::Event& event) {
 						_cursorPosition = 0;
 				}
 
-				if (_cursorPosition > _textStr.length())
-					_cursorPosition = _textStr.length();
+				if (_cursorPosition > (int)_textStr.length())
+					_cursorPosition = (int)_textStr.length();
 				
 				_text->setString(_textStr);
 
