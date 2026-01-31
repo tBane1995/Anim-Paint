@@ -11,10 +11,6 @@ Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector<std::shared_p
 
 	saveOriginalLayers(layers);
 
-	sf::Vector2f text_pos;
-	text_pos.x = _position.x + 24;
-	text_pos.y = _position.y + 160 / 2 - 28;
-
 	_brightness_text = std::make_unique<sf::Text>(basicFont, L"brightness", 13);
 	_contrast_text = std::make_unique<sf::Text>(basicFont, L"contrast", 13);
 
@@ -75,8 +71,8 @@ void Dialog_Brightness_Contrast::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
 	sf::Vector2f text_pos;
-	text_pos.x = _position.x + 24;
-	text_pos.y = _position.y + 160 / 2 - 28;
+	text_pos.x = (float)(_position.x + 24);
+	text_pos.y = (float)(_position.y + 160 / 2 - 28);
 
 	_brightness_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
 	_contrast_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2) + sf::Vector2f(0, 32));
