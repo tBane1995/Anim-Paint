@@ -104,9 +104,11 @@ void Dialog_Resize::setPosition(sf::Vector2i position) {
 
 	// draw texts inputs
 	sf::Vector2i size(64, basic_text_rect_height);
-	float dy = 16;
-	float distYToCenter = 28;
-	float distXToCenter = 48;
+
+	int dy = 16;
+	int distYToCenter = 28;
+	int distXToCenter = 48;
+
 	sf::Vector2i center;
 	center.x = getContentPosition().x + getContentSize().x / 2;
 	center.y = getContentPosition().y + getContentSize().y / 2 - dy;
@@ -116,10 +118,25 @@ void Dialog_Resize::setPosition(sf::Vector2i position) {
 	_width_percent_input->setPosition(center + sf::Vector2i(-distXToCenter - size.x / 2, distYToCenter - size.y / 2));
 	_height_percent_input->setPosition(center + sf::Vector2i(distXToCenter - size.x / 2, distYToCenter - size.y / 2));
 
-	_width_text->setPosition(sf::Vector2f(_width_input->getPosition()) + sf::Vector2f(size.x / 2 - _width_text->getGlobalBounds().size.x / 2, -basic_text_rect_height));
-	_height_text->setPosition(sf::Vector2f(_height_input->getPosition()) + sf::Vector2f(size.x / 2 - _height_text->getGlobalBounds().size.x / 2, -basic_text_rect_height));
-	_width_percent_text->setPosition(sf::Vector2f(_width_percent_input->getPosition()) + sf::Vector2f(size.x / 2 - _width_percent_text->getGlobalBounds().size.x / 2, - basic_text_rect_height));
-	_height_percent_text->setPosition(sf::Vector2f(_height_percent_input->getPosition()) + sf::Vector2f(size.x / 2 - _height_percent_text->getGlobalBounds().size.x / 2, -basic_text_rect_height));
+	sf::Vector2f width_text_pos;
+	width_text_pos.x = (float)(_width_input->getPosition().x + size.x / 2) - _width_text->getGlobalBounds().size.x/2.0f;
+	width_text_pos.y = (float)(_width_input->getPosition().y - basic_text_rect_height);
+	_width_text->setPosition(width_text_pos);
+
+	sf::Vector2f height_text_pos;
+	height_text_pos.x = (float)(_height_input->getPosition().x + size.x / 2) - _height_text->getGlobalBounds().size.x / 2.0f;
+	height_text_pos.y = (float)(_height_input->getPosition().y - basic_text_rect_height);
+	_height_text->setPosition(height_text_pos);
+
+	sf::Vector2f width_percent_text_pos;
+	width_percent_text_pos.x = (float)(_width_percent_input->getPosition().x + size.x / 2) - _width_percent_text->getGlobalBounds().size.x / 2.0f;
+	width_percent_text_pos.y = (float)(_width_percent_input->getPosition().y - basic_text_rect_height);
+	_width_percent_text->setPosition(width_percent_text_pos);
+
+	sf::Vector2f height_percent_text_pos;
+	height_percent_text_pos.x = (float)(_height_percent_input->getPosition().x + size.x / 2) - _height_percent_text->getGlobalBounds().size.x / 2.0f;
+	height_percent_text_pos.y = (float)(_height_percent_input->getPosition().y - basic_text_rect_height);
+	_height_percent_text->setPosition(height_percent_text_pos);
 
 	sf::Vector2i button_pos;
 	button_pos.x = _position.x + 256 / 2 - 32;

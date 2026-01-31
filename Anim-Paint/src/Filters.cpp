@@ -411,7 +411,7 @@ void set_sepia(sf::Image& image, float value) {
     image = rtex.getTexture().copyToImage();
 }
 
-void set_outline(sf::Image& image, float width, sf::Color backgroundColor, sf::Color outlineColor) {
+void set_outline(sf::Image& image, int width, sf::Color backgroundColor, sf::Color outlineColor) {
     // value 0 - 8
 
     sf::Texture tex;
@@ -432,7 +432,7 @@ void set_outline(sf::Image& image, float width, sf::Color backgroundColor, sf::C
         exit(0);
 	}
 
-    sh.setUniform("outlineWidth", width);
+    sh.setUniform("outlineWidth", (float)(width));
     sh.setUniform("texelSize", sf::Vector2f(1.0f / float(image.getSize().x), 1.0f / float(image.getSize().y)));
     sh.setUniform("threshold", 0.02f);
     sh.setUniform("backgroundColor", sf::Glsl::Vec4(float(backgroundColor.r)/255.0f, float(backgroundColor.g)/255.0f, float(backgroundColor.b)/255.0f, float(backgroundColor.a)/255.0f));
@@ -446,7 +446,7 @@ void set_outline(sf::Image& image, float width, sf::Color backgroundColor, sf::C
     image = rtex.getTexture().copyToImage();
 }
 
-void set_resize(sf::Image& image, float width, float height) {
+void set_resize(sf::Image& image, int width, int height) {
 
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
@@ -466,7 +466,7 @@ void set_resize(sf::Image& image, float width, float height) {
         exit(0);
 	}
 
-    sh.setUniform("targetSize", sf::Vector2f(width, height));
+    sh.setUniform("targetSize", sf::Vector2f((float)(width), (float)(height)));
     sh.setUniform("originalSize", sf::Vector2f(tex.getSize()));
 
     sf::Sprite spr(tex);

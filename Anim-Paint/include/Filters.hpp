@@ -17,5 +17,5 @@ void set_brightness(sf::Image& image, float value);
 void set_contrast(sf::Image& image, float value);
 void set_saturation(sf::Image& image, float value);
 void set_sepia(sf::Image& image, float value);
-void set_outline(sf::Image& image, float width, sf::Color backgroundColor, sf::Color outlineColor);
-void set_resize(sf::Image& image, float width, float height);
+void set_outline(sf::Image& image, int width, sf::Color backgroundColor, sf::Color outlineColor);
+void set_resize(sf::Image& image, int width, int height);

@@ -87,7 +87,7 @@ void Dialog_Outline::setTheFilter() {
 
 	for (auto& org : _original_layers) {
 		_edited_layers.push_back(std::make_shared<Layer>(org));
-		set_outline(_edited_layers.back()->_image, float(_outline_slider->getValue()), toolbar->_second_color->_color, toolbar->_first_color->_color);
+		set_outline(_edited_layers.back()->_image, _outline_slider->getValue(), toolbar->_second_color->_color, toolbar->_first_color->_color);
 	}
 
 	// TO-DO
