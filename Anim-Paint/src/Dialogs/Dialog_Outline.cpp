@@ -65,8 +65,8 @@ void Dialog_Outline::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
 	sf::Vector2f text_pos;
-	text_pos.x = _position.x + 24;
-	text_pos.y = _position.y + dialog_title_rect_height / 2 + (160) / 2 - 24;
+	text_pos.x = (float)(_position.x + 24);
+	text_pos.y = (float)(_position.y + dialog_title_rect_height / 2 + (160) / 2 - 24);
 	_outline_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
 
 	sf::Vector2i slider_pos;
