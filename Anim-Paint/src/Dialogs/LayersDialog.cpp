@@ -28,7 +28,10 @@ LayerBox::~LayerBox() {
 void LayerBox::setPosition(sf::Vector2i position) {
 	_visibling->setPosition(position);
 	_rect.position = position;
-	_textName->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32 + dialog_padding, (32.0f / 2.0f - basicFont.getLineSpacing(17) / 2.0f)));
+	sf::Vector2f textNamePosition;
+	textNamePosition.x = (float)(position.x + 32 + dialog_padding);
+	textNamePosition.y = (float)(position.y + (32.0f / 2.0f - basicFont.getLineSpacing(17) / 2.0f));
+	_textName->setPosition(textNamePosition);
 }
 
 void LayerBox::cursorHover() {
@@ -50,7 +53,7 @@ void LayerBox::handleEvent(const sf::Event& event) {
 	if (ElementGUI_pressed != _visibling) {
 		if (_rect.contains(cursor->_worldMousePosition)) {
 			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-				ElementGUI_pressed == this->shared_from_this();
+				ElementGUI_pressed = this->shared_from_this();
 				_onclick_func();
 			}
 		}
@@ -131,7 +134,8 @@ void LayersDialog::setPosition(sf::Vector2i position) {
 
 	for (int i = 0; i < layersBoxes.size(); i++) {
 		sf::Vector2i pos;
-		pos = _position + sf::Vector2i(dialog_padding, 32 + dialog_padding + (layersBoxes.size() - 1 - i) * 32);
+		pos.x = _position.x + dialog_padding;
+		pos.y = _position.y + 32 + dialog_padding + ((int)(layersBoxes.size()) - 1 - i) * 32;
 		layersBoxes[i]->setPosition(pos);
 	}
 
