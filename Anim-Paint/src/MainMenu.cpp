@@ -24,15 +24,19 @@
 #include <filesystem>
 #include "Tools/Lasso.hpp"
 #include "Tools/Selection.hpp"
-
 #include "Canvas.hpp"
 #include <fstream>
+#include <DebugLog.hpp>
 
 OptionBox::OptionBox(std::wstring text) : ElementGUI() {
 	_text = std::make_unique<sf::Text>(basicFont, text, menu_font_size);
 	_text->setFillColor(menu_text_color);
 
-	_rect = sf::RectangleShape(sf::Vector2f(_text->getGlobalBounds().size.x + 2 * menu_horizontal_margin, menu_height));
+	sf::Vector2f rectSize;
+	rectSize.x = _text->getGlobalBounds().size.x + (float)(2 * menu_horizontal_margin);
+	rectSize.y = (float)menu_height;
+
+	_rect = sf::RectangleShape(rectSize);
 	_rect.setFillColor(optionbox_idle_color);
 
 	_state = ButtonState::Idle;
@@ -45,7 +49,11 @@ OptionBox::~OptionBox() {
 
 void OptionBox::setPosition(sf::Vector2i position) {
 	_rect.setPosition(sf::Vector2f(position));
-	_text->setPosition(sf::Vector2f(position) + sf::Vector2f(menu_horizontal_margin, (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
+	
+	sf::Vector2f textPos;
+	textPos.x = (float)(position.x + menu_horizontal_margin);
+	textPos.y = (float)(position.y) + ((float)menu_height - basicFont.getLineSpacing(menu_font_size)) / 2.0f;
+	_text->setPosition(textPos);
 }
 
 void OptionBox::unclick() {
@@ -116,7 +124,11 @@ MenuBox::MenuBox(std::wstring text) : ElementGUI() {
 
 	_text = std::make_unique<sf::Text>(basicFont, text, menu_font_size);
 	_text->setFillColor(menu_text_color);
-	_rect = sf::RectangleShape(sf::Vector2f(_text->getGlobalBounds().size.x + 2 * menu_horizontal_margin, menu_height));
+
+	sf::Vector2f rectSize;
+	rectSize.x = _text->getGlobalBounds().size.x + (float)(2 * menu_horizontal_margin);
+	rectSize.y = (float)(menu_height);
+	_rect = sf::RectangleShape(rectSize);
 
 	_isOpen = false;
 	_options.clear();
@@ -131,12 +143,15 @@ void MenuBox::addOption(std::shared_ptr<OptionBox> option) {
 
 	int max_wdt = 0;
 	for (auto& o : _options) {
-		if (o->_rect.getSize().x > max_wdt)
-			max_wdt = o->_rect.getSize().x;
+		if ((int)(o->_rect.getSize().x) > max_wdt)
+			max_wdt = (int)(o->_rect.getSize().x);
 	}
 
 	for (auto& o : _options) {
-		o->_rect.setSize(sf::Vector2f(max_wdt, menu_height));
+		sf::Vector2f size;
+		size.x = (float)(max_wdt);
+		size.y = (float)(menu_height);
+		o->_rect.setSize(size);
 	}
 
 
@@ -144,10 +159,17 @@ void MenuBox::addOption(std::shared_ptr<OptionBox> option) {
 
 void MenuBox::setPosition(sf::Vector2i position) {
 	_rect.setPosition(sf::Vector2f(position));
-	_text->setPosition(sf::Vector2f(position) + sf::Vector2f(menu_horizontal_margin, (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
+
+	sf::Vector2f textPos;
+	textPos.x = (float)(position.x + menu_horizontal_margin);
+	textPos.y = (float)(position.y) + ((float)(menu_height) - basicFont.getLineSpacing(menu_font_size)) / 2.0f;
+	_text->setPosition(textPos);
 
 	for (int i = 0; i < _options.size(); i++) {
-		_options[i]->setPosition(sf::Vector2i(_rect.getPosition()) + sf::Vector2i(0, _rect.getSize().y + i * menu_height));
+		sf::Vector2i optionPos;
+		optionPos.x = (int)(_rect.getPosition().x);
+		optionPos.y = (int)(_rect.getPosition().y + _rect.getSize().y) + i * menu_height;
+		_options[i]->setPosition(optionPos);
 	}
 }
 
@@ -240,7 +262,12 @@ void MenuBox::draw() {
 /////////////////////////////////////////////////////////////////////////
 
 MainMenu::MainMenu() : ElementGUI() {
-	_rect = sf::RectangleShape(sf::Vector2f(window->getSize().x, menu_height));
+
+	sf::Vector2f rectSize;
+	rectSize.x = (float)(window->getSize().x);
+	rectSize.y = (float)(menu_height);
+
+	_rect = sf::RectangleShape(rectSize);
 	_rect.setFillColor(menu_bar_color);
 	_rect.setPosition(sf::Vector2f(0,0));
 
@@ -426,8 +453,11 @@ MainMenu::~MainMenu() {
 }
 
 void MainMenu::resize() {
-	sf::Vector2i newSize = sf::Vector2i(mainView.getSize().x, menu_height);
-	_rect.setSize(sf::Vector2f(newSize));
+	sf::Vector2f rectSize;
+	rectSize.x = mainView.getSize().x;
+	rectSize.y = (float)(menu_height);
+
+	_rect.setSize(rectSize);
 	_rect.setPosition(sf::Vector2f(0, 0));
 }
 
@@ -437,13 +467,13 @@ sf::Vector2f MainMenu::getSize() {
 
 void MainMenu::setPosition(sf::Vector2i position) {
 	_rect.setPosition(sf::Vector2f(position));
-	_logo->setPosition(sf::Vector2f(0, (menu_height - _logo->getGlobalBounds().size.y) / 2.0f));
+	_logo->setPosition(sf::Vector2f(0, ((float)(menu_height) - _logo->getGlobalBounds().size.y) / 2.0f));
 
 	int x = 24;
 	int y = position.y + menu_padding;
 	for (int i = 0; i < _menu_boxes.size(); i++) {
 		_menu_boxes[i]->setPosition(sf::Vector2i(position.x + x, y));
-		x = x + _menu_boxes[i]->_rect.getSize().x;
+		x = x + (int)(_menu_boxes[i]->_rect.getSize().x);
 	}
 }
 
@@ -666,22 +696,55 @@ void MainMenu::loadProject(const std::filesystem::path& path) {
 void MainMenu::exportAsFile(const std::filesystem::path& path) {
 
 	sf::RenderTexture tex;
-	sf::Vector2f layerSize;
+
+	sf::Vector2i layerSize;
 	layerSize.x = canvas->_size.x;
 	layerSize.y = canvas->_size.y;
 
-	tex.resize(sf::Vector2u(layerSize.x * getCurrentAnimation()->getFramesCount(), layerSize.y));
+	sf::Vector2u texSize;
+	texSize.x = unsigned int(layerSize.x * getCurrentAnimation()->getFramesCount());
+	texSize.y = unsigned int(layerSize.y * (int)(animations.size()));
+	
+	if (!tex.resize(texSize)) {
+		DebugError(L"MainMenu::exportAsFile: failed to resize render texture.");
+		exit(0);
+	}
+
 	tex.clear(sf::Color::Transparent);
 
 	sf::Vector2f offset(0, 0);
 
 	for (int a = 0; a < animations.size(); a++) {
-		for (int f = 0; f < getAnimation(a)->getFramesCount(); f += 1) {
-			for (int l = 0; l < getAnimation(a)->getLayersCount(); l += 1) {
+
+		std::shared_ptr<Animation> anim = getAnimation(a);
+		if (anim == nullptr) {
+			DebugError(L"MainMenu::exportAsFile: failed to load animation.");
+			exit(0);
+		}
+
+		for (int f = 0; f < anim->getFramesCount(); f += 1) {
+
+			std::shared_ptr<Frame> frame = anim->getFrame(f);
+			if (frame == nullptr) {
+				DebugError(L"MainMenu::exportAsFile: failed to load frame.");
+				exit(0);
+			}
+
+			std::vector<std::shared_ptr<Layer>> layers = frame->getLayers();
+			if (layers.empty()) {
+				DebugError(L"MainMenu::exportAsFile: failed to load layers.");
+				exit(0);
+			}
+
+			for (int l = 0; l < (int)(layers.size()); l += 1) {
 				sf::Texture t;
 				t.setSmooth(false);
 				t.setRepeated(false);
-				t.loadFromImage(getAnimation(a)->getFrame(f)->getLayers()[l]->_image);
+
+				if (!t.loadFromImage(layers[l]->_image)) {
+					DebugError(L"MainMenu::exportAsFile: failed to load texture from image.");
+					exit(0);
+				}
 
 				sf::Sprite spr(t);
 				spr.setPosition(offset);
@@ -689,17 +752,22 @@ void MainMenu::exportAsFile(const std::filesystem::path& path) {
 			}
 			offset.x += layerSize.x;
 		}
-		offset.y += layerSize.y;
-	}
-	
 
+		offset.x = 0;
+		offset.y += layerSize.y;
+		
+	}
 	
 	sf::Image finalImage = tex.getTexture().copyToImage();
 	finalImage.flipVertically();
-	std::wstring filename = path.wstring();
-	finalImage.saveToFile(filename);
 
-	std::wcout << "export " << filename << "\n";
+	std::wstring filename = path.wstring();
+	if (!finalImage.saveToFile(filename)) {
+		DebugError(L"MainMenu::exportAsFile: failed to save file.");
+		exit(0);
+	}
+
+	DebugLog(L"export " + filename);;
 }
 
 void MainMenu::importAnimation(std::vector<std::shared_ptr<Animation>> newAnimations) {
@@ -812,9 +880,14 @@ void MainMenu::draw() {
 
 	if (_open_menu_box != nullptr) {
 		if (_open_menu_box->_options.size() > 0) {
-			sf::RectangleShape rect(sf::Vector2f(_open_menu_box->_options.front()->_rect.getSize().x, _open_menu_box->_options.size() * menu_height));
+
+			sf::Vector2f rectSize;
+			rectSize.x = _open_menu_box->_options.front()->_rect.getSize().x;
+			rectSize.y = (float)(_open_menu_box->_options.size()) * (float)(menu_height);
+
+			sf::RectangleShape rect(rectSize);
 			rect.setPosition(_open_menu_box->_options.front()->_rect.getPosition());
-			rect.setOutlineThickness(menuoptions_border_width);
+			rect.setOutlineThickness((float)(menuoptions_border_width));
 			rect.setOutlineColor(menuoptions_border_color);
 			window->draw(rect);
 		}
