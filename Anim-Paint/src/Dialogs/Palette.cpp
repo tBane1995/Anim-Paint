@@ -9,7 +9,7 @@
 #include <iostream>
 #include "MainMenu.hpp"
 #include "BottomBar.hpp"
-
+#include "DebugLog.hpp"
 
 HSV rgbToHsv(sf::Color c) {
 	float r = c.r / 255.f, g = c.g / 255.f, b = c.b / 255.f;
@@ -47,16 +47,20 @@ sf::Vector2i cursorOnValues(sf::Vector2i rectSize, sf::Color rgb) {
 	float y = std::clamp(1.f - hsv.v, 0.f, 1.f);
 
 	int ix = 0;
-	int iy = std::clamp(float(y)*(rectSize.y-1), 0.0f, float(rectSize.y - 1));
+	float fy = std::clamp(float(y)*(rectSize.y-1), 0.0f, float(rectSize.y - 1));
+	int iy = (int)(fy);
 
 	return sf::Vector2i(ix, iy);
 }
 
 PaletteValues::PaletteValues(sf::Vector2i position, sf::Vector2i size, std::string shader, sf::Color color) {
+	
 	_shader = sf::Shader();
-	_shader.loadFromMemory(shader, sf::Shader::Type::Fragment);
 
-	////////////////////////////////////////////
+	if (!_shader.loadFromMemory(shader, sf::Shader::Type::Fragment)) {
+		DebugError(L"PaletteValues::PaletteValues: Failed to load palette shader from memory.");
+		exit(0);
+	}
 
 	_rect = sf::IntRect(position, size);
 
@@ -75,7 +79,10 @@ void PaletteValues::loadTexture(sf::Color color) {
 	img.resize(sf::Vector2u(_rect.size), color);
 
 	sf::Texture tex;
-	tex.loadFromImage(img);
+	if (!tex.loadFromImage(img)) {
+		DebugError(L"PaletteValues::loadTexture: Failed to load texture from image.");
+		exit(0);
+	}
 
 	// set the uniforms in shader
 	sf::IntRect r = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(tex.getSize().x, tex.getSize().y));
@@ -91,7 +98,10 @@ void PaletteValues::loadTexture(sf::Color color) {
 	_shader.setUniform("texRectUV", texRectUV);
 
 	// create palette render texture
-	_renderTexture.resize(tex.getSize());
+	if (!_renderTexture.resize(tex.getSize())) {
+		DebugError(L"PaletteValues::loadTexture: Failed to resize render texture.");
+		exit(0);
+	}
 
 	sf::Sprite spr(tex);
 	_renderTexture.clear(sf::Color::White);
