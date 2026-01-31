@@ -101,7 +101,7 @@ void AnimationsDialog::setPosition(sf::Vector2i position) {
 
 void AnimationsDialog::updateText() {
 	_text->setString(std::to_wstring(getCurrentAnimationId() + 1) + L"/" + std::to_wstring(getAnimationsCount()));
-	int pos_slash = _text->getString().find(L'/');
+	int pos_slash = (int)(_text->getString().find(L'/'));
 	_text->setPosition(sf::Vector2f(0, 0));
 
 	float slashLeft = _text->findCharacterPos(pos_slash).x;

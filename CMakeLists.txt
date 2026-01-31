@@ -9,6 +9,7 @@ add_executable(${PROJECT_NAME}
 # SOURCES FILES
 set(SOURCES
     Anim-Paint/src/Window.cpp
+    Anim-Paint/src/DebugLog.cpp    
     Anim-Paint/src/Textures.cpp
     Anim-Paint/src/Theme.cpp
     Anim-Paint/src/Cursor.cpp
@@ -62,6 +63,7 @@ source_group(TREE ${CMAKE_SOURCE_DIR}/Anim-Paint/src
 # HEADERS FILES
 set(HEADERS
     Anim-Paint/include/Window.hpp
+    Anim-Paint/include/DebugLog.hpp
     Anim-Paint/include/Textures.hpp
     Anim-Paint/include/Theme.hpp
     Anim-Paint/include/Cursor.hpp
