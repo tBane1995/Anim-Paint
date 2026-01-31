@@ -62,9 +62,9 @@ void Dialog_Rotation::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
 	sf::Vector2f text_pos;
-	text_pos.x = _position.x + 24;
-	text_pos.y = _position.y + dialog_title_rect_height / 2 + (160) / 2 - 24;
-	_rotation_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
+	text_pos.x = (float)(_position.x + 24);
+	text_pos.y = (float)(_position.y + dialog_title_rect_height / 2 + (160) / 2 - 24 + 2 - basicFont.getLineSpacing(13) / 2);
+	_rotation_text->setPosition(text_pos);
 
 	sf::Vector2i slider_pos;
 	slider_pos.x = _position.x + 256 / 2 - 64 / 2;
@@ -84,7 +84,7 @@ void Dialog_Rotation::setTheFilter() {
 
 	for (auto& org : _original_layers) {
 		_edited_layers.push_back(std::make_shared<Layer>(org));
-		set_rotation(_edited_layers.back()->_image, _rotation_slider->getValue(), true);
+		set_rotation(_edited_layers.back()->_image, (float)(_rotation_slider->getValue()), true);
 	}
 
 	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
