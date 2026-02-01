@@ -11,7 +11,7 @@
 #include "Filters.hpp"
 #include "Time.hpp"
 #include "Dialogs/Palette.hpp"
-
+#include "DebugLog.hpp"
 
 Separator::Separator() {
 	_rect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(2, tools_separator_height));
@@ -92,7 +92,10 @@ void LargeColorButton::draw() {
 
 PaletteButton::PaletteButton(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0)) : ButtonWithBottomText(text, rectColor, textColor, hoverTextColor, texture, hoverTexture, position) {
 	_shader = sf::Shader();
-	_shader.loadFromMemory(palette_button_shader_source, sf::Shader::Type::Fragment);
+	if (!_shader.loadFromMemory(palette_button_shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"PaletteButton::PaletteButton: failed to load shader from memory.");
+		exit(0);
+	}
 }
 
 PaletteButton::~PaletteButton() {
@@ -617,7 +620,12 @@ void Toolbar::update() {
 void Toolbar::draw() {
 
 	// main rect
-	sf::RectangleShape rect(sf::Vector2f(window->getSize().x, tools_height));
+
+	sf::Vector2f rectSize;
+	rectSize.x = float(window->getSize().x);
+	rectSize.y = float(tools_height);
+
+	sf::RectangleShape rect(rectSize);
 	rect.setFillColor(tools_bar_color);
 	rect.setPosition(sf::Vector2f(_rect.position));
 
