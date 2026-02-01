@@ -72,23 +72,24 @@ void EdgePoint::draw() {
 }
 
 Canvas::Canvas() : ElementGUI() {
-	this->_minSize = sf::Vector2i(16, 16);
-	this->_maxSize = sf::Vector2i(256, 256);
-	this->_size = sf::Vector2i(64, 64);
-	this->_pixelSize = 8.0f;
+	_minSize = sf::Vector2i(16, 16);
+	_maxSize = sf::Vector2i(256, 256);
+	_size = sf::Vector2i(64, 64);
+	_pixelSize = 8;
 
 	int targetSize = 32;
-	float sides = std::max(_size.x, _size.y);
-	this->_zoom_delta = 16.0f;
-	this->_min_zoom = 0.125f;
-	this->_max_zoom = 1.0f;
-	this->_zoom = targetSize / (sides * 4.0f);
+	int sides = std::max(_size.x, _size.y);
+	
+	_zoom_delta = 16.0f;
+	_min_zoom = 0.125f;
+	_max_zoom = 1.0f;
+	_zoom = (float)(targetSize) / (float)(sides * 4);
 
-	this->_size = sf::Vector2i(targetSize, targetSize);  
+	_size = sf::Vector2i(targetSize, targetSize);  
 
 	_state = CanvasState::Idle;
 
-	this->_offset = sf::Vector2i(0, 0);
+	_offset = sf::Vector2i(0, 0);
 
 	resize(_size);
 
@@ -108,7 +109,7 @@ void Canvas::resize(sf::Vector2i size) {
 }
 
 sf::Vector2i Canvas::getZoomedSize(sf::Vector2i size) {
-	return sf::Vector2i(int(size.x * _zoom_delta * _zoom), int(size.y * _zoom_delta * _zoom));
+	return sf::Vector2i(int((float)(size.x) * _zoom_delta * _zoom), int((float)(size.y) * _zoom_delta * _zoom));
 }      
 
 void Canvas::generateBackground(sf::Vector2i size) {
@@ -151,12 +152,12 @@ void Canvas::generateBackground(sf::Vector2i size) {
 void Canvas::generateEdgePoints() {
 	_edgePoints.clear();
 	_point_left_top = std::make_shared<EdgePoint>(_position);
-	_point_top = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x / 2.0f, 0));
+	_point_top = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x / 2, 0));
 	_point_right_top = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x, 0));
-	_point_left = std::make_shared<EdgePoint>(_position + sf::Vector2i(0, getZoomedSize(_size).y / 2.0f));
-	_point_right = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y / 2.0f));
+	_point_left = std::make_shared<EdgePoint>(_position + sf::Vector2i(0, getZoomedSize(_size).y / 2));
+	_point_right = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y / 2));
 	_point_left_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(0, getZoomedSize(_size).y));
-	_point_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x / 2.0f, getZoomedSize(_size).y));
+	_point_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x / 2, getZoomedSize(_size).y));
 	_point_right_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y));
 
 	_edgePoints.push_back(_point_left_top);
@@ -178,12 +179,12 @@ void Canvas::setPosition(sf::Vector2i position) {
 	_rect.position = position;
 
 	_point_left_top->setPosition(_position);
-	_point_top->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x / 2.0f, 0));
+	_point_top->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x / 2, 0));
 	_point_right_top->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x, 0));
-	_point_left->setPosition(_position + sf::Vector2i(0, getZoomedSize(_size).y / 2.0f));
-	_point_right->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y / 2.0f));
+	_point_left->setPosition(_position + sf::Vector2i(0, getZoomedSize(_size).y / 2));
+	_point_right->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y / 2));
 	_point_left_bottom->setPosition(_position + sf::Vector2i(0, getZoomedSize(_size).y));
-	_point_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x / 2.0f, getZoomedSize(_size).y));
+	_point_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x / 2, getZoomedSize(_size).y));
 	_point_right_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y));
 }
 
@@ -225,8 +226,8 @@ void Canvas::drawPixels(sf::Color color) {
 			for (int x = 0; x < b[y].size(); x++) {
 				if (b[y][x]) {
 
-					int tx = pixel.x - b[y].size() / 2 + x;
-					int ty = pixel.y - b.size() / 2 + y;
+					int tx = pixel.x - (int)(b[y].size()) / 2 + x;
+					int ty = pixel.y - (int)(b.size()) / 2 + y;
 
 					if (tx < 0 || ty < 0 || tx >= _size.x || ty >= _size.y)
 						continue;
@@ -677,45 +678,45 @@ void Canvas::update() {
 
 		float minX, minY, maxX, maxY;
 
-		minX = _point_left->getPosition().x;
-		minY = _point_top->getPosition().y;
-		maxX = _point_right->getPosition().x;
-		maxY = _point_bottom->getPosition().y;
+		minX = (float)(_point_left->getPosition().x);
+		minY = (float)(_point_top->getPosition().y);
+		maxX = (float)(_point_right->getPosition().x);
+		maxY = (float)(_point_bottom->getPosition().y);
 
 		if (_clickedEdgePoint == _point_left_top) {
-			minX = _point_left->getPosition().x + float(pp.x) * _zoom * _zoom_delta;
-			minY = _point_top->getPosition().y + float(pp.y) * _zoom * _zoom_delta;
+			minX = (float)(_point_left->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
+			minY = (float)(_point_top->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
 		}
 		else if (_clickedEdgePoint == _point_right_top) {
-			minY = _point_top->getPosition().y + float(pp.y) * _zoom * _zoom_delta;
-			maxX = _point_right->getPosition().x + float(pp.x) * _zoom * _zoom_delta;
+			minY = (float)(_point_top->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
+			maxX = (float)(_point_right->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
 		}
 		else if (_clickedEdgePoint == _point_left_bottom) {
-			minX = _point_left->getPosition().x + float(pp.x) * _zoom * _zoom_delta;
-			maxY = _point_bottom->getPosition().y + float(pp.y) * _zoom * _zoom_delta;
+			minX = (float)(_point_left->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
+			maxY = (float)(_point_bottom->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
 		}
 		else if (_clickedEdgePoint == _point_right_bottom) {
-			maxX = _point_right->getPosition().x + float(pp.x) * _zoom * _zoom_delta;
-			maxY = _point_bottom->getPosition().y + float(pp.y) * _zoom * _zoom_delta;
+			maxX = (float)(_point_right->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
+			maxY = (float)(_point_bottom->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
 		}
 		else if (_clickedEdgePoint == _point_top) {
-			minY = _point_top->getPosition().y + float(pp.y) * _zoom * _zoom_delta;
+			minY = (float)(_point_top->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
 		}
 		else if (_clickedEdgePoint == _point_bottom) {
-			maxY = _point_bottom->getPosition().y + float(pp.y) * _zoom * _zoom_delta;
+			maxY = (float)(_point_bottom->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
 		}
 		else if (_clickedEdgePoint == _point_left) {
-			minX = _point_left->getPosition().x + float(pp.x) * _zoom * _zoom_delta;
+			minX = (float)(_point_left->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
 		}
 		else if (_clickedEdgePoint == _point_right) {
-			maxX = _point_right->getPosition().x + float(pp.x) * _zoom * _zoom_delta;
+			maxX = (float)(_point_right->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
 		}
 
-		float minWpx = canvas->_minSize.x * _zoom * _zoom_delta;
-		float minHpx = canvas->_minSize.y * _zoom * _zoom_delta;
+		float minWpx = (float)(canvas->_minSize.x * _zoom * _zoom_delta);
+		float minHpx = (float)(canvas->_minSize.y * _zoom * _zoom_delta);
 
-		float maxWpx = canvas->_maxSize.x * _zoom * _zoom_delta;
-		float maxHpx = canvas->_maxSize.y * _zoom * _zoom_delta;
+		float maxWpx = (float)(canvas->_maxSize.x * _zoom * _zoom_delta);
+		float maxHpx = (float)(canvas->_maxSize.y * _zoom * _zoom_delta);
 
 		// Który bok/narożnik jest przeciągany?
 		const bool movingLeft = (_clickedEdgePoint == _point_left || _clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_left_bottom);
@@ -744,41 +745,46 @@ void Canvas::update() {
 		}
 
 		sf::Vector2i dst;
-		dst.x = (_orginalEdgePointPosition.x - minX) / (_zoom * _zoom_delta);
-		dst.y = (_orginalEdgePointPosition.y - minY) / (_zoom * _zoom_delta);
+		dst.x = (int)(((float)(_orginalEdgePointPosition.x) - minX) / (_zoom * _zoom_delta));
+		dst.y = (int)(((float)(_orginalEdgePointPosition.y) - minY) / (_zoom * _zoom_delta));
 
+		int iminX = (int)minX;
+		int iminY = (int)minY;
+		int imaxX = (int)maxX;
+		int imaxY = (int)maxY;
 
+		_position = sf::Vector2i(iminX, iminY);
 
-		_position = sf::Vector2i(minX, minY);
+		_point_left_top->setPosition(sf::Vector2i(iminX, iminY));
+		_point_top->setPosition(sf::Vector2i((iminX + imaxX) / 2, iminY));
+		_point_right_top->setPosition(sf::Vector2i(imaxX, iminY));
 
-		_point_left_top->setPosition(sf::Vector2i(minX, minY));
-		_point_top->setPosition(sf::Vector2i((minX + maxX) / 2, minY));
-		_point_right_top->setPosition(sf::Vector2i(maxX, minY));
+		_point_left->setPosition(sf::Vector2i(iminX, (iminY + imaxY) / 2));
+		_point_right->setPosition(sf::Vector2i(imaxX, (iminY + imaxY) / 2));
 
-		_point_left->setPosition(sf::Vector2i(minX, (minY + maxY) / 2));
-		_point_right->setPosition(sf::Vector2i(maxX, (minY + maxY) / 2));
-
-		_point_left_bottom->setPosition(sf::Vector2i(minX, maxY));
-		_point_bottom->setPosition(sf::Vector2i((minX + maxX) / 2, maxY));
-		_point_right_bottom->setPosition(sf::Vector2i(maxX, maxY));
+		_point_left_bottom->setPosition(sf::Vector2i(iminX, imaxY));
+		_point_bottom->setPosition(sf::Vector2i((iminX + imaxX) / 2, imaxY));
+		_point_right_bottom->setPosition(sf::Vector2i(imaxX, imaxY));
 
 		////////////////////
 
 		sf::Vector2i newSize;
-		newSize.x = (maxX - minX) / (_zoom * _zoom_delta);
-		newSize.y = (maxY - minY) / (_zoom * _zoom_delta);
+		newSize.x = (int)((maxX - minX) / (_zoom * _zoom_delta));
+		newSize.y = (int)((maxY - minY) / (_zoom * _zoom_delta));
 		_size = newSize;
 
 		generateBackground(_size);
+
 		_rect.position = _point_left_top->getPosition();
 
 		if (p.x < 0)
-			_offset.x = _offset.x - float(p.x) * _zoom * _zoom_delta;
+			_offset.x = _offset.x - (int)(float(p.x) * _zoom * _zoom_delta);
 
 		if (p.y < 0)
-			_offset.y = _offset.y - float(p.y) * _zoom * _zoom_delta;
+			_offset.y = _offset.y - (int)(float(p.y) * _zoom * _zoom_delta);
 
 		const size_t framesCount = std::min(_backupFrames.size(), getCurrentAnimation()->getFrames().size());
+
 		for (size_t f = 0; f < framesCount; ++f) {
 			std::shared_ptr<Frame> src = _backupFrames[f];
 			std::shared_ptr<Frame> org = getCurrentAnimation()->getFrames()[f];
@@ -798,8 +804,8 @@ void Canvas::update() {
 	}
 	else if (_state == CanvasState::Moving) {
 		sf::Vector2f target = sf::Vector2f(cursor->_worldMousePosition + _offset);
-		float x = clampAxisOverscroll(target.x, _rect.size.x, window->getSize().x, 0.5f);
-		float y = clampAxisOverscroll(target.y, _rect.size.y, window->getSize().y, 0.5f);
+		int x = (int)(clampAxisOverscroll(target.x, (float)(_rect.size.x), (float)(window->getSize().x), 0.5f));
+		int y = (int)(clampAxisOverscroll(target.y, (float)(_rect.size.y), (float)(window->getSize().y), 0.5f));
 		setPosition(sf::Vector2i(x, y));
 	}
 	
