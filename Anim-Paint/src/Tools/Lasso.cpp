@@ -132,8 +132,8 @@ void Lasso::copy(sf::Image& canvas, sf::Color emptyColor)
 	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
 	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
 	
-	pasteImage(canvas, *_image, r.position.x, r.position.y, _maskImage, emptyColor);
-	copyImage(*lasso->_image, canvas, _rect, emptyColor);
+	pasteImageWithMask(canvas, *_image, r.position.x, r.position.y, _maskImage, emptyColor);
+	copyImageWithAlpha(*lasso->_image, canvas, _rect, emptyColor);
 
 	sf::IntRect canvasRect(sf::Vector2i(0,0), sf::Vector2i(canvas.getSize()));
 

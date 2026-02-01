@@ -537,8 +537,8 @@ void Canvas::handleEvent(const sf::Event& event) {
 					lasso->generateRect();
 					lasso->generateMask();
 					if (lasso->_image != nullptr) {
-						copyImage(*lasso->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, lasso->_rect.position.x, lasso->_rect.position.y, lasso->_maskImage, toolbar->_second_color->_color);
-						removeImage(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, lasso->_maskImage, toolbar->_second_color->_color);
+						copyImageWithMask(*lasso->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, lasso->_rect.position.x, lasso->_rect.position.y, lasso->_maskImage, toolbar->_second_color->_color);
+						removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, lasso->_maskImage, toolbar->_second_color->_color);
 					}
 					lasso->_state = LassoState::Selected;
 				}
@@ -568,13 +568,13 @@ void Canvas::handleEvent(const sf::Event& event) {
 						if (lasso->_image == nullptr) {
 							lasso->_image = new sf::Image();
 							lasso->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
-							copyImage(getCurrentAnimation()->getCurrentLayer()->_image, *lasso->_image,lasso->_rect.position.x, lasso->_rect.position.y, 0, 0, lasso->_maskImage , toolbar->_second_color->_color);
-							removeImage(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, toolbar->_second_color->_color);
+							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *lasso->_image,lasso->_rect.position.x, lasso->_rect.position.y, 0, 0, lasso->_maskImage , toolbar->_second_color->_color);
+							removeImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, toolbar->_second_color->_color);
 						}
 					}
 					else if (_rect.contains(cursor->_worldMousePosition)) {
 						if (lasso->_image != nullptr) {
-							copyImage(getCurrentAnimation()->getCurrentLayer()->_image, *lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, 0, 0, lasso->_maskImage, toolbar->_second_color->_color);
+							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, 0, 0, lasso->_maskImage, toolbar->_second_color->_color);
 							lasso->_image = nullptr;
 						}
 
@@ -586,7 +586,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 					}
 					else {
 						if (lasso->_image != nullptr) {
-							copyImage(getCurrentAnimation()->getCurrentLayer()->_image, *lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, 0, 0, lasso->_maskImage, toolbar->_second_color->_color);
+							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, 0, 0, lasso->_maskImage, toolbar->_second_color->_color);
 							lasso->_image = nullptr;
 						}
 
@@ -787,7 +787,7 @@ void Canvas::update() {
 
 				sf::Image newImage;
 				newImage.resize(sf::Vector2u(_size), toolbar->_second_color->_color);
-				pasteImage(newImage, srcLayer->_image, dst.x, dst.y);
+				pasteImageWithAlpha(newImage, srcLayer->_image, dst.x, dst.y);
 				orgLayer->_image = newImage;
 			}
 

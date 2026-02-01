@@ -187,7 +187,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		//selection->copy(&animation->getCurrentLayer()->image, selection->img);
 		lasso->_state = LassoState::Selected;
 		lasso->copy(getCurrentAnimation()->getCurrentLayer()->_image, _second_color->_color);
-		removeImage(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, lasso->_maskImage, toolbar->_second_color->_color);
+		removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, lasso->_maskImage, toolbar->_second_color->_color);
 
 		};
 	_btn_select = std::make_shared<ButtonWithBottomText>(L"select", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_select.png"), getTexture(L"tex\\tools\\btn_select_hover.png"));

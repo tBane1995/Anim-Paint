@@ -1,9 +1,9 @@
 ﻿#include "Tools/Selection.hpp"
 #include "Clipboard.hpp"
 #include "Window.hpp"
-#include <iostream>
+#include "DebugLog.hpp"
 
-void removeImage(sf::Image& image, sf::IntRect rect, sf::Color alphaColor)
+void removeImageWithAlpha(sf::Image& image, sf::IntRect rect, sf::Color alphaColor)
 {
 	if (rect.size.x <= 0 || rect.size.y <= 0)
 		return;
@@ -19,10 +19,14 @@ void removeImage(sf::Image& image, sf::IntRect rect, sf::Color alphaColor)
 
 	sf::IntRect r(clipped.position - rect.position, clipped.size);
 
-	image.copy(backgroundImage, sf::Vector2u(clipped.position), r, false);
+	if (!image.copy(backgroundImage, sf::Vector2u(clipped.position), r, false)) {
+		DebugError(L"removeImageWithAlpha: image copy failed");
+		exit(0);
+	}
+	
 }
 
-void removeImage(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf::Color alphaColor)
+void removeImageWithMask(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf::Color alphaColor)
 {
 	if (rect.size.x <= 0 || rect.size.y <= 0)
 		return;
@@ -40,8 +44,8 @@ void removeImage(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf::Color 
 
 	sf::IntRect r(clipped.position - rect.position, clipped.size);
 
-	for (int y = 0; y < backgroundImage.getSize().y; y++) {
-		for (int x = 0; x < backgroundImage.getSize().x; x++) {
+	for (int y = 0; y < (int)(backgroundImage.getSize().y); y++) {
+		for (int x = 0; x < (int)(backgroundImage.getSize().x); x++) {
 			if (mask.getPixel(sf::Vector2u(x, y)) == sf::Color::White) {
 				backgroundImage.setPixel(sf::Vector2u(x, y), alphaColor);
 			}
@@ -50,7 +54,11 @@ void removeImage(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf::Color 
 			}
 		}
 	}
-	image.copy(backgroundImage, sf::Vector2u(clipped.position), r, false);
+	
+	if (!image.copy(backgroundImage, sf::Vector2u(clipped.position), r, false)) {
+		DebugError(L"removeImageWithMask: image copy failed");
+		exit(0);
+	}
 }
 
 void copyImage(sf::Image& dst, sf::Image& src, sf::IntRect srcRect) {
@@ -63,19 +71,22 @@ void copyImage(sf::Image& dst, sf::Image& src, sf::IntRect srcRect) {
 
 	sf::IntRect s = srcRect.findIntersection(srcB).value();
 
-	if (s.size.x > dst.getSize().x)
-		s.size.x = dst.getSize().x;
+	if (s.size.x > (int)(dst.getSize().x))
+		s.size.x = (int)(dst.getSize().x);
 
-	if (s.size.y > dst.getSize().y)
-		s.size.y = dst.getSize().y;
+	if (s.size.y > (int)(dst.getSize().y))
+		s.size.y = (int)(dst.getSize().y);
 
 	if (s.size.x <= 0 || s.size.y <= 0) 
 		return;
 
-	dst.copy(src, sf::Vector2u(0,0), s, false);
+	if (!dst.copy(src, sf::Vector2u(0, 0), s, false)) {
+		DebugError(L"copyImage: image copy failed");
+		exit(0);
+	}
 }
 
-void copyImage(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf::Color emptyColor) {
+void copyImageWithAlpha(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf::Color alphaColor) {
 
 	sf::IntRect srcB(sf::Vector2i(0,0), sf::Vector2i(src.getSize()));
 
@@ -84,11 +95,11 @@ void copyImage(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf::Color em
 
 	sf::IntRect s = srcRect.findIntersection(srcB).value();
 
-	if (s.size.x > dst.getSize().x)
-		s.size.x = dst.getSize().x;
+	if (s.size.x < (int)(dst.getSize().x))
+		s.size.x = (int)(dst.getSize().x);
 
-	if (s.size.y > dst.getSize().y)
-		s.size.y = dst.getSize().y;
+	if (s.size.y > (int)(dst.getSize().y))
+		s.size.y = (int)(dst.getSize().y);
 
 	if (s.size.x <= 0 || s.size.y<= 0)
 		return;
@@ -96,19 +107,22 @@ void copyImage(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf::Color em
 	sf::Image img;
 	img.resize(src.getSize(), sf::Color::Transparent);
 
-	for (int y = 0; y < img.getSize().y; y++) {
-		for (int x = 0; x < img.getSize().x; x++) {
-			if (!(src.getPixel(sf::Vector2u(x, y)) == sf::Color::Transparent || src.getPixel(sf::Vector2u(x,y)) == emptyColor)) {
+	for (int y = 0; y < (int)(img.getSize().y); y++) {
+		for (int x = 0; x < (int)(img.getSize().x); x++) {
+			if (!(src.getPixel(sf::Vector2u(x, y)) == sf::Color::Transparent || src.getPixel(sf::Vector2u(x,y)) == alphaColor)) {
 				img.setPixel(sf::Vector2u(x, y), src.getPixel(sf::Vector2u(x, y)));
 			}
 		}
 	}
 
-	dst.copy(img, sf::Vector2u(0,0), s, false);
+	if(!dst.copy(img, sf::Vector2u(0, 0), s, false)) {
+		DebugError(L"copyImageWithAlpha: image copy failed");
+		exit(0);
+	}
 
 }
 
-void copyImage(sf::Image& dst, sf::Image& src, int dstX, int dstY, int srcX, int srcY, sf::Image& mask, sf::Color alphaColor)
+void copyImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, int srcX, int srcY, sf::Image& mask, sf::Color alphaColor)
 {
 	const int dw = (int)dst.getSize().x;
 	const int dh = (int)dst.getSize().y;
@@ -160,7 +174,7 @@ void copyImage(sf::Image& dst, sf::Image& src, int dstX, int dstY, int srcX, int
 	}
 } 
 
-void pasteImage(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor)
+void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor)
 {
 	sf::IntRect s(sf::Vector2i(0,0), sf::Vector2i(src.getSize()));
 
@@ -180,16 +194,22 @@ void pasteImage(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color al
 
 	sf::Image tmp;
 	tmp.resize(sf::Vector2u(s.size), sf::Color::Transparent);
-	tmp.copy(src, sf::Vector2u(0, 0), s, true);
+	if (!tmp.copy(src, sf::Vector2u(0, 0), s, true)) {
+		DebugError(L"pasteImageWithAlpha: image copy failed");
+		exit(0);
+	}
 	tmp.createMaskFromColor(alphaColor);
 
 	const sf::IntRect all(sf::Vector2i(0, 0), sf::Vector2i(tmp.getSize()));
-	dst.copy(tmp, sf::Vector2u(dstX, dstY), all, true);
+	if(!dst.copy(tmp, sf::Vector2u(dstX, dstY), all, true)) {
+		DebugError(L"pasteImageWithAlpha: image copy to dst failed");
+		exit(0);
+	}
 }
 
 
 
-void pasteImage(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor)
+void pasteImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor)
 {
 
 	int dw = dst.getSize().x;
