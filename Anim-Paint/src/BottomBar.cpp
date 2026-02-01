@@ -6,7 +6,16 @@
 #include "Cursor.hpp"
 
 BottomBar::BottomBar() : ElementGUI() {
-	_rect = sf::IntRect(sf::Vector2i(0,mainView.getSize().y - menu_height), sf::Vector2i(256+128, menu_height));
+	
+	sf::Vector2i rectPosition;
+	rectPosition.x = 0;
+	rectPosition.y = (int)(mainView.getSize().y) - menu_height;
+
+	sf::Vector2i rectSize;
+	rectSize.x = 256 + 128;
+	rectSize.y = menu_height;
+
+	_rect = sf::IntRect(rectPosition, rectSize);
 	
 	_textCursorPosition = std::make_unique<sf::Text>(basicFont, L"0 x 0", menu_font_size);
 	_textCursorPosition->setPosition(sf::Vector2f(32, mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
@@ -32,10 +41,22 @@ sf::Vector2i BottomBar::getSize() {
 }
 
 void BottomBar::resize() {
-	_rect.position = sf::Vector2i(0, mainView.getSize().y - _rect.size.y);
-	_textCanvasSize->setPosition(sf::Vector2f(128 + 32, mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
-	_textCursorPosition->setPosition(sf::Vector2f(32, mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
-	_textSelectionSize->setPosition(sf::Vector2f(256 + 32, mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2));
+	_rect.position = sf::Vector2i(0, (int)(mainView.getSize().y) - _rect.size.y);
+
+	sf::Vector2f textCursorPositionPosition;
+	textCursorPositionPosition.x = 32;
+	textCursorPositionPosition.y = mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2;
+	_textCursorPosition->setPosition(textCursorPositionPosition);
+
+	sf::Vector2f textCanvasSizePosition;
+	textCanvasSizePosition.x = 128 + 32;
+	textCanvasSizePosition.y = mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2;
+	_textCanvasSize->setPosition(textCanvasSizePosition);
+
+	sf::Vector2f _textSelectionSizePosition;
+	_textSelectionSizePosition.x = 256 + 32;
+	_textSelectionSizePosition.y = mainView.getSize().y - menu_height + (menu_height - basicFont.getLineSpacing(menu_font_size)) / 2;
+	_textSelectionSize->setPosition(_textSelectionSizePosition);
 }
 
 void BottomBar::cursorHover() {
@@ -81,8 +102,16 @@ void BottomBar::update() {
 
 void BottomBar::draw() {
 	
-	sf::RectangleShape rect(sf::Vector2f(_rect.size.x, _rect.size.y));
-	rect.setPosition(sf::Vector2f(_rect.position.x, _rect.position.y));
+	sf::Vector2f rectSize;
+	rectSize.x = (float)(_rect.size.x);
+	rectSize.y = (float)(_rect.size.y);
+
+	sf::Vector2f rectPosition;
+	rectPosition.x = (float)(_rect.position.x);
+	rectPosition.y = (float)(_rect.position.y);
+
+	sf::RectangleShape rect(rectSize);
+	rect.setPosition(rectPosition);
 	rect.setFillColor(tools_bar_color);
 	window->draw(rect);
 
