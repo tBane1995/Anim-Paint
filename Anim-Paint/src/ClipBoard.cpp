@@ -9,7 +9,7 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect)
     const auto imgH = static_cast<int>(image.getSize().y);
     if (imgW == 0 || imgH == 0) return false;
 
-    // Granice obrazu i bezpieczne przecięcie z rect
+	// intersection with image bounds
     const sf::IntRect imgRect({ 0, 0 }, { imgW, imgH });
     std::optional<sf::IntRect> interOpt = rect.findIntersection(imgRect);
     if (!interOpt.has_value()) {
@@ -18,7 +18,7 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect)
     }
     const sf::IntRect inter = *interOpt;
 
-    // Wymiary i start
+	// sizes and positions
     const int x0 = inter.position.x;
     const int y0 = inter.position.y;
     const unsigned w = static_cast<unsigned>(inter.size.x > 0 ? inter.size.x : 0);
@@ -35,7 +35,7 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect)
 
     const uint8_t* src = image.getPixelsPtr(); // RGBA (R,G, B, A)
 
-    // Przygotuj nagłówek DIB 32bpp (BGRA), top-down
+    // header DIB 32bpp (BGRA), top-down
     BITMAPINFOHEADER bi{};
     bi.biSize = sizeof(BITMAPINFOHEADER);
     bi.biWidth = static_cast<LONG>(w);
@@ -62,8 +62,7 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect)
 
     std::memcpy(pHeader, &bi, headerSize);
 
-    // Kopiowanie pikseli: RGBA (SFML) -> BGRA (DIB)
-    // Dzięki top-down (ujemny height) kopiujemy od y=0 w dół bez odwracania.
+    // RGBA (SFML) -> BGRA (DIB)
     const unsigned srcStride = static_cast<unsigned>(image.getSize().x) * 4;
     const unsigned dstStride = w * 4;
 
@@ -77,11 +76,11 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect)
             const uint8_t b = srcRow[4 * x + 2];
             const uint8_t a = srcRow[4 * x + 3];
 
-            // DIB (CF_DIB, BI_RGB, 32bpp) oczekuje BGRA
+            // DIB (CF_DIB, BI_RGB, 32bpp) BGRA
             dstRow[4 * x + 0] = b; // B
             dstRow[4 * x + 1] = g; // G
             dstRow[4 * x + 2] = r; // R
-            dstRow[4 * x + 3] = a; // A (Windows może pominąć, ale zachowujemy)
+            dstRow[4 * x + 3] = a; // A
         }
     }
 
@@ -91,7 +90,7 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect)
         GlobalFree(hMem);
         return false;
     }
-    // Ważne: po ustawieniu danych NIE wolno już wywoływać GlobalFree – własność przejmuje schowek.
+
     EmptyClipboard();
     if (!SetClipboardData(CF_DIB, hMem)) {
         CloseClipboard();
@@ -120,7 +119,7 @@ void loadImageFromClipboard(sf::Image& outImage) {
         GlobalUnlock(hData); CloseClipboard(); return;
     }
 
-    // Rozmiary i kierunki
+    // sizes and directions
     const bool rightToLeft = (bih->biWidth < 0);
     const int  width = std::abs(bih->biWidth);
     const int  height = std::abs(bih->biHeight);
@@ -135,14 +134,14 @@ void loadImageFromClipboard(sf::Image& outImage) {
 
     const BYTE* base = reinterpret_cast<const BYTE*>(pData);
 
-    // Ustalenie offsetu pikseli
+    // pixels offset
     const BYTE* srcPixels = base + bih->biSize
-        + ((compression == BI_BITFIELDS) ? 12 : 0) // 3 maski po 4 bajty za BITMAPINFOHEADER
+        + ((compression == BI_BITFIELDS) ? 12 : 0) // 3 masks 4 bajts - BITMAPINFOHEADER
         + paletteEntries * sizeof(RGBQUAD);
 
     const size_t srcStride = ((size_t(width) * bih->biBitCount + 31) / 32) * 4;
 
-    // Maski dla 32bpp
+    // Masks for 32bpp
     auto maskShift = [](uint32_t m) -> int {
         if (m == 0) return 0;
         int s = 0; while ((m & 1u) == 0u) { m >>= 1; ++s; } return s;
@@ -230,12 +229,6 @@ void loadImageFromClipboard(sf::Image& outImage) {
     GlobalUnlock(hData);
     CloseClipboard();
 
-    // Fallback: XRGB bywa zapisane z alfą=0 → ustaw 255, jeśli nigdzie nie było alfy > 0
-    if (bih->biBitCount == 32 && !anyAlphaNonZero) {
-        for (size_t i = 3; i < rgba.size(); i += 4) rgba[i] = 255;
-    }
-
-    // Prosto do outImage (bez dodatkowych kopii/resize)
     sf::Image src(sf::Vector2u(width, height), rgba.data());
     outImage = std::move(src);
     return;
