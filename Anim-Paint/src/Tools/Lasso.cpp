@@ -1,9 +1,9 @@
 ﻿#include "Tools/Lasso.hpp"
 #include "Clipboard.hpp"
-#include <iostream>
 #include "Window.hpp"
 #include "Textures.hpp"
 #include "Tools/Selection.hpp"
+#include "DebugLog.hpp"
 
 std::string shader_source = R"(
     uniform sampler2D texture;
@@ -35,22 +35,17 @@ Lasso::Lasso() {
 
 	generateMask();
 
-	_shader.loadFromMemory(shader_source, sf::Shader::Type::Fragment);
-
+	if (!_shader.loadFromMemory(shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"Lasso::Lasso: Failed to load shader from memory.");
+		exit(0);
+	}
 
 	_sprite = nullptr;
 	_outlineSprite = nullptr;
 }
 
 Lasso::~Lasso() {
-	if(_image != nullptr)
-		delete _image;
 
-	if(_sprite != nullptr)
-		delete _sprite;
-	
-	if (_outlineSprite != nullptr)
-		delete _outlineSprite;
 }
 
 void Lasso::shiftOriginIfNeeded(sf::Vector2i& point)
@@ -165,20 +160,6 @@ void Lasso::copy(sf::Image& canvas, sf::Color emptyColor)
 			}
 		}
 
-	std::wcout << "\n\n\n\n\n";
-
-	for (int y = 0; y < copiedImage.getSize().y; y += 1) {
-		for (int x = 0; x < copiedImage.getSize().x; x += 1) {
-			if (copiedImage.getPixel(sf::Vector2u(x, y)) != sf::Color::Transparent)
-				std::wcout << "1";
-			else
-				std::wcout << "0";
-		}
-
-		std::wcout << "\n";
-	}
-			
-
 	copyImageToClipboard(copiedImage, sf::IntRect(sf::Vector2i(0,0), s.size));
 
 }
@@ -234,8 +215,9 @@ void Lasso::paste(sf::Image& canvas, sf::Color emptyColor)
 		paste(canvas, *_image, _rect.position.x, _rect.position.y, _maskImage, emptyColor);
 	}
 	else {
-		_image = new sf::Image();   
+		_image = std::make_shared<sf::Image>();
 	}
+
 	loadImageFromClipboard(*_image);
 	_state = LassoState::Selected;
 	
@@ -250,9 +232,14 @@ void Lasso::cut(sf::Image& canvas, sf::Color emptyColor) {
 	if (_state == LassoState::Selected) {
 
 		if (_image == nullptr) {
-			_image = new sf::Image();
+			_image = std::make_shared<sf::Image>();
 			_image->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
-			_image->copy(canvas, sf::Vector2u(0, 0), _rect, false);
+			
+			if (!_image->copy(canvas, sf::Vector2u(0, 0), _rect, false)) {
+				DebugError(L"Lasso::cut: Failed to copy image from canvas.");
+				exit(0);
+			}
+
 			copyImageToClipboard(*_image, sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(_image->getSize())));
 		}
 		else {
@@ -260,7 +247,6 @@ void Lasso::cut(sf::Image& canvas, sf::Color emptyColor) {
 			//copyImageToClipboard(image, sf::IntRect(0, 0, image->getSize().x, image->getSize().y), mask);
 		}
 
-		delete _image;
 		_image = nullptr;
 		_state = LassoState::None;
 		_rect = sf::IntRect(sf::Vector2i(-1,-1), sf::Vector2i(-1,-1));
@@ -275,7 +261,11 @@ void Lasso::generateOutline(bool selectionComplete) {
 		return;
 
 	
-	_outlineRenderTexture.resize(sf::Vector2u(_rect.size));
+	if (!_outlineRenderTexture.resize(sf::Vector2u(_rect.size))) {
+		DebugError(L"Lasso::generateOutline: Failed to resize outline render texture.");
+		exit(0);
+	}
+
 	_outlineRenderTexture.clear(sf::Color(0, 0, 0, 0));
 
 	sf::Color lassoColor = sf::Color(47, 127, 127, 255);
@@ -395,8 +385,16 @@ void Lasso::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, floa
 	sf::IntRect texRect(sf::Vector2i(tx, ty), visibleRect.size);
 
 	_texture = sf::Texture();
-	_texture.resize(_image->getSize());
-	_texture.loadFromImage(*_image);
+	if (!_texture.resize(_image->getSize())) {
+		DebugError(L"Lasso::drawImage: Failed to resize texture.");
+		exit(0);
+	}
+
+	if (!_texture.loadFromImage(*_image)) {
+		DebugError(L"Lasso::drawImage: Failed to load texture from image.");
+		exit(0);
+	}
+
 	_texture.setSmooth(false);
 
 	sf::Image maskImage;
@@ -411,23 +409,26 @@ void Lasso::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, floa
 		maskImage.resize(_image->getSize(), sf::Color::White);
 	}
 
-	sf::Image maskSub;
-	maskSub.resize(sf::Vector2u(texRect.size), sf::Color::Transparent);
-	maskSub.copy(maskImage, sf::Vector2u(0,0), texRect, true);
-
 	sf::Texture maskTexture;
-	maskTexture.loadFromImage(maskImage);
+
+	if (!maskTexture.loadFromImage(maskImage)) {
+		DebugError(L"Lasso::drawImage: Failed to load mask texture from image.");
+		exit(0);
+	}
+
 	_shader.setUniform("texture", _texture);
 	_shader.setUniform("mask", maskTexture);
 	_shader.setUniform("alphaColor", sf::Vector3f(alphaColor.r, alphaColor.g, alphaColor.b));
 
-	if(_sprite != nullptr)
-		delete _sprite;
 
-	_sprite = new sf::Sprite(_texture);
+	_sprite = std::make_shared<sf::Sprite>(_texture);
 	_sprite->setTextureRect(texRect);
 	_sprite->setScale(sf::Vector2f(scale, scale));
-	_sprite->setPosition(sf::Vector2f(canvasPosition) + sf::Vector2f(visibleRect.position.x, visibleRect.position.y) * scale);
+
+	sf::Vector2f spritePos;
+	spritePos.x = (float)(canvasPosition.x) + (float)(visibleRect.position.x)*scale;
+	spritePos.y = (float)(canvasPosition.y) + (float)(visibleRect.position.y)*scale;
+	_sprite->setPosition(spritePos);
 
 	sf::RenderStates rs;
 	rs.shader = &_shader;
@@ -437,23 +438,37 @@ void Lasso::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, floa
 
 void Lasso::drawOutline(sf::Vector2i canvasPosition, float scale) {
 
-	if(_outlineSprite != nullptr)
-		delete _outlineSprite;
 
-	_outlineSprite = new sf::Sprite(_outlineRenderTexture.getTexture());
+	_outlineSprite = std::make_shared<sf::Sprite>(_outlineRenderTexture.getTexture());
 	_outlineSprite->setScale(sf::Vector2f(scale, scale));
-	_outlineSprite->setPosition(sf::Vector2f(canvasPosition) + sf::Vector2f(_outlineOffset) * scale);
+
+	sf::Vector2f outlineSpritePos;
+	outlineSpritePos.x = (float)(canvasPosition.x) + (float)(_outlineOffset.x) * scale;
+	outlineSpritePos.y = (float)(canvasPosition.y) + (float)(_outlineOffset.y) * scale;
+	_outlineSprite->setPosition(outlineSpritePos);
+
 	window->draw(*_outlineSprite);
 
 }
 
 void Lasso::drawRect(sf::Vector2i canvasPosition, float scale) {
-	sf::RectangleShape r(sf::Vector2f(float(_rect.size.x) * scale, float(_rect.size.y) * scale));
-	r.setPosition(sf::Vector2f(canvasPosition) + sf::Vector2f(_rect.position.x * scale, _rect.position.y * scale));
-	r.setFillColor(sf::Color(127, 47, 47, 127));
-	r.setOutlineColor(sf::Color(47, 127, 127, 255));
-	r.setOutlineThickness(4.0f);
-	window->draw(r);
+
+	sf::Vector2f rectSize;
+	rectSize.x = float(_rect.size.x) * scale;
+	rectSize.y = float(_rect.size.y) * scale;
+	
+	sf::RectangleShape rect(rectSize);
+
+	sf::Vector2f rectPos;
+	rectPos.x = float(canvasPosition.x) + float(_rect.position.x) * scale;
+	rectPos.y = float(canvasPosition.y) + float(_rect.position.y) * scale;
+	rect.setPosition(rectPos);
+
+	rect.setFillColor(sf::Color(127, 47, 47, 127));
+	rect.setOutlineColor(sf::Color(47, 127, 127, 255));
+	rect.setOutlineThickness(4.0f);
+
+	window->draw(rect);
 }
 
 

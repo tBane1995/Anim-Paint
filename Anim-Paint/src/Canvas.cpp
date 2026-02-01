@@ -10,7 +10,7 @@
 #include "Tools/Lasso.hpp"
 #include "Dialogs/LayersDialog.hpp"
 #include "Dialogs/Dialog.hpp"
-#include <iostream>
+#include "DebugLog.hpp"
 #include "MainMenu.hpp"
 #include "Dialogs/Palette.hpp"
 #include "Tools/Line.hpp"
@@ -139,7 +139,10 @@ void Canvas::generateBackground(sf::Vector2i size) {
 	}
 
 	_bg_texture = sf::Texture();
-	_bg_texture.loadFromImage(_bg_image);
+	if (!_bg_texture.loadFromImage(_bg_image)) {
+		DebugError(L"Canvas::generateBackground: Failed to load texture from image.");
+		exit(0);
+	}
 
 	_rect = sf::IntRect(_rect.position, s);
 	
@@ -417,7 +420,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 					if (lasso->_state == LassoState::None) {
 						sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
 						lasso->_state = LassoState::Selecting;
-						lasso->_image = new sf::Image();
+						lasso->_image = std::make_shared<sf::Image>();
 						lasso->_image->resize(sf::Vector2u(1, 1));
 						lasso->unselect();
 						lasso->_outlineOffset = tile;
@@ -513,7 +516,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 				lasso->addPoint(tile);
 				lasso->generateRect();
 
-				lasso->_image = new sf::Image();
+				lasso->_image = std::make_shared<sf::Image>();
 				lasso->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
 				if (lasso->_rect.size.x >= 1 && lasso->_rect.size.y >= 1) {
 					lasso->_image->resize(sf::Vector2u(lasso->_rect.size), sf::Color::Transparent);
@@ -566,7 +569,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 						lasso->_offset = tile - lasso->_outlineOffset;
 
 						if (lasso->_image == nullptr) {
-							lasso->_image = new sf::Image();
+							lasso->_image = std::make_shared<sf::Image>();
 							lasso->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
 							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *lasso->_image,lasso->_rect.position.x, lasso->_rect.position.y, 0, 0, lasso->_maskImage , toolbar->_second_color->_color);
 							removeImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, toolbar->_second_color->_color);
@@ -812,7 +815,10 @@ void Canvas::draw() {
 
 		if (layers_dialog->layersBoxes[i]->_visibling->_value == 0) {	// 0 - visible, 1 - invisible
 			sf::Texture tex;
-			tex.loadFromImage(getCurrentAnimation()->getLayer(i)->_image);
+			if (!tex.loadFromImage(getCurrentAnimation()->getLayer(i)->_image)) {
+				DebugError(L"Canvas::draw: Failed to load texture from image.");
+				exit(0);
+			}
 
 			sf::Sprite spr(tex);
 			spr.setPosition(sf::Vector2f(_rect.position));

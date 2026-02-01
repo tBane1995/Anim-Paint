@@ -100,32 +100,43 @@ PaletteButton::~PaletteButton() {
 }
 
 void PaletteButton::draw() {
-	sf::RectangleShape rect(sf::Vector2f(_rect.size.x - 2 * tools_border_width, _rect.size.y - 2 * tools_border_width));
+
+	sf::Vector2f rectSize;
+	rectSize.x = float(_rect.size.x - 2 * tools_border_width);
+	rectSize.y = float(_rect.size.y - 2 * tools_border_width);
+
+	sf::RectangleShape rect(rectSize);
+
 	switch (_state) {
 	case ButtonState::Pressed:
 		rect.setFillColor(_rectPressColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)(_rectBorderWidth));
 		rect.setOutlineColor(_rectPressBorderColor);
 		break;
 	case ButtonState::Hover:
 		rect.setFillColor(_rectHoverColor);
-		rect.setOutlineThickness(_rectBorderWidth);
+		rect.setOutlineThickness((float)(_rectBorderWidth));
 		rect.setOutlineColor(_rectHoverBorderColor);
 		break;
 	case ButtonState::Idle:
 		if (_isSelected) {
 			rect.setFillColor(_rectSelectColor);
-			rect.setOutlineThickness(_rectBorderWidth);
+			rect.setOutlineThickness((float)(_rectBorderWidth));
 			rect.setOutlineColor(_rectSelectBorderColor);
 		}
 		else {
 			rect.setFillColor(_rectIdleColor);
-			rect.setOutlineThickness(_rectBorderWidth);
+			rect.setOutlineThickness((float)(_rectBorderWidth));
 			rect.setOutlineColor(_rectIdleBorderColor);
 		};
 		break;
 	};
-	rect.setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(_rectBorderWidth, _rectBorderWidth));
+
+	sf::Vector2f rectPosition;
+	rectPosition.x = float(_rect.position.x + _rectBorderWidth);
+	rectPosition.y = float(_rect.position.y + _rectBorderWidth);
+	rect.setPosition(rectPosition);
+
 	window->draw(rect);
 	
 	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);

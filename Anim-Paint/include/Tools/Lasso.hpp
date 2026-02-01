@@ -13,14 +13,14 @@ public:
 	sf::Vector2i _offset;	// to move
 
 	// image
-	sf::Image* _image;
+	std::shared_ptr<sf::Image> _image;
 	sf::Texture _texture;
-	sf::Sprite* _sprite;
+	std::shared_ptr<sf::Sprite> _sprite;
 
 	// outline
 	sf::RenderTexture _outlineRenderTexture;
 	sf::Vector2i _outlineOffset;
-	sf::Sprite* _outlineSprite;
+	std::shared_ptr<sf::Sprite> _outlineSprite;
 	
 	// outside rect
 	sf::IntRect _rect;
