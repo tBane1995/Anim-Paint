@@ -12,6 +12,7 @@
 #include "Time.hpp"
 #include "Dialogs/Palette.hpp"
 #include "DebugLog.hpp"
+#include "ClipBoard.hpp"
 
 Separator::Separator() {
 	_rect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(2, tools_separator_height));
@@ -177,9 +178,10 @@ Toolbar::Toolbar() : ElementGUI() {
 	_btn_paste->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
 	_btn_paste->_onclick_func = [this]() {
-		_toolType = ToolType::Lasso;
 		//selection->paste(&animation->getCurrentLayer()->image, selection->img);
-		lasso->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent);
+		if (lasso->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent)) {
+			_toolType = ToolType::Lasso;
+		}
 		};
 	_btn_paste_2 = std::make_shared<ButtonWithTopTextAndList>(L"paste", tools_text_color, tools_text_hover_color);
 	_btn_paste_2->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -192,17 +194,18 @@ Toolbar::Toolbar() : ElementGUI() {
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
 	_btn_cut->_onclick_func = [this]() {
 		//selection->cut(&animation->getCurrentLayer()->image, selection->img, second_color->color);
-		lasso->cut(getCurrentAnimation()->getCurrentLayer()->_image, _second_color->_color);
+		if (lasso->_state == LassoState::Selected) {
+			lasso->cut(getCurrentAnimation()->getCurrentLayer()->_image, _second_color->_color);
+		}
 		};
 	_btn_copy = std::make_shared<ButtonWithRightText>(L"copy", tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));
 	_btn_copy->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
 	_btn_copy->_onclick_func = [this]() {
-		//selection->copy(&animation->getCurrentLayer()->image, selection->img);
-		lasso->_state = LassoState::Selected;
-		lasso->copy(getCurrentAnimation()->getCurrentLayer()->_image, _second_color->_color);
-		removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, lasso->_maskImage, toolbar->_second_color->_color);
-
+		if (lasso->_state == LassoState::Selected) {
+			lasso->copy(getCurrentAnimation()->getCurrentLayer()->_image, _second_color->_color);
+			removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, lasso->_maskImage, toolbar->_second_color->_color);
+		}
 		};
 	_btn_select = std::make_shared<ButtonWithBottomText>(L"select", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_select.png"), getTexture(L"tex\\tools\\btn_select_hover.png"));
 	_btn_select->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 

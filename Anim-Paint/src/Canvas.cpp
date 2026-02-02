@@ -531,15 +531,16 @@ void Canvas::handleEvent(const sf::Event& event) {
 			// TO-DO - selection
 		}
 		else if (toolbar->_toolType == ToolType::Lasso) {
+
+			lasso->generateRect();
+			lasso->generateMask();
+
 			if (lasso->_state == LassoState::Selecting) {
 				if (lasso->_rect.size.x <= 1 || lasso->_rect.size.y <= 1) {
 					lasso->_state = LassoState::None;
 
-					
 				}
 				else {
-					lasso->generateRect();
-					lasso->generateMask();
 					if (lasso->_image != nullptr) {
 						copyImageWithMask(*lasso->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, lasso->_rect.position.x, lasso->_rect.position.y, lasso->_maskImage, toolbar->_second_color->_color);
 						removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, lasso->_maskImage, toolbar->_second_color->_color);

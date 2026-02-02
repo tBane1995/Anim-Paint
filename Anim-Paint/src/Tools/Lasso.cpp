@@ -208,7 +208,7 @@ void Lasso::paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image&
 	}
 }
 
-void Lasso::paste(sf::Image& canvas, sf::Color emptyColor)
+bool Lasso::paste(sf::Image& canvas, sf::Color emptyColor)
 {
 
 	if (_image != nullptr) {
@@ -219,6 +219,12 @@ void Lasso::paste(sf::Image& canvas, sf::Color emptyColor)
 	}
 
 	loadImageFromClipboard(*_image);
+
+	if(_image->getSize().x <= 0 || _image->getSize().y <= 0) {
+		DebugError(L"Lasso::paste: Clipboard image has invalid size.");
+		return false;
+	}
+
 	_state = LassoState::Selected;
 	
 	unselect();
@@ -226,6 +232,8 @@ void Lasso::paste(sf::Image& canvas, sf::Color emptyColor)
 	addPoint(sf::Vector2i(0, _image->getSize().y - 1));
 	addPoint(sf::Vector2i(_image->getSize().x - 1, _image->getSize().y - 1));
 	addPoint(sf::Vector2i(_image->getSize().x - 1, 0));
+
+	return true;
 }
 
 void Lasso::cut(sf::Image& canvas, sf::Color emptyColor) {

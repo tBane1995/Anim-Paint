@@ -41,7 +41,7 @@ public:
 	bool clickOnSelection(sf::Vector2i point);
 	void copy(sf::Image& canvas, sf::Color emptyColor);
 	void paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor);
-	void paste(sf::Image& canvas, sf::Color emptyColor);
+	bool paste(sf::Image& canvas, sf::Color emptyColor);
 	void cut(sf::Image& canvas, sf::Color emptyColor);
 	void generateOutline(bool selectionComplete = false);
 	bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
