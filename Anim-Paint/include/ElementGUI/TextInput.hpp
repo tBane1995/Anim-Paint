@@ -16,6 +16,8 @@ public:
 	std::unique_ptr<sf::Text> _text;
 	TextInputState _state;
 	int _cursorPosition;
+	int _selectionStart, _selectionEnd;
+
 	std::function<void()> _onClickedFunction;
 	std::function<void()> _onEditedFunction;
 	std::function<void()> _onEnteredFunction;

@@ -21,6 +21,8 @@ TextInput::TextInput(sf::Vector2i size, int limitCharacters, int characterSize) 
 	_state = TextInputState::Idle;
 
 	_cursorPosition = 0;
+	_selectionStart = -1;
+	_selectionEnd = -1;
 
 	_onEditedFunction = { };
 	_onClickedFunction = { };
@@ -87,33 +89,54 @@ void TextInput::positioningCursorByMouse() {
 void TextInput::cursorHover() {
 	if (_rect.contains(cursor->_worldMousePosition)) {
 		ElementGUI_hovered = this->shared_from_this();
+		return;
 	}
+
 }
 
 void TextInput::handleEvent(const sf::Event& event) {
 	
-
 	if (const auto* mp = event.getIf<sf::Event::MouseButtonPressed>(); mp) {
-		
 		if (_rect.contains(cursor->_worldMousePosition)) {
 
 			if (_state == TextInputState::TextEntered) {
-				// posiition cursor
 				positioningCursorByMouse();
+				if (_selectionStart == -1) {
+					_selectionStart = _cursorPosition;
+					_selectionEnd = _cursorPosition;
+				}
+					
 			}
 			else {
 				_state = TextInputState::TextEntered;
 				if (_onClickedFunction)
 					_onClickedFunction();
 			}
-
-			
 		}
 		else {
 			_state = TextInputState::Idle;
+			_selectionStart = -1;
+			_selectionEnd = -1;
 		}
-
 		return;
+	}
+
+	if(const auto* mr = event.getIf<sf::Event::MouseButtonReleased>(); mr) {
+		if (mr->button == sf::Mouse::Button::Left) {
+			_selectionStart = -1;
+			_selectionEnd = -1;
+		}
+	}
+
+	if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+			
+		if (_selectionStart != -1) {
+			if (_state == TextInputState::TextEntered) {
+				positioningCursorByMouse();
+				_selectionEnd = _cursorPosition;
+			}
+			return;
+		}
 	}
 
 	if (_state == TextInputState::TextEntered) {
@@ -176,7 +199,7 @@ void TextInput::handleEvent(const sf::Event& event) {
 void TextInput::update() {
 
 	if (_state == TextInputState::TextEntered) {
-
+	
 	}
 	else if (ElementGUI_hovered.get() == this) {
 		_state = TextInputState::Hover;
@@ -219,8 +242,30 @@ void TextInput::draw() {
 
 	window->draw(rect);
 
+	if (!(_selectionStart == -1 && _selectionEnd == -1) && _selectionStart != _selectionEnd) {
+
+		int selection_margin = 1;
+
+		sf::Vector2f selectionRectSize;
+		selectionRectSize.x = _text->findCharacterPos(_selectionEnd).x - _text->findCharacterPos(_selectionStart).x;
+		selectionRectSize.y = _rect.size.y - 2 * textInput_border_width - 2* selection_margin;
+
+		sf::Vector2f selectionRectPosition;
+		selectionRectPosition.x = _text->findCharacterPos(_selectionStart).x;
+		selectionRectPosition.y = (float)_rect.position.y + (float)textInput_border_width + selection_margin;
+		
+		sf::RectangleShape selectionRect(selectionRectSize);
+
+		selectionRect.setPosition(selectionRectPosition);
+		selectionRect.setFillColor(sf::Color(31, 31, 127, 255));
+
+		window->draw(selectionRect);
+
+	}
+
 	// draw text
 	window->draw(*_text);
+
 	
 	// draw cursor
 	if (_state == TextInputState::TextEntered && int(currentTime.asSeconds() * 3) % 2 == 0) {

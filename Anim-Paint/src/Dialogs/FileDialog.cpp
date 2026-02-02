@@ -1083,10 +1083,10 @@ void FileDialog::cursorHover() {
 
 	_separator->cursorHover();
 
-	_filenameInput->cursorHover();
-
 	_selectBtn->cursorHover();
 	_cancelBtn->cursorHover();
+
+	_filenameInput->cursorHover(); // at the end, because input can overwrite hovered
 }
 
 void FileDialog::handleEvent(const sf::Event& event) {

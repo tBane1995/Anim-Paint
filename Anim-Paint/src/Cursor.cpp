@@ -47,7 +47,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 
 	_hoveredElementGUI = ElementGUI_hovered;
 
-
 	if (dynamic_cast<TextInput*>(_hoveredElementGUI.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Text);
