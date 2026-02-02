@@ -46,7 +46,10 @@ cmake ..
 cmake --build .
 `
 
-10. Plik wykonywalny znajdziesz w **build/Debug** lub **build/Release**
+11. Set the Working Directory 
+`Project -> Properties -> Debugging -> Working Directory -> "$(ProjectDir)/../Anim-Paint"`
+
+12. Plik wykonywalny znajdziesz w **build/Debug** lub **build/Release**
 
 ## Technologie
 Program stworzono w języku C++ z wykorzystaniem biblioteki SFML 3.0.2.  

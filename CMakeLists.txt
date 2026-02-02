@@ -119,11 +119,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-  CXX_STANDARD 17
+  CXX_STANDARD 23
   CXX_STANDARD_REQUIRED ON
 )
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 
 # set the SFML lib
 set(SFML_DIR "C:/SFML-3.0.2/lib/cmake/SFML")
@@ -139,8 +139,15 @@ target_link_libraries(${PROJECT_NAME}
 
 # set the working directory (assets)
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Anim-Paint
+    VS_DEBUGGER_WORKING_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/Anim-Paint"
+    VS_DEBUGGER_WORKING_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/Anim-Paint"
 )
+
+get_target_property(WD_DEBUG   ${PROJECT_NAME} VS_DEBUGGER_WORKING_DIRECTORY_DEBUG)
+get_target_property(WD_RELEASE ${PROJECT_NAME} VS_DEBUGGER_WORKING_DIRECTORY_RELEASE)
+
+message(STATUS "WD DEBUG   = ${WD_DEBUG}")
+message(STATUS "WD RELEASE = ${WD_RELEASE}")
 
 # set the path for SFML bin
 set_target_properties(${PROJECT_NAME} PROPERTIES

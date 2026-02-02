@@ -290,9 +290,6 @@ int main() {
 		cursor->draw();
 
 		window->display();
-
-		
-		
 	}
 
 	
