@@ -241,7 +241,7 @@ ColoredButtonWithText::ColoredButtonWithText(std::wstring text, sf::Vector2i siz
 	_text = std::make_unique<sf::Text>(basicFont, text, 13);
 	_text->setFillColor(dark_and_red_button_text_color);
 
-	_rectIdleColor = dark_and_red_button_normal_color;
+	_rectIdleColor = dark_and_red_button_idle_color;
 	_rectHoverColor = dark_and_red_button_hover_color;
 	_rectPressColor = dark_and_red_button_press_color;
 	_rectSelectColor = dark_and_red_button_select_color;

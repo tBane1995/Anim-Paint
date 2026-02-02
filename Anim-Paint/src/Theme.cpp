@@ -33,13 +33,13 @@ sf::Color file_dialog_separator_press_color;
 
 // buttons
 sf::Color dark_and_red_button_select_color;
-sf::Color dark_and_red_button_normal_color;
+sf::Color dark_and_red_button_idle_color;
 sf::Color dark_and_red_button_hover_color;
 sf::Color dark_and_red_button_press_color;
 sf::Color dark_and_red_button_text_color;
 
 sf::Color dark_button_select_color;
-sf::Color dark_button_normal_color;
+sf::Color dark_button_idle_color;
 sf::Color dark_button_hover_color;
 sf::Color dark_button_press_color;
 sf::Color dark_button_text_color;
@@ -135,13 +135,13 @@ void loadTheme() {
 
 	// buttons
 	dark_and_red_button_select_color = sf::Color(79, 31, 31);
-	dark_and_red_button_normal_color = sf::Color(47, 47, 47);
+	dark_and_red_button_idle_color = sf::Color(47, 47, 47);
 	dark_and_red_button_hover_color = sf::Color(31, 31, 31);
 	dark_and_red_button_press_color = sf::Color(23, 23, 23);
 	dark_and_red_button_text_color = sf::Color(191, 191, 191);
 
 	dark_button_select_color = sf::Color(23, 23, 23);
-	dark_button_normal_color = sf::Color(31, 31, 31);
+	dark_button_idle_color = sf::Color(31, 31, 31);
 	dark_button_hover_color = sf::Color(7, 7, 7);
 	dark_button_press_color = sf::Color(23, 23, 23);
 	dark_button_text_color = sf::Color(191, 191, 191);

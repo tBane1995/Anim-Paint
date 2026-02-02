@@ -51,6 +51,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 
 	int animationsCount = (int)(std::ceil(float(spriteSheet.getSize().y) / std::stoi(_heightOfFrame->getText())));
 	int framesCount = (int)(std::ceil(float(spriteSheet.getSize().x) / std::stoi(_widthOfFrame->getText())));
+
 	_animationsCount->setText(std::to_wstring(animationsCount));
 	_frameCount->setText(std::to_wstring(framesCount));
 
@@ -128,7 +129,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 	_bottomRect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(getContentSize().x, btnSize.y + 2 * dialog_padding));
 
 	_confirmBtn = std::make_shared<ColoredButtonWithText>(L"Confirm", btnSize);
-	_confirmBtn->setRectColors(dark_button_select_color, dark_button_normal_color, dark_button_hover_color, dark_button_press_color);
+	_confirmBtn->setRectColors(dark_button_idle_color, dark_button_hover_color, dark_button_press_color, dark_button_select_color);
 	_confirmBtn->activateByEnter(true);
 	_confirmBtn->_onclick_func = [this]() {
 		if (datasIsCorrect()) {
@@ -144,7 +145,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 		};
 
 	_cancelBtn = std::make_shared<ColoredButtonWithText>(L"Cancel", btnSize);
-	_cancelBtn->setRectColors(dark_button_select_color, dark_button_normal_color, dark_button_hover_color, dark_button_press_color);
+	_cancelBtn->setRectColors(dark_button_idle_color, dark_button_hover_color, dark_button_press_color, dark_button_select_color);
 	_cancelBtn->activateByEnter(true);
 	_cancelBtn->_onclick_func = [this]() {
 		_state = DialogState::ToClose;
@@ -211,8 +212,8 @@ void Dialog_Load_SpriteSheet::setPosition(sf::Vector2i position) {
 	// bottom buttons
 	_bottomRect.position = sf::Vector2i(getContentPosition()) + sf::Vector2i(0, getContentSize().y - _bottomRect.size.y);
 	int xx = 48;
-	_cancelBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x / 2 - xx - _cancelBtn->getSize().x / 2, getContentSize().y - _cancelBtn->getSize().y - dialog_padding));
-	_confirmBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x / 2 + xx - _confirmBtn->getSize().x / 2, getContentSize().y - _confirmBtn->getSize().y - dialog_padding));
+	_confirmBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x / 2 - xx - _confirmBtn->getSize().x / 2, getContentSize().y - _confirmBtn->getSize().y - dialog_padding));
+	_cancelBtn->setPosition(getContentPosition() + sf::Vector2i(getContentSize().x / 2 + xx - _cancelBtn->getSize().x / 2, getContentSize().y - _cancelBtn->getSize().y - dialog_padding));
 
 }
 

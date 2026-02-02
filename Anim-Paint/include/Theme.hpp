@@ -32,13 +32,13 @@ extern sf::Color file_dialog_separator_press_color;
 
 // buttons
 extern sf::Color dark_and_red_button_select_color;
-extern sf::Color dark_and_red_button_normal_color;
+extern sf::Color dark_and_red_button_idle_color;
 extern sf::Color dark_and_red_button_hover_color;
 extern sf::Color dark_and_red_button_press_color;
 extern sf::Color dark_and_red_button_text_color;
 
 extern sf::Color dark_button_select_color;
-extern sf::Color dark_button_normal_color;
+extern sf::Color dark_button_idle_color;
 extern sf::Color dark_button_hover_color;
 extern sf::Color dark_button_press_color;
 extern sf::Color dark_button_text_color;
