@@ -88,6 +88,8 @@ extern sf::Color textinput_idle_color;
 extern sf::Color textinput_hover_color;
 extern sf::Color textinput_textentered_color;
 extern sf::Color textInput_incorrect_data_color;
+extern sf::Color textInput_border_color;
+extern int textInput_border_width;
 
 // canvas
 extern sf::Color canvas_color1;

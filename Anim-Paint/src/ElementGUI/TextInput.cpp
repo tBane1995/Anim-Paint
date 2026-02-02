@@ -7,6 +7,7 @@
 #include "Cursor.hpp"
 
 TextInput::TextInput(sf::Vector2i size, int limitCharacters, int characterSize) : ElementGUI() {
+	
 	_rect = sf::IntRect(sf::Vector2i(0,0), size);
 	
 	_limitCharacters = limitCharacters;
@@ -33,7 +34,12 @@ TextInput::~TextInput() {
 
 void TextInput::setPosition(sf::Vector2i position) {
 	_rect.position = position;
-	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(0, (_rect.size.y - basicFont.getLineSpacing(_text->getCharacterSize())) / 2.f));
+
+	sf::Vector2f textPosition;
+	textPosition.x = (float)_rect.position.x + (float)(textInput_border_width);
+	textPosition.y = (float)_rect.position.y + (float)(textInput_border_width);
+	textPosition.y += (float)(_rect.size.y-2*textInput_border_width - basicFont.getLineSpacing(_text->getCharacterSize())) / 2.f;
+	_text->setPosition(textPosition);
 }
 
 void TextInput::setText(std::wstring text) {
@@ -158,7 +164,11 @@ void TextInput::update() {
 
 void TextInput::draw() {
 	// draw rect
-	sf::RectangleShape rect(sf::Vector2f(_rect.size));
+
+	sf::Vector2f rectSize;
+	rectSize.x = (float)(_rect.size.x - 2 * textInput_border_width);
+	rectSize.y = (float)(_rect.size.y - 2 * textInput_border_width);
+	sf::RectangleShape rect(rectSize);
 	switch (_state)
 	{
 	case TextInputState::Idle:
@@ -174,7 +184,15 @@ void TextInput::draw() {
 		rect.setFillColor(textinput_idle_color);
 		break;
 	}
-	rect.setPosition(sf::Vector2f(_rect.position));
+	
+	rect.setOutlineThickness((float)textInput_border_width);
+	rect.setOutlineColor(textInput_border_color);
+
+	sf::Vector2f rectPosition;
+	rectPosition.x = (float)(_rect.position.x + textInput_border_width);
+	rectPosition.y = (float)(_rect.position.y + textInput_border_width);
+	rect.setPosition(rectPosition);
+
 	window->draw(rect);
 
 	// draw text

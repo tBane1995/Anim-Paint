@@ -89,6 +89,8 @@ sf::Color textinput_idle_color;
 sf::Color textinput_hover_color;
 sf::Color textinput_textentered_color;
 sf::Color textInput_incorrect_data_color;
+sf::Color textInput_border_color;
+int textInput_border_width;
 
 // canvas
 sf::Color canvas_color1;
@@ -193,6 +195,8 @@ void loadTheme() {
 	textinput_hover_color = sf::Color(95, 95, 95);
 	textinput_textentered_color = sf::Color(95, 95, 95);
 	textInput_incorrect_data_color = sf::Color(127, 31, 31);
+	textInput_border_width = 1;
+	textInput_border_color = sf::Color(15,15,15);
 
 	// canvas
 	canvas_color1 = sf::Color(63, 63, 63);

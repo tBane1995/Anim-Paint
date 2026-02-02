@@ -211,28 +211,38 @@ void NumberInput::update() {
 }
 
 void NumberInput::draw() {
-	// draw rect
-	sf::RectangleShape rect(sf::Vector2f(_rect.size));
 
-	sf::Color rectColor;
+	// draw rect
+	sf::Vector2f rectSize;
+	rectSize.x = (float)(_rect.size.x - 2 * textInput_border_width);
+	rectSize.y = (float)(_rect.size.y - 2 * textInput_border_width);
+
+	sf::RectangleShape rect(rectSize);
+
 	switch (_state)
 	{
 	case TextInputState::Idle:
-		rectColor = textinput_idle_color;
+		rect.setFillColor(textinput_idle_color);
 		break;
 	case TextInputState::Hover:
-		rectColor = textinput_hover_color;
+		rect.setFillColor(textinput_hover_color);
 		break;
 	case TextInputState::TextEntered:
-		rectColor = textinput_textentered_color;
+		rect.setFillColor(textinput_textentered_color);
 		break;
 	default:
-		rectColor = textinput_idle_color;
+		rect.setFillColor(textinput_idle_color);
 		break;
 	}
 
-	rect.setFillColor((dataIsCorrect()) ? rectColor : textInput_incorrect_data_color);
-	rect.setPosition(sf::Vector2f(_rect.position));
+	rect.setOutlineThickness((float)textInput_border_width);
+	rect.setOutlineColor(textInput_border_color);
+
+	sf::Vector2f rectPosition;
+	rectPosition.x = (float)(_rect.position.x + textInput_border_width);
+	rectPosition.y = (float)(_rect.position.y + textInput_border_width);
+	rect.setPosition(rectPosition);
+
 	window->draw(rect);
 
 	// draw text
