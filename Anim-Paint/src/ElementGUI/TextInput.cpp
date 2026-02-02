@@ -69,6 +69,21 @@ sf::Vector2i TextInput::getPosition() {
 sf::Vector2i TextInput::getSize() {
 	return _rect.size;
 }
+
+void TextInput::positioningCursorByMouse() {
+
+	int newCursorPosition = 0;
+
+	for (int i = 0; i < (int)(_textStr.length()); i++) {
+		sf::Vector2f charPos = _text->findCharacterPos(i);
+		if (cursor->_worldMousePosition.x > charPos.x) {
+			newCursorPosition = i + 1;
+		}
+	}
+
+	_cursorPosition = newCursorPosition;
+}
+
 void TextInput::cursorHover() {
 	if (_rect.contains(cursor->_worldMousePosition)) {
 		ElementGUI_hovered = this->shared_from_this();
@@ -81,9 +96,18 @@ void TextInput::handleEvent(const sf::Event& event) {
 	if (const auto* mp = event.getIf<sf::Event::MouseButtonPressed>(); mp) {
 		
 		if (_rect.contains(cursor->_worldMousePosition)) {
-			_state = TextInputState::TextEntered;
-			if (_onClickedFunction)
-				_onClickedFunction();
+
+			if (_state == TextInputState::TextEntered) {
+				// posiition cursor
+				positioningCursorByMouse();
+			}
+			else {
+				_state = TextInputState::TextEntered;
+				if (_onClickedFunction)
+					_onClickedFunction();
+			}
+
+			
 		}
 		else {
 			_state = TextInputState::Idle;

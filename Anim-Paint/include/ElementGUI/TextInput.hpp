@@ -30,6 +30,7 @@ public:
 	std::wstring getText();
 	sf::Vector2i getPosition();
 	sf::Vector2i getSize();
+	void positioningCursorByMouse();
 
 
 	virtual void cursorHover();

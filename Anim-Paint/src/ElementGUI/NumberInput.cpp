@@ -86,9 +86,16 @@ void NumberInput::handleEvent(const sf::Event& event) {
 	if (const auto* mp = event.getIf<sf::Event::MouseButtonPressed>(); mp) {
 
 		if (_rect.contains(cursor->_worldMousePosition)) {
-			_state = TextInputState::TextEntered;
-			if (_onClickedFunction)
-				_onClickedFunction();
+
+			if (_state == TextInputState::TextEntered) {
+				// posiition cursor
+				positioningCursorByMouse();
+			}
+			else {
+				_state = TextInputState::TextEntered;
+				if (_onClickedFunction)
+					_onClickedFunction();
+			}
 		}
 		else {
 
