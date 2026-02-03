@@ -25,6 +25,11 @@ Button::Button() : ElementGUI() {
 	_rectSelectBorderColor = sf::Color::Transparent;
 
 	_activatedByEnter = false;
+
+	_state = ButtonState::Idle;
+	_hover_func = {};
+	_onclick_func = {};
+	_clickTime = sf::Time::Zero;
 }
 
 

@@ -24,6 +24,11 @@ public:
 	sf::Color _rectPressBorderColor;
 	sf::Color _rectSelectBorderColor;
 
+	ButtonState _state;
+	std::function<void()> _hover_func;
+	std::function<void()> _onclick_func;
+	sf::Time _clickTime;
+
 	Button();
 	virtual ~Button();
 
@@ -44,17 +49,9 @@ public:
 
 class NormalButton : public Button {
 public:
-	
-	
 
 	std::shared_ptr<Texture> _texture;
 	std::shared_ptr<Texture> _hoverTexture;
-	
-	ButtonState _state;
-	std::function<void()> _hover_func;
-	std::function<void()> _onclick_func;
-	sf::Time _clickTime;
-
 
 	NormalButton(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~NormalButton();
@@ -76,12 +73,6 @@ class ColoredButtonWithText : public Button {
 public:
 
 	std::unique_ptr < sf::Text > _text;
-
-	ButtonState _state;
-	std::function<void()> _hover_func;
-	std::function<void()> _onclick_func;
-	sf::Time _clickTime;
-
 
 	ColoredButtonWithText(std::wstring text, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ColoredButtonWithText();
@@ -107,12 +98,6 @@ public:
 	std::shared_ptr<Texture> _texture;
 	std::shared_ptr<Texture> _hoverTexture;
 	std::unique_ptr<sf::Text> _text;
-
-	ButtonState _state;
-	std::function<void()> _hover_func;
-	std::function<void()> _onclick_func;
-	sf::Time _clickTime;
-
 
 	ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithBottomText();
@@ -140,12 +125,6 @@ public:
 	std::shared_ptr<Texture> _hoverTexture;
 	std::unique_ptr<sf::Text> _text;
 
-	ButtonState _state;
-	std::function<void()> _hover_func;
-	std::function<void()> _onclick_func;
-	sf::Time _clickTime;
-
-
 	ButtonWithRightText(std::wstring text, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithRightText();
 
@@ -167,12 +146,6 @@ public:
 	std::shared_ptr<Texture> _texture;
 	std::shared_ptr<Texture> _hoverTexture;
 	std::unique_ptr<sf::Text> _text;
-
-	ButtonState _state;
-	std::function<void()> _hover_func;
-	std::function<void()> _onclick_func;
-	sf::Time _clickTime;
-
 
 	Option(std::wstring text, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~Option();
@@ -199,11 +172,6 @@ public:
 	std::shared_ptr<Texture> _texture;
 	std::shared_ptr<Texture> _hoverTexture;
 	std::unique_ptr<sf::Text> _text;
-
-	ButtonState _state;
-	std::function<void()> _hover_func;
-	std::function<void()> _onclick_func;
-	sf::Time _clickTime;
 
 	sf::RectangleShape _list_rect;
 	sf::VertexArray _list_border;
