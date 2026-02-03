@@ -3,8 +3,8 @@
 #include "SFML//Graphics.hpp"
 #include <functional>
 
-enum class TextInputState { Idle, Hover, TextEntered };
-
+enum class TextInputState { Idle, Hover };
+enum class TextInputEditState { None, TextEntered, Selecting, Selected};
 class TextInput : public ElementGUI {
 public:
 
@@ -12,9 +12,13 @@ public:
 
 	int _characterSize;
 	int _limitCharacters;
+
 	std::wstring _textStr;
 	std::unique_ptr<sf::Text> _text;
+
 	TextInputState _state;
+	sf::Time _lastCLickTime;
+	TextInputEditState _editState;
 	int _cursorPosition;
 	int _selectionStart, _selectionEnd;
 

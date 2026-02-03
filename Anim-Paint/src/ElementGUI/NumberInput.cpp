@@ -87,19 +87,19 @@ void NumberInput::handleEvent(const sf::Event& event) {
 
 		if (_rect.contains(cursor->_worldMousePosition)) {
 
-			if (_state == TextInputState::TextEntered) {
+			if (_editState == TextInputEditState::TextEntered) {
 				// posiition cursor
 				positioningCursorByMouse();
 			}
 			else {
-				_state = TextInputState::TextEntered;
+				_editState = TextInputEditState::TextEntered;
 				if (_onClickedFunction)
 					_onClickedFunction();
 			}
 		}
 		else {
 
-			if (_state == TextInputState::TextEntered) {
+			if (_editState == TextInputEditState::TextEntered) {
 				if (dataIsCorrect()) {
 					deleteStartZeros();
 					_previousText = _textStr;
@@ -114,13 +114,13 @@ void NumberInput::handleEvent(const sf::Event& event) {
 				setText(_textStr);
 			}
 
-			_state = TextInputState::Idle;
+			_editState = TextInputEditState::None;
 		}
 
 		return;
 	}
 
-	if (_state == TextInputState::TextEntered) {
+	if (_editState == TextInputEditState::TextEntered) {
 		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp) {
 
 			if (kp->code == sf::Keyboard::Key::Left) {
@@ -226,20 +226,14 @@ void NumberInput::draw() {
 
 	sf::RectangleShape rect(rectSize);
 
-	switch (_state)
-	{
-	case TextInputState::Idle:
-		rect.setFillColor(textinput_idle_color);
-		break;
-	case TextInputState::Hover:
-		rect.setFillColor(textinput_hover_color);
-		break;
-	case TextInputState::TextEntered:
+	if (_editState == TextInputEditState::TextEntered) {
 		rect.setFillColor(textinput_textentered_color);
-		break;
-	default:
+	}
+	else if (_state == TextInputState::Hover) {
+		rect.setFillColor(textinput_hover_color);
+	}
+	else {
 		rect.setFillColor(textinput_idle_color);
-		break;
 	}
 
 	rect.setOutlineThickness((float)textInput_border_width);
@@ -256,7 +250,7 @@ void NumberInput::draw() {
 	window->draw(*_text);
 
 	// draw cursor
-	if (_state == TextInputState::TextEntered && int(currentTime.asSeconds() * 3) % 2 == 0) {
+	if (_editState == TextInputEditState::TextEntered && int(currentTime.asSeconds() * 3) % 2 == 0) {
 		sf::RectangleShape cursor(sf::Vector2f(2, basicFont.getLineSpacing(_characterSize)));
 		cursor.setFillColor(sf::Color::Red);
 		cursor.setPosition(_text->findCharacterPos(_cursorPosition));;

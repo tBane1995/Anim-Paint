@@ -180,13 +180,13 @@ void Dialog::activateOnTabElement(int id) {
 	if (_currentOnTabElement >= 0) {
 		std::shared_ptr<NumberInput> ni = std::dynamic_pointer_cast<NumberInput>(_onTabElements[_currentOnTabElement]);
 		if (ni != nullptr) {
-			ni->_state = TextInputState::TextEntered;
+			ni->_editState = TextInputEditState::TextEntered;
 			return;
 		}
 
 		std::shared_ptr<TextInput> ti = std::dynamic_pointer_cast<TextInput>(_onTabElements[_currentOnTabElement]);
 		if (ti != nullptr) {
-			ti->_state = TextInputState::TextEntered;
+			ti->_editState = TextInputEditState::TextEntered;
 			return;
 		}
 

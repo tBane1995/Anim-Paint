@@ -41,6 +41,16 @@ void Cursor::handleEvent(const sf::Event& event) {
 
 	brush->setPosition(worldToTile(_worldMousePosition, canvas->_position, canvas->_zoom, canvas->_zoom_delta));
 
+	std::shared_ptr<TextInput> input = dynamic_pointer_cast<TextInput>(ElementGUI_pressed);
+	if (input != nullptr && input->_editState == TextInputEditState::Selecting) {
+		window->setMouseCursorVisible(true);
+		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Text);
+		window->setMouseCursor(*_cursor);
+		_ico = nullptr;
+		_offset = sf::Vector2i(0, 0);
+		_brushIsVisible = false;
+		return;
+	}
 
 	if (_hoveredElementGUI != canvas && _hoveredElementGUI == ElementGUI_hovered)
 		return;

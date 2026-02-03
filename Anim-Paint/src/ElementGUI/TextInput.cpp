@@ -5,6 +5,7 @@
 #include "SFML/Graphics.hpp"
 #include <iostream>
 #include "Cursor.hpp"
+#include "DebugLog.hpp"
 
 TextInput::TextInput(sf::Vector2i size, int limitCharacters, int characterSize) : ElementGUI() {
 	
@@ -19,6 +20,8 @@ TextInput::TextInput(sf::Vector2i size, int limitCharacters, int characterSize) 
 	_text->setString(_textStr);
 
 	_state = TextInputState::Idle;
+	_lastCLickTime = sf::Time::Zero;
+	_editState = TextInputEditState::None;
 
 	_cursorPosition = 0;
 	_selectionStart = -1;
@@ -92,6 +95,11 @@ void TextInput::cursorHover() {
 		return;
 	}
 
+	if (_editState == TextInputEditState::Selecting) {
+		ElementGUI_hovered = this->shared_from_this();
+		return;
+	}
+
 }
 
 void TextInput::handleEvent(const sf::Event& event) {
@@ -99,47 +107,86 @@ void TextInput::handleEvent(const sf::Event& event) {
 	if (const auto* mp = event.getIf<sf::Event::MouseButtonPressed>(); mp) {
 		if (_rect.contains(cursor->_worldMousePosition)) {
 
-			if (_state == TextInputState::TextEntered) {
-				positioningCursorByMouse();
-				if (_selectionStart == -1) {
+			if (_editState == TextInputEditState::TextEntered) {
+				if ((currentTime - _lastCLickTime).asSeconds() < 0.2f) {
+					// double click
+					_selectionStart = 0;
+					_selectionEnd = (int)_textStr.length();
+					_cursorPosition = _selectionEnd;
+					_editState = TextInputEditState::Selected;
+				}
+				else {
+					positioningCursorByMouse();
 					_selectionStart = _cursorPosition;
 					_selectionEnd = _cursorPosition;
+
 				}
-					
 			}
 			else {
-				_state = TextInputState::TextEntered;
-				if (_onClickedFunction)
-					_onClickedFunction();
+
+				if ((currentTime - _lastCLickTime).asSeconds() < 0.2f) {
+					// double click
+					_selectionStart = 0;
+					_selectionEnd = (int)_textStr.length();
+					_cursorPosition = _selectionEnd;
+					_editState = TextInputEditState::Selected;
+				}
+				else {
+					positioningCursorByMouse();
+					_selectionStart = _cursorPosition;
+					_selectionEnd = _cursorPosition;
+					
+					_editState = TextInputEditState::TextEntered;
+					if (_onClickedFunction)
+						_onClickedFunction();
+				}
+				
 			}
+
+			ElementGUI_pressed = this->shared_from_this();
 		}
 		else {
-			_state = TextInputState::Idle;
+			_editState = TextInputEditState::None;
 			_selectionStart = -1;
 			_selectionEnd = -1;
+			_lastCLickTime = currentTime;
+
+			if(ElementGUI_pressed.get() == this)
+				ElementGUI_pressed = nullptr;
 		}
+		_lastCLickTime = currentTime;
 		return;
 	}
 
 	if(const auto* mr = event.getIf<sf::Event::MouseButtonReleased>(); mr) {
-		if (mr->button == sf::Mouse::Button::Left) {
-			_selectionStart = -1;
-			_selectionEnd = -1;
+		if (ElementGUI_pressed.get() == this) {
+			ElementGUI_pressed = nullptr;
 		}
+
+		if(_editState == TextInputEditState::Selecting)
+			_editState = TextInputEditState::Selected;
+
+		return;
 	}
 
-	if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-			
-		if (_selectionStart != -1) {
-			if (_state == TextInputState::TextEntered) {
-				positioningCursorByMouse();
-				_selectionEnd = _cursorPosition;
+	if (_editState == TextInputEditState::Selecting || _editState == TextInputEditState::TextEntered) {
+		if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+
+			positioningCursorByMouse();
+			_selectionEnd = _cursorPosition;
+
+			if (_editState == TextInputEditState::TextEntered) {
+				if (!(_selectionStart == -1 && _selectionEnd == -1) && _selectionEnd != _selectionStart) {
+					_editState = TextInputEditState::Selecting;
+					
+				}
 			}
+
 			return;
 		}
 	}
 
-	if (_state == TextInputState::TextEntered) {
+	if (_editState == TextInputEditState::TextEntered || _editState == TextInputEditState::Selected) {
 		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp) {
 
 			if (kp->code == sf::Keyboard::Key::Left) {
@@ -198,10 +245,11 @@ void TextInput::handleEvent(const sf::Event& event) {
 
 void TextInput::update() {
 
-	if (_state == TextInputState::TextEntered) {
+	if (_editState == TextInputEditState::TextEntered) {
 	
 	}
-	else if (ElementGUI_hovered.get() == this) {
+	
+	if (ElementGUI_hovered.get() == this) {
 		_state = TextInputState::Hover;
 	}
 	else {
@@ -216,20 +264,15 @@ void TextInput::draw() {
 	rectSize.x = (float)(_rect.size.x - 2 * textInput_border_width);
 	rectSize.y = (float)(_rect.size.y - 2 * textInput_border_width);
 	sf::RectangleShape rect(rectSize);
-	switch (_state)
-	{
-	case TextInputState::Idle:
-		rect.setFillColor(textinput_idle_color);
-		break;
-	case TextInputState::Hover:
-		rect.setFillColor(textinput_hover_color);
-		break;
-	case TextInputState::TextEntered:
+
+	if (_editState == TextInputEditState::TextEntered) {
 		rect.setFillColor(textinput_textentered_color);
-		break;
-	default:
+	}
+	else if(_state == TextInputState::Hover) {
+		rect.setFillColor(textinput_hover_color);
+	}
+	else {
 		rect.setFillColor(textinput_idle_color);
-		break;
 	}
 	
 	rect.setOutlineThickness((float)textInput_border_width);
@@ -246,12 +289,15 @@ void TextInput::draw() {
 
 		int selection_margin = 1;
 
+		int min = std::min(_selectionStart, _selectionEnd);
+		int max = std::max(_selectionStart, _selectionEnd);
+
 		sf::Vector2f selectionRectSize;
-		selectionRectSize.x = _text->findCharacterPos(_selectionEnd).x - _text->findCharacterPos(_selectionStart).x;
+		selectionRectSize.x = _text->findCharacterPos(max).x - _text->findCharacterPos(min).x;
 		selectionRectSize.y = _rect.size.y - 2 * textInput_border_width - 2* selection_margin;
 
 		sf::Vector2f selectionRectPosition;
-		selectionRectPosition.x = _text->findCharacterPos(_selectionStart).x;
+		selectionRectPosition.x = _text->findCharacterPos(min).x;
 		selectionRectPosition.y = (float)_rect.position.y + (float)textInput_border_width + selection_margin;
 		
 		sf::RectangleShape selectionRect(selectionRectSize);
@@ -268,10 +314,10 @@ void TextInput::draw() {
 
 	
 	// draw cursor
-	if (_state == TextInputState::TextEntered && int(currentTime.asSeconds() * 3) % 2 == 0) {
+	if (_editState == TextInputEditState::TextEntered && int(currentTime.asSeconds() * 3) % 2 == 0) {
 		sf::RectangleShape cursor(sf::Vector2f(2, basicFont.getLineSpacing(_characterSize)));
 		cursor.setFillColor(sf::Color::Red);
-		cursor.setPosition(_text->findCharacterPos(_cursorPosition));;
+		cursor.setPosition(_text->findCharacterPos(_cursorPosition));
 		window->draw(cursor);
 	}
 		
