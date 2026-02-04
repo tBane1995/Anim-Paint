@@ -442,15 +442,16 @@ void Lasso::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, floa
 	_texture.setSmooth(false);
 
 	sf::Image maskImage;
-	if (useMask) {
+	if (useMask && _rect.size.x > 0 && _rect.size.y > 0) {
 		maskImage = _maskImage;
 	}
 	else {
 		maskImage = sf::Image();
-		if (_image->getSize().x == 0 || _image->getSize().y == 0)
+		if (_rect.size.x < 1 || _rect.size.y < 1) {
 			return;
-
-		maskImage.resize(_image->getSize(), sf::Color::White);
+		}
+			
+		maskImage.resize(sf::Vector2u(_rect.size), sf::Color::White);
 	}
 
 	sf::Texture maskTexture;
