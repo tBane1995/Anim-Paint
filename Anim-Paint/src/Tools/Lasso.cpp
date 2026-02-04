@@ -4,7 +4,8 @@
 #include "Textures.hpp"
 #include "Tools/Selection.hpp"
 #include "DebugLog.hpp"
-
+#include "Animation/Animation.hpp"
+#include "Tools/Toolbar.hpp"
 std::string shader_source = R"(
     uniform sampler2D texture;
     uniform sampler2D mask;
@@ -80,6 +81,32 @@ void Lasso::addPoint(sf::Vector2i point) {
 void Lasso::unselect() {
 	_points.clear();
 	_outlineOffset = sf::Vector2i(0, 0);
+}
+
+void Lasso::selectAll() {
+	_points.clear();
+	_outlineOffset = sf::Vector2i(0, 0);
+
+	std::shared_ptr<Animation> anim = getCurrentAnimation();
+	int width = anim->getCurrentLayer()->_image.getSize().x-1;
+	int height = anim->getCurrentLayer()->_image.getSize().y-1;
+
+	addPoint(sf::Vector2i(0, height));
+	addPoint(sf::Vector2i(0,0));
+	addPoint(sf::Vector2i(width, 0));
+	addPoint(sf::Vector2i(width, height));
+
+	generateRect();
+
+	_image = std::make_shared<sf::Image>();
+	_image->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
+
+	generateMask();
+
+	copyImageWithMask(*_image, anim->getCurrentLayer()->_image, 0,0,0,0, _maskImage, toolbar->_second_color->_color);
+	removeImageWithMask(anim->getCurrentLayer()->_image, _rect, _maskImage, toolbar->_second_color->_color);
+	
+	_state = LassoState::Selected;
 }
 
 void Lasso::generateRect() {
