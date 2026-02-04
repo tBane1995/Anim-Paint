@@ -570,9 +570,10 @@ void Toolbar::cursorHover() {
 
 void Toolbar::handleEvent(const sf::Event& event) {
 
-	if (!dialogs.empty())
+	if (!dialogs.empty()) {
 		return;
-
+	}
+		
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
@@ -580,6 +581,20 @@ void Toolbar::handleEvent(const sf::Event& event) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this->shared_from_this();
 		}
+	}
+
+	if (const auto* kp = event.getIf<sf::Event::KeyPressed>()) {
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::X) {
+			_btn_cut->click();
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::C) {
+			_btn_copy->click();
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::V) {
+			_btn_paste->click();
+		}
+
 	}
 
 	for (auto& tool : _clipboard)

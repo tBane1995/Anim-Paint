@@ -247,22 +247,6 @@ int main() {
 			if (palette)
 				palette->handleEvent(*event);
 
-			
-
-			if (const auto* kp = event->getIf<sf::Event::KeyPressed>()) {
-
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::X) {
-					toolbar->_btn_cut->click();
-				}
-				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::C) {
-					toolbar->_btn_copy->click();
-				}
-				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::V) {
-					toolbar->_btn_paste->click();
-				}
-
-			}
-
 			cursor->handleEvent(*event);
 			bottom_bar->handleEvent(*event);
 		}
