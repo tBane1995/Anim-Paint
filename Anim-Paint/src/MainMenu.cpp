@@ -420,19 +420,22 @@ MainMenu::MainMenu() : ElementGUI() {
 	_menu_boxes.push_back(select);
 
 	std::shared_ptr<OptionBox> select_all = std::make_shared<OptionBox>(L"select all");
+	select_all->_onclick_func = [this]() {
+		toolbar->selectToolButton(toolbar->_btn_lasso);
+		toolbar->_toolType = ToolType::Lasso;
+		lasso->selectAll();
+		closeMenu();
+		};
+
 	std::shared_ptr<OptionBox> select_none = std::make_shared<OptionBox>(L"none");
-	std::shared_ptr<OptionBox> select_invert = std::make_shared<OptionBox>(L"invert selection");
-	std::shared_ptr<OptionBox> select_align = std::make_shared<OptionBox>(L"align center");
-
-
-	select->addOption(select_all);
-	select->addOption(select_none);
 	select_none->_onclick_func = [this]() {
 		lasso->unselect();
 		closeMenu();
 		};
-	select->addOption(select_invert);
-	select->addOption(select_align);
+
+	std::shared_ptr<OptionBox> select_invert = std::make_shared<OptionBox>(L"invert selection");
+
+	std::shared_ptr<OptionBox> select_align = std::make_shared<OptionBox>(L"align center");
 	select_align->_onclick_func = [this, select]() {
 		lasso->_outlineOffset = (canvas->_size - lasso->_rect.size) / 2;
 		lasso->generateRect();
@@ -441,6 +444,10 @@ MainMenu::MainMenu() : ElementGUI() {
 		closeMenu();
 		};
 
+	select->addOption(select_all);
+	select->addOption(select_none);
+	select->addOption(select_invert);
+	select->addOption(select_align);
 
 	// SETTINGS
 	std::shared_ptr<MenuBox> settings = std::make_shared<MenuBox>(L"settings");
