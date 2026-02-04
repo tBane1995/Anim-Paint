@@ -44,6 +44,7 @@ set(SOURCES
     Anim-Paint/src/Dialogs/Dialog_Sepia.cpp
     Anim-Paint/src/Dialogs/Dialog_Outline.cpp
     Anim-Paint/src/Dialogs/Dialog_Resize.cpp
+    Anim-Paint/src/Dialogs/Dialog_Chessboard.cpp
     Anim-Paint/src/MainMenu.cpp
     Anim-Paint/src/BottomBar.cpp
     Anim-Paint/src/Tools/Selection.cpp
@@ -98,6 +99,7 @@ set(HEADERS
     Anim-Paint/include/Dialogs/Dialog_Sepia.hpp
     Anim-Paint/include/Dialogs/Dialog_Outline.hpp
     Anim-Paint/include/Dialogs/Dialog_Resize.hpp
+    Anim-Paint/include/Dialogs/Dialog_Chessboard.hpp
     Anim-Paint/include/MainMenu.hpp
     Anim-Paint/include/BottomBar.hpp
     Anim-Paint/include/Tools/Selection.hpp

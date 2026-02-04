@@ -17,6 +17,8 @@
 #include "Dialogs/Dialog_Sepia.hpp"
 #include "Dialogs/Dialog_Outline.hpp"
 #include "Dialogs/Dialog_Resize.hpp"
+#include "Dialogs/Dialog_Chessboard.hpp"
+
 #include "Dialogs/FramesDialog.hpp"
 #include "Dialogs/LayersDialog.hpp"
 #include "Animation/Animation.hpp"
@@ -391,6 +393,12 @@ MainMenu::MainMenu() : ElementGUI() {
 
 	std::shared_ptr<OptionBox> effects_invert = std::make_shared<OptionBox>(L"invert colors");
 
+	std::shared_ptr<OptionBox> effects_chessboard = std::make_shared<OptionBox>(L"chessboard");
+	effects_chessboard->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Chessboard>(getCurrentAnimation()->getLayers()));
+		closeMenu();
+		};
+
 	effects->addOption(effects_resize_scale);
 	effects->addOption(effects_rotation);
 	effects->addOption(effects_brightness_contrast);
@@ -401,6 +409,7 @@ MainMenu::MainMenu() : ElementGUI() {
 	effects->addOption(effects_outline);
 	effects->addOption(effects_resize);
 	effects->addOption(effects_invert);
+	effects->addOption(effects_chessboard);
 
 	// SELECT
 	std::shared_ptr<MenuBox> select = std::make_shared<MenuBox>(L"select");

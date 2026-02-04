@@ -1,0 +1,33 @@
+#pragma once
+#include "Dialog.hpp"
+#include "ElementGUI/Slider.hpp"
+#include "Animation/Layer.hpp"
+
+
+enum class ChessboardState { Idle, Edited };
+
+class Dialog_Chessboard : public Dialog {
+public:
+	ChessboardState _state;
+
+	std::unique_ptr<sf::Text> _chessboard_text;
+	std::shared_ptr<Slider> _chessboard_slider;
+	std::shared_ptr<ColoredButtonWithText> _reset;
+	std::shared_ptr<ColoredButtonWithText> _confirm;
+
+	std::vector<std::shared_ptr<Layer>> _original_layers;
+	std::vector<std::shared_ptr<Layer>> _edited_layers;
+
+	Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers);
+	~Dialog_Chessboard();
+
+	void saveOriginalLayers(std::vector<std::shared_ptr<Layer>> layers);
+	void setPosition(sf::Vector2i position);
+	void setTheFilter();
+
+	void cursorHover();
+	void handleEvent(const sf::Event& event);
+	void update();
+	void draw();
+
+};
