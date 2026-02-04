@@ -6,6 +6,8 @@
 #include "DebugLog.hpp"
 #include "Animation/Animation.hpp"
 #include "Tools/Toolbar.hpp"
+#include "Tools/Line.hpp"
+
 std::string shader_source = R"(
     uniform sampler2D texture;
     uniform sampler2D mask;
@@ -384,13 +386,19 @@ void Lasso::generateMask() {
 	sf::Vector2u size = _image->getSize();
 	_maskImage.resize(size, sf::Color::Transparent);
 
-	if (_points.size() < 3) {
-		for (auto& p : _points) {
-			_maskImage.setPixel(sf::Vector2u(p), sf::Color::White);
+	if (_points.size() == 4 && _rect.size.x == 2 || _rect.size.y == 2)
+	{
+
+		for(int y = 0; y < _rect.size.y; y++) {
+			for(int x = 0; x < _rect.size.x; x++) {
+				_maskImage.setPixel(sf::Vector2u(x, y), sf::Color::White);
+			}
 		}
+
 		return;
 	}
-	
+
+
 
 	for (unsigned int y = 0; y < size.y; ++y) {
 		for (unsigned int x = 0; x < size.x; ++x) {
@@ -442,15 +450,11 @@ void Lasso::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, floa
 	_texture.setSmooth(false);
 
 	sf::Image maskImage;
-	if (useMask && _rect.size.x > 1 && _rect.size.y > 1) {
+	if (useMask && _rect.size.x > 0 && _rect.size.y > 0) {
 		maskImage = _maskImage;
 	}
 	else {
-		maskImage = sf::Image();
-		if (_rect.size.x < 1 || _rect.size.y < 1) {
-			return;
-		}
-			
+		maskImage = sf::Image();	
 		maskImage.resize(sf::Vector2u(_rect.size), sf::Color::White);
 	}
 

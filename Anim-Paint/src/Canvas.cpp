@@ -519,7 +519,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 
 				lasso->_image = std::make_shared<sf::Image>();
 				lasso->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
-				if (lasso->_rect.size.x >= 1 && lasso->_rect.size.y >= 1) {
+				if (lasso->_rect.size.x > 1 && lasso->_rect.size.y > 1) {
 					lasso->_image->resize(sf::Vector2u(lasso->_rect.size), sf::Color::Transparent);
 				}
 				
@@ -536,12 +536,12 @@ void Canvas::handleEvent(const sf::Event& event) {
 			lasso->generateMask();
 
 			if (lasso->_state == LassoState::Selecting) {
-				if (lasso->_rect.size.x <= 1 || lasso->_rect.size.y <= 1) {
+				if (lasso->_rect.size.x < 2 || lasso->_rect.size.y < 2) {
 					lasso->_state = LassoState::None;
 
 				}
 				else {
-					if (lasso->_rect.size.x > 0 && lasso->_rect.size.y > 0) {
+					if (lasso->_rect.size.x > 1 && lasso->_rect.size.y > 1) {
 						copyImageWithMask(*lasso->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, lasso->_rect.position.x, lasso->_rect.position.y, lasso->_maskImage, toolbar->_second_color->_color);
 						removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, lasso->_maskImage, toolbar->_second_color->_color);
 					}
@@ -578,7 +578,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 						}
 					}
 					else if (_rect.contains(cursor->_worldMousePosition)) {
-						if (lasso->_rect.size.x > 0 && lasso->_rect.size.y > 0) {
+						if (lasso->_rect.size.x > 1 && lasso->_rect.size.y > 1) {
 							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, 0, 0, lasso->_maskImage, toolbar->_second_color->_color);
 							lasso->_image = nullptr;
 						}
@@ -590,7 +590,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 						lasso->addPoint(tile);
 					}
 					else {
-						if (lasso->_rect.size.x > 0 && lasso->_rect.size.y > 0) {
+						if (lasso->_rect.size.x > 1 && lasso->_rect.size.y > 1) {
 							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, 0, 0, lasso->_maskImage, toolbar->_second_color->_color);
 							lasso->_image = nullptr;
 						}
