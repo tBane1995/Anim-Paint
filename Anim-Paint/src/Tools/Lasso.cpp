@@ -345,11 +345,14 @@ bool Lasso::isPointInPolygon( sf::Vector2i p, std::vector < sf::Vector2i > & pol
 
 void Lasso::generateMask() {
 
-	_maskImage = sf::Image();
+	
 
 	if (!_image) return;
 	if (_rect.size.x <= 1 || _rect.size.y <= 1) return;
 	if (_image->getSize().x <= 1 || _image->getSize().y <= 1) return;
+
+
+	_maskImage = sf::Image();
 
 	sf::Vector2u size = _image->getSize();
 	_maskImage.resize(size, sf::Color::Transparent);
@@ -392,6 +395,12 @@ void Lasso::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, floa
 	int ty = visibleRect.position.y - _outlineOffset.y;
 	sf::IntRect texRect(sf::Vector2i(tx, ty), visibleRect.size);
 
+	if (_image->getSize().x <= 0 || _image->getSize().y <= 0) {
+		DebugError(L"Lasso::drawImage: Image has invalid size.");
+		return;
+	}
+		
+
 	_texture = sf::Texture();
 	if (!_texture.resize(_image->getSize())) {
 		DebugError(L"Lasso::drawImage: Failed to resize texture.");
@@ -418,7 +427,6 @@ void Lasso::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, floa
 	}
 
 	sf::Texture maskTexture;
-
 	if (!maskTexture.loadFromImage(maskImage)) {
 		DebugError(L"Lasso::drawImage: Failed to load mask texture from image.");
 		exit(0);
