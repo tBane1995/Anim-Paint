@@ -196,10 +196,10 @@ std::string sepia_shader_source = R"(
 
 std::string outline_shader_source = R"(
     uniform sampler2D u_tex;
-    uniform vec2  texelSize;           // 1.0 / textureSize
+    uniform vec2 texelSize;           // 1.0 / textureSize
     uniform float outlineWidth;        // 0..8 px
-    uniform vec4  backgroundColor;
-    uniform vec4  outlineColor;        // color (rgb) + power (a) [0..1]
+    uniform vec4 backgroundColor;
+    uniform vec4 outlineColor;        // color (rgb) + power (a) [0..1]
     uniform float threshold;           // background similarity tolerance (0.02..0.08)
 
     float colorDistance(vec3 a, vec3 b) { return length(a - b); }
@@ -253,6 +253,30 @@ std::string resize_shader_source = R"(
         vec2 finalUV = scaledUV + vec2(0.5);
 
         gl_FragColor = texture2D(texture, finalUV);
+    }
+)";
+
+std::string chessboard_shader_source = R"(
+
+    uniform sampler2D texture;
+    uniform vec4 firstColor;
+    uniform vec4 secondColor;
+    uniform int tileCount;
+    uniform int transparency; // 0–100
+
+    void main()
+    {
+        float t = float(tileCount);
+        vec2 uv = gl_TexCoord[0].xy * t;
+
+        float c = mod(floor(uv.x) + floor(uv.y), 2.0);
+
+        vec4 checkerColor = mix(firstColor, secondColor, c);
+        vec4 texColor = texture2D(texture, gl_TexCoord[0].xy);
+
+        float alpha = float(transparency) / 100.0;
+
+        gl_FragColor = mix(texColor, checkerColor, alpha);
     }
 )";
 
@@ -468,6 +492,40 @@ void set_resize(sf::Image& image, int width, int height) {
 
     sh.setUniform("targetSize", sf::Vector2f((float)(width), (float)(height)));
     sh.setUniform("originalSize", sf::Vector2f(tex.getSize()));
+
+    sf::Sprite spr(tex);
+    rtex.clear(sf::Color::Transparent);
+    rtex.draw(spr, &sh);
+    rtex.display();
+
+    image = rtex.getTexture().copyToImage();
+}
+
+
+void set_chessboard(sf::Image& image, int tileCount, int transparency, sf::Color firstColor, sf::Color secondColor) {
+
+    sf::Texture tex;
+    if (!tex.loadFromImage(image)) {
+        DebugError(L"Filter set_chessboard: failed to load texture from image.");
+        exit(0);
+    }
+
+    sf::RenderTexture rtex;
+    if (!rtex.resize(tex.getSize())) {
+        DebugError(L"Filter set_chessboard: failed to resize render texture.");
+        exit(0);
+    }
+
+    sf::Shader sh;
+    if (!sh.loadFromMemory(chessboard_shader_source, sf::Shader::Type::Fragment)) {
+        DebugError(L"Filter set_chessboard: failed to load shader from memory.");
+        exit(0);
+    }
+
+    sh.setUniform("tileCount", tileCount);
+	sh.setUniform("transparency", transparency); // 0–100
+    sh.setUniform("firstColor", sf::Glsl::Vec4(float(firstColor.r) / 255.0f, float(firstColor.g) / 255.0f, float(firstColor.b) / 255.0f, float(firstColor.a) / 255.0f));
+    sh.setUniform("secondColor", sf::Glsl::Vec4(float(secondColor.r) / 255.0f, float(secondColor.g) / 255.0f, float(secondColor.b) / 255.0f, float(secondColor.a) / 255.0f));
 
     sf::Sprite spr(tex);
     rtex.clear(sf::Color::Transparent);

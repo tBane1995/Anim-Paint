@@ -6,19 +6,25 @@
 #include "Window.hpp"
 #include "Tools/Toolbar.hpp"
 
-Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"chessboard", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
+Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"chessboard", sf::Vector2i(256+16, 160), sf::Vector2i(8, 120)) {
 
 	_state = ChessboardState::Idle;
 
 	saveOriginalLayers(layers);
 
-	_chessboard_text = std::make_unique<sf::Text>(basicFont, L"chessboard", 13);
-	_chessboard_slider = std::make_shared<Slider>(0, 100);
-	_chessboard_slider->setValue(0);
+	_tileCount_text = std::make_unique<sf::Text>(basicFont, L"tile count", 13);
+	int maxTileCount = std::max(getCurrentAnimation()->getCurrentLayer()->_image.getSize().x, getCurrentAnimation()->getCurrentLayer()->_image.getSize().y);
+	_tileCount_slider = std::make_shared<Slider>(0, maxTileCount);
+	_tileCount_slider->setValue(0);
+
+	_transparency_text = std::make_unique<sf::Text>(basicFont, L"transparency", 13);
+	_transparency_slider = std::make_shared<Slider>(0, 100);
+	_transparency_slider->setValue(100);
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
-		_chessboard_slider->setValue(0);
+		_tileCount_slider->setValue(0);
+		_transparency_slider->setValue(100);
 		setTheFilter();
 		};
 
@@ -37,7 +43,8 @@ Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers)
 
 Dialog_Chessboard::~Dialog_Chessboard() {
 	if (Dialog_Chessboard::_state == ChessboardState::Idle) {
-		_chessboard_slider->setValue(0);
+		_tileCount_slider->setValue(0);
+		_transparency_slider->setValue(0);
 		setTheFilter();
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
@@ -62,13 +69,16 @@ void Dialog_Chessboard::setPosition(sf::Vector2i position) {
 
 	sf::Vector2f text_pos;
 	text_pos.x = (float)(_position.x + 24);
-	text_pos.y = (float)(_position.y + dialog_title_rect_height / 2 + (160) / 2 - 24);
-	_chessboard_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
+	text_pos.y = (float)(_position.y + 160 / 2 - 28);
+
+	_tileCount_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
+	_transparency_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2) + sf::Vector2f(0, 32));
 
 	sf::Vector2i slider_pos;
-	slider_pos.x = _position.x + 256 / 2 - 64 / 2;
-	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160) / 2 - 24;
-	_chessboard_slider->setPosition(slider_pos);
+	slider_pos.x = _position.x + 256 / 2 - 64 / 2 + 16;
+	slider_pos.y = _position.y + 160 / 2 - 28;
+	_tileCount_slider->setPosition(slider_pos);
+	_transparency_slider->setPosition(slider_pos + sf::Vector2i(0, 32));
 
 	sf::Vector2i button_pos;
 	button_pos.x = _position.x + 256 / 2 - 32;
@@ -83,8 +93,7 @@ void Dialog_Chessboard::setTheFilter() {
 
 	for (auto& org : _original_layers) {
 		_edited_layers.push_back(std::make_shared<Layer>(org));
-		// TO-DO
-		//set_chessboard(_edited_layers.back()->_image, toolbar->_first_color->_color, toolbar->_second_color->_color);
+		set_chessboard(_edited_layers.back()->_image, _tileCount_slider->getValue(), _transparency_slider->getValue(), toolbar->_first_color->_color, toolbar->_second_color->_color);
 	}
 
 	// TO-DO
@@ -96,7 +105,8 @@ void Dialog_Chessboard::setTheFilter() {
 void Dialog_Chessboard::cursorHover() {
 	Dialog::cursorHover();
 
-	_chessboard_slider->cursorHover();
+	_tileCount_slider->cursorHover();
+	_transparency_slider->cursorHover();
 	_reset->cursorHover();
 	_confirm->cursorHover();
 }
@@ -104,7 +114,9 @@ void Dialog_Chessboard::cursorHover() {
 void Dialog_Chessboard::handleEvent(const sf::Event& event) {
 	Dialog::handleEvent(event);
 
-	_chessboard_slider->handleEvent(event);
+	_tileCount_slider->handleEvent(event);
+	_transparency_slider->handleEvent(event);
+
 	_reset->handleEvent(event);
 	_confirm->handleEvent(event);
 }
@@ -112,9 +124,10 @@ void Dialog_Chessboard::handleEvent(const sf::Event& event) {
 void Dialog_Chessboard::update() {
 	Dialog::update();
 
-	_chessboard_slider->update();
+	_tileCount_slider->update();
+	_transparency_slider->update();
 
-	if (_chessboard_slider->_state == SliderState::Changed) {
+	if (_tileCount_slider->_state == SliderState::Changed || _transparency_slider->_state == SliderState::Changed) {
 
 		setTheFilter();
 	}
@@ -126,9 +139,11 @@ void Dialog_Chessboard::update() {
 void Dialog_Chessboard::draw() {
 	Dialog::draw();
 
-	window->draw(*_chessboard_text);
+	window->draw(*_tileCount_text);
+	window->draw(*_transparency_text);
 
-	_chessboard_slider->draw();
+	_tileCount_slider->draw();
+	_transparency_slider->draw();
 
 	_reset->draw();
 	_confirm->draw();
