@@ -220,6 +220,9 @@ Toolbar::Toolbar() : ElementGUI() {
 	_btn_lasso->_onclick_func = [this]() {
 		_toolType = ToolType::Lasso;
 		selectToolButton(_btn_lasso);
+		lasso->unselect();
+		lasso->generateRect();
+		lasso->generateMask();
 		};
 
 	_clipboard.clear();
