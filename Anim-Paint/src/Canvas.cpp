@@ -614,47 +614,8 @@ void Canvas::handleEvent(const sf::Event& event) {
 		}
 	}
 
+
 	
-	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Up) {
-		if (lasso->_state == LassoState::Selected) {
-			lasso->_outlineOffset.y -= 1;
-
-			if (lasso->_outlineOffset.y + lasso->_rect.size.y < 0 ) {
-				lasso->_outlineOffset.y = -lasso->_rect.size.y;
-			}
-		}
-	}
-
-	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Down) {
-		if (lasso->_state == LassoState::Selected) {
-			lasso->_outlineOffset.y += 1;
-
-			if (lasso->_outlineOffset.y > canvas->_size.y) {
-				lasso->_outlineOffset.y = canvas->_size.y;
-			}
-		}
-	}
-
-	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Left) {
-		if (lasso->_state == LassoState::Selected) {
-			lasso->_outlineOffset.x -= 1;
-
-			if (lasso->_outlineOffset.x + lasso->_rect.size.x < 0) {
-				lasso->_outlineOffset.x = -lasso->_rect.size.x;
-			}
-		}
-	}
-
-	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Right) {
-		if (lasso->_state == LassoState::Selected) {
-			lasso->_outlineOffset.x += 1;
-
-			if (lasso->_outlineOffset.x > canvas->_size.x) {
-				lasso->_outlineOffset.x = canvas->_size.x;
-			}
-		}
-
-	}
 }
 
 float Canvas::clampAxisOverscroll(float v, float content, float viewport, float overscrollRatio) {
