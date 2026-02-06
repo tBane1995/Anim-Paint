@@ -342,74 +342,74 @@ MainMenu::MainMenu() : ElementGUI() {
 	edit->addOption(edit_paste);
 	edit->addOption(edit_paste_as);
 
-	// EFFECTS
-	std::shared_ptr<MenuBox> effects = std::make_shared<MenuBox>(L"effects");
-	effects->_onclick_func = [this, effects]() {
+	// TOOLS
+	std::shared_ptr<MenuBox> tools = std::make_shared<MenuBox>(L"tools");
+	tools->_onclick_func = [this, tools]() {
 		hideMenu();
-		openMenuBox(effects);
+		openMenuBox(tools);
 		};
-	_menu_boxes.push_back(effects);
+	_menu_boxes.push_back(tools);
 
-	std::shared_ptr<OptionBox> effects_resize_scale = std::make_shared<OptionBox>(L"resize/scale");
-	std::shared_ptr<OptionBox> effects_rotation = std::make_shared<OptionBox>(L"rotation");
-	effects_rotation->_onclick_func = [this]() {
+	std::shared_ptr<OptionBox> tools_resize_scale = std::make_shared<OptionBox>(L"resize/scale");
+	std::shared_ptr<OptionBox> tools_rotation = std::make_shared<OptionBox>(L"rotation");
+	tools_rotation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Rotation>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> effects_brightness_contrast = std::make_shared<OptionBox>(L"brightness-contrast");
-	effects_brightness_contrast->_onclick_func = [this]() {
+	std::shared_ptr<OptionBox> tools_brightness_contrast = std::make_shared<OptionBox>(L"brightness-contrast");
+	tools_brightness_contrast->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Brightness_Contrast>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> effects_saturation = std::make_shared<OptionBox>(L"saturation");
-	effects_saturation->_onclick_func = [this]() {
+	std::shared_ptr<OptionBox> tools_saturation = std::make_shared<OptionBox>(L"saturation");
+	tools_saturation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Saturation>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
 
-	std::shared_ptr<OptionBox> effects_hue = std::make_shared<OptionBox>(L"hue");
-	std::shared_ptr<OptionBox> effects_gray = std::make_shared<OptionBox>(L"grayscale mode");
+	std::shared_ptr<OptionBox> tools_hue = std::make_shared<OptionBox>(L"hue");
+	std::shared_ptr<OptionBox> tools_gray = std::make_shared<OptionBox>(L"grayscale mode");
 
-	std::shared_ptr<OptionBox> effects_sepia = std::make_shared<OptionBox>(L"sepia");
-	effects_sepia->_onclick_func = [this]() {
+	std::shared_ptr<OptionBox> tools_sepia = std::make_shared<OptionBox>(L"sepia");
+	tools_sepia->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Sepia>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> effects_outline = std::make_shared<OptionBox>(L"outline");
-	effects_outline->_onclick_func = [this]() {
+	std::shared_ptr<OptionBox> tools_outline = std::make_shared<OptionBox>(L"outline");
+	tools_outline->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Outline>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> effects_resize = std::make_shared<OptionBox>(L"resize");
-	effects_resize->_onclick_func = [this]() {
+	std::shared_ptr<OptionBox> tools_resize = std::make_shared<OptionBox>(L"resize");
+	tools_resize->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Resize>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> effects_invert = std::make_shared<OptionBox>(L"invert colors");
+	std::shared_ptr<OptionBox> tools_invert = std::make_shared<OptionBox>(L"invert colors");
 
-	std::shared_ptr<OptionBox> effects_chessboard = std::make_shared<OptionBox>(L"chessboard");
-	effects_chessboard->_onclick_func = [this]() {
+	std::shared_ptr<OptionBox> tools_chessboard = std::make_shared<OptionBox>(L"chessboard");
+	tools_chessboard->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Chessboard>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	effects->addOption(effects_resize_scale);
-	effects->addOption(effects_rotation);
-	effects->addOption(effects_brightness_contrast);
-	effects->addOption(effects_saturation);
-	effects->addOption(effects_hue);
-	effects->addOption(effects_gray);
-	effects->addOption(effects_sepia);
-	effects->addOption(effects_outline);
-	effects->addOption(effects_resize);
-	effects->addOption(effects_invert);
-	effects->addOption(effects_chessboard);
+	tools->addOption(tools_resize_scale);
+	tools->addOption(tools_rotation);
+	tools->addOption(tools_brightness_contrast);
+	tools->addOption(tools_saturation);
+	tools->addOption(tools_hue);
+	tools->addOption(tools_gray);
+	tools->addOption(tools_sepia);
+	tools->addOption(tools_outline);
+	tools->addOption(tools_resize);
+	tools->addOption(tools_invert);
+	tools->addOption(tools_chessboard);
 
 	// SELECT
 	std::shared_ptr<MenuBox> select = std::make_shared<MenuBox>(L"select");
