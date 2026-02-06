@@ -350,7 +350,12 @@ MainMenu::MainMenu() : ElementGUI() {
 		};
 	_menu_boxes.push_back(tools);
 
-	std::shared_ptr<OptionBox> tools_resize_scale = std::make_shared<OptionBox>(L"resize/scale");
+	std::shared_ptr<OptionBox> tools_resize = std::make_shared<OptionBox>(L"resize");
+	tools_resize->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Resize>(getCurrentAnimation()->getLayers()));
+		closeMenu();
+		};
+
 	std::shared_ptr<OptionBox> tools_rotation = std::make_shared<OptionBox>(L"rotation");
 	tools_rotation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Rotation>(getCurrentAnimation()->getLayers()));
@@ -385,11 +390,7 @@ MainMenu::MainMenu() : ElementGUI() {
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> tools_resize = std::make_shared<OptionBox>(L"resize");
-	tools_resize->_onclick_func = [this]() {
-		dialogs.push_back(std::make_shared<Dialog_Resize>(getCurrentAnimation()->getLayers()));
-		closeMenu();
-		};
+	
 
 	std::shared_ptr<OptionBox> tools_invert = std::make_shared<OptionBox>(L"invert colors");
 
@@ -399,7 +400,7 @@ MainMenu::MainMenu() : ElementGUI() {
 		closeMenu();
 		};
 
-	tools->addOption(tools_resize_scale);
+	tools->addOption(tools_resize);
 	tools->addOption(tools_rotation);
 	tools->addOption(tools_brightness_contrast);
 	tools->addOption(tools_saturation);
@@ -407,7 +408,6 @@ MainMenu::MainMenu() : ElementGUI() {
 	tools->addOption(tools_gray);
 	tools->addOption(tools_sepia);
 	tools->addOption(tools_outline);
-	tools->addOption(tools_resize);
 	tools->addOption(tools_invert);
 	tools->addOption(tools_chessboard);
 
