@@ -3,6 +3,7 @@
 #include "Animation/Animation.hpp"
 #include "Cursor.hpp"
 #include "Window.hpp"
+#include "Tools/Lasso.hpp"
 
 LayerBox::LayerBox(std::shared_ptr<Layer> layer) : ElementGUI() {
 
@@ -142,6 +143,10 @@ void LayersDialog::setPosition(sf::Vector2i position) {
 }
 
 void LayersDialog::cursorHover() {
+
+	if (lasso->_state == LassoState::Selecting)
+		return;
+
 	Dialog::cursorHover();
 
 	for (auto& layerbox : layersBoxes) {

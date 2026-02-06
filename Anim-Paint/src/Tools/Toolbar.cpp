@@ -549,6 +549,9 @@ void Toolbar::cursorHover() {
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
+	if (lasso->_state == LassoState::Selecting)
+		return;
+
 	if (_rect.contains(cursor->_worldMousePosition)) {
 		ElementGUI_hovered = this->shared_from_this();
 	}

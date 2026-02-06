@@ -3,6 +3,7 @@
 #include "Theme.hpp"
 #include "Window.hpp"
 #include "Dialogs/LayersDialog.hpp"
+#include "Tools/Lasso.hpp"
 
 FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
 
@@ -117,6 +118,10 @@ void FramesDialog::updateText() {
 
 void FramesDialog::cursorHover() {
 	if (!dialogs.empty())
+		return;
+
+
+	if (lasso->_state == LassoState::Selecting)
 		return;
 
 	Dialog::cursorHover();

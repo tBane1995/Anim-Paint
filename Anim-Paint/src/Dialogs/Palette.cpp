@@ -288,6 +288,9 @@ void Palette::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
+	if (lasso->_state == LassoState::Selecting)
+		return;
+
 	Dialog::cursorHover();
 	_hues->cursorHover();
 	_values->cursorHover();

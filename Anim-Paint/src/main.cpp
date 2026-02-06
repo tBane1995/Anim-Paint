@@ -188,8 +188,8 @@ int main() {
 		ElementGUI_hovered = nullptr;
 
 		canvas->cursorHover();
+	
 		toolbar->cursorHover();
-		
 		frames_dialog->cursorHover();
 		layers_dialog->cursorHover();
 		animations_dialog->cursorHover();
@@ -197,10 +197,10 @@ int main() {
 		if (palette)
 			palette->cursorHover();
 
-		for (auto& dialog : dialogs)
-			dialog->cursorHover();
 		main_menu->cursorHover();
 
+		for (auto& dialog : dialogs)
+			dialog->cursorHover();
 
 		// Element GUI update before handle events
 		for (auto& dialog : dialogs)

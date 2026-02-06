@@ -799,6 +799,9 @@ void MainMenu::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
+	if (lasso->_state == LassoState::Selecting)
+		return;
+
 	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
   		ElementGUI_hovered = this->shared_from_this();
 	}

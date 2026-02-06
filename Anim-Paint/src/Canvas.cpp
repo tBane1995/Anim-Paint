@@ -324,6 +324,10 @@ void Canvas::cursorHover() {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 
+	if(lasso->_state == LassoState::Selecting) {
+		ElementGUI_hovered = this->shared_from_this();
+	}
+
 }
 
 void Canvas::handleEvent(const sf::Event& event) {
