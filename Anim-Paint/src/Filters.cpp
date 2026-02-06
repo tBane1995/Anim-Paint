@@ -242,6 +242,7 @@ std::string resize_shader_source = R"(
     uniform sampler2D texture;
     uniform vec2 originalSize;
     uniform vec2 targetSize;
+    uniform vec4 backgroundColor;
 
     void main() {
         vec2 uv = gl_TexCoord[0].xy;
@@ -252,7 +253,11 @@ std::string resize_shader_source = R"(
         vec2 scaledUV = centeredUV * scale;
         vec2 finalUV = scaledUV + vec2(0.5);
 
-        gl_FragColor = texture2D(texture, finalUV);
+        if (finalUV.x < 0.0 || finalUV.x > 1.0 || finalUV.y < 0.0 || finalUV.y > 1.0) {
+            gl_FragColor = backgroundColor;
+        } else {
+            gl_FragColor = texture2D(texture, finalUV);
+        }
     }
 )";
 
@@ -470,7 +475,7 @@ void set_outline(sf::Image& image, int width, sf::Color backgroundColor, sf::Col
     image = rtex.getTexture().copyToImage();
 }
 
-void set_resize(sf::Image& image, int width, int height) {
+void set_resize(sf::Image& image, int width, int height, sf::Color backgroundColor) {
 
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
@@ -492,6 +497,7 @@ void set_resize(sf::Image& image, int width, int height) {
 
     sh.setUniform("targetSize", sf::Vector2f((float)(width), (float)(height)));
     sh.setUniform("originalSize", sf::Vector2f(tex.getSize()));
+    sh.setUniform("backgroundColor", sf::Glsl::Vec4(float(backgroundColor.r) / 255.0f, float(backgroundColor.g) / 255.0f, float(backgroundColor.b) / 255.0f, float(backgroundColor.a) / 255.0f));
 
     sf::Sprite spr(tex);
     rtex.clear(sf::Color::Transparent);

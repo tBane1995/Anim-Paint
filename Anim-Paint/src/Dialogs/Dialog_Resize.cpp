@@ -152,7 +152,7 @@ void Dialog_Resize::setTheFilter() {
 
 	for (auto& org : _original_layers) {
 		_edited_layers.push_back(std::make_shared<Layer>(org));
-		set_resize(_edited_layers.back()->_image, _width_input->getValue(), _height_input->getValue());
+		set_resize(_edited_layers.back()->_image, _width_input->getValue(), _height_input->getValue(), toolbar->_second_color->_color);
 	}
 
 	// TO-DO
