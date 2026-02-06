@@ -337,6 +337,10 @@ void Canvas::handleEvent(const sf::Event& event) {
 		return;
 	}
 
+	if (ElementGUI_hovered.get() != nullptr && ElementGUI_hovered.get() != this && lasso->_state != LassoState::Selecting) {
+		return;
+	}
+
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_rect.contains(cursor->_worldMousePosition)) {
 			ElementGUI_pressed = this->shared_from_this();
