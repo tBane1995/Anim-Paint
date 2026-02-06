@@ -4,6 +4,7 @@
 #include "Canvas.hpp"
 #include "WorldToTileConverter.hpp"
 #include "Cursor.hpp"
+#include "Tools/Selection.hpp"
 
 BottomBar::BottomBar() : ElementGUI() {
 	
@@ -86,8 +87,8 @@ void BottomBar::handleEvent(const sf::Event& event) {
 		_textCanvasSize->setString(std::to_wstring(canvas->_size.x) + L" x " + std::to_wstring(canvas->_size.y));
 	}
 
-	if (lasso->_state != LassoState::None) {
-		std::wstring ssize = std::to_wstring(lasso->_rect.size.x) + L" x " + std::to_wstring(lasso->_rect.size.y);
+	if (selection->_state != SelectionState::None) {
+		std::wstring ssize = std::to_wstring(selection->_rect.size.x) + L" x " + std::to_wstring(selection->_rect.size.y);
 		_textSelectionSize->setString(ssize);
 	}
 	else {

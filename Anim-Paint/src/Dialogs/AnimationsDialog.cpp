@@ -4,7 +4,7 @@
 #include "Animation/Animation.hpp"
 #include "Window.hpp"
 #include "Dialogs/FramesDialog.hpp"
-#include "Tools/Lasso.hpp"
+#include "Tools/Selection.hpp"
 
 AnimationsDialog::AnimationsDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
 
@@ -120,7 +120,7 @@ void AnimationsDialog::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
-	if (lasso->_state == LassoState::Selecting)
+	if (selection->_state == SelectionState::Selecting)
 		return;
 
 	Dialog::cursorHover();

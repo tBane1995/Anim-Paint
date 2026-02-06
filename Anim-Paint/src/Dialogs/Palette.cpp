@@ -10,6 +10,7 @@
 #include "MainMenu.hpp"
 #include "BottomBar.hpp"
 #include "DebugLog.hpp"
+#include "Tools/Selection.hpp"
 
 HSV rgbToHsv(sf::Color c) {
 	float r = c.r / 255.f, g = c.g / 255.f, b = c.b / 255.f;
@@ -288,7 +289,7 @@ void Palette::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
-	if (lasso->_state == LassoState::Selecting)
+	if (selection->_state == SelectionState::Selecting)
 		return;
 
 	Dialog::cursorHover();

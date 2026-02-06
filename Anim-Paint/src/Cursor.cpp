@@ -4,6 +4,7 @@
 #include "Canvas.hpp"
 #include "Tools/Brush.hpp"
 #include "Dialogs/Palette.hpp"
+#include "Tools/Selection.hpp"
 
 Cursor::Cursor() {
 
@@ -179,8 +180,8 @@ void Cursor::handleEvent(const sf::Event& event) {
 	}
 
 	sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-	if (lasso->_state == LassoState::Selected || lasso->_state == LassoState::Moving) {
-		if (lasso->clickOnSelection(tile)) {
+	if (selection->_state == SelectionState::Selected || selection->_state == SelectionState::Moving) {
+		if (selection->clickOnSelection(tile)) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
 			window->setMouseCursor(*_cursor);

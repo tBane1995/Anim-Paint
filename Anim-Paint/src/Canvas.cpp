@@ -324,7 +324,7 @@ void Canvas::cursorHover() {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 
-	if(lasso->_state == LassoState::Selecting) {
+	if(selection->_state == SelectionState::Selecting) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 
@@ -341,7 +341,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (ElementGUI_hovered.get() != nullptr && ElementGUI_hovered.get() != this && lasso->_state != LassoState::Selecting) {
+	if (ElementGUI_hovered.get() != nullptr && ElementGUI_hovered.get() != this && selection->_state != SelectionState::Selecting) {
 		return;
 	}
 
@@ -426,16 +426,16 @@ void Canvas::handleEvent(const sf::Event& event) {
 				}
 				else if (toolbar->_toolType == ToolType::Lasso) {
 
-					if (lasso->_state == LassoState::None) {
+					if (selection->_state == SelectionState::None) {
 						sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
-						lasso->_state = LassoState::Selecting;
-						lasso->_image = std::make_shared<sf::Image>();
-						lasso->_image->resize(sf::Vector2u(1, 1));
-						lasso->unselect();
-						lasso->_outlineOffset = tile;
+						selection->_state = SelectionState::Selecting;
+						selection->_image = std::make_shared<sf::Image>();
+						selection->_image->resize(sf::Vector2u(1, 1));
+						selection->unselect();
+						selection->_outlineOffset = tile;
 						
-						lasso->addPoint(tile);
-						lasso->generateRect();
+						selection->addPoint(tile);
+						selection->generateRect();
 					}
 				}
 			}
@@ -508,27 +508,27 @@ void Canvas::handleEvent(const sf::Event& event) {
 			// TO-DO - selection
 		}
 		else if (toolbar->_toolType == ToolType::Lasso) {
-			if (lasso->_state == LassoState::Moving) {
-				sf::Vector2i tile = selectionToTile(cursor->_worldMousePosition, _position, _size, lasso->_rect.size, lasso->_offset, _zoom, _zoom_delta);
-				sf::Vector2i dst = tile - lasso->_offset;
-				lasso->_outlineOffset.x = dst.x;
-				lasso->_outlineOffset.y = dst.y;
-				lasso->generateRect();
+			if (selection->_state == SelectionState::Moving) {
+				sf::Vector2i tile = selectionToTile(cursor->_worldMousePosition, _position, _size, selection->_rect.size, selection->_offset, _zoom, _zoom_delta);
+				sf::Vector2i dst = tile - selection->_offset;
+				selection->_outlineOffset.x = dst.x;
+				selection->_outlineOffset.y = dst.y;
+				selection->generateRect();
 			}
-			else if (lasso->_state == LassoState::Selecting) {
+			else if (selection->_state == SelectionState::Selecting) {
 				sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
 
-				if (lasso->_image != nullptr) {
-					lasso->_image = nullptr;
+				if (selection->_image != nullptr) {
+					selection->_image = nullptr;
 				}
 
-				lasso->addPoint(tile);
-				lasso->generateRect();
+				selection->addPoint(tile);
+				selection->generateRect();
 
-				lasso->_image = std::make_shared<sf::Image>();
-				lasso->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
-				if (lasso->_rect.size.x > 1 && lasso->_rect.size.y > 1) {
-					lasso->_image->resize(sf::Vector2u(lasso->_rect.size), sf::Color::Transparent);
+				selection->_image = std::make_shared<sf::Image>();
+				selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
+				if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
+					selection->_image->resize(sf::Vector2u(selection->_rect.size), sf::Color::Transparent);
 				}
 				
 			}
@@ -540,25 +540,25 @@ void Canvas::handleEvent(const sf::Event& event) {
 		}
 		else if (toolbar->_toolType == ToolType::Lasso) {
 
-			lasso->generateRect();
-			lasso->generateMask();
+			selection->generateRect();
+			selection->generateMask();
 
-			if (lasso->_state == LassoState::Selecting) {
-				if (lasso->_rect.size.x < 2 || lasso->_rect.size.y < 2) {
-					lasso->_state = LassoState::None;
+			if (selection->_state == SelectionState::Selecting) {
+				if (selection->_rect.size.x < 2 || selection->_rect.size.y < 2) {
+					selection->_state = SelectionState::None;
 
 				}
 				else {
-					if (lasso->_rect.size.x > 1 && lasso->_rect.size.y > 1) {
-						copyImageWithMask(*lasso->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, lasso->_rect.position.x, lasso->_rect.position.y, lasso->_maskImage, toolbar->_second_color->_color);
-						removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, lasso->_maskImage, toolbar->_second_color->_color);
+					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
+						copyImageWithMask(*selection->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, selection->_rect.position.x, selection->_rect.position.y, selection->_maskImage, toolbar->_second_color->_color);
+						removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, selection->_maskImage, toolbar->_second_color->_color);
 					}
-					lasso->_state = LassoState::Selected;
+					selection->_state = SelectionState::Selected;
 				}
 					
 			}
-			else if (lasso->_state == LassoState::Moving) {
-				lasso->_state = LassoState::Selected;
+			else if (selection->_state == SelectionState::Moving) {
+				selection->_state = SelectionState::Selected;
 			}
 		}
 	}
@@ -573,39 +573,39 @@ void Canvas::handleEvent(const sf::Event& event) {
 				if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
 					sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
 
-					if (lasso->clickOnSelection(tile)) {
+					if (selection->clickOnSelection(tile)) {
 
-						lasso->_state = LassoState::Moving;
-						lasso->_offset = tile - lasso->_outlineOffset;
+						selection->_state = SelectionState::Moving;
+						selection->_offset = tile - selection->_outlineOffset;
 
-						if (lasso->_image == nullptr) {
-							lasso->_image = std::make_shared<sf::Image>();
-							lasso->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
-							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *lasso->_image,lasso->_rect.position.x, lasso->_rect.position.y, 0, 0, lasso->_maskImage , toolbar->_second_color->_color);
-							removeImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, lasso->_rect, toolbar->_second_color->_color);
+						if (selection->_image == nullptr) {
+							selection->_image = std::make_shared<sf::Image>();
+							selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
+							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image,selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage , toolbar->_second_color->_color);
+							removeImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, toolbar->_second_color->_color);
 						}
 					}
 					else if (_rect.contains(cursor->_worldMousePosition)) {
-						if (lasso->_rect.size.x > 1 && lasso->_rect.size.y > 1) {
-							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, 0, 0, lasso->_maskImage, toolbar->_second_color->_color);
-							lasso->_image = nullptr;
+						if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
+							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
+							selection->_image = nullptr;
 						}
 
 
-						lasso->_state = LassoState::Selecting;
-						lasso->unselect();
-						lasso->_outlineOffset = tile;
-						lasso->addPoint(tile);
+						selection->_state = SelectionState::Selecting;
+						selection->unselect();
+						selection->_outlineOffset = tile;
+						selection->addPoint(tile);
 					}
 					else {
-						if (lasso->_rect.size.x > 1 && lasso->_rect.size.y > 1) {
-							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *lasso->_image, lasso->_rect.position.x, lasso->_rect.position.y, 0, 0, lasso->_maskImage, toolbar->_second_color->_color);
-							lasso->_image = nullptr;
+						if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
+							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
+							selection->_image = nullptr;
 						}
 
-						lasso->_state = LassoState::None;
-						lasso->unselect();
-						lasso->addPoint(tile);
+						selection->_state = SelectionState::None;
+						selection->unselect();
+						selection->addPoint(tile);
 					}
 				}
 					
@@ -810,7 +810,7 @@ void Canvas::draw() {
 	}
 	
 
-	lasso->draw(_rect.position, _size, _zoom * _zoom_delta, toolbar->_second_color->_color);
+	selection->draw(_rect.position, _size, _zoom * _zoom_delta, toolbar->_second_color->_color);
 
 	
 

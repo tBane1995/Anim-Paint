@@ -143,7 +143,7 @@ int main() {
 	animation->addEmptyFrame(sf::Vector2i(32,32));
 	animations.push_back(animation);
 
-	lasso = std::make_shared<Lasso>();
+	selection = std::make_shared<Selection>();
 	brush = std::make_shared<Brush>(2);
 	toolbar = std::make_shared<Toolbar>();
 	createDialogs();

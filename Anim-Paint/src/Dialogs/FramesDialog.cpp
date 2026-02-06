@@ -3,7 +3,7 @@
 #include "Theme.hpp"
 #include "Window.hpp"
 #include "Dialogs/LayersDialog.hpp"
-#include "Tools/Lasso.hpp"
+#include "Tools/Selection.hpp"
 
 FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
 
@@ -121,7 +121,7 @@ void FramesDialog::cursorHover() {
 		return;
 
 
-	if (lasso->_state == LassoState::Selecting)
+	if (selection->_state == SelectionState::Selecting)
 		return;
 
 	Dialog::cursorHover();

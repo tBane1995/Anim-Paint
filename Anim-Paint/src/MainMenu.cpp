@@ -423,13 +423,13 @@ MainMenu::MainMenu() : ElementGUI() {
 	select_all->_onclick_func = [this]() {
 		toolbar->selectToolButton(toolbar->_btn_lasso);
 		toolbar->_toolType = ToolType::Lasso;
-		lasso->selectAll();
+		selection->selectAll();
 		closeMenu();
 		};
 
 	std::shared_ptr<OptionBox> select_none = std::make_shared<OptionBox>(L"none");
 	select_none->_onclick_func = [this]() {
-		lasso->unselect();
+		selection->unselect();
 		closeMenu();
 		};
 
@@ -437,10 +437,10 @@ MainMenu::MainMenu() : ElementGUI() {
 
 	std::shared_ptr<OptionBox> select_align = std::make_shared<OptionBox>(L"align center");
 	select_align->_onclick_func = [this, select]() {
-		lasso->_outlineOffset = (canvas->_size - lasso->_rect.size) / 2;
-		lasso->generateRect();
-		lasso->generateOutline();
-		lasso->generateMask();
+		selection->_outlineOffset = (canvas->_size - selection->_rect.size) / 2;
+		selection->generateRect();
+		selection->generateOutline();
+		selection->generateMask();
 		closeMenu();
 		};
 
@@ -799,7 +799,7 @@ void MainMenu::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
-	if (lasso->_state == LassoState::Selecting)
+	if (selection->_state == SelectionState::Selecting)
 		return;
 
 	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
