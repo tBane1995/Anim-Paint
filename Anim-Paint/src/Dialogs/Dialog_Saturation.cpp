@@ -11,9 +11,8 @@ Dialog_Saturation::Dialog_Saturation(std::vector<std::shared_ptr<Layer>> layers)
 
 	saveOriginalLayers(layers);
 
-	_saturation_text = std::make_unique<sf::Text>(basicFont, L"saturation", 13);
 	
-	_saturation_slider = std::make_shared<Slider>(0, 200);
+	_saturation_slider = std::make_shared<BigSlider>(L"saturation", 0, 200);
 	_saturation_slider->setValue(100);
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
@@ -60,14 +59,9 @@ void Dialog_Saturation::saveOriginalLayers(std::vector<std::shared_ptr<Layer>> l
 void Dialog_Saturation::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
-	sf::Vector2f text_pos;
-	text_pos.x = (float)(_position.x + 24);
-	text_pos.y = (float)(_position.y + dialog_title_rect_height / 2 + (160) / 2 - 24);
-	_saturation_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
-
 	sf::Vector2i slider_pos;
-	slider_pos.x = _position.x + 256 / 2 - 64 / 2;
-	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160) / 2 - 24;
+	slider_pos.x = _position.x + 256 / 2 - 160 / 2;
+	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160 - dialog_title_rect_height) / 2 - _saturation_slider->getSize().y;
 	_saturation_slider->setPosition(slider_pos);
 
 	sf::Vector2i button_pos;
@@ -113,7 +107,7 @@ void Dialog_Saturation::update() {
 
 	_saturation_slider->update();
 
-	if (_saturation_slider->_state == SliderState::Changed) {
+	if (_saturation_slider->_editState == BigSliderEditState::Changed) {
 
 		setTheFilter();
 	}
@@ -124,8 +118,6 @@ void Dialog_Saturation::update() {
 
 void Dialog_Saturation::draw() {
 	Dialog::draw();
-
-	window->draw(*_saturation_text);
 
 	_saturation_slider->draw();
 

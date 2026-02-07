@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialog.hpp"
-#include "ElementGUI/Slider.hpp"
+#include "ElementGUI/BigSlider.hpp"
 #include "Animation/Layer.hpp"
 
 
@@ -10,11 +10,9 @@ class Dialog_Chessboard : public Dialog {
 public:
 	ChessboardState _state;
 
-	std::unique_ptr<sf::Text> _tileCount_text;
-	std::shared_ptr<Slider> _tileCount_slider;
+	std::shared_ptr<BigSlider> _tileCount_slider;
 
-	std::unique_ptr<sf::Text> _transparency_text;
-	std::shared_ptr<Slider> _transparency_slider;
+	std::shared_ptr<BigSlider> _transparency_slider;
 
 	std::shared_ptr<ColoredButtonWithText> _reset;
 	std::shared_ptr<ColoredButtonWithText> _confirm;

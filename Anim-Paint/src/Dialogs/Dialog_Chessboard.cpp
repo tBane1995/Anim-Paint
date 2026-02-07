@@ -12,13 +12,11 @@ Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers)
 
 	saveOriginalLayers(layers);
 
-	_tileCount_text = std::make_unique<sf::Text>(basicFont, L"tile count", 13);
 	int maxTileCount = std::max(getCurrentAnimation()->getCurrentLayer()->_image.getSize().x, getCurrentAnimation()->getCurrentLayer()->_image.getSize().y);
-	_tileCount_slider = std::make_shared<Slider>(0, maxTileCount);
+	_tileCount_slider = std::make_shared<BigSlider>(L"tile count",0, maxTileCount);
 	_tileCount_slider->setValue(0);
 
-	_transparency_text = std::make_unique<sf::Text>(basicFont, L"transparency", 13);
-	_transparency_slider = std::make_shared<Slider>(0, 100);
+	_transparency_slider = std::make_shared<BigSlider>(L"transparency", 0, 100);
 	_transparency_slider->setValue(100);
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
@@ -67,16 +65,9 @@ void Dialog_Chessboard::saveOriginalLayers(std::vector<std::shared_ptr<Layer>> l
 void Dialog_Chessboard::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
-	sf::Vector2f text_pos;
-	text_pos.x = (float)(_position.x + 24);
-	text_pos.y = (float)(_position.y + 160 / 2 - 28);
-
-	_tileCount_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
-	_transparency_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2) + sf::Vector2f(0, 32));
-
 	sf::Vector2i slider_pos;
-	slider_pos.x = _position.x + 256 / 2 - 64 / 2 + 16;
-	slider_pos.y = _position.y + 160 / 2 - 28;
+	slider_pos.x = _position.x + 256 / 2 - 160 / 2;
+	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160 - dialog_title_rect_height) / 2 - _tileCount_slider->getSize().y - 12;
 	_tileCount_slider->setPosition(slider_pos);
 	_transparency_slider->setPosition(slider_pos + sf::Vector2i(0, 32));
 
@@ -127,7 +118,7 @@ void Dialog_Chessboard::update() {
 	_tileCount_slider->update();
 	_transparency_slider->update();
 
-	if (_tileCount_slider->_state == SliderState::Changed || _transparency_slider->_state == SliderState::Changed) {
+	if (_tileCount_slider->_editState == BigSliderEditState::Changed || _transparency_slider->_editState == BigSliderEditState::Changed) {
 
 		setTheFilter();
 	}
@@ -138,9 +129,6 @@ void Dialog_Chessboard::update() {
 
 void Dialog_Chessboard::draw() {
 	Dialog::draw();
-
-	window->draw(*_tileCount_text);
-	window->draw(*_transparency_text);
 
 	_tileCount_slider->draw();
 	_transparency_slider->draw();

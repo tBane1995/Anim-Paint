@@ -59,7 +59,6 @@ void Dialog_Rotation::saveOriginalLayers(std::vector<std::shared_ptr<Layer>> lay
 void Dialog_Rotation::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
-
 	sf::Vector2i slider_pos;
 	slider_pos.x = _position.x + 256 / 2 - 160 / 2;
 	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160-dialog_title_rect_height) / 2 - _rotation_slider->getSize().y;

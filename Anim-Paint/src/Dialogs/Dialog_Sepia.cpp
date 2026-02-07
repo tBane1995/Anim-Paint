@@ -11,9 +11,8 @@ Dialog_Sepia::Dialog_Sepia(std::vector<std::shared_ptr<Layer>> layers) : Dialog(
 
 	saveOriginalLayers(layers);
 
-	_sepia_text = std::make_unique<sf::Text>(basicFont, L"sepia", 13);
 
-	_sepia_slider = std::make_shared<Slider>(0, 100);
+	_sepia_slider = std::make_shared<BigSlider>(L"sepia", 0, 100);
 	_sepia_slider->setValue(0);
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
@@ -60,14 +59,9 @@ void Dialog_Sepia::saveOriginalLayers(std::vector<std::shared_ptr<Layer>> layers
 void Dialog_Sepia::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
-	sf::Vector2f text_pos;
-	text_pos.x = (float)(_position.x + 24);
-	text_pos.y = (float)(_position.y + dialog_title_rect_height / 2 + (160) / 2 - 24);
-	_sepia_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
-
 	sf::Vector2i slider_pos;
-	slider_pos.x = _position.x + 256 / 2 - 64 / 2;
-	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160) / 2 - 24;
+	slider_pos.x = _position.x + 256 / 2 - 160 / 2;
+	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160 - dialog_title_rect_height) / 2 - _sepia_slider->getSize().y;
 	_sepia_slider->setPosition(slider_pos);
 
 	sf::Vector2i button_pos;
@@ -113,7 +107,7 @@ void Dialog_Sepia::update() {
 
 	_sepia_slider->update();
 
-	if (_sepia_slider->_state == SliderState::Changed) {
+	if (_sepia_slider->_editState == BigSliderEditState::Changed) {
 
 		setTheFilter();
 	}
@@ -124,8 +118,6 @@ void Dialog_Sepia::update() {
 
 void Dialog_Sepia::draw() {
 	Dialog::draw();
-
-	window->draw(*_sepia_text);
 
 	_sepia_slider->draw();
 

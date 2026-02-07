@@ -11,13 +11,10 @@ Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector<std::shared_p
 
 	saveOriginalLayers(layers);
 
-	_brightness_text = std::make_unique<sf::Text>(basicFont, L"brightness", 13);
-	_contrast_text = std::make_unique<sf::Text>(basicFont, L"contrast", 13);
-
-	_brightness_slider = std::make_shared<Slider>(-50, 50);
+	_brightness_slider = std::make_shared<BigSlider>(L"brightness", -50, 50);
 	_brightness_slider->setValue(0);
 
-	_contrast_slider = std::make_shared<Slider>(-50, 50);
+	_contrast_slider = std::make_shared<BigSlider>(L"contrast", -50, 50);
 	_contrast_slider->setValue(0);
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
@@ -70,16 +67,10 @@ void Dialog_Brightness_Contrast::saveOriginalLayers(std::vector<std::shared_ptr<
 void Dialog_Brightness_Contrast::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
-	sf::Vector2f text_pos;
-	text_pos.x = (float)(_position.x + 24);
-	text_pos.y = (float)(_position.y + 160 / 2 - 28);
-
-	_brightness_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
-	_contrast_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2) + sf::Vector2f(0, 32));
-
 	sf::Vector2i slider_pos;
-	slider_pos.x = _position.x + 256 / 2 - 64 / 2;
-	slider_pos.y = _position.y + 160 / 2 - 28;
+	slider_pos.x = _position.x + 256 / 2 - 160 / 2;
+	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160-dialog_title_rect_height) / 2 - _brightness_slider->getSize().y - 12;
+
 	_brightness_slider->setPosition(slider_pos);
 	_contrast_slider->setPosition(slider_pos + sf::Vector2i(0, 32));
 
@@ -132,7 +123,7 @@ void Dialog_Brightness_Contrast::update() {
 	_brightness_slider->update();
 	_contrast_slider->update();
 
-	if (_brightness_slider->_state == SliderState::Changed || _contrast_slider->_state == SliderState::Changed) {
+	if (_brightness_slider->_editState == BigSliderEditState::Changed || _contrast_slider->_editState == BigSliderEditState::Changed) {
 		setTheFilter();
 	}
 
@@ -143,9 +134,6 @@ void Dialog_Brightness_Contrast::update() {
 
 void Dialog_Brightness_Contrast::draw() {
 	Dialog::draw();
-
-	window->draw(*_brightness_text);
-	window->draw(*_contrast_text);
 
 	_brightness_slider->draw();
 	_contrast_slider->draw();

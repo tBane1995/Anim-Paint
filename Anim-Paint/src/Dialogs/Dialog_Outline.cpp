@@ -12,9 +12,8 @@ Dialog_Outline::Dialog_Outline(std::vector<std::shared_ptr<Layer>> layers) : Dia
 
 	saveOriginalLayers(layers);
 
-	_outline_text = std::make_unique<sf::Text>(basicFont, L"width", 13);
 	
-	_outline_slider = std::make_shared<Slider>(0, 8);
+	_outline_slider = std::make_shared<BigSlider>(L"width", 0, 8);
 	_outline_slider->setValue(1);
 	setTheFilter();
 
@@ -64,14 +63,9 @@ void Dialog_Outline::saveOriginalLayers(std::vector<std::shared_ptr<Layer>> laye
 void Dialog_Outline::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
-	sf::Vector2f text_pos;
-	text_pos.x = (float)(_position.x + 24);
-	text_pos.y = (float)(_position.y + dialog_title_rect_height / 2 + (160) / 2 - 24);
-	_outline_text->setPosition(text_pos + sf::Vector2f(0, 2 - basicFont.getLineSpacing(13) / 2));
-
 	sf::Vector2i slider_pos;
-	slider_pos.x = _position.x + 256 / 2 - 64 / 2;
-	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160) / 2 - 24;
+	slider_pos.x = _position.x + 256 / 2 - 160 / 2;
+	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160 - dialog_title_rect_height) / 2 - _outline_slider->getSize().y;
 	_outline_slider->setPosition(slider_pos);
 
 	sf::Vector2i button_pos;
@@ -117,7 +111,7 @@ void Dialog_Outline::update() {
 
 	_outline_slider->update();
 
-	if (_outline_slider->_state == SliderState::Changed) {
+	if (_outline_slider->_editState == BigSliderEditState::Changed) {
 
 		setTheFilter();
 	}
@@ -128,8 +122,6 @@ void Dialog_Outline::update() {
 
 void Dialog_Outline::draw() {
 	Dialog::draw();
-
-	window->draw(*_outline_text);
 
 	_outline_slider->draw();
 
