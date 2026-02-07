@@ -212,13 +212,26 @@ void TextInput::handleEvent(const sf::Event& event) {
 				if (character == 8) {
 					// BACKSPACE
 					if (!_textStr.empty()) {
-						if (_cursorPosition > 0) {
+
+						if (_cursorPosition > 0 && _editState == TextInputEditState::TextEntered) {
 							_textStr.erase(_cursorPosition - 1, 1);
 							_text->setString(_textStr.substr(0, _limitCharacters));
 							_cursorPosition -= 1;
-							if (_onEditedFunction)
-								_onEditedFunction();
 						}
+						else {
+							int min = std::min(_selectionStart, _selectionEnd);
+							int max = std::max(_selectionStart, _selectionEnd);
+							_textStr.erase(min, max - min);
+							_text->setString(_textStr.substr(0, _limitCharacters));
+							_editState = TextInputEditState::TextEntered;
+							_cursorPosition = min;
+							_selectionStart = -1;
+							_selectionEnd = -1;
+						}
+						
+						if (_onEditedFunction)
+							_onEditedFunction();
+					
 					}
 					return;
 				}
@@ -229,9 +242,24 @@ void TextInput::handleEvent(const sf::Event& event) {
 				else if (character >= 32) {
 					std::wstring c;
 					c += character;
-					_textStr.insert(_cursorPosition, c);
-					_text->setString(_textStr.substr(0, _limitCharacters));
-					_cursorPosition += 1;
+					
+					if (_editState == TextInputEditState::TextEntered) {
+						_textStr.insert(_cursorPosition, c);
+						_text->setString(_textStr.substr(0, _limitCharacters));
+						_cursorPosition += 1;
+					}
+					else {
+						int min = std::min(_selectionStart, _selectionEnd);
+						int max = std::max(_selectionStart, _selectionEnd);
+						_textStr.erase(min, max - min);
+						_textStr.insert(min, c);
+						_text->setString(_textStr.substr(0, _limitCharacters));
+						_editState = TextInputEditState::TextEntered;
+						_cursorPosition = min + 1;
+						_selectionStart = -1;
+						_selectionEnd = -1;
+					}
+
 					if (_onEditedFunction)
 						_onEditedFunction();
 
