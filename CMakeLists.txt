@@ -18,6 +18,7 @@ set(SOURCES
     Anim-Paint/src/ElementGUI/Button.cpp
     Anim-Paint/src/ElementGUI/Checkbox.cpp
     Anim-Paint/src/ElementGUI/Slider.cpp
+    Anim-Paint/src/ElementGUI/BigSlider.cpp
     Anim-Paint/src/ElementGUI/Scrollbar.cpp
     Anim-Paint/src/ElementGUI/TextInput.cpp
     Anim-Paint/src/ElementGUI/NumberInput.cpp
@@ -72,6 +73,7 @@ set(HEADERS
     Anim-Paint/include/ElementGUI/Button.hpp
     Anim-Paint/include/ElementGUI/Checkbox.hpp
     Anim-Paint/include/ElementGUI/Slider.hpp
+    Anim-Paint/include/ElementGUI/BigSlider.hpp
     Anim-Paint/include/ElementGUI/Scrollbar.hpp
     Anim-Paint/include/ElementGUI/TextInput.hpp
     Anim-Paint/include/ElementGUI/NumberInput.hpp

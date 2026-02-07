@@ -91,6 +91,16 @@ extern sf::Color textInput_incorrect_data_color;
 extern sf::Color textInput_border_color;
 extern int textInput_border_width;
 
+// Sliders
+extern sf::Color slider_bar_idle_color;
+extern sf::Color slider_bar_hover_color;
+extern sf::Color slider_bar_press_color;
+extern sf::Color slider_thumb_idle_color;
+extern sf::Color slider_thumb_hover_color;
+extern sf::Color slider_thumb_press_color;
+extern sf::Color slider_text_color;
+extern int slider_font_size;
+
 // canvas
 extern sf::Color canvas_color1;
 extern sf::Color canvas_color2;

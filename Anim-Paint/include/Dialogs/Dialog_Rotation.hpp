@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialog.hpp"
-#include "../ElementGUI/Slider.hpp"
+#include "ElementGUI/BigSlider.hpp"
 #include "Animation/Layer.hpp"
 
 enum class RotationState { Idle, Edited };
@@ -10,8 +10,7 @@ public:
 
 	RotationState _state;
 
-	std::unique_ptr<sf::Text> _rotation_text;
-	std::shared_ptr<Slider> _rotation_slider;
+	std::shared_ptr<BigSlider> _rotation_slider;
 	std::shared_ptr<ColoredButtonWithText> _reset;
 	std::shared_ptr<ColoredButtonWithText> _confirm;
 

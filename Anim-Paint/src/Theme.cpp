@@ -92,6 +92,16 @@ sf::Color textInput_incorrect_data_color;
 sf::Color textInput_border_color;
 int textInput_border_width;
 
+// Sliders
+sf::Color slider_bar_idle_color;
+sf::Color slider_bar_hover_color;
+sf::Color slider_bar_press_color;
+sf::Color slider_thumb_idle_color;
+sf::Color slider_thumb_hover_color;
+sf::Color slider_thumb_press_color;
+sf::Color slider_text_color;
+int slider_font_size;
+
 // canvas
 sf::Color canvas_color1;
 sf::Color canvas_color2;
@@ -197,6 +207,16 @@ void loadTheme() {
 	textInput_incorrect_data_color = sf::Color(127, 31, 31);
 	textInput_border_width = 1;
 	textInput_border_color = sf::Color(15,15,15);
+
+	// Sliders
+	slider_bar_idle_color = sf::Color(63, 63, 63);
+	slider_bar_hover_color = sf::Color(79, 79, 79);
+	slider_bar_press_color = sf::Color(95, 95, 95);
+	slider_thumb_idle_color = sf::Color(7, 7, 7);
+	slider_thumb_hover_color = sf::Color(15, 15, 15);
+	slider_thumb_press_color = sf::Color(7, 7, 7);
+	slider_text_color = sf::Color(163, 163, 163);
+	slider_font_size = 13;
 
 	// canvas
 	canvas_color1 = sf::Color(63, 63, 63);
