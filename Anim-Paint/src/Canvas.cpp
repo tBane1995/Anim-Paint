@@ -306,6 +306,9 @@ void Canvas::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
+	if (_rect.contains(cursor->_worldMousePosition)) {
+		ElementGUI_hovered = this->shared_from_this();
+	}
 	
 
 	if (dialogs.empty() && toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
@@ -319,11 +322,6 @@ void Canvas::cursorHover() {
 		}
 	}
 	
-
-	if (_rect.contains(cursor->_worldMousePosition)) {
-		ElementGUI_hovered = this->shared_from_this();
-	}
-
 	if(selection->_state == SelectionState::Selecting) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
@@ -341,7 +339,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (ElementGUI_hovered.get() != nullptr && ElementGUI_hovered.get() != this && selection->_state != SelectionState::Selecting) {
+	if ((_clickedEdgePoint != nullptr && ElementGUI_hovered != _clickedEdgePoint) && ElementGUI_hovered.get() != nullptr && ElementGUI_hovered.get() != this && selection->_state != SelectionState::Selecting) {
 		return;
 	}
 
