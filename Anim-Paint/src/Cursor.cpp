@@ -5,6 +5,7 @@
 #include "Tools/Brush.hpp"
 #include "Dialogs/Palette.hpp"
 #include "Tools/Selection.hpp"
+#include "ElementGUI/BigSlider.hpp"
 
 Cursor::Cursor() {
 
@@ -61,6 +62,16 @@ void Cursor::handleEvent(const sf::Event& event) {
 	if (dynamic_cast<TextInput*>(_hoveredElementGUI.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Text);
+		window->setMouseCursor(*_cursor);
+		_ico = nullptr;
+		_offset = sf::Vector2i(0, 0);
+		_brushIsVisible = false;
+		return;
+	}
+
+	if (dynamic_cast<BigSlider*>(_hoveredElementGUI.get()) != nullptr) {
+		window->setMouseCursorVisible(true);
+		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Hand);
 		window->setMouseCursor(*_cursor);
 		_ico = nullptr;
 		_offset = sf::Vector2i(0, 0);
