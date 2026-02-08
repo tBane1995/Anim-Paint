@@ -301,6 +301,180 @@ void Canvas::pickPixel() {
 	
 }
 
+void Canvas::mouseLeftButtonPressedEvent() {
+	if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
+		if (toolbar->_toolType == ToolType::Brush) {
+			drawPixels(toolbar->_first_color->_color);
+		}
+		else if (toolbar->_toolType == ToolType::Eraser) {
+			drawPixels(toolbar->_second_color->_color);
+		}
+		else if (toolbar->_toolType == ToolType::Fill) {
+			fillPixels(toolbar->_first_color->_color);
+		}
+		else if (toolbar->_toolType == ToolType::Picker) {
+			pickPixel();
+			
+		}
+	}
+
+	if (ElementGUI_pressed.get() == nullptr || ElementGUI_pressed.get() == this) {
+		if (toolbar->_toolType == ToolType::Selector) {
+			// TO-DO - selection
+		}
+		else if (toolbar->_toolType == ToolType::Lasso) {
+
+			if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
+				sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
+
+				if (selection->clickOnSelection(tile)) {
+
+					selection->_state = SelectionState::Moving;
+					selection->_offset = tile - selection->_outlineOffset;
+
+					if (selection->_image == nullptr) {
+						selection->_image = std::make_shared<sf::Image>();
+						selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
+						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
+						removeImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, toolbar->_second_color->_color);
+					}
+				}
+				else if (_rect.contains(cursor->_worldMousePosition)) {
+					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
+						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
+						selection->_image = nullptr;
+					}
+
+
+					selection->_state = SelectionState::Selecting;
+					selection->unselect();
+					selection->_outlineOffset = tile;
+					selection->addPoint(tile);
+				}
+				else {
+					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
+						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
+						selection->_image = nullptr;
+					}
+
+					selection->_state = SelectionState::None;
+					selection->unselect();
+					selection->addPoint(tile);
+				}
+			}
+
+		}
+	}
+}
+
+void Canvas::mouseRightButtonPressedEvent() {
+	if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
+		if (toolbar->_toolType == ToolType::Brush) {
+			drawPixels(toolbar->_second_color->_color);
+		}
+		else if (toolbar->_toolType == ToolType::Eraser) {
+			drawPixels(toolbar->_first_color->_color);
+		}
+		else if (toolbar->_toolType == ToolType::Fill) {
+			fillPixels(toolbar->_second_color->_color);
+		}
+
+	}
+}
+
+void Canvas::mouseLeftButtonReleasedEvent() {
+	if (toolbar->_toolType == ToolType::Selector) {
+		// TO-DO - selection
+	}
+	else if (toolbar->_toolType == ToolType::Lasso) {
+
+		selection->generateRect();
+		selection->generateMask();
+
+		if (selection->_state == SelectionState::Selecting) {
+			if (selection->_rect.size.x < 2 || selection->_rect.size.y < 2) {
+				selection->_state = SelectionState::None;
+
+			}
+			else {
+				if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
+					copyImageWithMask(*selection->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, selection->_rect.position.x, selection->_rect.position.y, selection->_maskImage, toolbar->_second_color->_color);
+					removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, selection->_maskImage, toolbar->_second_color->_color);
+				}
+				selection->_state = SelectionState::Selected;
+			}
+
+		}
+		else if (selection->_state == SelectionState::Moving) {
+			selection->_state = SelectionState::Selected;
+		}
+	}
+}
+
+void Canvas::mouseMovedWithLeftButtonPressedEvent() {
+
+	if (_state == CanvasState::Idle) {
+		if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
+			if (toolbar->_toolType == ToolType::Brush) {
+				drawPixels(toolbar->_first_color->_color);
+				return;
+			}
+			else if (toolbar->_toolType == ToolType::Eraser) {
+				drawPixels(toolbar->_second_color->_color);
+				return;
+			}
+			else if (toolbar->_toolType == ToolType::Picker) {
+				pickPixel();
+				return;
+			}
+		}
+	}
+
+	if (toolbar->_toolType == ToolType::Selector) {
+		// TO-DO - selection
+	}
+	else if (toolbar->_toolType == ToolType::Lasso) {
+		if (selection->_state == SelectionState::Moving) {
+			sf::Vector2i tile = selectionToTile(cursor->_worldMousePosition, _position, _size, selection->_rect.size, selection->_offset, _zoom, _zoom_delta);
+			sf::Vector2i dst = tile - selection->_offset;
+			selection->_outlineOffset.x = dst.x;
+			selection->_outlineOffset.y = dst.y;
+			selection->generateRect();
+		}
+		else if (selection->_state == SelectionState::Selecting) {
+			sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
+
+			if (selection->_image != nullptr) {
+				selection->_image = nullptr;
+			}
+
+			selection->addPoint(tile);
+			selection->generateRect();
+
+			selection->_image = std::make_shared<sf::Image>();
+			selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
+			if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
+				selection->_image->resize(sf::Vector2u(selection->_rect.size), sf::Color::Transparent);
+			}
+
+		}
+	}
+}
+
+void Canvas::mouseMovedWithRightButtonPressedEvent() {
+
+	if (_state == CanvasState::Idle) {
+		if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
+			if (toolbar->_toolType == ToolType::Brush) {
+				drawPixels(toolbar->_second_color->_color);
+			}
+			else if (toolbar->_toolType == ToolType::Eraser) {
+				drawPixels(toolbar->_first_color->_color);
+			}
+		}
+	}
+}
+
 void Canvas::cursorHover() {
 
 	if (!dialogs.empty())
@@ -356,9 +530,8 @@ void Canvas::handleEvent(const sf::Event& event) {
 	}
 	
 
+	// resizing canvas
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-
-		
 		if (dialogs.empty() && toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
 			if (_hoveredEdgePoint != nullptr) {
 				_clickedEdgePoint = _hoveredEdgePoint;
@@ -366,7 +539,6 @@ void Canvas::handleEvent(const sf::Event& event) {
 
 				_state = CanvasState::Resizing;
 
-				// TO-DO - do sprawdzenia czy da się uprościć bo teraz operujemy na inteligentnych wskaźnikach
 				_backupFrames.clear();
 				for (auto& frame : getCurrentAnimation()->getFrames()) {
 					std::shared_ptr<Frame> newFrame = std::make_shared<Frame>();
@@ -380,13 +552,8 @@ void Canvas::handleEvent(const sf::Event& event) {
 					_backupFrames.push_back(newFrame);
 				}
 				return;
-				//
 			}
 		}
-
-		
-
-
 	}
 	else if (_state == CanvasState::Resizing) {
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
@@ -399,79 +566,15 @@ void Canvas::handleEvent(const sf::Event& event) {
 	}
 
 	if (ElementGUI_hovered.get() == this || ElementGUI_hovered.get() == nullptr) {
-		
 
-		// signle press
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-
-			if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
-				if (toolbar->_toolType == ToolType::Brush) {
-					drawPixels(toolbar->_first_color->_color);
-				}
-				else if (toolbar->_toolType == ToolType::Eraser) {
-					drawPixels(toolbar->_second_color->_color);
-				}
-				else if (toolbar->_toolType == ToolType::Fill) {
-					fillPixels(toolbar->_first_color->_color);
-				}
-				else if (toolbar->_toolType == ToolType::Picker) {
-					pickPixel();
-					
-				}
-				else if (toolbar->_toolType == ToolType::Selector) {
-
-					// TO-DO - selection
-				}
-				else if (toolbar->_toolType == ToolType::Lasso) {
-
-					if (selection->_state == SelectionState::None) {
-						sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
-						selection->_state = SelectionState::Selecting;
-						selection->_image = std::make_shared<sf::Image>();
-						selection->_image->resize(sf::Vector2u(1, 1));
-						selection->unselect();
-						selection->_outlineOffset = tile;
-						
-						selection->addPoint(tile);
-						selection->generateRect();
-					}
-				}
-			}
+			mouseLeftButtonPressedEvent();
 		}
-
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 
 		}
-
-		else if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-
-			if (_state == CanvasState::Idle) {
-				if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
-					if (toolbar->_toolType == ToolType::Brush) {
-						drawPixels(toolbar->_first_color->_color);
-					}
-					else if (toolbar->_toolType == ToolType::Eraser) {
-						drawPixels(toolbar->_second_color->_color);
-					}
-					else if (toolbar->_toolType == ToolType::Picker) {
-						pickPixel();
-					}
-				}
-			}
-		}
 		else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Right) {
-			if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
-				if (toolbar->_toolType == ToolType::Brush) {
-					drawPixels(toolbar->_second_color->_color);
-				}
-				else if (toolbar->_toolType == ToolType::Eraser) {
-					drawPixels(toolbar->_first_color->_color);
-				}
-				else if (toolbar->_toolType == ToolType::Fill) {
-					fillPixels(toolbar->_second_color->_color);
-				}
-				
-			}
+			mouseRightButtonPressedEvent();
 		}
 		else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {
 			_state = CanvasState::Moving; 
@@ -479,17 +582,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 		}
 
 		else if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
-
-			if (_state == CanvasState::Idle) {
-				if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
-					if (toolbar->_toolType == ToolType::Brush) {
-						drawPixels(toolbar->_second_color->_color);
-					}
-					else if (toolbar->_toolType == ToolType::Eraser) {
-						drawPixels(toolbar->_first_color->_color);
-					}
-				}
-			}
+			mouseMovedWithRightButtonPressedEvent();
 		}
 
 		else if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>()) {
@@ -502,117 +595,10 @@ void Canvas::handleEvent(const sf::Event& event) {
 
 
 	if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv!=nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-		if (toolbar->_toolType == ToolType::Selector) {
-			// TO-DO - selection
-		}
-		else if (toolbar->_toolType == ToolType::Lasso) {
-			if (selection->_state == SelectionState::Moving) {
-				sf::Vector2i tile = selectionToTile(cursor->_worldMousePosition, _position, _size, selection->_rect.size, selection->_offset, _zoom, _zoom_delta);
-				sf::Vector2i dst = tile - selection->_offset;
-				selection->_outlineOffset.x = dst.x;
-				selection->_outlineOffset.y = dst.y;
-				selection->generateRect();
-			}
-			else if (selection->_state == SelectionState::Selecting) {
-				sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
-
-				if (selection->_image != nullptr) {
-					selection->_image = nullptr;
-				}
-
-				selection->addPoint(tile);
-				selection->generateRect();
-
-				selection->_image = std::make_shared<sf::Image>();
-				selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
-				if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
-					selection->_image->resize(sf::Vector2u(selection->_rect.size), sf::Color::Transparent);
-				}
-				
-			}
-		}
+		mouseMovedWithLeftButtonPressedEvent();
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-		if (toolbar->_toolType == ToolType::Selector) {
-			// TO-DO - selection
-		}
-		else if (toolbar->_toolType == ToolType::Lasso) {
-
-			selection->generateRect();
-			selection->generateMask();
-
-			if (selection->_state == SelectionState::Selecting) {
-				if (selection->_rect.size.x < 2 || selection->_rect.size.y < 2) {
-					selection->_state = SelectionState::None;
-
-				}
-				else {
-					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
-						copyImageWithMask(*selection->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, selection->_rect.position.x, selection->_rect.position.y, selection->_maskImage, toolbar->_second_color->_color);
-						removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, selection->_maskImage, toolbar->_second_color->_color);
-					}
-					selection->_state = SelectionState::Selected;
-				}
-					
-			}
-			else if (selection->_state == SelectionState::Moving) {
-				selection->_state = SelectionState::Selected;
-			}
-		}
-	}
-	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-
-		if (ElementGUI_pressed.get() == nullptr || ElementGUI_pressed.get() == this) {
-			if (toolbar->_toolType == ToolType::Selector) {
-				// TO-DO - selection
-			}
-			else if (toolbar->_toolType == ToolType::Lasso) {
-
-				if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
-					sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
-
-					if (selection->clickOnSelection(tile)) {
-
-						selection->_state = SelectionState::Moving;
-						selection->_offset = tile - selection->_outlineOffset;
-
-						if (selection->_image == nullptr) {
-							selection->_image = std::make_shared<sf::Image>();
-							selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
-							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image,selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage , toolbar->_second_color->_color);
-							removeImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, toolbar->_second_color->_color);
-						}
-					}
-					else if (_rect.contains(cursor->_worldMousePosition)) {
-						if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
-							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
-							selection->_image = nullptr;
-						}
-
-
-						selection->_state = SelectionState::Selecting;
-						selection->unselect();
-						selection->_outlineOffset = tile;
-						selection->addPoint(tile);
-					}
-					else {
-						if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
-							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
-							selection->_image = nullptr;
-						}
-
-						selection->_state = SelectionState::None;
-						selection->unselect();
-						selection->addPoint(tile);
-					}
-				}
-					
-
-				
-
-			}
-		}
-
+		mouseLeftButtonReleasedEvent();
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Middle) {
 		if (_state == CanvasState::Moving) {
