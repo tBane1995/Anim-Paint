@@ -13,16 +13,18 @@ Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers)
 	saveOriginalLayers(layers);
 
 	int maxTileCount = std::max(getCurrentAnimation()->getCurrentLayer()->_image.getSize().x, getCurrentAnimation()->getCurrentLayer()->_image.getSize().y);
-	_tileCount_slider = std::make_shared<BigSlider>(L"tile count",0, maxTileCount);
-	_tileCount_slider->setValue(0);
+	_tileCount_slider = std::make_shared<BigSlider>(L"tile count",1, maxTileCount);
+	_tileCount_slider->setValue(2);
 
 	_transparency_slider = std::make_shared<BigSlider>(L"transparency", 0, 100, L"%");
-	_transparency_slider->setValue(15);
+	_transparency_slider->setValue(20);
+
+	setTheFilter();
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
-		_tileCount_slider->setValue(0);
-		_transparency_slider->setValue(100);
+		_tileCount_slider->setValue(2);
+		_transparency_slider->setValue(20);
 		setTheFilter();
 		};
 
@@ -41,7 +43,7 @@ Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers)
 
 Dialog_Chessboard::~Dialog_Chessboard() {
 	if (Dialog_Chessboard::_state == ChessboardState::Idle) {
-		_tileCount_slider->setValue(0);
+		_tileCount_slider->setValue(1);
 		_transparency_slider->setValue(0);
 		setTheFilter();
 
