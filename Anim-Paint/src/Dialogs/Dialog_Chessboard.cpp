@@ -16,8 +16,8 @@ Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers)
 	_tileCount_slider = std::make_shared<BigSlider>(L"tile count",0, maxTileCount);
 	_tileCount_slider->setValue(0);
 
-	_transparency_slider = std::make_shared<BigSlider>(L"transparency", 0, 100);
-	_transparency_slider->setValue(100);
+	_transparency_slider = std::make_shared<BigSlider>(L"transparency", 0, 100, L"%");
+	_transparency_slider->setValue(15);
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {

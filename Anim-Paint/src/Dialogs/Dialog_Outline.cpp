@@ -13,7 +13,7 @@ Dialog_Outline::Dialog_Outline(std::vector<std::shared_ptr<Layer>> layers) : Dia
 	saveOriginalLayers(layers);
 
 	
-	_outline_slider = std::make_shared<BigSlider>(L"width", 0, 8);
+	_outline_slider = std::make_shared<BigSlider>(L"width", 0, 8, L"px");
 	_outline_slider->setValue(1);
 	setTheFilter();
 
