@@ -66,8 +66,8 @@ void Dialog_Chessboard::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
 	sf::Vector2i slider_pos;
-	slider_pos.x = _position.x + 256 / 2 - 160 / 2;
-	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160 - dialog_title_rect_height) / 2 - _tileCount_slider->getSize().y - 12;
+	slider_pos.x = getContentPosition().x + getContentSize().x / 2 - _tileCount_slider->getSize().x / 2;
+	slider_pos.y = getContentPosition().y + (getContentSize().y) / 2 - _tileCount_slider->getSize().y - 28;
 	_tileCount_slider->setPosition(slider_pos);
 	_transparency_slider->setPosition(slider_pos + sf::Vector2i(0, 32));
 

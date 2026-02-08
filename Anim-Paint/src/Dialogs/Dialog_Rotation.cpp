@@ -60,8 +60,8 @@ void Dialog_Rotation::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
 	sf::Vector2i slider_pos;
-	slider_pos.x = _position.x + 256 / 2 - 160 / 2;
-	slider_pos.y = _position.y + dialog_title_rect_height / 2 + (160-dialog_title_rect_height) / 2 - _rotation_slider->getSize().y;
+	slider_pos.x = getContentPosition().x + getContentSize().x / 2 - _rotation_slider->getSize().x / 2;
+	slider_pos.y = getContentPosition().y + (getContentSize().y) / 2 - _rotation_slider->getSize().y / 2 - 24;
 	_rotation_slider->setPosition(slider_pos);
 
 	sf::Vector2i button_pos;

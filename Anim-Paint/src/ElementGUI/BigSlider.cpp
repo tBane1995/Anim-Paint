@@ -22,7 +22,7 @@ BigSlider::BigSlider(std::wstring name, int min_value, int max_value) : ElementG
 	_max_value = max_value;
 	setValue(min_value);
 
-	_barRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(160, 24));
+	_barRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(192, 24));
 	_thumbRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(24, 24));
 	
 }
