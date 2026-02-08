@@ -334,7 +334,7 @@ void NumberInput::draw() {
 
 		sf::Vector2f selectionRectSize;
 		selectionRectSize.x = _text->findCharacterPos(max).x - _text->findCharacterPos(min).x;
-		selectionRectSize.y = _rect.size.y - 2 * textInput_border_width - 2 * selection_margin;
+		selectionRectSize.y = (float)(_rect.size.y - 2 * textInput_border_width - 2 * selection_margin);
 
 		sf::Vector2f selectionRectPosition;
 		selectionRectPosition.x = _text->findCharacterPos(min).x;

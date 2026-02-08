@@ -6,8 +6,9 @@
 #include "Window.hpp"
 #include "Theme.hpp"
 
-BigSlider::BigSlider(std::wstring name, int min_value, int max_value) : ElementGUI() {
+BigSlider::BigSlider(std::wstring name, int min_value, int max_value, std::wstring units) : ElementGUI() {
 	_name = name;
+	_units = units;
 
 	_state = BigSliderState::Idle;
 	_editState = BigSliderEditState::None;
@@ -15,7 +16,7 @@ BigSlider::BigSlider(std::wstring name, int min_value, int max_value) : ElementG
 	_nameText = std::make_unique<sf::Text>(basicFont, _name, slider_font_size);
 	_nameText->setFillColor(slider_text_color);
 
-	_valueText = std::make_unique<sf::Text>(basicFont, std::to_wstring(_current_value), slider_font_size);
+	_valueText = std::make_unique<sf::Text>(basicFont, std::to_wstring(_current_value) + _units, slider_font_size);
 	_valueText->setFillColor(slider_text_color);
 
 	_min_value = min_value;
@@ -39,7 +40,7 @@ void BigSlider::setValue(int value) {
 	else if (_current_value > _max_value)
 		_current_value = _max_value;
 
-	_valueText->setString(std::to_wstring(_current_value));
+	_valueText->setString(std::to_wstring(_current_value) + _units);
 	_thumbRect.size.x = getThumbWidth();
 }
 
@@ -61,8 +62,16 @@ void BigSlider::setPosition(sf::Vector2i position) {
 	_thumbRect.position = position;
 	
 	int text_margin = 6;
-	_nameText->setPosition(sf::Vector2f(position.x + text_margin, position.y + _barRect.size.y / 2 - basicFont.getLineSpacing(slider_font_size) / 2));
-	_valueText->setPosition(sf::Vector2f(position.x + _barRect.size.x - text_margin - _valueText->getGlobalBounds().size.x, position.y + _barRect.size.y / 2 - basicFont.getLineSpacing(slider_font_size) / 2));
+
+	sf::Vector2f nameTextPos;
+	nameTextPos.x = (float)(position.x + text_margin);
+	nameTextPos.y = (float)(position.y + _barRect.size.y / 2) - basicFont.getLineSpacing(slider_font_size) / 2;
+	_nameText->setPosition(nameTextPos);
+
+	sf::Vector2f valueTextPos;
+	valueTextPos.x = (float)(position.x + _barRect.size.x - text_margin - (int)(_valueText->getGlobalBounds().size.x));
+	valueTextPos.y = (float)(position.y + _barRect.size.y / 2) - basicFont.getLineSpacing(slider_font_size) / 2;
+	_valueText->setPosition(valueTextPos);
 }
 
 void BigSlider::cursorHover() {

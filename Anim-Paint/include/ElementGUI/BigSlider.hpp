@@ -8,6 +8,7 @@ enum class BigSliderEditState { None, Changed };
 class BigSlider : public ElementGUI {
 public:
 	std::wstring _name;
+	std::wstring _units;
 	int _min_value;
 	int _max_value;
 	int _current_value;
@@ -21,7 +22,7 @@ public:
 	std::unique_ptr<sf::Text> _nameText;
 	std::unique_ptr<sf::Text> _valueText;
 
-	BigSlider(std::wstring name, int min_value, int max_value);
+	BigSlider(std::wstring name, int min_value, int max_value, std::wstring units=L"");
 	~BigSlider();
 
 	void setValue(int value);
