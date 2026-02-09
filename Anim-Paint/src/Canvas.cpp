@@ -497,25 +497,27 @@ void Canvas::mouseMovedWithRightButtonPressedEvent() {
 
 void Canvas::cursorHover() {
 
+	_hoveredEdgePoint = nullptr;
+
 	if (!dialogs.empty())
+		return;
+
+	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
 	if (_rect.contains(cursor->_worldMousePosition)) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
-	
 
-	if (dialogs.empty() && toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
-		_hoveredEdgePoint = nullptr;
+	if (toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
 		for (auto& point : _edgePoints) {
 			point->cursorHover();
 			if (ElementGUI_hovered == point) {
 				_hoveredEdgePoint = point;
-				return;
 			}
 		}
 	}
-	
+
 	if(selection->_state == SelectionState::Selecting) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
@@ -553,7 +555,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 	// resizing canvas
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (dialogs.empty() && toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
-			if (_hoveredEdgePoint != nullptr) {
+			if (_hoveredEdgePoint != nullptr && ElementGUI_hovered == _hoveredEdgePoint) {
 				_clickedEdgePoint = _hoveredEdgePoint;
 				_orginalEdgePointPosition = _point_left_top->getPosition();
 
