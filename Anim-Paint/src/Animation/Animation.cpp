@@ -21,7 +21,7 @@ void Animation::addEmptyFrame(sf::Vector2i size) {
 	
 	std::shared_ptr<Frame> frame = std::make_shared<Frame>();
 	std::vector<std::shared_ptr<Layer>>& layers = frame->getLayers();
-	layers.push_back(std::make_shared<Layer>(L"Layer " + std::to_wstring(layers.size()), sf::Vector2i(size.x, size.y)));
+	layers.push_back(std::make_shared<Layer>(L"Layer " + std::to_wstring(layers.size()+1), sf::Vector2i(size.x, size.y)));
 	_frames.push_back(frame);
 	
 	//std::wcout << "added Empty Frame\n";
