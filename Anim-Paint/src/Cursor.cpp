@@ -5,7 +5,7 @@
 #include "Tools/Brush.hpp"
 #include "Dialogs/Palette.hpp"
 #include "Tools/Selection.hpp"
-#include "ElementGUI/BigSlider.hpp"
+#include "ElementGUI/Slider.hpp"
 
 Cursor::Cursor() {
 
@@ -69,7 +69,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (dynamic_cast<BigSlider*>(_hoveredElementGUI.get()) != nullptr) {
+	if (dynamic_cast<Slider*>(_hoveredElementGUI.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Hand);
 		window->setMouseCursor(*_cursor);

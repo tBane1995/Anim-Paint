@@ -12,7 +12,7 @@ Dialog_Rotation::Dialog_Rotation(std::vector<std::shared_ptr<Layer>> layers) : D
 	
 	saveOriginalLayers(layers);
 
-	_rotation_slider = std::make_shared<BigSlider>(L"rotation", 0, 359, L" deg");
+	_rotation_slider = std::make_shared<Slider>(L"rotation", 0, 359, L" deg");
 	_rotation_slider->setValue(0);
 
 	_reset =std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
@@ -107,7 +107,7 @@ void Dialog_Rotation::update() {
 
 	_rotation_slider->update();
 
-	if (_rotation_slider->_editState == BigSliderEditState::Changed) {
+	if (_rotation_slider->_editState == SliderEditState::Changed) {
 
 		setTheFilter();
 	}

@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialog.hpp"
-#include "ElementGUI/BigSlider.hpp"
+#include "ElementGUI/Slider.hpp"
 #include "Animation/Layer.hpp"
 
 enum class OutlineState { Idle, Edited };
@@ -9,7 +9,7 @@ class Dialog_Outline : public Dialog {
 public:
 	OutlineState _state;
 
-	std::shared_ptr<BigSlider> _outline_slider;
+	std::shared_ptr<Slider> _outline_slider;
 	std::shared_ptr<ColoredButtonWithText> _reset;
 	std::shared_ptr<ColoredButtonWithText> _confirm;
 

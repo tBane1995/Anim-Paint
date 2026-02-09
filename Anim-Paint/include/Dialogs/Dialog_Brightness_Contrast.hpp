@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialog.hpp"
-#include "ElementGUI/BigSlider.hpp"
+#include "ElementGUI/Slider.hpp"
 #include "Animation/Layer.hpp"
 
 enum class BrightnessContrastState { Idle, Edited };
@@ -9,8 +9,8 @@ class Dialog_Brightness_Contrast : public Dialog {
 public:
 	BrightnessContrastState _state;
 	
-	std::shared_ptr<BigSlider> _brightness_slider;
-	std::shared_ptr<BigSlider> _contrast_slider;
+	std::shared_ptr<Slider> _brightness_slider;
+	std::shared_ptr<Slider> _contrast_slider;
 
 	std::shared_ptr<ColoredButtonWithText> _reset;
 	std::shared_ptr<ColoredButtonWithText> _confirm;

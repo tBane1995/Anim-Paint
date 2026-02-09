@@ -13,10 +13,10 @@ Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers)
 	saveOriginalLayers(layers);
 
 	int maxTileCount = std::max(getCurrentAnimation()->getCurrentLayer()->_image.getSize().x, getCurrentAnimation()->getCurrentLayer()->_image.getSize().y);
-	_tileCount_slider = std::make_shared<BigSlider>(L"tile count",1, maxTileCount);
+	_tileCount_slider = std::make_shared<Slider>(L"tile count",1, maxTileCount);
 	_tileCount_slider->setValue(2);
 
-	_transparency_slider = std::make_shared<BigSlider>(L"transparency", 0, 100, L"%");
+	_transparency_slider = std::make_shared<Slider>(L"transparency", 0, 100, L"%");
 	_transparency_slider->setValue(20);
 
 	setTheFilter();
@@ -120,7 +120,7 @@ void Dialog_Chessboard::update() {
 	_tileCount_slider->update();
 	_transparency_slider->update();
 
-	if (_tileCount_slider->_editState == BigSliderEditState::Changed || _transparency_slider->_editState == BigSliderEditState::Changed) {
+	if (_tileCount_slider->_editState == SliderEditState::Changed || _transparency_slider->_editState == SliderEditState::Changed) {
 
 		setTheFilter();
 	}

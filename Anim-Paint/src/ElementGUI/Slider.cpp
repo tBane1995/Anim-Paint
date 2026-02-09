@@ -4,16 +4,28 @@
 #include "SFML/Graphics.hpp"
 #include "Cursor.hpp"
 #include "Window.hpp"
+#include "Theme.hpp"
 
-Slider::Slider(int min_value, int max_value) : ElementGUI() {
-	_min_value = min_value;
-	_max_value = max_value;
-	_current_value = min_value;
-
-	_barRect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(128, 8));
-	_sliderRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(16, 16));
+Slider::Slider(std::wstring name, int min_value, int max_value, std::wstring units) : ElementGUI() {
+	_name = name;
+	_units = units;
 
 	_state = SliderState::Idle;
+	_editState = SliderEditState::None;
+
+	_nameText = std::make_unique<sf::Text>(basicFont, _name, slider_font_size);
+	_nameText->setFillColor(slider_text_color);
+
+	_valueText = std::make_unique<sf::Text>(basicFont, std::to_wstring(_current_value) + _units, slider_font_size);
+	_valueText->setFillColor(slider_text_color);
+
+	_min_value = min_value;
+	_max_value = max_value;
+	setValue(min_value);
+
+	_barRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(192, 24));
+	_thumbRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(24, 24));
+	
 }
 
 Slider::~Slider() {
@@ -28,38 +40,51 @@ void Slider::setValue(int value) {
 	else if (_current_value > _max_value)
 		_current_value = _max_value;
 
-	_sliderRect.position = getSliderPosition();
+	_valueText->setString(std::to_wstring(_current_value) + _units);
+	_thumbRect.size.x = getThumbWidth();
 }
 
 int Slider::getValue() {
 	return _current_value;
 }
 
-sf::Vector2i Slider::getSliderPosition() {
-	int line_length = _barRect.size.x - 16;
+sf::Vector2i Slider::getSize() {
+	return _barRect.size;
+}
 
-	sf::Vector2i result;
-	result.x = _barRect.position.x + int(float(_current_value - _min_value) * float(line_length) / float(_max_value - _min_value));
-	result.y = _barRect.position.y - 4;
-	return result;
+int Slider::getThumbWidth() {
+	float sliderWidth = float(_current_value - _min_value) / float(_max_value - _min_value) * float(_barRect.size.x);
+	return (int)(sliderWidth);
 }
 
 void Slider::setPosition(sf::Vector2i position) {
 	_barRect.position = position;
-	_sliderRect.position = getSliderPosition();
+	_thumbRect.position = position;
+	
+	int text_margin = basicFont.getLineSpacing(slider_font_size) / 2;
+
+	sf::Vector2f nameTextPos;
+	nameTextPos.x = (float)(position.x + text_margin);
+	nameTextPos.y = (float)(position.y + _barRect.size.y / 2) - basicFont.getLineSpacing(slider_font_size) / 2;
+	_nameText->setPosition(nameTextPos);
+
+	sf::Vector2f valueTextPos;
+	valueTextPos.x = (float)(position.x + _barRect.size.x - text_margin - (int)(_valueText->getGlobalBounds().size.x));
+	valueTextPos.y = (float)(position.y + _barRect.size.y / 2) - basicFont.getLineSpacing(slider_font_size) / 2;
+	_valueText->setPosition(valueTextPos);
 }
 
 void Slider::cursorHover() {
-
+	if(_barRect.contains(cursor->_worldMousePosition))
+		ElementGUI_hovered = this->shared_from_this();
 }
 
-void Slider::handleEvent(const sf::Event& event) {	
+void Slider::handleEvent(const sf::Event& event) {
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_sliderRect.contains(cursor->_worldMousePosition)) {
+		if (_barRect.contains(cursor->_worldMousePosition)) {
 			ElementGUI_pressed = this->shared_from_this();
-			_offset = cursor->_worldMousePosition - sf::Vector2i(_sliderRect.position);
-			_state = SliderState::Changed;
+			_editState = SliderEditState::Changed;
 
 		}
 	}
@@ -67,33 +92,74 @@ void Slider::handleEvent(const sf::Event& event) {
 		if (ElementGUI_pressed.get() == this) {
 			ElementGUI_pressed = nullptr;
 			_state = SliderState::Idle;
+			_editState = SliderEditState::None;
 		}
 	}
-
 }
 
 void Slider::update() {
-	if (_state == SliderState::Changed) {
-		sf::Vector2i newPos = cursor->_worldMousePosition - _offset;
-		newPos.y = _barRect.position.y - 4;
-		newPos.x = std::clamp(newPos.x, int(_barRect.position.x), int(_barRect.position.x + _barRect.size.x - 16));
-		float ratio = float(newPos.x - _barRect.position.x) / float(_barRect.size.x - 16);
-		int newValue = static_cast<int>(std::round(ratio * (_max_value - _min_value) + _min_value));
+	if (_editState == SliderEditState::Changed) {
+		_thumbRect.size.x = cursor->_worldMousePosition.x - _barRect.position.x;
+		_thumbRect.size.x = std::max(0, std::min(_thumbRect.size.x, _barRect.size.x));
+		int newValue = (int)((float)_thumbRect.size.x / (float)_barRect.size.x * float(_max_value - _min_value) + float(_min_value));
 		setValue(newValue);
+		_state = SliderState::Pressed;
+		return;
+	}
+
+	if (ElementGUI_pressed.get() == this) {
+		_state = SliderState::Pressed;
+	}else if(ElementGUI_hovered .get() == this) {
+		_state = SliderState::Hovered;
+	}
+	else {
+		_state = SliderState::Idle;
 	}
 }
 
 
-
 void Slider::draw() {
+	// Bar
+	sf::RectangleShape barRect(sf::Vector2f(_barRect.size));
+	barRect.setPosition(sf::Vector2f(_barRect.position));
+	switch (_state) {
+		case SliderState::Idle:
+			barRect.setFillColor(slider_bar_idle_color);
+			break;
+		case SliderState::Hovered:
+			barRect.setFillColor(slider_bar_hover_color);
+			break;
+		case SliderState::Pressed:
+			barRect.setFillColor(slider_bar_press_color);
+			break;
+	}
+	window->draw(barRect);
 
-	sf::Sprite barSprite(*getTexture(L"tex\\slider\\bar.png")->_texture);
-	barSprite.setScale({ 128 / 8, 1.0f });
-	barSprite.setPosition(sf::Vector2f(_barRect.position));
-	window->draw(barSprite);
+	// Thumb
+	sf::RectangleShape thumbRect(sf::Vector2f(_thumbRect.size));
+	thumbRect.setPosition(sf::Vector2f(_thumbRect.position));
 
-	sf::Sprite sliderSprite(*getTexture(L"tex\\slider\\slider.png")->_texture);
-	sliderSprite.setPosition(sf::Vector2f(_sliderRect.position));
-	window->draw(sliderSprite);
+	if (_editState == SliderEditState::Changed) {
+		thumbRect.setFillColor(slider_thumb_press_color);
+	}
+	else {
+		switch (_state) {
+		case SliderState::Idle:
+			thumbRect.setFillColor(slider_thumb_idle_color);
+			break;
+		case SliderState::Hovered:
+			thumbRect.setFillColor(slider_thumb_hover_color);
+			break;
+		case SliderState::Pressed:
+			thumbRect.setFillColor(slider_thumb_press_color);
+			break;
+		}
+	}
+		
+	
+	window->draw(thumbRect);
 
+	// Texts
+	window->draw(*_nameText);
+	window->draw(*_valueText);
 }

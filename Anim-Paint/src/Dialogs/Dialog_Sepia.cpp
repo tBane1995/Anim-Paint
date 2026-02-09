@@ -12,7 +12,7 @@ Dialog_Sepia::Dialog_Sepia(std::vector<std::shared_ptr<Layer>> layers) : Dialog(
 	saveOriginalLayers(layers);
 
 
-	_sepia_slider = std::make_shared<BigSlider>(L"sepia", 0, 100, L"%");
+	_sepia_slider = std::make_shared<Slider>(L"sepia", 0, 100, L"%");
 	_sepia_slider->setValue(0);
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
@@ -107,7 +107,7 @@ void Dialog_Sepia::update() {
 
 	_sepia_slider->update();
 
-	if (_sepia_slider->_editState == BigSliderEditState::Changed) {
+	if (_sepia_slider->_editState == SliderEditState::Changed) {
 
 		setTheFilter();
 	}

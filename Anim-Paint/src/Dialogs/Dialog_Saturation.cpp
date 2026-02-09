@@ -12,7 +12,7 @@ Dialog_Saturation::Dialog_Saturation(std::vector<std::shared_ptr<Layer>> layers)
 	saveOriginalLayers(layers);
 
 	
-	_saturation_slider = std::make_shared<BigSlider>(L"saturation", 0, 200, L"%");
+	_saturation_slider = std::make_shared<Slider>(L"saturation", 0, 200, L"%");
 	_saturation_slider->setValue(100);
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
@@ -107,7 +107,7 @@ void Dialog_Saturation::update() {
 
 	_saturation_slider->update();
 
-	if (_saturation_slider->_editState == BigSliderEditState::Changed) {
+	if (_saturation_slider->_editState == SliderEditState::Changed) {
 
 		setTheFilter();
 	}

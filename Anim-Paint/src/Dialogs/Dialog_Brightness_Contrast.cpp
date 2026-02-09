@@ -11,10 +11,10 @@ Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector<std::shared_p
 
 	saveOriginalLayers(layers);
 
-	_brightness_slider = std::make_shared<BigSlider>(L"brightness", -50, 50);
+	_brightness_slider = std::make_shared<Slider>(L"brightness", -50, 50);
 	_brightness_slider->setValue(0);
 
-	_contrast_slider = std::make_shared<BigSlider>(L"contrast", -50, 50, L"%");
+	_contrast_slider = std::make_shared<Slider>(L"contrast", -50, 50, L"%");
 	_contrast_slider->setValue(0);
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
@@ -123,7 +123,7 @@ void Dialog_Brightness_Contrast::update() {
 	_brightness_slider->update();
 	_contrast_slider->update();
 
-	if (_brightness_slider->_editState == BigSliderEditState::Changed || _contrast_slider->_editState == BigSliderEditState::Changed) {
+	if (_brightness_slider->_editState == SliderEditState::Changed || _contrast_slider->_editState == SliderEditState::Changed) {
 		setTheFilter();
 	}
 
