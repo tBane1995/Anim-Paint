@@ -27,6 +27,7 @@
 #include "Tools/Lasso.hpp"
 #include "Tools/Selection.hpp"
 #include "Canvas.hpp"
+#include "History.hpp"
 #include <fstream>
 #include <DebugLog.hpp>
 
@@ -329,7 +330,17 @@ MainMenu::MainMenu() : ElementGUI() {
 	_menu_boxes.push_back(edit);
 
 	std::shared_ptr<OptionBox> edit_undo = std::make_shared<OptionBox>(L"undo");
+	edit_undo->_onclick_func = [this]() {
+		history->undo();
+		//closeMenu();
+		};
+
 	std::shared_ptr<OptionBox> edit_redo = std::make_shared<OptionBox>(L"redo");
+	edit_redo->_onclick_func = [this]() {
+		history->redo();
+		//closeMenu();
+		};
+
 	std::shared_ptr<OptionBox> edit_cut = std::make_shared<OptionBox>(L"cut");
 	std::shared_ptr<OptionBox> edit_copy = std::make_shared<OptionBox>(L"copy");
 	std::shared_ptr<OptionBox> edit_paste = std::make_shared<OptionBox>(L"paste");
@@ -840,7 +851,6 @@ void MainMenu::handleEvent(const sf::Event& event) {
 		if (hoverBox != nullptr && _open_menu_box != hoverBox) {
 			hideMenu();
 			openMenuBox(hoverBox);
-			return;
 		}
 	}
 
@@ -875,11 +885,10 @@ void MainMenu::handleEvent(const sf::Event& event) {
 		}
 	}
 
-	
-
-	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-		_state = MainMenuStates::Closed;
-	}
+	if(!clicked_in_menu)
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			_state = MainMenuStates::Closed;
+		}
 
 	if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>(); mws && mws->delta != 0) {
 		_state = MainMenuStates::Closed;

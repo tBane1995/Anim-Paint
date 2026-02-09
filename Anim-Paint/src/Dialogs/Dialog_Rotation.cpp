@@ -5,6 +5,7 @@
 #include "Window.hpp"
 #include "Filters.hpp"
 #include "Tools/Toolbar.hpp"
+#include "History.hpp"
 
 Dialog_Rotation::Dialog_Rotation(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"rotation", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
 
@@ -43,6 +44,10 @@ Dialog_Rotation::~Dialog_Rotation() {
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
 		//layers_dialog->loadLayersFromCurrentFrame();
+	}
+	else {
+		// is Edited
+		history->saveStep();
 	}
 
 }

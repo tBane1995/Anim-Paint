@@ -6,6 +6,7 @@
 #include "Window.hpp"
 #include "Tools/Toolbar.hpp"
 #include "Canvas.hpp"
+#include "History.hpp"
 
 Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"resize", sf::Vector2i(256, 160+64), sf::Vector2i(8, 120)) {
 
@@ -85,6 +86,10 @@ Dialog_Resize::~Dialog_Resize() {
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
 		layers_dialog->loadLayersFromCurrentFrame();
+	}
+	else {
+		// is Edited
+		history->saveStep();
 	}
 
 }

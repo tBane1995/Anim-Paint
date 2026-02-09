@@ -23,6 +23,7 @@ set(SOURCES
     Anim-Paint/src/ElementGUI/NumberInput.cpp
     Anim-Paint/src/WorldToTileConverter.cpp
     Anim-Paint/src/Clipboard.cpp
+    Anim-Paint/src/History.cpp
     Anim-Paint/src/Filters.cpp
     Anim-Paint/src/Animation/Layer.cpp
     Anim-Paint/src/Animation/Frame.cpp
@@ -77,6 +78,7 @@ set(HEADERS
     Anim-Paint/include/ElementGUI/NumberInput.hpp
     Anim-Paint/include/WorldToTileConverter.hpp
     Anim-Paint/include/Clipboard.hpp
+    Anim-Paint/include/History.hpp
     Anim-Paint/include/Filters.hpp
     Anim-Paint/include/Animation/Layer.hpp
     Anim-Paint/include/Animation/Frame.hpp

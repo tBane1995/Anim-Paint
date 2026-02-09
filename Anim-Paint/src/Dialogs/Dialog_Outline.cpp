@@ -5,6 +5,7 @@
 #include "Filters.hpp"
 #include "Window.hpp"
 #include "Tools/Toolbar.hpp"
+#include "History.hpp"
 
 Dialog_Outline::Dialog_Outline(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"outline", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
 
@@ -46,6 +47,10 @@ Dialog_Outline::~Dialog_Outline() {
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
 		layers_dialog->loadLayersFromCurrentFrame();
+	}
+	else {
+		// is Edited
+		history->saveStep();
 	}
 
 }

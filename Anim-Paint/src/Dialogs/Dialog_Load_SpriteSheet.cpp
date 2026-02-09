@@ -10,6 +10,7 @@
 #include "Dialogs/FramesDialog.hpp"
 #include "Dialogs/AnimationsDialog.hpp"
 #include "DebugLog.hpp"
+#include "History.hpp"
 
 Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : Dialog(L"Import Animation", sf::Vector2i(256+16, 256+16+80)) {
 	
@@ -138,6 +139,8 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 			size.y = std::stoi(_heightOfFrame->getText());
 			loadAnimationsByFrameSize(size);
 			main_menu->importAnimation(_animations);
+			history->clear();
+			history->saveStep();
 			animations_dialog->updateText();
 			frames_dialog->updateText();
 			_state = DialogState::ToClose;

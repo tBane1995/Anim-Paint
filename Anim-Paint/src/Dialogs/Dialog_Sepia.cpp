@@ -4,6 +4,8 @@
 #include "Dialogs/LayersDialog.hpp"
 #include "Filters.hpp"
 #include "Window.hpp"
+#include "History.hpp"
+
 
 Dialog_Sepia::Dialog_Sepia(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"sepia", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
 
@@ -42,6 +44,10 @@ Dialog_Sepia::~Dialog_Sepia() {
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
 		layers_dialog->loadLayersFromCurrentFrame();
+	}
+	else {
+		// is Edited
+		history->saveStep();
 	}
 
 }

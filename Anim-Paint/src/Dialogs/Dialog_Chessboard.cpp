@@ -5,6 +5,7 @@
 #include "Filters.hpp"
 #include "Window.hpp"
 #include "Tools/Toolbar.hpp"
+#include "History.hpp"
 
 Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"chessboard", sf::Vector2i(256+16, 160), sf::Vector2i(8, 120)) {
 
@@ -50,6 +51,10 @@ Dialog_Chessboard::~Dialog_Chessboard() {
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
 		layers_dialog->loadLayersFromCurrentFrame();
+	}
+	else {
+		// is Edited
+		history->saveStep();
 	}
 
 }

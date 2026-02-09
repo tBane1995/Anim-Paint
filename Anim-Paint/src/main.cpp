@@ -24,6 +24,7 @@
 
 #include "WorldToTileConverter.hpp"
 #include "ClipBoard.hpp"
+#include "History.hpp"
 #include "Filters.hpp"
 
 #include "Animation/Layer.hpp"
@@ -143,6 +144,9 @@ int main() {
 	animation->addEmptyFrame(sf::Vector2i(32,32));
 	animations.push_back(animation);
 
+	history = std::make_shared<History>();
+	history->saveStep();
+
 	selection = std::make_shared<Selection>();
 	brush = std::make_shared<Brush>(2);
 	toolbar = std::make_shared<Toolbar>();
@@ -234,6 +238,8 @@ int main() {
 				window->setView(mainView);
 				resize();
 			}
+
+			history->handleEvent(*event);
 
 			main_menu->handleEvent(*event);
 

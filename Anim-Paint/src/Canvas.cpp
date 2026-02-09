@@ -14,6 +14,7 @@
 #include "MainMenu.hpp"
 #include "Dialogs/Palette.hpp"
 #include "Tools/Line.hpp"
+#include "History.hpp"
 
 EdgePoint::EdgePoint(sf::Vector2i position) {
 	_rect = sf::IntRect(position, sf::Vector2i(8, 8));
@@ -94,6 +95,8 @@ Canvas::Canvas() : ElementGUI() {
 	resize(_size);
 
 	setPosition((sf::Vector2i(window->getSize()) - sf::Vector2i(getZoomedSize(_size))) / 2);
+
+	_isEdited = false;
 }
 
 Canvas::~Canvas() {
@@ -237,6 +240,7 @@ void Canvas::drawPixels(sf::Color color) {
 			}
 		}
 	}
+
 }
 
 void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords) {
@@ -305,12 +309,15 @@ void Canvas::mouseLeftButtonPressedEvent() {
 	if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
 		if (toolbar->_toolType == ToolType::Brush) {
 			drawPixels(toolbar->_first_color->_color);
+			_isEdited = true;
 		}
 		else if (toolbar->_toolType == ToolType::Eraser) {
 			drawPixels(toolbar->_second_color->_color);
+			_isEdited = true;
 		}
 		else if (toolbar->_toolType == ToolType::Fill) {
 			fillPixels(toolbar->_first_color->_color);
+			_isEdited = true;
 		}
 		else if (toolbar->_toolType == ToolType::Picker) {
 			pickPixel();
@@ -339,6 +346,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
 						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
 						selection->_image = nullptr;
+						history->saveStep();
 					}
 					selection->_state = SelectionState::Selecting;
 					selection->unselect();
@@ -348,6 +356,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
 						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
 						selection->_image = nullptr;
+						history->saveStep();
 					}
 
 					selection->_state = SelectionState::None;
@@ -363,18 +372,22 @@ void Canvas::mouseRightButtonPressedEvent() {
 	if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
 		if (toolbar->_toolType == ToolType::Brush) {
 			drawPixels(toolbar->_second_color->_color);
+			_isEdited = true;
 		}
 		else if (toolbar->_toolType == ToolType::Eraser) {
 			drawPixels(toolbar->_first_color->_color);
+			_isEdited = true;
 		}
 		else if (toolbar->_toolType == ToolType::Fill) {
 			fillPixels(toolbar->_second_color->_color);
+			_isEdited = true;
 		}
 
 	}
 }
 
 void Canvas::mouseLeftButtonReleasedEvent() {
+
 	if (toolbar->_toolType == ToolType::Lasso || toolbar->_toolType == ToolType::Selector) {
 
 		selection->generateRect();
@@ -396,9 +409,20 @@ void Canvas::mouseLeftButtonReleasedEvent() {
 		}
 		else if (selection->_state == SelectionState::Moving) {
 			selection->_state = SelectionState::Selected;
+		}else if (_isEdited) {
+			history->saveStep();
+			_isEdited = false;
 		}
 	}
 }
+void Canvas::mouseRightButtonReleasedEvent() {
+
+	if (_isEdited) {
+		history->saveStep();
+		_isEdited = false;
+	}
+}
+
 
 void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 
@@ -593,7 +617,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 			mouseLeftButtonPressedEvent();
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-
+			mouseRightButtonReleasedEvent();
 		}
 		else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Right) {
 			mouseRightButtonPressedEvent();

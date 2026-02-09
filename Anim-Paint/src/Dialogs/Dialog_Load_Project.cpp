@@ -7,6 +7,7 @@
 #include "Dialogs/FramesDialog.hpp"
 #include "Dialogs/LayersDialog.hpp"
 #include "Canvas.hpp"
+#include "History.hpp"
 
 Dialog_Load_Project::Dialog_Load_Project() : FileDialog(L"Load Project", L"load") {
 
@@ -14,12 +15,17 @@ Dialog_Load_Project::Dialog_Load_Project() : FileDialog(L"Load Project", L"load"
 		std::wstring name = _filenameInput->getText();
 		std::filesystem::path fullPath = std::filesystem::path(currentPath) / name;
 		//std::wcout << L"Load: " << fullPath << L"\n";
+		
 		main_menu->loadProject(fullPath);
+		
 		_state = DialogState::ToClose;
 
 		firstAnimation();
 		getCurrentAnimation()->firstFrame();
 		getCurrentAnimation()->firstLayer();
+
+		history->clear();
+		history->saveStep();
 
 		sf::Vector2i newCanvasSize = sf::Vector2i(getCurrentAnimation()->getCurrentLayer()->_image.getSize());
 		canvas->resize(newCanvasSize);

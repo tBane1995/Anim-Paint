@@ -41,6 +41,8 @@ public:
 	float _min_zoom;
 	float _max_zoom;
 
+	bool _isEdited;		// if brush/eraser/fill was used, then true
+
 	sf::Vector2f _edgePointSize;
 	std::vector<std::shared_ptr<EdgePoint>> _edgePoints;	// points use to resize of canvas
 	std::shared_ptr<EdgePoint> _point_left_top;
@@ -78,6 +80,7 @@ public:
 	void mouseLeftButtonPressedEvent();
 	void mouseRightButtonPressedEvent();
 	void mouseLeftButtonReleasedEvent();
+	void mouseRightButtonReleasedEvent();
 	void mouseMovedWithLeftButtonPressedEvent();
 	void mouseMovedWithRightButtonPressedEvent();
 
