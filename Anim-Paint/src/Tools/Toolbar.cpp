@@ -180,7 +180,8 @@ Toolbar::Toolbar() : ElementGUI() {
 	_btn_paste->_onclick_func = [this]() {
 		//selection->paste(&animation->getCurrentLayer()->image, selection->img);
 		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent)) {
-			_toolType = ToolType::Lasso;
+			_toolType = ToolType::Selector;
+			selectToolButton(_btn_select);
 		}
 		};
 	_btn_paste_2 = std::make_shared<ButtonWithTopTextAndList>(L"paste", tools_text_color, tools_text_hover_color);

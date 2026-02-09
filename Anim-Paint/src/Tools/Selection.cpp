@@ -341,10 +341,10 @@ void Selection::selectAll() {
 	int width = anim->getCurrentLayer()->_image.getSize().x - 1;
 	int height = anim->getCurrentLayer()->_image.getSize().y - 1;
 
-	addPoint(sf::Vector2i(0, height));
-	addPoint(sf::Vector2i(0, 0));
-	addPoint(sf::Vector2i(width, 0));
-	addPoint(sf::Vector2i(width, height));
+	selection->addPoint(sf::Vector2i(0, 0));			// LT
+	selection->addPoint(sf::Vector2i(width, 0));		// RT
+	selection->addPoint(sf::Vector2i(width, height));	// RB
+	selection->addPoint(sf::Vector2i(0, height));		// LB
 
 	generateRect();
 
@@ -538,43 +538,51 @@ void Selection::cut(sf::Image& canvas, sf::Color emptyColor) {
 	}
 }
 
-void Selection::generateOutline(bool selectionComplete) {
-	//std::vector <sf::Vector2i> _points
-	if (_points.size() < 1) return;
+void Selection::generateOutline(bool selectionComplete) { 
+	//std::vector <sf::Vector2i> _points 
 
-	if (_rect.size.x <= 0 || _rect.size.y <= 0)
-		return;
+	if (_points.size() < 1) return; 
+	if (std::abs(_rect.size.x) == 0 || std::abs(_rect.size.y) == 0) return; 
 
-
-	if (!_outlineRenderTexture.resize(sf::Vector2u(_rect.size))) {
-		DebugError(L"Lasso::generateOutline: Failed to resize outline render texture.");
-		exit(0);
+	if (!_outlineRenderTexture.resize(sf::Vector2u(std::abs(_rect.size.x), std::abs(_rect.size.y)))) { 
+		DebugError(L"Lasso::generateOutline: Failed to resize outline render texture."); 
+		exit(0); 
+	} 
+	
+	// calc the shift to move points to (0,0) based coordinates for rendering
+	int minX = std::numeric_limits<int>::max();
+	int minY = std::numeric_limits<int>::max();
+	for (const auto& pt : _points) {
+		minX = std::min(minX, pt.x);
+		minY = std::min(minY, pt.y);
 	}
 
-	_outlineRenderTexture.clear(sf::Color(0, 0, 0, 0));
+	sf::Vector2f shift = sf::Vector2f((float)(-minX), (float)(-minY));
 
-	sf::Color selectionColor = sf::Color(47, 127, 127, 255);
+	// generate outline texture
+	_outlineRenderTexture.clear(sf::Color(0, 0, 0, 0)); 
+	sf::Color selectionColor = sf::Color(47, 127, 127, 255); 
+	sf::VertexArray lines(sf::PrimitiveType::LineStrip); 
+	
+	for (auto& point : _points) 
+		lines.append(sf::Vertex{ sf::Vector2f(point) + shift, selectionColor }); 
+	
+	// first and last point 
+	sf::VertexArray p(sf::PrimitiveType::Points); 
+	p.append(sf::Vertex{ sf::Vector2f(_points.front()) + shift, selectionColor }); 
+	p.append(sf::Vertex{ sf::Vector2f(_points.back()) + shift, selectionColor }); 
+	
+	if (selectionComplete) lines.append(sf::Vertex{ sf::Vector2f(_points.front()) + shift, selectionColor }); 
+	
+	sf::RenderStates rs; 
+	rs.blendMode = sf::BlendAlpha; 
+	rs.transform.translate(sf::Vector2f(0.5f, 0.5f)); 
+	_outlineRenderTexture.draw(lines, rs); 
+	_outlineRenderTexture.draw(p, rs); 
+	_outlineRenderTexture.display(); 
 
-	sf::VertexArray lines(sf::PrimitiveType::LineStrip);
-	for (auto& point : _points)
-		lines.append(sf::Vertex{ sf::Vector2f(point), selectionColor });
-
-	// first and last point
-	sf::VertexArray p(sf::PrimitiveType::Points);
-
-	p.append(sf::Vertex{ sf::Vector2f(_points.front()), selectionColor });
-	p.append(sf::Vertex{ sf::Vector2f(_points.back()), selectionColor });
-
-	if (selectionComplete)
-		lines.append(sf::Vertex{ sf::Vector2f(_points.front()), selectionColor });
-
-	sf::RenderStates rs;
-	rs.blendMode = sf::BlendAlpha;
-	rs.transform.translate(sf::Vector2f(0.5f, 0.5f));
-	_outlineRenderTexture.draw(lines, rs);
-	_outlineRenderTexture.draw(p, rs);
-	_outlineRenderTexture.display();
 }
+
 bool Selection::pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b)
 {
 	int cross = 1LL * (b.x - a.x) * (p.y - a.y) - 1LL * (b.y - a.y) * (p.x - a.x);
@@ -634,8 +642,7 @@ void Selection::generateMask() {
 	sf::Vector2u size = _image->getSize();
 	_maskImage.resize(size, sf::Color::Transparent);
 
-	if (_points.size() == 4 && _rect.size.x == 2 || _rect.size.y == 2)
-	{
+	if (_points.size() == 4 && (_rect.size.x == 2 || _rect.size.y == 2)) {
 
 		for (int y = 0; y < _rect.size.y; y++) {
 			for (int x = 0; x < _rect.size.x; x++) {
@@ -734,13 +741,12 @@ void Selection::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, 
 
 void Selection::drawOutline(sf::Vector2i canvasPosition, float scale) {
 
-
 	_outlineSprite = std::make_shared<sf::Sprite>(_outlineRenderTexture.getTexture());
 	_outlineSprite->setScale(sf::Vector2f(scale, scale));
 
 	sf::Vector2f outlineSpritePos;
-	outlineSpritePos.x = (float)(canvasPosition.x) + (float)(_outlineOffset.x) * scale;
-	outlineSpritePos.y = (float)(canvasPosition.y) + (float)(_outlineOffset.y) * scale;
+	outlineSpritePos.x = (float)(canvasPosition.x) + (float)(_rect.position.x) * scale;
+	outlineSpritePos.y = (float)(canvasPosition.y) + (float)(_rect.position.y) * scale;
 	_outlineSprite->setPosition(outlineSpritePos);
 
 	window->draw(*_outlineSprite);

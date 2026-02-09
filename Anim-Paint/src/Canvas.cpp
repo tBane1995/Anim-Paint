@@ -319,37 +319,30 @@ void Canvas::mouseLeftButtonPressedEvent() {
 	}
 
 	if (ElementGUI_pressed.get() == nullptr || ElementGUI_pressed.get() == this) {
-		if (toolbar->_toolType == ToolType::Selector) {
-			// TO-DO - selection
+		sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
+
+		if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->clickOnSelection(tile)) {
+			selection->_state = SelectionState::Moving;
+			selection->_offset = tile - selection->_outlineOffset;
+
+			if (selection->_image == nullptr) {
+				selection->_image = std::make_shared<sf::Image>();
+				selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
+				copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
+				removeImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, toolbar->_second_color->_color);
+			}
 		}
-		else if (toolbar->_toolType == ToolType::Lasso) {
+		else if (toolbar->_toolType == ToolType::Lasso || toolbar->_toolType == ToolType::Selector) {
 
 			if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
-				sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
-
-				if (selection->clickOnSelection(tile)) {
-
-					selection->_state = SelectionState::Moving;
-					selection->_offset = tile - selection->_outlineOffset;
-
-					if (selection->_image == nullptr) {
-						selection->_image = std::make_shared<sf::Image>();
-						selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
-						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
-						removeImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, toolbar->_second_color->_color);
-					}
-				}
-				else if (_rect.contains(cursor->_worldMousePosition)) {
+				if (_rect.contains(cursor->_worldMousePosition)) {
 					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
 						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
 						selection->_image = nullptr;
 					}
-
-
 					selection->_state = SelectionState::Selecting;
 					selection->unselect();
 					selection->_outlineOffset = tile;
-					selection->addPoint(tile);
 				}
 				else {
 					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
@@ -359,7 +352,6 @@ void Canvas::mouseLeftButtonPressedEvent() {
 
 					selection->_state = SelectionState::None;
 					selection->unselect();
-					selection->addPoint(tile);
 				}
 			}
 
@@ -383,10 +375,7 @@ void Canvas::mouseRightButtonPressedEvent() {
 }
 
 void Canvas::mouseLeftButtonReleasedEvent() {
-	if (toolbar->_toolType == ToolType::Selector) {
-		// TO-DO - selection
-	}
-	else if (toolbar->_toolType == ToolType::Lasso) {
+	if (toolbar->_toolType == ToolType::Lasso || toolbar->_toolType == ToolType::Selector) {
 
 		selection->generateRect();
 		selection->generateMask();
@@ -430,18 +419,49 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 		}
 	}
 
-	if (toolbar->_toolType == ToolType::Selector) {
-		// TO-DO - selection
+	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == SelectionState::Moving){
+		sf::Vector2i tile = selectionToTile(cursor->_worldMousePosition, _position, _size, selection->_rect.size, selection->_offset, _zoom, _zoom_delta);
+		sf::Vector2i dst = tile - selection->_offset;
+		selection->_outlineOffset.x = dst.x;
+		selection->_outlineOffset.y = dst.y;
+		selection->generateRect();
+	}
+
+	else if (toolbar->_toolType == ToolType::Selector) {
+		if (selection->_state == SelectionState::Selecting) {
+
+			sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
+
+			if (selection->_image != nullptr)
+				selection->_image = nullptr;
+
+			// LOCAL względem punktu kliknięcia
+			sf::Vector2i local = tile - selection->_outlineOffset;
+
+			int minX = std::min(0, local.x);
+			int minY = std::min(0, local.y);
+			int maxX = std::max(0, local.x);
+			int maxY = std::max(0, local.y);
+
+			selection->_points.clear();
+			selection->_points.push_back(sf::Vector2i(minX, minY)); // LT
+			selection->_points.push_back(sf::Vector2i(maxX, minY)); // RT
+			selection->_points.push_back(sf::Vector2i(maxX, maxY)); // RB
+			selection->_points.push_back(sf::Vector2i(minX, maxY)); // LB
+			selection->_points.push_back(sf::Vector2i(minX, minY)); // close
+
+			selection->generateRect();
+
+			selection->_image = std::make_shared<sf::Image>();
+			selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
+			if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
+				selection->_image->resize(sf::Vector2u(selection->_rect.size), sf::Color::Transparent);
+			}
+		}
 	}
 	else if (toolbar->_toolType == ToolType::Lasso) {
-		if (selection->_state == SelectionState::Moving) {
-			sf::Vector2i tile = selectionToTile(cursor->_worldMousePosition, _position, _size, selection->_rect.size, selection->_offset, _zoom, _zoom_delta);
-			sf::Vector2i dst = tile - selection->_offset;
-			selection->_outlineOffset.x = dst.x;
-			selection->_outlineOffset.y = dst.y;
-			selection->generateRect();
-		}
-		else if (selection->_state == SelectionState::Selecting) {
+		
+		if (selection->_state == SelectionState::Selecting) {
 			sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
 
 			if (selection->_image != nullptr) {
