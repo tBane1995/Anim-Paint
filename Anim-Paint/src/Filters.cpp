@@ -100,6 +100,7 @@ std::string palette_values_shader_source = R"(
 std::string rotation_shader_source = R"(
     uniform sampler2D texture;
     uniform float angle;
+    uniform vec4 backgroundColor;
 
     vec2 rotate(vec2 uv, vec2 pivot, float a) {
         float c = cos(a);
@@ -116,7 +117,7 @@ std::string rotation_shader_source = R"(
 
         if (rotated_uv.x < 0.0 || rotated_uv.x > 1.0 ||
             rotated_uv.y < 0.0 || rotated_uv.y > 1.0) {
-            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+            gl_FragColor = backgroundColor;
         } else {
             gl_FragColor = texture2D(texture, rotated_uv);
         }
@@ -286,7 +287,7 @@ std::string chessboard_shader_source = R"(
 )";
 
 
-void set_rotation(sf::Image& image, float angle, bool set_smooth) {
+void set_rotation(sf::Image& image, float angle, bool set_smooth, sf::Color backgroundColor) {
 
     angle = angle * 3.14159265f / 180.f;
 
@@ -309,7 +310,7 @@ void set_rotation(sf::Image& image, float angle, bool set_smooth) {
     }
 
     sh.setUniform("angle", angle);
-
+	sh.setUniform("backgroundColor", sf::Glsl::Vec4(backgroundColor.r / 255.0f, backgroundColor.g / 255.0f, backgroundColor.b / 255.0f, backgroundColor.a / 255.0f));
     tex.setSmooth(set_smooth);
 
     sf::Sprite spr(tex);

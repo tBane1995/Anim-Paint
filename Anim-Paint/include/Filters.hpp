@@ -13,7 +13,7 @@ extern std::string sepia_shader_source;
 extern std::string outline_shader_source;
 extern std::string chessboard_shader_source;
 
-void set_rotation(sf::Image& image, float angle, bool set_smooth);
+void set_rotation(sf::Image& image, float angle, bool set_smooth, sf::Color backgroundColor);
 void set_brightness(sf::Image& image, float value);
 void set_contrast(sf::Image& image, float value);
 void set_saturation(sf::Image& image, float value);
