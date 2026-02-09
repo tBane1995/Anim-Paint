@@ -61,7 +61,7 @@ void BigSlider::setPosition(sf::Vector2i position) {
 	_barRect.position = position;
 	_thumbRect.position = position;
 	
-	int text_margin = 6;
+	int text_margin = basicFont.getLineSpacing(slider_font_size) / 2;
 
 	sf::Vector2f nameTextPos;
 	nameTextPos.x = (float)(position.x + text_margin);
