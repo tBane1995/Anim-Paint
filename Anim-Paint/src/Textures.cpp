@@ -65,10 +65,6 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\file_dialog\\dictionaryIsOpened.png");
 	texturePaths.push_back(L"tex\\file_dialog\\dictionaryIsEmpty.png");
 
-	// slider
-	texturePaths.push_back(L"tex\\slider\\bar.png");
-	texturePaths.push_back(L"tex\\slider\\slider.png");
-
 	// buttons 32x32
 	texturePaths.push_back(L"tex\\btn32\\close.png");
 	texturePaths.push_back(L"tex\\btn32\\close_hover.png");
