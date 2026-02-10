@@ -18,6 +18,7 @@
 #include "Dialogs/Dialog_Outline.hpp"
 #include "Dialogs/Dialog_Resize.hpp"
 #include "Dialogs/Dialog_Chessboard.hpp"
+#include "Dialogs/Dialog_Invert_Colors.hpp"
 
 #include "Dialogs/FramesDialog.hpp"
 #include "Dialogs/LayersDialog.hpp"
@@ -404,6 +405,10 @@ MainMenu::MainMenu() : ElementGUI() {
 	
 
 	std::shared_ptr<OptionBox> tools_invert = std::make_shared<OptionBox>(L"invert colors");
+	tools_invert->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Invert_Colors>(getCurrentAnimation()->getLayers()));
+		closeMenu();
+		};
 
 	std::shared_ptr<OptionBox> tools_chessboard = std::make_shared<OptionBox>(L"chessboard");
 	tools_chessboard->_onclick_func = [this]() {

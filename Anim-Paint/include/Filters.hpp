@@ -12,6 +12,8 @@ extern std::string saturation_shader_source;
 extern std::string sepia_shader_source;
 extern std::string outline_shader_source;
 extern std::string chessboard_shader_source;
+extern std::string invert_rgb_shader_source;
+extern std::string invert_hsv_shader_source;
 
 void set_rotation(sf::Image& image, float angle, bool set_smooth, sf::Color backgroundColor);
 void set_brightness(sf::Image& image, float value);
@@ -21,3 +23,5 @@ void set_sepia(sf::Image& image, float value);
 void set_outline(sf::Image& image, int width, sf::Color backgroundColor, sf::Color outlineColor);
 void set_resize(sf::Image& image, int width, int height, sf::Color backgroundColor);
 void set_chessboard(sf::Image& image, int tileCount, int transparency, sf::Color firstColor, sf::Color secondColor);
+void set_invert_rgb(sf::Image& image);
+void set_invert_hsv(sf::Image& image);

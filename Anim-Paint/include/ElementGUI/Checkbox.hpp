@@ -21,6 +21,7 @@ public:
 	Checkbox(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture);
 	~Checkbox();
 
+	sf::Vector2i getSize();
 	void setPosition(sf::Vector2i position);
 	void setValue(int value);
 	void addValue(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture);

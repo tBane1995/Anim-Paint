@@ -3,6 +3,7 @@
 #include "Time.hpp"
 #include "Window.hpp"
 #include "Cursor.hpp"
+#include "DebugLog.hpp"
 
 Checkbox::Checkbox(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture) : ElementGUI() {
 
@@ -12,13 +13,26 @@ Checkbox::Checkbox(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> ho
 	_textures.clear();
 	_hoverTextures.clear();
 
+	if (texture == nullptr) {
+		DebugError(L"Checkbox: texture is null");
+		return;
+	}
 	_textures.push_back(texture);
+
+	if (hoverTexture == nullptr) {
+		DebugError(L"Checkbox: hoverTexture is null");
+		return;
+	}
 	_hoverTextures.push_back(hoverTexture);
 
 	_state = CheckboxState::Idle;
 }
 
 Checkbox::~Checkbox() {
+}
+
+sf::Vector2i Checkbox::getSize() {
+	return _rect.size;
 }
 
 void Checkbox::setPosition(sf::Vector2i position) {
@@ -98,7 +112,12 @@ void Checkbox::update() {
 }
 
 void Checkbox::draw() {	
-	sf::Sprite sprite(*_textures[_value]->_texture);
-	sprite.setPosition(sf::Vector2f(_rect.position));
-	window->draw(sprite);
+	if (_value > -1) {
+		
+		std::shared_ptr<Texture> tex = (_state == CheckboxState::Hover) ? _hoverTextures[_value] : _textures[_value];
+
+		sf::Sprite sprite(*tex->_texture);
+		sprite.setPosition(sf::Vector2f(_rect.position));
+		window->draw(sprite);
+	}
 }

@@ -99,6 +99,12 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\btn32\\unvisible.png");
 	texturePaths.push_back(L"tex\\btn32\\unvisible_hover.png");
 
+	texturePaths.push_back(L"tex\\btn32\\unchecked.png");
+	texturePaths.push_back(L"tex\\btn32\\unchecked_hover.png");
+								  
+	texturePaths.push_back(L"tex\\btn32\\checked.png");
+	texturePaths.push_back(L"tex\\btn32\\checked_hover.png");
+
 	// tools
 	texturePaths.push_back(L"tex\\tools\\bottom_arrow.png");
 	texturePaths.push_back(L"tex\\tools\\bottom_arrow_hover.png");
@@ -147,6 +153,8 @@ void loadTextures() {
 
 	texturePaths.push_back(L"tex\\tools\\btn_palette_colors.png");
 	texturePaths.push_back(L"tex\\tools\\btn_palette_colors_hover.png");
+
+	
 
 	// bottom bar
 	texturePaths.push_back(L"tex\\bottom_bar\\cursor_position.png");

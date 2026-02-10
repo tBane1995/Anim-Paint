@@ -286,6 +286,56 @@ std::string chessboard_shader_source = R"(
     }
 )";
 
+std::string invert_rgb_shader_source = R"(
+
+    uniform sampler2D texture;
+
+    void main()
+    {
+        vec4 color = texture2D(texture, gl_TexCoord[0].xy);
+        color.rgb = 1.0 - color.rgb;
+        gl_FragColor = color;
+    }
+)";
+
+std::string invert_hsv_shader_source = R"(
+
+    uniform sampler2D texture;
+
+    vec3 rgb2hsv(in vec3 c)
+    {
+        vec4 K = vec4(0.0, -1.0/3.0, 2.0/3.0, -1.0);
+
+        vec4 p = mix(vec4(c.bg, K.wz),vec4(c.gb, K.xy),step(c.b, c.g)); 
+
+        vec4 q = mix(vec4(p.xyw, c.r),vec4(c.r, p.yzx),step(p.x, c.r));
+
+        float d = q.x - min(q.w, q.y);
+        float e = 1e-10;
+
+        return vec3(
+            abs(q.z + (q.w - q.y) / (6.0 * d + e)), // Hue
+            d / (q.x + e),                          // Saturation
+            q.x                                     // Value
+        );
+    }
+
+    vec3 hsv2rgb(in vec3 c)
+    {
+        vec3 rgb = clamp(abs(mod(c.x*6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+        return c.z * mix(vec3(1.0), rgb, c.y);
+    }
+
+    void main()
+    {
+        vec4 color = texture2D(texture, gl_TexCoord[0].xy);
+        vec3 hsv = rgb2hsv(color.rgb);
+        hsv.x = mod(hsv.x + 0.5, 1.0); // Invert hue
+        color.rgb = hsv2rgb(hsv);
+        gl_FragColor = color;
+    }
+)";
+
 
 void set_rotation(sf::Image& image, float angle, bool set_smooth, sf::Color backgroundColor) {
 
@@ -533,6 +583,60 @@ void set_chessboard(sf::Image& image, int tileCount, int transparency, sf::Color
 	sh.setUniform("transparency", transparency); // 0–100
     sh.setUniform("firstColor", sf::Glsl::Vec4(float(firstColor.r) / 255.0f, float(firstColor.g) / 255.0f, float(firstColor.b) / 255.0f, float(firstColor.a) / 255.0f));
     sh.setUniform("secondColor", sf::Glsl::Vec4(float(secondColor.r) / 255.0f, float(secondColor.g) / 255.0f, float(secondColor.b) / 255.0f, float(secondColor.a) / 255.0f));
+
+    sf::Sprite spr(tex);
+    rtex.clear(sf::Color::Transparent);
+    rtex.draw(spr, &sh);
+    rtex.display();
+
+    image = rtex.getTexture().copyToImage();
+}
+
+void set_invert_rgb(sf::Image& image) {
+    sf::Texture tex;
+    if (!tex.loadFromImage(image)) {
+        DebugError(L"Filter set_invert_rgb: failed to load texture from image.");
+        exit(0);
+    }
+
+    sf::RenderTexture rtex;
+    if (!rtex.resize(tex.getSize())) {
+        DebugError(L"Filter set_invert_rgb: failed to resize render texture.");
+        exit(0);
+    }
+
+    sf::Shader sh;
+    if (!sh.loadFromMemory(invert_rgb_shader_source, sf::Shader::Type::Fragment)) {
+        DebugError(L"Filter set_invert_rgb: failed to load shader from memory.");
+        exit(0);
+    }
+
+    sf::Sprite spr(tex);
+    rtex.clear(sf::Color::Transparent);
+    rtex.draw(spr, &sh);
+    rtex.display();
+
+    image = rtex.getTexture().copyToImage();
+}
+
+void set_invert_hsv(sf::Image& image) {
+    sf::Texture tex;
+    if (!tex.loadFromImage(image)) {
+        DebugError(L"Filter set_invert_rgb: failed to load texture from image.");
+        exit(0);
+    }
+
+    sf::RenderTexture rtex;
+    if (!rtex.resize(tex.getSize())) {
+        DebugError(L"Filter set_invert_rgb: failed to resize render texture.");
+        exit(0);
+    }
+
+    sf::Shader sh;
+    if (!sh.loadFromMemory(invert_hsv_shader_source, sf::Shader::Type::Fragment)) {
+        DebugError(L"Filter set_invert_rgb: failed to load shader from memory.");
+        exit(0);
+    }
 
     sf::Sprite spr(tex);
     rtex.clear(sf::Color::Transparent);
