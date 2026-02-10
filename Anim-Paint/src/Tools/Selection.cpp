@@ -628,38 +628,21 @@ bool Selection::isPointInPolygon(sf::Vector2i p, std::vector < sf::Vector2i >& p
 	return inside;
 }
 
-void Selection::generateMask() {
-
-
-
-	if (!_image) return;
+void Selection::generateMask()
+{
 	if (_rect.size.x <= 1 || _rect.size.y <= 1) return;
-	if (_image->getSize().x <= 1 || _image->getSize().y <= 1) return;
-
 
 	_maskImage = sf::Image();
+	_maskImage.resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
 
-	sf::Vector2u size = _image->getSize();
-	_maskImage.resize(size, sf::Color::Transparent);
+	for (int y = 0; y < _rect.size.y; ++y) {
+		for (int x = 0; x < _rect.size.x; ++x) {
 
-	if (_points.size() == 4 && (_rect.size.x == 2 || _rect.size.y == 2)) {
+			int lx = (_rect.position.x + x) - _outlineOffset.x;
+			int ly = (_rect.position.y + y) - _outlineOffset.y;
 
-		for (int y = 0; y < _rect.size.y; y++) {
-			for (int x = 0; x < _rect.size.x; x++) {
-				_maskImage.setPixel(sf::Vector2u(x, y), sf::Color::White);
-			}
-		}
-
-		return;
-	}
-
-
-
-	for (unsigned int y = 0; y < size.y; ++y) {
-		for (unsigned int x = 0; x < size.x; ++x) {
-			if (isPointInPolygon(sf::Vector2i(x, y), _points)) {
-				//std::wcout << x << L", " << y << L": is inside\n";
-				_maskImage.setPixel(sf::Vector2u(x, y), sf::Color::White);
+			if (isPointInPolygon({ lx, ly }, _points)) {
+				_maskImage.setPixel({ (unsigned)x, (unsigned)y }, sf::Color::White);
 			}
 		}
 	}
@@ -681,8 +664,8 @@ void Selection::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, 
 	sf::IntRect visibleRect = _rect.findIntersection(canvasRect).value();
 
 
-	int tx = visibleRect.position.x - _outlineOffset.x;
-	int ty = visibleRect.position.y - _outlineOffset.y;
+	int tx = visibleRect.position.x - _rect.position.x;
+	int ty = visibleRect.position.y - _rect.position.y;
 	sf::IntRect texRect(sf::Vector2i(tx, ty), visibleRect.size);
 
 	if (_image->getSize().x <= 0 || _image->getSize().y <= 0) {

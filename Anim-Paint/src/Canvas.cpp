@@ -400,6 +400,8 @@ void Canvas::mouseLeftButtonReleasedEvent() {
 			}
 			else {
 				if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
+
+					// DLACZEGO TO NIE DZIAŁA ??
 					copyImageWithMask(*selection->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, selection->_rect.position.x, selection->_rect.position.y, selection->_maskImage, toolbar->_second_color->_color);
 					removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, selection->_maskImage, toolbar->_second_color->_color);
 				}
@@ -475,12 +477,13 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 			selection->_points.push_back(sf::Vector2i(minX, minY)); // close
 
 			selection->generateRect();
-
+			
 			selection->_image = std::make_shared<sf::Image>();
 			selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
 			if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
 				selection->_image->resize(sf::Vector2u(selection->_rect.size), sf::Color::Transparent);
 			}
+
 		}
 	}
 	else if (toolbar->_toolType == ToolType::Lasso) {
