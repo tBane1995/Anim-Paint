@@ -27,22 +27,20 @@ void removeImageWithAlpha(sf::Image& image, sf::IntRect rect, sf::Color alphaCol
 	if (rect.size.x <= 0 || rect.size.y <= 0)
 		return;
 
-	sf::Image backgroundImage;
-	backgroundImage.resize(sf::Vector2u(rect.size), alphaColor);
+	const sf::Vector2u imgSize = image.getSize();
 
-	sf::IntRect clipped;
-	if (!rect.findIntersection(rect).has_value())
-		return;
-	
-	clipped = rect.findIntersection(rect).value();
+	for (int y = 0; y < rect.size.y; ++y) {
+		for (int x = 0; x < rect.size.x; ++x) {
 
-	sf::IntRect r(clipped.position - rect.position, clipped.size);
+			int px = rect.position.x + x;
+			int py = rect.position.y + y;
 
-	if (!image.copy(backgroundImage, sf::Vector2u(clipped.position), r, false)) {
-		DebugError(L"removeImageWithAlpha: image copy failed");
-		exit(0);
+			if (px < 0 || py < 0 || px >= (int)(imgSize.x) || py >= (int)(imgSize.y))
+				continue;
+
+			image.setPixel(sf::Vector2u(px, py), alphaColor);
+		}
 	}
-	
 }
 
 void removeImageWithMask(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf::Color alphaColor)
@@ -50,33 +48,23 @@ void removeImageWithMask(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf
 	if (rect.size.x <= 0 || rect.size.y <= 0)
 		return;
 
-	if (mask.getSize().x <= 0 || mask.getSize().y <= 0) return;
-
-	sf::Image backgroundImage;
-	backgroundImage.resize(sf::Vector2u(rect.size), alphaColor);
-
-	sf::IntRect clipped;
-	if (!rect.findIntersection(rect).has_value())
+	if (mask.getSize().x <= 0 || mask.getSize().y <= 0)
 		return;
 
-	clipped = rect.findIntersection(rect).value();
+	for (int y = 0; y < rect.size.y; ++y) {
+		for (int x = 0; x < rect.size.x; ++x) {
 
-	sf::IntRect r(clipped.position - rect.position, clipped.size);
+			if (mask.getPixel(sf::Vector2u(x, y)) != sf::Color::White)
+				continue;
 
-	for (int y = 0; y < (int)(backgroundImage.getSize().y); y++) {
-		for (int x = 0; x < (int)(backgroundImage.getSize().x); x++) {
-			if (mask.getPixel(sf::Vector2u(x, y)) == sf::Color::White) {
-				backgroundImage.setPixel(sf::Vector2u(x, y), alphaColor);
-			}
-			else {
-				backgroundImage.setPixel(sf::Vector2u(x, y), image.getPixel(sf::Vector2u(clipped.position.x + (x - r.position.x), clipped.position.y + (y - r.position.y))));
-			}
+			int px = rect.position.x + x;
+			int py = rect.position.y + y;
+
+			if (px < 0 || py < 0 || px >= (int)(image.getSize().x) || py >= (int)(image.getSize().y))
+				continue;
+
+			image.setPixel(sf::Vector2u(px, py), alphaColor);
 		}
-	}
-	
-	if (!image.copy(backgroundImage, sf::Vector2u(clipped.position), r, false)) {
-		DebugError(L"removeImageWithMask: image copy failed");
-		exit(0);
 	}
 }
 

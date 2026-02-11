@@ -329,13 +329,16 @@ void Canvas::mouseLeftButtonPressedEvent() {
 		sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
 
 		if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->clickOnSelection(tile)) {
+			selection->generateRect();                 // upewnij się, że _rect.position jest LT
 			selection->_state = SelectionState::Moving;
-			selection->_offset = tile - selection->_outlineOffset;
+			selection->_offset = tile - selection->_rect.position; // <-- JEDYNA poprawna linia
 
 			if (selection->_image == nullptr) {
 				selection->_image = std::make_shared<sf::Image>();
 				selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
-				copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
+				copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image,
+					selection->_rect.position.x, selection->_rect.position.y, 0, 0,
+					selection->_maskImage, toolbar->_second_color->_color);
 				removeImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, toolbar->_second_color->_color);
 			}
 		}
@@ -400,8 +403,6 @@ void Canvas::mouseLeftButtonReleasedEvent() {
 			}
 			else {
 				if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
-
-					// DLACZEGO TO NIE DZIAŁA ??
 					copyImageWithMask(*selection->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, selection->_rect.position.x, selection->_rect.position.y, selection->_maskImage, toolbar->_second_color->_color);
 					removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, selection->_maskImage, toolbar->_second_color->_color);
 				}
@@ -445,11 +446,20 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 		}
 	}
 
-	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == SelectionState::Moving){
-		sf::Vector2i tile = selectionToTile(cursor->_worldMousePosition, _position, _size, selection->_rect.size, selection->_offset, _zoom, _zoom_delta);
-		sf::Vector2i dst = tile - selection->_offset;
-		selection->_outlineOffset.x = dst.x;
-		selection->_outlineOffset.y = dst.y;
+	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == SelectionState::Moving) {
+		sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
+
+		sf::Vector2i desiredRectPos = tile - selection->_offset;
+		desiredRectPos.x = std::clamp(desiredRectPos.x, -selection->_rect.size.x, _size.x);
+		desiredRectPos.y = std::clamp(desiredRectPos.y, -selection->_rect.size.y, _size.y);
+
+		int minX = INT_MAX, minY = INT_MAX;
+		for (auto& p : selection->_points) {
+			minX = std::min(minX, p.x);
+			minY = std::min(minY, p.y);
+		}
+
+		selection->_outlineOffset = desiredRectPos - sf::Vector2i(minX, minY);
 		selection->generateRect();
 	}
 
