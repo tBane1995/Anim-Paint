@@ -21,6 +21,7 @@ set(SOURCES
     Anim-Paint/src/ElementGUI/Scrollbar.cpp
     Anim-Paint/src/ElementGUI/TextInput.cpp
     Anim-Paint/src/ElementGUI/NumberInput.cpp
+    Anim-Paint/src/ElementGUI/EdgePoint.cpp
     Anim-Paint/src/WorldToTileConverter.cpp
     Anim-Paint/src/Clipboard.cpp
     Anim-Paint/src/History.cpp
@@ -77,6 +78,7 @@ set(HEADERS
     Anim-Paint/include/ElementGUI/Scrollbar.hpp
     Anim-Paint/include/ElementGUI/TextInput.hpp
     Anim-Paint/include/ElementGUI/NumberInput.hpp
+    Anim-Paint/include/ElementGUI/EdgePoint.hpp
     Anim-Paint/include/WorldToTileConverter.hpp
     Anim-Paint/include/Clipboard.hpp
     Anim-Paint/include/History.hpp
