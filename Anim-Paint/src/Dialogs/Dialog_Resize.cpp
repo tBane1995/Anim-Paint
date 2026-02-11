@@ -144,7 +144,7 @@ void Dialog_Resize::setPosition(sf::Vector2i position) {
 	_height_percent_text->setPosition(height_percent_text_pos);
 
 	sf::Vector2i button_pos;
-	button_pos.x = _position.x + 256 / 2 - 32;
+	button_pos.x = _position.x + getSize().x / 2 - _confirm->getSize().x / 2;
 	button_pos.y = _position.y + 160 + 64 - _confirm->getSize().y - 16;
 
 	_reset->setPosition(button_pos - sf::Vector2i(48, 0));

@@ -79,7 +79,7 @@ void Dialog_Brightness_Contrast::setPosition(sf::Vector2i position) {
 	_contrast_slider->setPosition(slider_pos + sf::Vector2i(0, 32));
 
 	sf::Vector2i button_pos;
-	button_pos.x = _position.x + 256 / 2 - 32;
+	button_pos.x = _position.x + getSize().x / 2 - _confirm->getSize().x / 2;
 	button_pos.y = _position.y + 160 - _confirm->getSize().y - 16;
 	_reset->setPosition(button_pos - sf::Vector2i(48, 0));
 	_confirm->setPosition(button_pos + sf::Vector2i(48, 0));

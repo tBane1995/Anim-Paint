@@ -7,7 +7,7 @@
 #include "Tools/Toolbar.hpp"
 #include "History.hpp"
 
-Dialog_Invert_Colors::Dialog_Invert_Colors(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"invert colors", sf::Vector2i(256+16, 160), sf::Vector2i(8, 120)) {
+Dialog_Invert_Colors::Dialog_Invert_Colors(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"invert colors", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
 
 	_state = InvertColorsState::Idle;
 
@@ -108,7 +108,7 @@ void Dialog_Invert_Colors::setPosition(sf::Vector2i position) {
 	_hsv_checkbox->setPosition(sf::Vector2i((int)(centerX + half - hsvB.size.x - _hsv_checkbox->getSize().x), (int)(centerY - _hsv_checkbox->getSize().y * 0.5f)));
 
 	sf::Vector2i button_pos;
-	button_pos.x = _position.x + 256 / 2 - 32;
+	button_pos.x = _position.x + getSize().x / 2 - _confirm->getSize().x / 2;
 	button_pos.y = _position.y + 160 - _confirm->getSize().y - 16;
 	_reset->setPosition(button_pos - sf::Vector2i(48, 0));
 	_confirm->setPosition(button_pos + sf::Vector2i(48, 0));
