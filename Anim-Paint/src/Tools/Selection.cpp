@@ -6,6 +6,8 @@
 #include "Animation/Animation.hpp"
 #include "Tools/Toolbar.hpp"
 #include "Tools/Line.hpp"
+#include "WorldToTileConverter.hpp"
+#include "Canvas.hpp"
 
 std::string shader_source = R"(
     uniform sampler2D texture;
@@ -636,6 +638,44 @@ void Selection::generateMask()
 	}
 }
 
+void Selection::generateEdgePoints() {
+
+	float scale = canvas->_zoom * canvas->_zoom_delta;
+
+	sf::Vector2f rectSize;
+	rectSize.x = float(_rect.size.x) * scale;
+	rectSize.y = float(_rect.size.y) * scale;
+
+	sf::Vector2f rectPos;
+	rectPos.x = float(canvas->_position.x) + float(_rect.position.x) * scale;
+	rectPos.y = float(canvas->_position.y) + float(_rect.position.y) * scale;
+
+	float m = 2;
+
+	_edgePoints.clear();
+	_point_left_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(-m, -m));
+	_point_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x/2, -m));
+	_point_right_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x+m, -m));
+	_point_left = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(-m, rectSize.y / 2));
+	_point_right = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x+m, rectSize.y / 2));
+	_point_left_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(-m, rectSize.y+m));
+	_point_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x / 2, rectSize.y+m));
+	_point_right_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x+m, rectSize.y+m));
+
+	_edgePoints.push_back(_point_left_top);
+	_edgePoints.push_back(_point_top);
+	_edgePoints.push_back(_point_right_top);
+	_edgePoints.push_back(_point_left);
+	_edgePoints.push_back(_point_right);
+	_edgePoints.push_back(_point_left_bottom);
+	_edgePoints.push_back(_point_bottom);
+	_edgePoints.push_back(_point_right_bottom);
+
+	_hoveredEdgePoint = nullptr;
+	_clickedEdgePoint = nullptr;
+
+}
+
 void Selection::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask) {
 	if (!_image) return;
 	if (_image->getSize().x < 1 || _image->getSize().y < 1) return;
@@ -760,8 +800,14 @@ void Selection::draw(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float
 		if (_points.size() >= 3) {
 			drawImage(canvasPosition, canvasSize, scale, alphaColor, true);
 			drawRect(canvasPosition, scale);
-			//generateOutline(true);
-			//drawOutline(canvasPosition, scale);
+			
+			if (_state == SelectionState::Selected) {
+				generateEdgePoints();
+				for (auto& point : _edgePoints) {
+					point->draw();
+				}
+					
+			}
 		}
 	}
 

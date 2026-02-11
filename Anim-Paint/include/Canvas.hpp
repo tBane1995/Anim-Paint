@@ -20,14 +20,13 @@ public:
 
 	int _pixelSize;
 
-	float _zoom;		// in percentage
+	float _zoom;		// TO_DO in percentage 
 	float _zoom_delta;	// const
 	float _min_zoom;
 	float _max_zoom;
 
 	bool _isEdited;		// if brush/eraser/fill was used, then true
 
-	sf::Vector2f _edgePointSize;
 	std::vector<std::shared_ptr<EdgePoint>> _edgePoints;	// points use to resize of canvas
 	std::shared_ptr<EdgePoint> _point_left_top;
 	std::shared_ptr<EdgePoint> _point_top;
@@ -40,6 +39,7 @@ public:
 	std::shared_ptr<EdgePoint> _hoveredEdgePoint;
 	std::shared_ptr<EdgePoint> _clickedEdgePoint;
 	sf::Vector2i _orginalEdgePointPosition;
+
 	std::vector<std::shared_ptr<Frame>> _backupFrames;
 
 	CanvasState _state;

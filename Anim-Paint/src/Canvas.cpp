@@ -629,7 +629,7 @@ void Canvas::update() {
 
 	if (_state == CanvasState::Resizing) {
 		sf::Vector2f p;
-		p = (sf::Vector2f(cursor->_worldMousePosition) + _edgePointSize / 2.0f - sf::Vector2f(_clickedEdgePoint->getPosition())) / (_zoom * _zoom_delta);
+		p = (sf::Vector2f(cursor->_worldMousePosition) + sf::Vector2f(_edgePoints[0]->getSize()) / 2.0f - sf::Vector2f(_clickedEdgePoint->getPosition())) / (_zoom * _zoom_delta);
 		sf::Vector2i pp = sf::Vector2i(p);
 		//std::cout << pp.x << ", " << pp.y << "\n";
 
