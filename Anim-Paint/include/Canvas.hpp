@@ -56,6 +56,7 @@ public:
 	void setPosition(sf::Vector2i position);
 	void setCenter();
 	void setZoom(float mouseWheelScrolllDelta);
+	void resize();
 	void drawPixels(sf::Color color);
 	void fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords);
 	void fillPixels(sf::Color color);

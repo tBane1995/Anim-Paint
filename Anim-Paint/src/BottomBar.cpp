@@ -60,15 +60,7 @@ void BottomBar::resize() {
 	_textSelectionSize->setPosition(_textSelectionSizePosition);
 }
 
-void BottomBar::cursorHover() {
-
-}
-
-void BottomBar::handleEvent(const sf::Event& event) {
-
-	if (ElementGUI_hovered != canvas && ElementGUI_hovered != canvas->_hoveredEdgePoint && _hoveredElementGUI == ElementGUI_hovered)
-		return;
-
+void BottomBar::updateText() {
 	_hoveredElementGUI = ElementGUI_hovered;
 
 	if (_hoveredElementGUI == canvas) {
@@ -94,6 +86,18 @@ void BottomBar::handleEvent(const sf::Event& event) {
 	else {
 		_textSelectionSize->setString(L"");
 	}
+}
+
+void BottomBar::cursorHover() {
+
+}
+
+void BottomBar::handleEvent(const sf::Event& event) {
+
+	if (ElementGUI_hovered != canvas && ElementGUI_hovered != canvas->_hoveredEdgePoint && _hoveredElementGUI == ElementGUI_hovered)
+		return;
+
+	updateText();
 
 }
 

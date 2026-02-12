@@ -133,6 +133,10 @@ void Canvas::setPosition(sf::Vector2i position) {
 	_point_left_bottom->setPosition(_position + sf::Vector2i(0, getZoomedSize(_size).y));
 	_point_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x / 2, getZoomedSize(_size).y));
 	_point_right_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y));
+
+	if(toolbar->_toolType == ToolType::Selector) {
+		selection->generateEdgePoints();
+	}
 }
 
 void Canvas::setCenter() {
@@ -155,6 +159,138 @@ void Canvas::setZoom(float mouseWheelScrolllDelta) {
 	setPosition(_position);
 }
 
+void Canvas::resize() {
+	sf::Vector2f p;
+	p = (sf::Vector2f(cursor->_worldMousePosition) + sf::Vector2f(_edgePoints[0]->getSize()) / 2.0f - sf::Vector2f(_clickedEdgePoint->getPosition())) / (_zoom * _zoom_delta);
+	sf::Vector2i pp = sf::Vector2i(p);
+	//std::cout << pp.x << ", " << pp.y << "\n";
+
+	float minX, minY, maxX, maxY;
+
+	minX = (float)(_point_left->getPosition().x);
+	minY = (float)(_point_top->getPosition().y);
+	maxX = (float)(_point_right->getPosition().x);
+	maxY = (float)(_point_bottom->getPosition().y);
+
+	if (_clickedEdgePoint == _point_left_top) {
+		minX = (float)(_point_left->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
+		minY = (float)(_point_top->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
+	}
+	else if (_clickedEdgePoint == _point_right_top) {
+		minY = (float)(_point_top->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
+		maxX = (float)(_point_right->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
+	}
+	else if (_clickedEdgePoint == _point_left_bottom) {
+		minX = (float)(_point_left->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
+		maxY = (float)(_point_bottom->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
+	}
+	else if (_clickedEdgePoint == _point_right_bottom) {
+		maxX = (float)(_point_right->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
+		maxY = (float)(_point_bottom->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
+	}
+	else if (_clickedEdgePoint == _point_top) {
+		minY = (float)(_point_top->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
+	}
+	else if (_clickedEdgePoint == _point_bottom) {
+		maxY = (float)(_point_bottom->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
+	}
+	else if (_clickedEdgePoint == _point_left) {
+		minX = (float)(_point_left->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
+	}
+	else if (_clickedEdgePoint == _point_right) {
+		maxX = (float)(_point_right->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
+	}
+
+	float minWpx = (float)(canvas->_minSize.x * _zoom * _zoom_delta);
+	float minHpx = (float)(canvas->_minSize.y * _zoom * _zoom_delta);
+
+	float maxWpx = (float)(canvas->_maxSize.x * _zoom * _zoom_delta);
+	float maxHpx = (float)(canvas->_maxSize.y * _zoom * _zoom_delta);
+
+	// Który bok/narożnik jest przeciągany?
+	const bool movingLeft = (_clickedEdgePoint == _point_left || _clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_left_bottom);
+	const bool movingRight = (_clickedEdgePoint == _point_right || _clickedEdgePoint == _point_right_top || _clickedEdgePoint == _point_right_bottom);
+	const bool movingTop = (_clickedEdgePoint == _point_top || _clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_right_top);
+	const bool movingBottom = (_clickedEdgePoint == _point_bottom || _clickedEdgePoint == _point_left_bottom || _clickedEdgePoint == _point_right_bottom);
+
+	if ((maxX - minX) < minWpx) {
+		if (movingLeft)  minX = maxX - minWpx;   // ciągniesz lewą krawędź → przytnij ją
+		else             maxX = minX + minWpx;   // w innym wypadku trzymaj prawą
+	}
+
+	if ((maxY - minY) < minHpx) {
+		if (movingTop)   minY = maxY - minHpx;   // ciągniesz górną krawędź → przytnij ją
+		else             maxY = minY + minHpx;   // w innym wypadku trzymaj dolną
+	}
+
+	if ((maxX - minX) > maxWpx) {
+		if (movingLeft)  minX = maxX - maxWpx;   // ciągniesz lewą krawędź → przytnij ją
+		else             maxX = minX + maxWpx;   // w innym wypadku trzymaj prawą
+	}
+
+	if ((maxY - minY) > maxHpx) {
+		if (movingTop)   minY = maxY - maxHpx;   // ciągniesz górną krawędź → przytnij ją
+		else             maxY = minY + maxHpx;   // w innym wypadku trzymaj dolną
+	}
+
+	sf::Vector2i dst;
+	dst.x = (int)(((float)(_orginalEdgePointPosition.x) - minX) / (_zoom * _zoom_delta));
+	dst.y = (int)(((float)(_orginalEdgePointPosition.y) - minY) / (_zoom * _zoom_delta));
+
+	int iminX = (int)minX;
+	int iminY = (int)minY;
+	int imaxX = (int)maxX;
+	int imaxY = (int)maxY;
+
+	_position = sf::Vector2i(iminX, iminY);
+
+	_point_left_top->setPosition(sf::Vector2i(iminX, iminY));
+	_point_top->setPosition(sf::Vector2i((iminX + imaxX) / 2, iminY));
+	_point_right_top->setPosition(sf::Vector2i(imaxX, iminY));
+
+	_point_left->setPosition(sf::Vector2i(iminX, (iminY + imaxY) / 2));
+	_point_right->setPosition(sf::Vector2i(imaxX, (iminY + imaxY) / 2));
+
+	_point_left_bottom->setPosition(sf::Vector2i(iminX, imaxY));
+	_point_bottom->setPosition(sf::Vector2i((iminX + imaxX) / 2, imaxY));
+	_point_right_bottom->setPosition(sf::Vector2i(imaxX, imaxY));
+
+	////////////////////
+
+	sf::Vector2i newSize;
+	newSize.x = (int)((maxX - minX) / (_zoom * _zoom_delta));
+	newSize.y = (int)((maxY - minY) / (_zoom * _zoom_delta));
+	_size = newSize;
+
+	generateBackground(_size);
+
+	_rect.position = _point_left_top->getPosition();
+
+	if (p.x < 0)
+		_offset.x = _offset.x - (int)(float(p.x) * _zoom * _zoom_delta);
+
+	if (p.y < 0)
+		_offset.y = _offset.y - (int)(float(p.y) * _zoom * _zoom_delta);
+
+	const size_t framesCount = std::min(_backupFrames.size(), getCurrentAnimation()->getFrames().size());
+
+	for (size_t f = 0; f < framesCount; ++f) {
+		std::shared_ptr<Frame> src = _backupFrames[f];
+		std::shared_ptr<Frame> org = getCurrentAnimation()->getFrames()[f];
+
+		const size_t layersCount = std::min(src->getLayers().size(), org->getLayers().size());
+		for (size_t l = 0; l < layersCount; ++l) {
+			std::shared_ptr<Layer> srcLayer = src->getLayers()[l];
+			std::shared_ptr<Layer> orgLayer = org->getLayers()[l];
+
+			sf::Image newImage;
+			newImage.resize(sf::Vector2u(_size), toolbar->_second_color->_color);
+			pasteImageWithAlpha(newImage, srcLayer->_image, dst.x, dst.y);
+			orgLayer->_image = newImage;
+		}
+
+	}
+}
 
 void Canvas::drawPixels(sf::Color color) {
 
@@ -270,6 +406,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 	}
 
 	if (ElementGUI_pressed.get() == nullptr || ElementGUI_pressed.get() == this) {
+
 		sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
 
 		if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->clickOnSelection(tile)) {
@@ -351,11 +488,13 @@ void Canvas::mouseLeftButtonReleasedEvent() {
 					removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, selection->_maskImage, toolbar->_second_color->_color);
 				}
 				selection->_state = SelectionState::Selected;
+				selection->generateEdgePoints();
 			}
 
 		}
 		else if (selection->_state == SelectionState::Moving) {
 			selection->_state = SelectionState::Selected;
+			selection->generateEdgePoints();
 		}else if (_isEdited) {
 			history->saveStep();
 			_isEdited = false;
@@ -499,6 +638,18 @@ void Canvas::cursorHover() {
 		}
 	}
 
+	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == SelectionState::Selected) {
+
+		selection->_hoveredEdgePoint = nullptr;
+
+		for (auto& point : selection->_edgePoints) {
+			point->cursorHover();
+			if (ElementGUI_hovered == point) {
+				selection->_hoveredEdgePoint = point;
+			}
+		}
+	}
+
 	if(selection->_state == SelectionState::Selecting) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
@@ -531,9 +682,30 @@ void Canvas::handleEvent(const sf::Event& event) {
 			point->handleEvent(event);
 		}
 	}
-	
 
-	// resizing canvas
+	if (dialogs.empty() && (toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == SelectionState::Selected) {
+		for (auto& point : selection->_edgePoints) {
+			point->handleEvent(event);
+		}
+	}
+	
+	// selection resizing
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+		if (selection->_state == SelectionState::Selected && selection->_hoveredEdgePoint != nullptr && ElementGUI_hovered == selection->_hoveredEdgePoint) {
+			selection->_clickedEdgePoint = selection->_hoveredEdgePoint;
+			selection->_orginalEdgePointPosition = selection->_point_left_top->getPosition();
+			selection->_state = SelectionState::Resizing;
+		}
+	}
+	else if (selection->_state == SelectionState::Resizing) {
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			selection->_clickedEdgePoint = nullptr;
+			selection->_state = SelectionState::Selected;
+		}
+		return;
+	}
+
+	// canvas resizing
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (dialogs.empty() && toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
 			if (_hoveredEdgePoint != nullptr && ElementGUI_hovered == _hoveredEdgePoint) {
@@ -564,7 +736,6 @@ void Canvas::handleEvent(const sf::Event& event) {
 			_state = CanvasState::Idle;
 			_backupFrames.clear();
 		}
-
 		return;
 	}
 
@@ -622,142 +793,20 @@ float Canvas::clampAxisOverscroll(float v, float content, float viewport, float 
 
 void Canvas::update() {
 
+	if (selection->_state == SelectionState::Resizing) {
+		for (auto& point : selection->_edgePoints) {
+			point->update();
+		}
+		selection->resize();
+		return;
+	}
 
 	for (auto& point : _edgePoints) {
 		point->update();
 	}
 
 	if (_state == CanvasState::Resizing) {
-		sf::Vector2f p;
-		p = (sf::Vector2f(cursor->_worldMousePosition) + sf::Vector2f(_edgePoints[0]->getSize()) / 2.0f - sf::Vector2f(_clickedEdgePoint->getPosition())) / (_zoom * _zoom_delta);
-		sf::Vector2i pp = sf::Vector2i(p);
-		//std::cout << pp.x << ", " << pp.y << "\n";
-
-		float minX, minY, maxX, maxY;
-
-		minX = (float)(_point_left->getPosition().x);
-		minY = (float)(_point_top->getPosition().y);
-		maxX = (float)(_point_right->getPosition().x);
-		maxY = (float)(_point_bottom->getPosition().y);
-
-		if (_clickedEdgePoint == _point_left_top) {
-			minX = (float)(_point_left->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
-			minY = (float)(_point_top->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
-		}
-		else if (_clickedEdgePoint == _point_right_top) {
-			minY = (float)(_point_top->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
-			maxX = (float)(_point_right->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
-		}
-		else if (_clickedEdgePoint == _point_left_bottom) {
-			minX = (float)(_point_left->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
-			maxY = (float)(_point_bottom->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
-		}
-		else if (_clickedEdgePoint == _point_right_bottom) {
-			maxX = (float)(_point_right->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
-			maxY = (float)(_point_bottom->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
-		}
-		else if (_clickedEdgePoint == _point_top) {
-			minY = (float)(_point_top->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
-		}
-		else if (_clickedEdgePoint == _point_bottom) {
-			maxY = (float)(_point_bottom->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
-		}
-		else if (_clickedEdgePoint == _point_left) {
-			minX = (float)(_point_left->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
-		}
-		else if (_clickedEdgePoint == _point_right) {
-			maxX = (float)(_point_right->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
-		}
-
-		float minWpx = (float)(canvas->_minSize.x * _zoom * _zoom_delta);
-		float minHpx = (float)(canvas->_minSize.y * _zoom * _zoom_delta);
-
-		float maxWpx = (float)(canvas->_maxSize.x * _zoom * _zoom_delta);
-		float maxHpx = (float)(canvas->_maxSize.y * _zoom * _zoom_delta);
-
-		// Który bok/narożnik jest przeciągany?
-		const bool movingLeft = (_clickedEdgePoint == _point_left || _clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_left_bottom);
-		const bool movingRight = (_clickedEdgePoint == _point_right || _clickedEdgePoint == _point_right_top || _clickedEdgePoint == _point_right_bottom);
-		const bool movingTop = (_clickedEdgePoint == _point_top || _clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_right_top);
-		const bool movingBottom = (_clickedEdgePoint == _point_bottom || _clickedEdgePoint == _point_left_bottom || _clickedEdgePoint == _point_right_bottom);
-
-		if ((maxX - minX) < minWpx) {
-			if (movingLeft)  minX = maxX - minWpx;   // ciągniesz lewą krawędź → przytnij ją
-			else             maxX = minX + minWpx;   // w innym wypadku trzymaj prawą
-		}
-
-		if ((maxY - minY) < minHpx) {
-			if (movingTop)   minY = maxY - minHpx;   // ciągniesz górną krawędź → przytnij ją
-			else             maxY = minY + minHpx;   // w innym wypadku trzymaj dolną
-		}
-
-		if ((maxX - minX) > maxWpx) {
-			if (movingLeft)  minX = maxX - maxWpx;   // ciągniesz lewą krawędź → przytnij ją
-			else             maxX = minX + maxWpx;   // w innym wypadku trzymaj prawą
-		}
-
-		if ((maxY - minY) > maxHpx) {
-			if (movingTop)   minY = maxY - maxHpx;   // ciągniesz górną krawędź → przytnij ją
-			else             maxY = minY + maxHpx;   // w innym wypadku trzymaj dolną
-		}
-
-		sf::Vector2i dst;
-		dst.x = (int)(((float)(_orginalEdgePointPosition.x) - minX) / (_zoom * _zoom_delta));
-		dst.y = (int)(((float)(_orginalEdgePointPosition.y) - minY) / (_zoom * _zoom_delta));
-
-		int iminX = (int)minX;
-		int iminY = (int)minY;
-		int imaxX = (int)maxX;
-		int imaxY = (int)maxY;
-
-		_position = sf::Vector2i(iminX, iminY);
-
-		_point_left_top->setPosition(sf::Vector2i(iminX, iminY));
-		_point_top->setPosition(sf::Vector2i((iminX + imaxX) / 2, iminY));
-		_point_right_top->setPosition(sf::Vector2i(imaxX, iminY));
-
-		_point_left->setPosition(sf::Vector2i(iminX, (iminY + imaxY) / 2));
-		_point_right->setPosition(sf::Vector2i(imaxX, (iminY + imaxY) / 2));
-
-		_point_left_bottom->setPosition(sf::Vector2i(iminX, imaxY));
-		_point_bottom->setPosition(sf::Vector2i((iminX + imaxX) / 2, imaxY));
-		_point_right_bottom->setPosition(sf::Vector2i(imaxX, imaxY));
-
-		////////////////////
-
-		sf::Vector2i newSize;
-		newSize.x = (int)((maxX - minX) / (_zoom * _zoom_delta));
-		newSize.y = (int)((maxY - minY) / (_zoom * _zoom_delta));
-		_size = newSize;
-
-		generateBackground(_size);
-
-		_rect.position = _point_left_top->getPosition();
-
-		if (p.x < 0)
-			_offset.x = _offset.x - (int)(float(p.x) * _zoom * _zoom_delta);
-
-		if (p.y < 0)
-			_offset.y = _offset.y - (int)(float(p.y) * _zoom * _zoom_delta);
-
-		const size_t framesCount = std::min(_backupFrames.size(), getCurrentAnimation()->getFrames().size());
-
-		for (size_t f = 0; f < framesCount; ++f) {
-			std::shared_ptr<Frame> src = _backupFrames[f];
-			std::shared_ptr<Frame> org = getCurrentAnimation()->getFrames()[f];
-
-			const size_t layersCount = std::min(src->getLayers().size(), org->getLayers().size());
-			for (size_t l = 0; l < layersCount; ++l) {
-				std::shared_ptr<Layer> srcLayer = src->getLayers()[l];
-				std::shared_ptr<Layer> orgLayer = org->getLayers()[l];
-
-				sf::Image newImage;
-				newImage.resize(sf::Vector2u(_size), toolbar->_second_color->_color);
-				pasteImageWithAlpha(newImage, srcLayer->_image, dst.x, dst.y);
-				orgLayer->_image = newImage;
-			}
-
-		}
+		resize();
 	}
 	else if (_state == CanvasState::Moving) {
 		sf::Vector2f target = sf::Vector2f(cursor->_worldMousePosition + _offset);

@@ -109,6 +109,11 @@ sf::Color canvas_color2;
 // palette with colors
 int colors_dialog_margin;
 
+// selection
+sf::Color selection_color;
+int selection_border_width;
+sf::Color selection_border_color;
+
 void loadTheme() {
 
 	if (!basicFont.openFromFile("C:/Windows/Fonts/arial.ttf")) {
@@ -224,4 +229,9 @@ void loadTheme() {
 
 	// palette with colors
 	colors_dialog_margin = 2;
+
+	// selection
+	selection_color = sf::Color(127, 47, 47, 127);
+	selection_border_width = 4;
+	selection_border_color = sf::Color(47, 127, 127, 255);
 }

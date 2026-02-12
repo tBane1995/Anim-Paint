@@ -12,7 +12,7 @@ void copyImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, int s
 void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor = sf::Color::Transparent);
 void pasteImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor = sf::Color::Transparent);
 
-enum class SelectionState { None, Selecting, Selected, Moving };
+enum class SelectionState { None, Selecting, Selected, Moving, Resizing };
 
 class Selection {
 public:
@@ -70,6 +70,7 @@ public:
 	bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
 	void generateMask();
 	void generateEdgePoints();
+	void resize();
 	void drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask = false);
 	void drawOutline(sf::Vector2i canvasPosition, float scale);
 	void drawRect(sf::Vector2i canvasPosition, float scale);

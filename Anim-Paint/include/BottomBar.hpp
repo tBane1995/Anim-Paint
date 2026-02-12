@@ -14,6 +14,7 @@ public:
 
 	sf::Vector2i getSize();
 	void resize();
+	void updateText();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

@@ -7,7 +7,9 @@
 #include "Tools/Toolbar.hpp"
 #include "Tools/Line.hpp"
 #include "WorldToTileConverter.hpp"
+#include "Cursor.hpp"
 #include "Canvas.hpp"
+#include "Theme.hpp"
 
 std::string shader_source = R"(
     uniform sampler2D texture;
@@ -551,7 +553,7 @@ void Selection::generateOutline(bool selectionComplete) {
 
 	// generate outline texture
 	_outlineRenderTexture.clear(sf::Color(0, 0, 0, 0)); 
-	sf::Color selectionColor = sf::Color(47, 127, 127, 255); 
+	sf::Color selectionColor = selection_border_color;
 	sf::VertexArray lines(sf::PrimitiveType::LineStrip); 
 	
 	for (auto& point : _points) 
@@ -650,7 +652,7 @@ void Selection::generateEdgePoints() {
 	rectPos.x = float(canvas->_position.x) + float(_rect.position.x) * scale;
 	rectPos.y = float(canvas->_position.y) + float(_rect.position.y) * scale;
 
-	float m = 2;
+	float m = selection_border_width/2;
 
 	_edgePoints.clear();
 	_point_left_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(-m, -m));
@@ -671,9 +673,83 @@ void Selection::generateEdgePoints() {
 	_edgePoints.push_back(_point_bottom);
 	_edgePoints.push_back(_point_right_bottom);
 
-	_hoveredEdgePoint = nullptr;
-	_clickedEdgePoint = nullptr;
 
+
+}
+
+void Selection::resize() {
+
+	float scale = (float)(canvas->_zoom * canvas->_zoom_delta);
+	sf::Vector2f p = (sf::Vector2f(cursor->_worldMousePosition) + sf::Vector2f(_edgePoints[0]->getSize()) / 2.0f - sf::Vector2f(_clickedEdgePoint->getPosition())) / scale;
+
+	float minX, minY, maxX, maxY;
+	minX = (float)(_point_left->getPosition().x);
+	minY = (float)(_point_top->getPosition().y);
+	maxX = (float)(_point_right->getPosition().x);
+	maxY = (float)(_point_bottom->getPosition().y);
+
+	if (_clickedEdgePoint == _point_left_top) {
+		minX = (float)(_point_left->getPosition().x + (int)p.x * (int)scale);
+		minY = (float)(_point_top->getPosition().y + (int)p.y * (int)scale);
+	}
+	else if (_clickedEdgePoint == _point_right_top) {
+		minY = (float)(_point_top->getPosition().y + (int)p.y * (int)scale);
+		maxX = (float)(_point_right->getPosition().x + (int)p.x * (int)scale);
+	}
+	else if (_clickedEdgePoint == _point_left_bottom) {
+		minX = (float)(_point_left->getPosition().x + (int)p.x * (int)scale);
+		maxY = (float)(_point_bottom->getPosition().y + (int)p.y * (int)scale);
+	}
+	else if (_clickedEdgePoint == _point_right_bottom) {
+		maxX = (float)(_point_right->getPosition().x + (int)p.x * (int)scale);
+		maxY = (float)(_point_bottom->getPosition().y + (int)p.y * (int)scale);
+	}
+	else if (_clickedEdgePoint == _point_top) {
+		minY = (float)(_point_top->getPosition().y + (int)p.y * (int)scale);
+	}
+	else if (_clickedEdgePoint == _point_bottom) {
+		maxY = (float)(_point_bottom->getPosition().y + (int)p.y * (int)scale);
+	}
+	else if (_clickedEdgePoint == _point_left) {
+		minX = (float)(_point_left->getPosition().x + (int)p.x * (int)scale);
+	}
+	else if (_clickedEdgePoint == _point_right) {
+		maxX = (float)(_point_right->getPosition().x + (int)p.x * (int)scale);
+	}
+
+	const float MIN_SIZE = scale;
+
+	if (_clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_left || _clickedEdgePoint == _point_left_bottom) {
+		minX = std::min(minX, maxX - MIN_SIZE);
+	}
+
+	if (_clickedEdgePoint == _point_right_top || _clickedEdgePoint == _point_right || _clickedEdgePoint == _point_right_bottom) {
+		maxX = std::max(maxX, minX + MIN_SIZE);
+	}
+
+	if (_clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_top || _clickedEdgePoint == _point_right_top) {
+		minY = std::min(minY, maxY - MIN_SIZE);
+	}
+
+	if (_clickedEdgePoint == _point_left_bottom || _clickedEdgePoint == _point_bottom || _clickedEdgePoint == _point_right_bottom) {
+		maxY = std::max(maxY, minY + MIN_SIZE);
+	}
+
+	float iminX = std::min(minX, maxX);
+	float iminY = std::min(minY, maxY);
+	float imaxX = std::max(minX, maxX);
+	float imaxY = std::max(minY, maxY);
+
+	_point_left_top->setPosition(sf::Vector2i((int)iminX, (int)iminY));
+	_point_top->setPosition(sf::Vector2i((int)((iminX + imaxX) / 2), (int)iminY));
+	_point_right_top->setPosition(sf::Vector2i((int)imaxX, (int)iminY));
+
+	_point_left->setPosition(sf::Vector2i((int)iminX, (int)((iminY + imaxY) / 2)));
+	_point_right->setPosition(sf::Vector2i((int)imaxX, (int)((iminY + imaxY) / 2)));
+
+	_point_left_bottom->setPosition(sf::Vector2i((int)iminX, (int)imaxY));
+	_point_bottom->setPosition(sf::Vector2i((int)((iminX + imaxX) / 2), (int)imaxY));
+	_point_right_bottom->setPosition(sf::Vector2i((int)imaxX, (int)imaxY));
 }
 
 void Selection::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask) {
@@ -777,9 +853,9 @@ void Selection::drawRect(sf::Vector2i canvasPosition, float scale) {
 	rectPos.y = float(canvasPosition.y) + float(_rect.position.y) * scale;
 	rect.setPosition(rectPos);
 
-	rect.setFillColor(sf::Color(127, 47, 47, 127));
-	rect.setOutlineColor(sf::Color(47, 127, 127, 255));
-	rect.setOutlineThickness(4.0f);
+	rect.setFillColor(selection_color);
+	rect.setOutlineColor(selection_border_color);
+	rect.setOutlineThickness((float)(selection_border_width));
 
 	window->draw(rect);
 }
@@ -796,13 +872,12 @@ void Selection::draw(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float
 
 	}
 
-	if (_state == SelectionState::Selected || _state == SelectionState::Moving) {
+	if (_state == SelectionState::Selected || _state == SelectionState::Moving || _state == SelectionState::Resizing) {
 		if (_points.size() >= 3) {
 			drawImage(canvasPosition, canvasSize, scale, alphaColor, true);
 			drawRect(canvasPosition, scale);
 			
-			if (_state == SelectionState::Selected) {
-				generateEdgePoints();
+			if (_state == SelectionState::Selected || _state == SelectionState::Resizing) {
 				for (auto& point : _edgePoints) {
 					point->draw();
 				}

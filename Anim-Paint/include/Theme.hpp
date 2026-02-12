@@ -108,4 +108,9 @@ extern sf::Color canvas_color2;
 // palette with colors
 extern int colors_dialog_margin;
 
+// selection
+extern sf::Color selection_color;
+extern int selection_border_width;
+extern sf::Color selection_border_color;
+
 void loadTheme();

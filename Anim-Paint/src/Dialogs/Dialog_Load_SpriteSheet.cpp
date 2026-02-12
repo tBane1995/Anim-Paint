@@ -11,6 +11,7 @@
 #include "Dialogs/AnimationsDialog.hpp"
 #include "DebugLog.hpp"
 #include "History.hpp"
+#include "BottomBar.hpp"
 
 Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : Dialog(L"Import Animation", sf::Vector2i(256+16, 256+16+80)) {
 	
@@ -143,6 +144,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 			history->saveStep();
 			animations_dialog->updateText();
 			frames_dialog->updateText();
+			bottom_bar->updateText();
 			_state = DialogState::ToClose;
 		}
 		};
