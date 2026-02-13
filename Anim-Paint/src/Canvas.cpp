@@ -122,7 +122,7 @@ void Canvas::generateEdgePoints() {
 
 void Canvas::setPosition(sf::Vector2i position) {
 	_position = position;
-
+	
 	_rect.position = position;
 
 	_point_left_top->setPosition(_position);
@@ -134,7 +134,7 @@ void Canvas::setPosition(sf::Vector2i position) {
 	_point_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x / 2, getZoomedSize(_size).y));
 	_point_right_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y));
 
-	if(toolbar->_toolType == ToolType::Selector) {
+	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == SelectionState::Selected) {
 		selection->generateEdgePoints();
 	}
 }
@@ -410,9 +410,9 @@ void Canvas::mouseLeftButtonPressedEvent() {
 		sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
 
 		if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->clickOnSelection(tile)) {
-			selection->generateRect();                 // upewnij się, że _rect.position jest LT
 			selection->_state = SelectionState::Moving;
-			selection->_offset = tile - selection->_rect.position; // <-- JEDYNA poprawna linia
+			selection->_offset = tile - selection->_resizedRect.position;
+			
 
 			if (selection->_image == nullptr) {
 				selection->_image = std::make_shared<sf::Image>();
@@ -480,7 +480,8 @@ void Canvas::mouseLeftButtonReleasedEvent() {
 		if (selection->_state == SelectionState::Selecting) {
 			if (selection->_rect.size.x < 2 || selection->_rect.size.y < 2) {
 				selection->_state = SelectionState::None;
-
+				selection->generateRect();
+				selection->_resizedRect = selection->_rect;
 			}
 			else {
 				if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
@@ -544,6 +545,7 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 
 		selection->_outlineOffset = desiredRectPos - sf::Vector2i(minX, minY);
 		selection->generateRect();
+		selection->_resizedRect.position = selection->_rect.position;
 	}
 
 	else if (toolbar->_toolType == ToolType::Selector) {
@@ -570,7 +572,7 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 			selection->_points.push_back(sf::Vector2i(minX, minY)); // close
 
 			selection->generateRect();
-			
+			selection->_resizedRect = selection->_rect;
 			selection->_image = std::make_shared<sf::Image>();
 			selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
 			if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
@@ -590,6 +592,7 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 
 			selection->addPoint(tile);
 			selection->generateRect();
+			selection->_resizedRect = selection->_rect;
 
 			selection->_image = std::make_shared<sf::Image>();
 			selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);

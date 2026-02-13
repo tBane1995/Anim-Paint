@@ -378,10 +378,10 @@ void Selection::generateRect() {
 
 bool Selection::clickOnSelection(sf::Vector2i point) {
 
-	if (_rect.size.x <= 1 || _rect.size.y <= 1)
+	if (_resizedRect.size.x <= 1 || _resizedRect.size.y <= 1)
 		return false;
 
-	return _rect.contains(point);
+	return _resizedRect.contains(point);
 }
 
 void Selection::copy(sf::Image& canvas, sf::Color emptyColor)
@@ -645,12 +645,12 @@ void Selection::generateEdgePoints() {
 	float scale = canvas->_zoom * canvas->_zoom_delta;
 
 	sf::Vector2f rectSize;
-	rectSize.x = float(_rect.size.x) * scale;
-	rectSize.y = float(_rect.size.y) * scale;
+	rectSize.x = float(_resizedRect.size.x) * scale;
+	rectSize.y = float(_resizedRect.size.y) * scale;
 
 	sf::Vector2f rectPos;
-	rectPos.x = float(canvas->_position.x) + float(_rect.position.x) * scale;
-	rectPos.y = float(canvas->_position.y) + float(_rect.position.y) * scale;
+	rectPos.x = float(canvas->_position.x) + float(_resizedRect.position.x) * scale;
+	rectPos.y = float(canvas->_position.y) + float(_resizedRect.position.y) * scale;
 
 	float m = selection_border_width/2;
 
@@ -663,7 +663,7 @@ void Selection::generateEdgePoints() {
 	_point_left_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(-m, rectSize.y+m));
 	_point_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x / 2, rectSize.y+m));
 	_point_right_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x+m, rectSize.y+m));
-
+	
 	_edgePoints.push_back(_point_left_top);
 	_edgePoints.push_back(_point_top);
 	_edgePoints.push_back(_point_right_top);
@@ -750,14 +750,16 @@ void Selection::resize() {
 	_point_left_bottom->setPosition(sf::Vector2i((int)iminX, (int)imaxY));
 	_point_bottom->setPosition(sf::Vector2i((int)((iminX + imaxX) / 2), (int)imaxY));
 	_point_right_bottom->setPosition(sf::Vector2i((int)imaxX, (int)imaxY));
+
+	sf::Vector2i min = worldToTile(sf::Vector2i(minX+ MIN_SIZE, minY+ MIN_SIZE), canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+	sf::Vector2i max = worldToTile(sf::Vector2i(maxX - MIN_SIZE, maxY - MIN_SIZE), canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+
+	_resizedRect = sf::IntRect(min, max-min + sf::Vector2i(1,1));
 }
 
 void Selection::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask) {
 	if (!_image) return;
 	if (_image->getSize().x < 1 || _image->getSize().y < 1) return;
-
-	generateRect();
-
 	if (_rect.size.x < 1 || _rect.size.y < 1) return;
 
 	sf::IntRect canvasRect(sf::Vector2i(0, 0), canvasSize);
@@ -843,14 +845,14 @@ void Selection::drawOutline(sf::Vector2i canvasPosition, float scale) {
 void Selection::drawRect(sf::Vector2i canvasPosition, float scale) {
 
 	sf::Vector2f rectSize;
-	rectSize.x = float(_rect.size.x) * scale;
-	rectSize.y = float(_rect.size.y) * scale;
+	rectSize.x = float(_resizedRect.size.x) * scale;
+	rectSize.y = float(_resizedRect.size.y) * scale;
 
 	sf::RectangleShape rect(rectSize);
 
 	sf::Vector2f rectPos;
-	rectPos.x = float(canvasPosition.x) + float(_rect.position.x) * scale;
-	rectPos.y = float(canvasPosition.y) + float(_rect.position.y) * scale;
+	rectPos.x = float(canvasPosition.x) + float(_resizedRect.position.x) * scale;
+	rectPos.y = float(canvasPosition.y) + float(_resizedRect.position.y) * scale;
 	rect.setPosition(rectPos);
 
 	rect.setFillColor(selection_color);

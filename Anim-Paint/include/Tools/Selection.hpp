@@ -38,6 +38,9 @@ public:
 	sf::Image _maskImage;
 	sf::Shader _shader;
 
+	// resized things
+	sf::IntRect _resizedRect;
+
 	// edge points
 	std::vector<std::shared_ptr<EdgePoint>> _edgePoints;	// points use to resize of canvas
 	std::shared_ptr<EdgePoint> _point_left_top;
