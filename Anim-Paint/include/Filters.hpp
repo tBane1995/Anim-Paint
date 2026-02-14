@@ -5,16 +5,6 @@ extern std::string palette_button_shader_source;
 extern std::string palette_colors_shader_source;
 extern std::string palette_values_shader_source;
 
-extern std::string rotation_shader_source;
-extern std::string brightness_shader_source;
-extern std::string contrast_shader_source;
-extern std::string saturation_shader_source;
-extern std::string sepia_shader_source;
-extern std::string outline_shader_source;
-extern std::string chessboard_shader_source;
-extern std::string invert_rgb_shader_source;
-extern std::string invert_hsv_shader_source;
-
 void set_rotation(sf::Image& image, float angle, bool set_smooth, sf::Color backgroundColor);
 void set_brightness(sf::Image& image, float value);
 void set_contrast(sf::Image& image, float value);
