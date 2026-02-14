@@ -94,7 +94,10 @@ void BottomBar::cursorHover() {
 
 void BottomBar::handleEvent(const sf::Event& event) {
 
-	if (ElementGUI_hovered != canvas && ElementGUI_hovered != canvas->_hoveredEdgePoint && _hoveredElementGUI == ElementGUI_hovered)
+	if (ElementGUI_hovered != canvas && 
+		ElementGUI_hovered != canvas->_hoveredEdgePoint && ElementGUI_pressed != canvas->_hoveredEdgePoint &&
+		ElementGUI_hovered != selection->_hoveredEdgePoint && ElementGUI_pressed != selection->_hoveredEdgePoint &&
+		_hoveredElementGUI == ElementGUI_hovered)
 		return;
 
 	updateText();

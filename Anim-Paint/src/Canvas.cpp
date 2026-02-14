@@ -808,9 +808,6 @@ void Canvas::update() {
 		selection->resizeRect();
 		selection->generateResizedMask();
 		selection->resizeImage();
-		
-		bottom_bar->updateText();
-
 		return;
 	}
 
