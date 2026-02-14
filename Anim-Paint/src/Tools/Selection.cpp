@@ -356,10 +356,10 @@ void Selection::selectAll() {
 	int width = anim->getCurrentLayer()->_image.getSize().x - 1;
 	int height = anim->getCurrentLayer()->_image.getSize().y - 1;
 
-	selection->addPoint(sf::Vector2i(0, 0));			// LT
-	selection->addPoint(sf::Vector2i(width, 0));		// RT
-	selection->addPoint(sf::Vector2i(width, height));	// RB
-	selection->addPoint(sf::Vector2i(0, height));		// LB
+	selection->addPoint(sf::Vector2i(0, 0));
+	selection->addPoint(sf::Vector2i(width, 0));
+	selection->addPoint(sf::Vector2i(width, height));
+	selection->addPoint(sf::Vector2i(0, height));
 
 	generateRect();
 

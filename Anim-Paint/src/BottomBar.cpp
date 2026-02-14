@@ -80,7 +80,7 @@ void BottomBar::updateText() {
 	}
 
 	if (selection->_state != SelectionState::None) {
-		std::wstring ssize = std::to_wstring(selection->_rect.size.x) + L" x " + std::to_wstring(selection->_rect.size.y);
+		std::wstring ssize = std::to_wstring(selection->_resizedRect.size.x) + L" x " + std::to_wstring(selection->_resizedRect.size.y);
 		_textSelectionSize->setString(ssize);
 	}
 	else {

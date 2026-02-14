@@ -15,6 +15,7 @@
 #include "Dialogs/Palette.hpp"
 #include "Tools/Line.hpp"
 #include "History.hpp"
+#include "BottomBar.hpp"
 
 Canvas::Canvas() : ElementGUI() {
 	_minSize = sf::Vector2i(16, 16);
@@ -807,6 +808,9 @@ void Canvas::update() {
 		selection->resizeRect();
 		selection->generateResizedMask();
 		selection->resizeImage();
+		
+		bottom_bar->updateText();
+
 		return;
 	}
 
