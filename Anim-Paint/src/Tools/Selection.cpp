@@ -26,6 +26,21 @@ std::string shader_source = R"(
     }
 )";
 
+std::string resize_shader = R"(
+    uniform sampler2D texture;
+    uniform vec2 oldSize;
+    uniform vec2 newSize;
+
+    void main() {
+        vec2 uv = gl_TexCoord[0].xy * (oldSize / newSize);
+
+        if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)
+            discard;
+
+        gl_FragColor = texture2D(texture, uv);
+    }
+)";
+
 void removeImageWithAlpha(sf::Image& image, sf::IntRect rect, sf::Color alphaColor)
 {
 	if (rect.size.x <= 0 || rect.size.y <= 0)
