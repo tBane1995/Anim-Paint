@@ -36,11 +36,12 @@ public:
 	// rect, mask and shader
 	sf::IntRect _rect;
 	std::shared_ptr<sf::Image> _maskImage;
-	sf::Shader _shader;
+	sf::Shader _maskShader;
 
 	// resized things
 	sf::IntRect _resizedRect;
 	std::shared_ptr<sf::Image> _resizedMaskImage;
+	sf::Shader _resizedMaskShader;
 	std::shared_ptr<sf::Image> _resizedImage;
 
 	// edge points
@@ -74,9 +75,12 @@ public:
 	bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
 	bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
 	void generateMask();
+	void generateResizedMask();
 	void generateEdgePoints();
-	void resize();
+	void resizeRect();
+	void resizeImage();
 	void drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask = false);
+	void drawResizedImage(sf::Color alphaColor, bool useMask = false);
 	void drawOutline(sf::Vector2i canvasPosition, float scale);
 	void drawRect(sf::Vector2i canvasPosition, float scale);
 	void draw(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor);

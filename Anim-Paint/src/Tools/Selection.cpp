@@ -11,7 +11,7 @@
 #include "Canvas.hpp"
 #include "Theme.hpp"
 
-std::string shader_source = R"(
+std::string mask_shader_source = R"(
     uniform sampler2D texture;
     uniform sampler2D mask;
 	uniform vec3 alphaColor;
@@ -26,7 +26,7 @@ std::string shader_source = R"(
     }
 )";
 
-std::string resize_shader = R"(
+std::string resize_mask_shader_source = R"(
     uniform sampler2D texture;
     uniform vec2 oldSize;
     uniform vec2 newSize;
@@ -293,7 +293,7 @@ Selection::Selection() {
 
 	_maskImage = nullptr;
 
-	if (!_shader.loadFromMemory(shader_source, sf::Shader::Type::Fragment)) {
+	if (!_maskShader.loadFromMemory(mask_shader_source, sf::Shader::Type::Fragment)) {
 		DebugError(L"Lasso::Lasso: Failed to load shader from memory.");
 		exit(0);
 	}
@@ -303,6 +303,11 @@ Selection::Selection() {
 
 	_resizedMaskImage = nullptr;
 	_resizedImage = nullptr;
+
+	if (!_resizedMaskShader.loadFromMemory(resize_mask_shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"Lasso::Lasso: Failed to load shader from memory.");
+		exit(0);
+	}
 }
 
 Selection::~Selection() {
@@ -363,8 +368,14 @@ void Selection::selectAll() {
 
 	generateMask();
 
-	copyImageWithMask(*_image, anim->getCurrentLayer()->_image, 0, 0, 0, 0, *_maskImage, toolbar->_second_color->_color);
-	removeImageWithMask(anim->getCurrentLayer()->_image, _rect, *_maskImage, toolbar->_second_color->_color);
+	_resizedRect = _rect;
+	_resizedImage = _image;
+	_resizedMaskImage = _maskImage;
+
+	generateEdgePoints();
+
+	copyImageWithMask(*_image, anim->getCurrentLayer()->_image, 0, 0, 0, 0, *_resizedMaskImage, toolbar->_second_color->_color);
+	removeImageWithMask(anim->getCurrentLayer()->_image, _resizedRect, *_resizedMaskImage, toolbar->_second_color->_color);
 
 	_state = SelectionState::Selected;
 }
@@ -499,7 +510,7 @@ bool Selection::paste(sf::Image& canvas, sf::Color emptyColor)
 {
 
 	if (_image != nullptr) {
-		paste(canvas, *_image, _rect.position.x, _rect.position.y, *_maskImage, emptyColor);
+		paste(canvas, *_resizedImage, _rect.position.x, _rect.position.y, *_resizedMaskImage, emptyColor);
 	}
 	else {
 		_image = std::make_shared<sf::Image>();
@@ -520,6 +531,9 @@ bool Selection::paste(sf::Image& canvas, sf::Color emptyColor)
 	addPoint(sf::Vector2i(_image->getSize().x - 1, _image->getSize().y - 1));
 	addPoint(sf::Vector2i(_image->getSize().x - 1, 0));
 
+	_rect.position = sf::Vector2i(0, 0);
+	_resizedRect.position = sf::Vector2i(0, 0);
+	generateEdgePoints();
 	return true;
 }
 
@@ -651,8 +665,28 @@ void Selection::generateMask()
 			int lx = (_rect.position.x + x) - _outlineOffset.x;
 			int ly = (_rect.position.y + y) - _outlineOffset.y;
 
-			if (isPointInPolygon({ lx, ly }, _points)) {
-				_maskImage->setPixel({ (unsigned)x, (unsigned)y }, sf::Color::White);
+			if (isPointInPolygon(sf::Vector2i(lx, ly), _points)) {
+				_maskImage->setPixel(sf::Vector2u(x, y), sf::Color::White);
+			}
+		}
+	}
+}
+
+void Selection::generateResizedMask() {
+	if (_rect.size.x <= 1 || _rect.size.y <= 1) return;
+	if (_resizedRect.size.x <= 1 || _resizedRect.size.y <= 1) return;
+
+	_resizedMaskImage = std::make_shared<sf::Image>();
+	_resizedMaskImage->resize(sf::Vector2u(_resizedRect.size), sf::Color::Transparent);
+
+	for (int y = 0; y < _resizedRect.size.y; ++y) {
+		for (int x = 0; x < _resizedRect.size.x; ++x) {
+
+			int lx = (_rect.position.x + (x * _rect.size.x) / _resizedRect.size.x) - _outlineOffset.x;
+			int ly = (_rect.position.y + (y * _rect.size.y) / _resizedRect.size.y) - _outlineOffset.y;
+
+			if (isPointInPolygon(sf::Vector2i(lx, ly), _points)) {
+				_resizedMaskImage->setPixel(sf::Vector2u(x, y), sf::Color::White);
 			}
 		}
 	}
@@ -695,7 +729,7 @@ void Selection::generateEdgePoints() {
 
 }
 
-void Selection::resize() {
+void Selection::resizeRect() {
 
 	float scale = (float)(canvas->_zoom * canvas->_zoom_delta);
 	sf::Vector2f p = (sf::Vector2f(cursor->_worldMousePosition) + sf::Vector2f(_edgePoints[0]->getSize()) / 2.0f - sf::Vector2f(_clickedEdgePoint->getPosition())) / scale;
@@ -775,6 +809,29 @@ void Selection::resize() {
 	_resizedRect = sf::IntRect(min, max-min + sf::Vector2i(1,1));
 }
 
+void Selection::resizeImage() {
+	if (_image == nullptr) return;
+	if (_rect.size.x <= 1 || _rect.size.y <= 1) return;
+	if (_resizedRect.size.x <= 1 || _resizedRect.size.y <= 1) return;
+
+	_resizedImage = std::make_shared<sf::Image>();
+	_resizedImage->resize(sf::Vector2u(_resizedRect.size), sf::Color::Transparent);
+
+	sf::Vector2u imgSize = _image->getSize();
+
+	for (int y = 0; y < _resizedRect.size.y; ++y) {
+		for (int x = 0; x < _resizedRect.size.x; ++x) {
+
+			int sx = (x * _rect.size.x) / _resizedRect.size.x;
+			int sy = (y * _rect.size.y) / _resizedRect.size.y;
+
+			if (sx < 0 || sy < 0 || sx >= (int)imgSize.x || sy >= (int)imgSize.y)
+				continue;
+
+			_resizedImage->setPixel(sf::Vector2u(x, y), _image->getPixel(sf::Vector2u(sx, sy)));
+		}
+	}
+}
 void Selection::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask) {
 	if (!_image) return;
 	if (_image->getSize().x < 1 || _image->getSize().y < 1) return;
@@ -826,9 +883,9 @@ void Selection::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, 
 		exit(0);
 	}
 
-	_shader.setUniform("texture", _texture);
-	_shader.setUniform("mask", maskTexture);
-	_shader.setUniform("alphaColor", sf::Vector3f(alphaColor.r, alphaColor.g, alphaColor.b));
+	_maskShader.setUniform("texture", _texture);
+	_maskShader.setUniform("mask", maskTexture);
+	_maskShader.setUniform("alphaColor", sf::Vector3f(alphaColor.r, alphaColor.g, alphaColor.b));
 
 
 	_sprite = std::make_shared<sf::Sprite>(_texture);
@@ -841,7 +898,80 @@ void Selection::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, 
 	_sprite->setPosition(spritePos);
 
 	sf::RenderStates rs;
-	rs.shader = &_shader;
+	rs.shader = &_maskShader;
+	window->draw(*_sprite, rs);
+
+}
+
+
+void Selection::drawResizedImage(sf::Color alphaColor, bool useMask) {
+	if (!_resizedImage) return;
+	if (_resizedImage->getSize().x < 1 || _resizedImage->getSize().y < 1) return;
+	if (_resizedRect.size.x < 1 || _resizedRect.size.y < 1) return;
+
+	sf::IntRect canvasRect(sf::Vector2i(0, 0), canvas->_size);
+
+	if (!_rect.findIntersection(canvasRect).has_value())
+		return;
+
+	sf::IntRect visibleRect = _resizedRect.findIntersection(canvasRect).value();
+
+
+	int tx = visibleRect.position.x - _resizedRect.position.x;
+	int ty = visibleRect.position.y - _resizedRect.position.y;
+	sf::IntRect texRect(sf::Vector2i(tx, ty), visibleRect.size);
+
+	if (_resizedImage->getSize().x <= 0 || _resizedImage->getSize().y <= 0) {
+		DebugError(L"Lasso::drawResizedImage: Image has invalid size.");
+		return;
+	}
+
+
+	_texture = sf::Texture();
+	if (!_texture.resize(_resizedImage->getSize())) {
+		DebugError(L"Lasso::drawResizedImage: Failed to resize texture.");
+		exit(0);
+	}
+
+	if (!_texture.loadFromImage(*_resizedImage)) {
+		DebugError(L"Lasso::drawResizedImage: Failed to load texture from image.");
+		exit(0);
+	}
+
+	_texture.setSmooth(false);
+
+	std::shared_ptr<sf::Image> maskImage;
+	if (useMask && _resizedRect.size.x > 0 && _resizedRect.size.y > 0) {
+		maskImage = _resizedMaskImage;
+	}
+	else {
+		maskImage = std::make_shared<sf::Image>();
+		maskImage->resize(sf::Vector2u(_resizedRect.size), sf::Color::White);
+	}
+
+	sf::Texture maskTexture;
+	if (!maskTexture.loadFromImage(*_resizedMaskImage)) {
+		DebugError(L"Lasso::drawImage: Failed to load mask texture from image.");
+		exit(0);
+	}
+
+	_maskShader.setUniform("texture", _texture);
+	_maskShader.setUniform("mask", maskTexture);
+	_maskShader.setUniform("alphaColor", sf::Vector3f(alphaColor.r, alphaColor.g, alphaColor.b));
+
+
+	_sprite = std::make_shared<sf::Sprite>(_texture);
+	_sprite->setTextureRect(texRect);
+	float scale = canvas->_zoom * canvas->_zoom_delta;
+	_sprite->setScale(sf::Vector2f(scale, scale));
+
+	sf::Vector2f spritePos;
+	spritePos.x = (float)(canvas->_position.x) + (float)(visibleRect.position.x) * scale;
+	spritePos.y = (float)(canvas->_position.y) + (float)(visibleRect.position.y) * scale;
+	_sprite->setPosition(spritePos);
+
+	sf::RenderStates rs;
+	rs.shader = &_maskShader;
 	window->draw(*_sprite, rs);
 
 }
@@ -894,7 +1024,7 @@ void Selection::draw(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float
 
 	if (_state == SelectionState::Selected || _state == SelectionState::Moving || _state == SelectionState::Resizing) {
 		if (_points.size() >= 3) {
-			drawImage(canvasPosition, canvasSize, scale, alphaColor, true);
+			drawResizedImage(alphaColor, false);
 			drawRect(canvasPosition, scale);
 			
 			if (_state == SelectionState::Selected || _state == SelectionState::Resizing) {

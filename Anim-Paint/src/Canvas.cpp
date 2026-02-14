@@ -412,22 +412,15 @@ void Canvas::mouseLeftButtonPressedEvent() {
 		if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->clickOnSelection(tile)) {
 			selection->_state = SelectionState::Moving;
 			selection->_offset = tile - selection->_resizedRect.position;
-			
-
-			if (selection->_image == nullptr) {
-				selection->_image = std::make_shared<sf::Image>();
-				selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
-				copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, *selection->_maskImage, toolbar->_second_color->_color);
-				removeImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, toolbar->_second_color->_color);
-			}
 		}
 		else if (toolbar->_toolType == ToolType::Lasso || toolbar->_toolType == ToolType::Selector) {
 
 			if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
 				if (_rect.contains(cursor->_worldMousePosition)) {
 					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
-						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, *selection->_maskImage, toolbar->_second_color->_color);
+						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_rect.position.x, selection->_rect.position.y, 0, 0, *selection->_resizedMaskImage, toolbar->_second_color->_color);
 						selection->_image = nullptr;
+						selection->_resizedImage = nullptr;
 						history->saveStep();
 					}
 					selection->_state = SelectionState::Selecting;
@@ -436,8 +429,9 @@ void Canvas::mouseLeftButtonPressedEvent() {
 				}
 				else {
 					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
-						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, *selection->_maskImage, toolbar->_second_color->_color);
+						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_rect.position.x, selection->_rect.position.y, 0, 0, *selection->_resizedMaskImage, toolbar->_second_color->_color);
 						selection->_image = nullptr;
+						selection->_resizedImage = nullptr;
 						history->saveStep();
 					}
 
@@ -474,17 +468,25 @@ void Canvas::mouseLeftButtonReleasedEvent() {
 
 		selection->generateRect();
 		selection->generateMask();
-
+		
+		if (selection->_state == SelectionState::Selecting) {
+			selection->_resizedRect = selection->_rect;
+			selection->_resizedMaskImage = selection->_maskImage;
+			selection->_resizedImage = selection->_image;
+		}
+		
 		if (selection->_state == SelectionState::Selecting) {
 			if (selection->_rect.size.x < 2 || selection->_rect.size.y < 2) {
 				selection->_state = SelectionState::None;
 				selection->generateRect();
 				selection->_resizedRect = selection->_rect;
+
 			}
 			else {
 				if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
 					copyImageWithMask(*selection->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, selection->_rect.position.x, selection->_rect.position.y, *selection->_maskImage, toolbar->_second_color->_color);
 					removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, *selection->_maskImage, toolbar->_second_color->_color);
+					selection->_resizedImage = selection->_image;
 				}
 				selection->_state = SelectionState::Selected;
 				selection->generateEdgePoints();
@@ -551,8 +553,11 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 
 			sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
 
-			if (selection->_image != nullptr)
+			if (selection->_image != nullptr) {
 				selection->_image = nullptr;
+				selection->_resizedImage = nullptr;
+			}
+				
 
 			// LOCAL względem punktu kliknięcia
 			sf::Vector2i local = tile - selection->_outlineOffset;
@@ -586,6 +591,7 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 
 			if (selection->_image != nullptr) {
 				selection->_image = nullptr;
+				selection->_resizedImage = nullptr;
 			}
 
 			selection->addPoint(tile);
@@ -798,7 +804,9 @@ void Canvas::update() {
 		for (auto& point : selection->_edgePoints) {
 			point->update();
 		}
-		selection->resize();
+		selection->resizeRect();
+		selection->generateResizedMask();
+		selection->resizeImage();
 		return;
 	}
 

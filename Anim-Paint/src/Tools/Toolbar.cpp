@@ -205,7 +205,7 @@ Toolbar::Toolbar() : ElementGUI() {
 	_btn_copy->_onclick_func = [this]() {
 		if (selection->_state == SelectionState::Selected) {
 			selection->copy(getCurrentAnimation()->getCurrentLayer()->_image, _second_color->_color);
-			removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, *selection->_maskImage, toolbar->_second_color->_color);
+			removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, *selection->_resizedMaskImage, toolbar->_second_color->_color);
 		}
 		};
 	_btn_select = std::make_shared<ButtonWithBottomText>(L"select", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_select.png"), getTexture(L"tex\\tools\\btn_select_hover.png"));
