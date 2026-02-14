@@ -291,7 +291,7 @@ Selection::Selection() {
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0));
 	_outlineOffset = sf::Vector2i(0, 0);
 
-	generateMask();
+	_maskImage = nullptr;
 
 	if (!_shader.loadFromMemory(shader_source, sf::Shader::Type::Fragment)) {
 		DebugError(L"Lasso::Lasso: Failed to load shader from memory.");
@@ -300,6 +300,9 @@ Selection::Selection() {
 
 	_sprite = nullptr;
 	_outlineSprite = nullptr;
+
+	_resizedMaskImage = nullptr;
+	_resizedImage = nullptr;
 }
 
 Selection::~Selection() {
@@ -360,8 +363,8 @@ void Selection::selectAll() {
 
 	generateMask();
 
-	copyImageWithMask(*_image, anim->getCurrentLayer()->_image, 0, 0, 0, 0, _maskImage, toolbar->_second_color->_color);
-	removeImageWithMask(anim->getCurrentLayer()->_image, _rect, _maskImage, toolbar->_second_color->_color);
+	copyImageWithMask(*_image, anim->getCurrentLayer()->_image, 0, 0, 0, 0, *_maskImage, toolbar->_second_color->_color);
+	removeImageWithMask(anim->getCurrentLayer()->_image, _rect, *_maskImage, toolbar->_second_color->_color);
 
 	_state = SelectionState::Selected;
 }
@@ -411,7 +414,7 @@ void Selection::copy(sf::Image& canvas, sf::Color emptyColor)
 	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
 	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
 
-	pasteImageWithMask(canvas, *_image, r.position.x, r.position.y, _maskImage, emptyColor);
+	pasteImageWithMask(canvas, *_image, r.position.x, r.position.y, *_maskImage, emptyColor);
 	copyImageWithAlpha(*_image, canvas, _rect, emptyColor);
 
 	sf::IntRect canvasRect(sf::Vector2i(0, 0), sf::Vector2i(canvas.getSize()));
@@ -432,7 +435,7 @@ void Selection::copy(sf::Image& canvas, sf::Color emptyColor)
 	for (int y = 0; y < s.size.y; ++y)
 		for (int x = 0; x < s.size.x; ++x) {
 
-			if (_maskImage.getPixel(sf::Vector2u(x, y)) != sf::Color::White)
+			if (_maskImage->getPixel(sf::Vector2u(x, y)) != sf::Color::White)
 				copiedImage.setPixel(sf::Vector2u(x, y), sf::Color::Transparent);
 			else {
 
@@ -496,7 +499,7 @@ bool Selection::paste(sf::Image& canvas, sf::Color emptyColor)
 {
 
 	if (_image != nullptr) {
-		paste(canvas, *_image, _rect.position.x, _rect.position.y, _maskImage, emptyColor);
+		paste(canvas, *_image, _rect.position.x, _rect.position.y, *_maskImage, emptyColor);
 	}
 	else {
 		_image = std::make_shared<sf::Image>();
@@ -639,8 +642,8 @@ void Selection::generateMask()
 {
 	if (_rect.size.x <= 1 || _rect.size.y <= 1) return;
 
-	_maskImage = sf::Image();
-	_maskImage.resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
+	_maskImage = std::make_shared<sf::Image>();
+	_maskImage->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
 
 	for (int y = 0; y < _rect.size.y; ++y) {
 		for (int x = 0; x < _rect.size.x; ++x) {
@@ -649,7 +652,7 @@ void Selection::generateMask()
 			int ly = (_rect.position.y + y) - _outlineOffset.y;
 
 			if (isPointInPolygon({ lx, ly }, _points)) {
-				_maskImage.setPixel({ (unsigned)x, (unsigned)y }, sf::Color::White);
+				_maskImage->setPixel({ (unsigned)x, (unsigned)y }, sf::Color::White);
 			}
 		}
 	}
@@ -808,17 +811,17 @@ void Selection::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, 
 
 	_texture.setSmooth(false);
 
-	sf::Image maskImage;
+	std::shared_ptr<sf::Image> maskImage;
 	if (useMask && _rect.size.x > 0 && _rect.size.y > 0) {
 		maskImage = _maskImage;
 	}
 	else {
-		maskImage = sf::Image();
-		maskImage.resize(sf::Vector2u(_rect.size), sf::Color::White);
+		maskImage = std::make_shared<sf::Image>();
+		maskImage->resize(sf::Vector2u(_rect.size), sf::Color::White);
 	}
 
 	sf::Texture maskTexture;
-	if (!maskTexture.loadFromImage(maskImage)) {
+	if (!maskTexture.loadFromImage(*maskImage)) {
 		DebugError(L"Lasso::drawImage: Failed to load mask texture from image.");
 		exit(0);
 	}

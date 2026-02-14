@@ -35,11 +35,13 @@ public:
 
 	// rect, mask and shader
 	sf::IntRect _rect;
-	sf::Image _maskImage;
+	std::shared_ptr<sf::Image> _maskImage;
 	sf::Shader _shader;
 
 	// resized things
 	sf::IntRect _resizedRect;
+	std::shared_ptr<sf::Image> _resizedMaskImage;
+	std::shared_ptr<sf::Image> _resizedImage;
 
 	// edge points
 	std::vector<std::shared_ptr<EdgePoint>> _edgePoints;	// points use to resize of canvas

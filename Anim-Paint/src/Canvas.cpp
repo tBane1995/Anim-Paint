@@ -417,9 +417,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 			if (selection->_image == nullptr) {
 				selection->_image = std::make_shared<sf::Image>();
 				selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
-				copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image,
-					selection->_rect.position.x, selection->_rect.position.y, 0, 0,
-					selection->_maskImage, toolbar->_second_color->_color);
+				copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, *selection->_maskImage, toolbar->_second_color->_color);
 				removeImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, toolbar->_second_color->_color);
 			}
 		}
@@ -428,7 +426,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 			if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
 				if (_rect.contains(cursor->_worldMousePosition)) {
 					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
-						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
+						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, *selection->_maskImage, toolbar->_second_color->_color);
 						selection->_image = nullptr;
 						history->saveStep();
 					}
@@ -438,7 +436,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 				}
 				else {
 					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
-						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, selection->_maskImage, toolbar->_second_color->_color);
+						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_image, selection->_rect.position.x, selection->_rect.position.y, 0, 0, *selection->_maskImage, toolbar->_second_color->_color);
 						selection->_image = nullptr;
 						history->saveStep();
 					}
@@ -485,8 +483,8 @@ void Canvas::mouseLeftButtonReleasedEvent() {
 			}
 			else {
 				if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
-					copyImageWithMask(*selection->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, selection->_rect.position.x, selection->_rect.position.y, selection->_maskImage, toolbar->_second_color->_color);
-					removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, selection->_maskImage, toolbar->_second_color->_color);
+					copyImageWithMask(*selection->_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, selection->_rect.position.x, selection->_rect.position.y, *selection->_maskImage, toolbar->_second_color->_color);
+					removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_rect, *selection->_maskImage, toolbar->_second_color->_color);
 				}
 				selection->_state = SelectionState::Selected;
 				selection->generateEdgePoints();
