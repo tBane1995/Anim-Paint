@@ -406,7 +406,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 		}
 	}
 
-	if (ElementGUI_pressed.get() == nullptr || ElementGUI_pressed.get() == this) {
+	if (ElementGUI_pressed.get() == nullptr || ElementGUI_pressed.get() == this || selection->_state == SelectionState::Selected) {
 
 		sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
 
@@ -415,7 +415,6 @@ void Canvas::mouseLeftButtonPressedEvent() {
 			selection->_offset = tile - selection->_resizedRect.position;
 		}
 		else if (toolbar->_toolType == ToolType::Lasso || toolbar->_toolType == ToolType::Selector) {
-			
 
 			if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
 				if (_rect.contains(cursor->_worldMousePosition)) {
@@ -537,8 +536,8 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 		sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
 
 		sf::Vector2i desiredRectPos = tile - selection->_offset;
-		desiredRectPos.x = std::clamp(desiredRectPos.x, -selection->_rect.size.x, _size.x);
-		desiredRectPos.y = std::clamp(desiredRectPos.y, -selection->_rect.size.y, _size.y);
+		desiredRectPos.x = std::clamp(desiredRectPos.x, -selection->_resizedRect.size.x, _size.x);
+		desiredRectPos.y = std::clamp(desiredRectPos.y, -selection->_resizedRect.size.y, _size.y);
 
 		int minX = INT_MAX, minY = INT_MAX;
 		for (auto& p : selection->_points) {
@@ -660,7 +659,7 @@ void Canvas::cursorHover() {
 		}
 	}
 
-	if(selection->_state == SelectionState::Selecting) {
+	if(selection->_state == SelectionState::Selecting || selection->_state == SelectionState::Resizing) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 

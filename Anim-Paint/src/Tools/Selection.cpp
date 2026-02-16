@@ -349,8 +349,7 @@ void Selection::unselect() {
 }
 
 void Selection::selectAll() {
-	_points.clear();
-	_outlineOffset = sf::Vector2i(0, 0);
+	unselect();
 
 	std::shared_ptr<Animation> anim = getCurrentAnimation();
 	int width = anim->getCurrentLayer()->_image.getSize().x - 1;
@@ -919,7 +918,7 @@ void Selection::drawResizedImage(sf::Color alphaColor, bool useMask) {
 
 	sf::IntRect canvasRect(sf::Vector2i(0, 0), canvas->_size);
 
-	if (!_rect.findIntersection(canvasRect).has_value())
+	if (!_resizedRect.findIntersection(canvasRect).has_value())
 		return;
 
 	sf::IntRect visibleRect = _resizedRect.findIntersection(canvasRect).value();
