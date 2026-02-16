@@ -415,6 +415,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 			selection->_offset = tile - selection->_resizedRect.position;
 		}
 		else if (toolbar->_toolType == ToolType::Lasso || toolbar->_toolType == ToolType::Selector) {
+			
 
 			if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
 				if (_rect.contains(cursor->_worldMousePosition)) {
@@ -469,6 +470,7 @@ void Canvas::mouseLeftButtonReleasedEvent() {
 
 		selection->generateRect();
 		selection->generateMask();
+		
 		
 		if (selection->_state == SelectionState::Selecting) {
 			selection->_resizedRect = selection->_rect;

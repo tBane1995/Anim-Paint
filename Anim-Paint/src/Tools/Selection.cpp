@@ -704,14 +704,16 @@ void Selection::generateEdgePoints() {
 	rectPos.x = float(canvas->_position.x) + float(_resizedRect.position.x) * scale;
 	rectPos.y = float(canvas->_position.y) + float(_resizedRect.position.y) * scale;
 
-	float m = selection_border_width/2;
+	float m = selection_border_width;
 
 	_edgePoints.clear();
 	_point_left_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(-m, -m));
 	_point_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x/2, -m));
 	_point_right_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x+m, -m));
+
 	_point_left = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(-m, rectSize.y / 2));
 	_point_right = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x+m, rectSize.y / 2));
+
 	_point_left_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(-m, rectSize.y+m));
 	_point_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x / 2, rectSize.y+m));
 	_point_right_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x+m, rectSize.y+m));
@@ -772,20 +774,20 @@ void Selection::resizeRect() {
 		maxY = (float)_point_bottom->getPosition().y + dy;
 	}
 
-	const float MIN_SIZE = scale;
+	const float m = (float)(selection_border_width);
+	const float MIN_SIZE_WORLD = scale + 2.0f * m;
 
-	if (_clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_left || _clickedEdgePoint == _point_left_bottom) {
-		minX = std::min(minX, maxX - MIN_SIZE);
-	}
-	if (_clickedEdgePoint == _point_right_top || _clickedEdgePoint == _point_right || _clickedEdgePoint == _point_right_bottom) {
-		maxX = std::max(maxX, minX + MIN_SIZE);
-	}
-	if (_clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_top || _clickedEdgePoint == _point_right_top) {
-		minY = std::min(minY, maxY - MIN_SIZE);
-	}
-	if (_clickedEdgePoint == _point_left_bottom || _clickedEdgePoint == _point_bottom || _clickedEdgePoint == _point_right_bottom) {
-		maxY = std::max(maxY, minY + MIN_SIZE);
-	}
+	if (_clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_left || _clickedEdgePoint == _point_left_bottom)
+		minX = std::min(minX, maxX - MIN_SIZE_WORLD);
+
+	if (_clickedEdgePoint == _point_right_top || _clickedEdgePoint == _point_right || _clickedEdgePoint == _point_right_bottom)
+		maxX = std::max(maxX, minX + MIN_SIZE_WORLD);
+
+	if (_clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_top || _clickedEdgePoint == _point_right_top)
+		minY = std::min(minY, maxY - MIN_SIZE_WORLD);
+
+	if (_clickedEdgePoint == _point_left_bottom || _clickedEdgePoint == _point_bottom || _clickedEdgePoint == _point_right_bottom)
+		maxY = std::max(maxY, minY + MIN_SIZE_WORLD);
 
 	float iminX = std::min(minX, maxX);
 	float iminY = std::min(minY, maxY);
@@ -803,17 +805,11 @@ void Selection::resizeRect() {
 	_point_bottom->setPosition(sf::Vector2i((int)((iminX + imaxX) / 2.0f), (int)imaxY));
 	_point_right_bottom->setPosition(sf::Vector2i((int)imaxX, (int)imaxY));
 
-	sf::Vector2i minT = worldToTile(
-		sf::Vector2i((int)(iminX + MIN_SIZE), (int)(iminY + MIN_SIZE)),
-		canvas->_position, canvas->_zoom, canvas->_zoom_delta
-	);
+	sf::Vector2i minT = worldToTile(sf::Vector2i((int)(iminX + m), (int)(iminY + m)), canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 
-	sf::Vector2i maxT = worldToTile(
-		sf::Vector2i((int)(imaxX - MIN_SIZE), (int)(imaxY - MIN_SIZE)),
-		canvas->_position, canvas->_zoom, canvas->_zoom_delta
-	);
+	sf::Vector2i maxT = worldToTile(sf::Vector2i((int)(imaxX - m), (int)(imaxY - m)), canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 
-	sf::Vector2i size = maxT - minT + sf::Vector2i(1, 1);
+	sf::Vector2i size = maxT - minT;
 
 	_resizedRect = sf::IntRect(minT, size);
 }
