@@ -15,3 +15,4 @@ void set_resize(sf::Image& image, int width, int height, sf::Color backgroundCol
 void set_chessboard(sf::Image& image, int tileCount, int transparency, sf::Color firstColor, sf::Color secondColor);
 void set_invert_rgb(sf::Image& image);
 void set_invert_hsv(sf::Image& image);
+void set_hue(sf::Image& image, int value);

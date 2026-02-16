@@ -343,10 +343,46 @@ std::string invert_hsv_shader_source = R"(
     }
 )";
 
+std::string hue_shader_source = R"(
+    uniform sampler2D texture;
+    uniform int hue;
+
+    vec3 rgb2hsv(in vec3 c)
+    {
+        vec4 K = vec4(0.0, -1.0/3.0, 2.0/3.0, -1.0);
+        vec4 p = mix(vec4(c.bg, K.wz),vec4(c.gb, K.xy),step(c.b, c.g)); 
+        vec4 q = mix(vec4(p.xyw, c.r),vec4(c.r, p.yzx),step(p.x, c.r));
+        float d = q.x - min(q.w, q.y);
+        float e = 1e-10;
+        return vec3(
+            abs(q.z + (q.w - q.y) / (6.0 * d + e)), // Hue
+            d / (q.x + e),                          // Saturation
+            q.x                                     // Value
+        );
+    }
+
+    vec3 hsv2rgb(in vec3 c)
+    {
+        vec3 rgb = clamp(abs(mod(c.x*6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+        return c.z * mix(vec3(1.0), rgb, c.y);
+    }
+
+    void main() {
+        
+        vec2 uv = gl_TexCoord[0].xy;
+        vec4 color = texture2D(texture, uv);
+
+        vec3 hsv = rgb2hsv(color.rgb);
+        hsv.x = mod(hsv.x + float(hue) / 360.0, 1.0);
+
+        color.rgb = hsv2rgb(hsv);
+        gl_FragColor = color;
+    }
+)";
 
 void set_rotation(sf::Image& image, int angle, bool set_smooth, sf::Color backgroundColor) {
 
-    
+	angle = std::clamp(angle, 0, 359);
 
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
@@ -381,6 +417,8 @@ void set_rotation(sf::Image& image, int angle, bool set_smooth, sf::Color backgr
 
 void set_brightness(sf::Image& image, int value) {
 
+    value = std::clamp(value, -50, 50);
+
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
 		DebugError(L"Filter set_brightness: failed to load texture from image.");
@@ -411,7 +449,7 @@ void set_brightness(sf::Image& image, int value) {
 
 void set_contrast(sf::Image& image, int value) {
 
-	
+    value = std::clamp(value, -50, 50);
 
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
@@ -443,6 +481,8 @@ void set_contrast(sf::Image& image, int value) {
 
 void set_saturation(sf::Image& image, int value) {
 
+    value = std::clamp(value, 0, 200);
+
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
 		DebugError(L"Filter set_saturation: failed to load texture from image.");
@@ -471,6 +511,8 @@ void set_saturation(sf::Image& image, int value) {
 }
 
 void set_sepia(sf::Image& image, int value) {
+
+    value = std::clamp(value, 0, 100);
 
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
@@ -501,6 +543,8 @@ void set_sepia(sf::Image& image, int value) {
 
 void set_outline(sf::Image& image, int width, sf::Color backgroundColor, sf::Color outlineColor) {
     // value 0 - 8
+
+    width = std::clamp(width, 0, 8);
 
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
@@ -569,6 +613,8 @@ void set_resize(sf::Image& image, int width, int height, sf::Color backgroundCol
 
 void set_chessboard(sf::Image& image, int tileCount, int transparency, sf::Color firstColor, sf::Color secondColor) {
 
+    transparency = std::clamp(transparency, 0, 100);
+
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
         DebugError(L"Filter set_chessboard: failed to load texture from image.");
@@ -588,7 +634,7 @@ void set_chessboard(sf::Image& image, int tileCount, int transparency, sf::Color
     }
 
     sh.setUniform("tileCount", tileCount);
-	sh.setUniform("transparency", transparency); // 0–100
+	sh.setUniform("transparency", transparency);
     sh.setUniform("firstColor", sf::Glsl::Vec4(float(firstColor.r) / 255.0f, float(firstColor.g) / 255.0f, float(firstColor.b) / 255.0f, float(firstColor.a) / 255.0f));
     sh.setUniform("secondColor", sf::Glsl::Vec4(float(secondColor.r) / 255.0f, float(secondColor.g) / 255.0f, float(secondColor.b) / 255.0f, float(secondColor.a) / 255.0f));
 
@@ -651,5 +697,36 @@ void set_invert_hsv(sf::Image& image) {
     rtex.draw(spr, &sh);
     rtex.display();
 
+    image = rtex.getTexture().copyToImage();
+}
+
+void set_hue(sf::Image& image, int value) {
+
+    value = std::clamp(value, -180, 180);
+
+    sf::Texture tex;
+    if (!tex.loadFromImage(image)) {
+        DebugError(L"Filter set_hue: failed to load texture from image.");
+        exit(0);
+    }
+
+    sf::RenderTexture rtex;
+    if (!rtex.resize(tex.getSize())) {
+        DebugError(L"Filter set_hue: failed to resize render texture.");
+        exit(0);
+    }
+
+    sf::Shader sh;
+    if (!sh.loadFromMemory(hue_shader_source, sf::Shader::Type::Fragment)) {
+        DebugError(L"Filter set_hue: failed to load shader from memory.");
+        exit(0);
+    }
+
+    sh.setUniform("hue", value);
+
+    sf::Sprite spr(tex);
+    rtex.clear(sf::Color::Transparent);
+    rtex.draw(spr, &sh);
+    rtex.display();
     image = rtex.getTexture().copyToImage();
 }

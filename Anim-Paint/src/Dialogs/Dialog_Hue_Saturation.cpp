@@ -12,7 +12,7 @@ Dialog_Hue_Saturation::Dialog_Hue_Saturation(std::vector<std::shared_ptr<Layer>>
 
 	saveOriginalLayers(layers);
 
-	_hue_slider = std::make_shared<Slider>(L"hue", -180, 180);
+	_hue_slider = std::make_shared<Slider>(L"hue", -180, 180, L" deg");
 	_hue_slider->setValue(0);
 
 	_brightness_slider = std::make_shared<Slider>(L"brightness", -50, 50);
@@ -94,7 +94,7 @@ void Dialog_Hue_Saturation::setTheFilter() {
 
 	for (auto& org : _original_layers) {
 		_edited_layers.push_back(std::make_shared<Layer>(org));
-		//setHue(_edited_layers.back()->_image, _hue_slider->getValue())
+		set_hue(_edited_layers.back()->_image, _hue_slider->getValue());
 		set_brightness(_edited_layers.back()->_image, _brightness_slider->getValue());
 		set_saturation(_edited_layers.back()->_image, _saturation_slider->getValue());
 	}
