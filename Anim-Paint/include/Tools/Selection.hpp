@@ -79,11 +79,11 @@ public:
 	void generateEdgePoints();
 	void resizeRect();
 	void resizeImage();
-	void drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask = false);
+	void drawImage(sf::Color alphaColor, bool useMask = false);
 	void drawResizedImage(sf::Color alphaColor, bool useMask = false);
-	void drawOutline(sf::Vector2i canvasPosition, float scale);
-	void drawRect(sf::Vector2i canvasPosition, float scale);
-	void draw(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor);
+	void drawOutline();
+	void drawRect();
+	void draw(sf::Color alphaColor);
 };
 
 extern std::shared_ptr<Selection> selection;

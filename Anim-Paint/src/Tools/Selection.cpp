@@ -837,12 +837,14 @@ void Selection::resizeImage() {
 		}
 	}
 }
-void Selection::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor, bool useMask) {
+void Selection::drawImage(sf::Color alphaColor, bool useMask) {
 	if (!_image) return;
 	if (_image->getSize().x < 1 || _image->getSize().y < 1) return;
 	if (_rect.size.x < 1 || _rect.size.y < 1) return;
 
-	sf::IntRect canvasRect(sf::Vector2i(0, 0), canvasSize);
+	// TO-DO
+	sf::IntRect canvasRect(sf::Vector2i(0, 0), canvas->_size);
+	//
 
 	if (!_rect.findIntersection(canvasRect).has_value())
 		return;
@@ -892,14 +894,15 @@ void Selection::drawImage(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, 
 	_maskShader.setUniform("mask", maskTexture);
 	_maskShader.setUniform("alphaColor", sf::Vector3f(alphaColor.r, alphaColor.g, alphaColor.b));
 
+	float scale = canvas->_zoom * canvas->_zoom_delta;
 
 	_sprite = std::make_shared<sf::Sprite>(_texture);
 	_sprite->setTextureRect(texRect);
 	_sprite->setScale(sf::Vector2f(scale, scale));
 
 	sf::Vector2f spritePos;
-	spritePos.x = (float)(canvasPosition.x) + (float)(visibleRect.position.x) * scale;
-	spritePos.y = (float)(canvasPosition.y) + (float)(visibleRect.position.y) * scale;
+	spritePos.x = (float)(canvas->_position.x) + (float)(visibleRect.position.x) * scale;
+	spritePos.y = (float)(canvas->_position.y) + (float)(visibleRect.position.y) * scale;
 	_sprite->setPosition(spritePos);
 
 	sf::RenderStates rs;
@@ -981,21 +984,25 @@ void Selection::drawResizedImage(sf::Color alphaColor, bool useMask) {
 
 }
 
-void Selection::drawOutline(sf::Vector2i canvasPosition, float scale) {
+void Selection::drawOutline() {
+
+	float scale = canvas->_zoom * canvas->_zoom_delta;
 
 	_outlineSprite = std::make_shared<sf::Sprite>(_outlineRenderTexture.getTexture());
 	_outlineSprite->setScale(sf::Vector2f(scale, scale));
 
 	sf::Vector2f outlineSpritePos;
-	outlineSpritePos.x = (float)(canvasPosition.x) + (float)(_rect.position.x) * scale;
-	outlineSpritePos.y = (float)(canvasPosition.y) + (float)(_rect.position.y) * scale;
+	outlineSpritePos.x = (float)(canvas->_position.x) + (float)(_rect.position.x) * scale;
+	outlineSpritePos.y = (float)(canvas->_position.y) + (float)(_rect.position.y) * scale;
 	_outlineSprite->setPosition(outlineSpritePos);
 
 	window->draw(*_outlineSprite);
 
 }
 
-void Selection::drawRect(sf::Vector2i canvasPosition, float scale) {
+void Selection::drawRect() {
+
+	float scale = canvas->_zoom * canvas->_zoom_delta;
 
 	sf::Vector2f rectSize;
 	rectSize.x = float(_resizedRect.size.x) * scale;
@@ -1004,8 +1011,8 @@ void Selection::drawRect(sf::Vector2i canvasPosition, float scale) {
 	sf::RectangleShape rect(rectSize);
 
 	sf::Vector2f rectPos;
-	rectPos.x = float(canvasPosition.x) + float(_resizedRect.position.x) * scale;
-	rectPos.y = float(canvasPosition.y) + float(_resizedRect.position.y) * scale;
+	rectPos.x = float(canvas->_position.x) + float(_resizedRect.position.x) * scale;
+	rectPos.y = float(canvas->_position.y) + float(_resizedRect.position.y) * scale;
 	rect.setPosition(rectPos);
 
 	rect.setFillColor(selection_color);
@@ -1016,13 +1023,14 @@ void Selection::drawRect(sf::Vector2i canvasPosition, float scale) {
 }
 
 
-void Selection::draw(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float scale, sf::Color alphaColor) {
+void Selection::draw(sf::Color alphaColor) {
+
 
 	if (_state == SelectionState::Selecting) {
 		if (_points.size() >= 1) {
-			drawImage(canvasPosition, canvasSize, scale, alphaColor, false);
+			drawImage(alphaColor, false);
 			generateOutline(false);
-			drawOutline(canvasPosition, scale);
+			drawOutline();
 		}
 
 	}
@@ -1030,7 +1038,7 @@ void Selection::draw(sf::Vector2i canvasPosition, sf::Vector2i canvasSize, float
 	if (_state == SelectionState::Selected || _state == SelectionState::Moving || _state == SelectionState::Resizing) {
 		if (_points.size() >= 3) {
 			drawResizedImage(alphaColor, false);
-			drawRect(canvasPosition, scale);
+			drawRect();
 			
 			if (_state == SelectionState::Selected || _state == SelectionState::Resizing) {
 				for (auto& point : _edgePoints) {

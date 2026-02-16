@@ -858,7 +858,7 @@ void Canvas::draw() {
 	}
 	
 
-	selection->draw(_rect.position, _size, _zoom * _zoom_delta, toolbar->_second_color->_color);
+	selection->draw(toolbar->_second_color->_color);
 
 	
 
