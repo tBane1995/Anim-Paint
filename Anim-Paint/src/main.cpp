@@ -39,7 +39,7 @@
 #include "Dialogs/FileDialog.hpp"
 #include "Dialogs/Dialog_Rotation.hpp"
 #include "Dialogs/Dialog_Brightness_Contrast.hpp"
-#include "Dialogs/Dialog_Saturation.hpp"
+#include "Dialogs/Dialog_Hue_Saturation.hpp"
 #include "Dialogs/Dialog_Sepia.hpp"
 
 #include "MainMenu.hpp"

@@ -13,7 +13,7 @@
 
 #include "Dialogs/Dialog_Rotation.hpp"
 #include "Dialogs/Dialog_Brightness_Contrast.hpp"
-#include "Dialogs/Dialog_Saturation.hpp"
+#include "Dialogs/Dialog_Hue_Saturation.hpp"
 #include "Dialogs/Dialog_Sepia.hpp"
 #include "Dialogs/Dialog_Outline.hpp"
 #include "Dialogs/Dialog_Resize.hpp"
@@ -380,9 +380,9 @@ MainMenu::MainMenu() : ElementGUI() {
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> tools_saturation = std::make_shared<OptionBox>(L"saturation");
-	tools_saturation->_onclick_func = [this]() {
-		dialogs.push_back(std::make_shared<Dialog_Saturation>(getCurrentAnimation()->getLayers()));
+	std::shared_ptr<OptionBox> tools_hue_saturation = std::make_shared<OptionBox>(L"hue-saturation");
+	tools_hue_saturation->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Hue_Saturation>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
@@ -419,7 +419,7 @@ MainMenu::MainMenu() : ElementGUI() {
 	tools->addOption(tools_resize);
 	tools->addOption(tools_rotation);
 	tools->addOption(tools_brightness_contrast);
-	tools->addOption(tools_saturation);
+	tools->addOption(tools_hue_saturation);
 	tools->addOption(tools_hue);
 	tools->addOption(tools_gray);
 	tools->addOption(tools_sepia);

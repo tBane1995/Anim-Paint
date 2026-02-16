@@ -42,12 +42,12 @@ set(SOURCES
     Anim-Paint/src/Dialogs/Palette.cpp
     Anim-Paint/src/Dialogs/Dialog_Rotation.cpp
     Anim-Paint/src/Dialogs/Dialog_Brightness_Contrast.cpp
-    Anim-Paint/src/Dialogs/Dialog_Saturation.cpp
+    Anim-Paint/src/Dialogs/Dialog_Hue_Saturation.cpp
     Anim-Paint/src/Dialogs/Dialog_Sepia.cpp
     Anim-Paint/src/Dialogs/Dialog_Outline.cpp
     Anim-Paint/src/Dialogs/Dialog_Resize.cpp
     Anim-Paint/src/Dialogs/Dialog_Chessboard.cpp
-    Anim-Paint/src/Dialogs/Dialog_Invert.cpp
+    Anim-Paint/src/Dialogs/Dialog_Invert_Colors.cpp
     Anim-Paint/src/MainMenu.cpp
     Anim-Paint/src/BottomBar.cpp
     Anim-Paint/src/Tools/Selection.cpp
@@ -99,12 +99,12 @@ set(HEADERS
     Anim-Paint/include/Dialogs/Palette.hpp
     Anim-Paint/include/Dialogs/Dialog_Rotation.hpp
     Anim-Paint/include/Dialogs/Dialog_Brightness_Contrast.hpp
-    Anim-Paint/include/Dialogs/Dialog_Saturation.hpp
+    Anim-Paint/include/Dialogs/Dialog_Hue_Saturation.hpp
     Anim-Paint/include/Dialogs/Dialog_Sepia.hpp
     Anim-Paint/include/Dialogs/Dialog_Outline.hpp
     Anim-Paint/include/Dialogs/Dialog_Resize.hpp
     Anim-Paint/include/Dialogs/Dialog_Chessboard.hpp
-    Anim-Paint/include/Dialogs/Dialog_Invert.hpp
+    Anim-Paint/include/Dialogs/Dialog_Invert_Colors.hpp
     Anim-Paint/include/MainMenu.hpp
     Anim-Paint/include/BottomBar.hpp
     Anim-Paint/include/Tools/Selection.hpp

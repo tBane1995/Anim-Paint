@@ -126,14 +126,16 @@ std::string rotation_shader_source = R"(
 
 std::string brightness_shader_source = R"(
     uniform sampler2D texture;
-    uniform float brightness;
+    uniform int brightness;
 
     void main() {
+        
         vec2 uv = gl_TexCoord[0].xy;
         vec4 color = texture2D(texture, uv);
 
         // Brightness
-        color.rgb += vec3(brightness);
+        float b = (float)brightness / 100.0;
+        color.rgb += vec3(b);
 
         gl_FragColor = color;
     }
@@ -141,13 +143,15 @@ std::string brightness_shader_source = R"(
 
 std::string contrast_shader_source = R"(
     uniform sampler2D texture;
-    uniform float contrast;
+    uniform int contrast;
 
     void main() {
         vec2 uv = gl_TexCoord[0].xy;
         vec4 color = texture2D(texture, uv);
 
-        color.rgb = (color.rgb - 0.5) * contrast + 0.5;
+        // Contrast
+        float c = 1.0 + ((float)contrast / 100.0);
+        color.rgb = (color.rgb - 0.5) * c + 0.5;
 
         gl_FragColor = color;
     }
@@ -155,7 +159,7 @@ std::string contrast_shader_source = R"(
 
 std::string saturation_shader_source = R"(
     uniform sampler2D texture;
-    uniform float saturation;
+    uniform int saturation;
 
     void main() {
         vec2 uv = gl_TexCoord[0].xy;
@@ -163,7 +167,8 @@ std::string saturation_shader_source = R"(
 
         vec3 luma = vec3(0.3086, 0.6094, 0.0820);
         float gray = dot(color.rgb, luma);
-        color.rgb = mix(vec3(gray), color.rgb, saturation);
+        float s = (float)saturation / 100.0;
+        color.rgb = mix(vec3(gray), color.rgb, s);
 
         gl_FragColor = color;
     }
@@ -172,7 +177,7 @@ std::string saturation_shader_source = R"(
 
 std::string sepia_shader_source = R"(
     uniform sampler2D texture;
-    uniform float sepia; // 0 - no effect, 100 - max sepia
+    uniform int sepia; // 0 - no effect, 100 - max sepia
 
     void main() {
         vec2 uv = gl_TexCoord[0].xy;
@@ -189,6 +194,7 @@ std::string sepia_shader_source = R"(
         sepiaColor.g *= 0.4;   // -60% green
         sepiaColor.b *= 0.4;   // -60% blue
 
+        float s = (float)sepia / 100.0;
         vec3 finalColor = mix(color.rgb, sepiaColor, sepia);
 
         gl_FragColor = vec4(finalColor, color.a);
@@ -198,7 +204,7 @@ std::string sepia_shader_source = R"(
 std::string outline_shader_source = R"(
     uniform sampler2D u_tex;
     uniform vec2 texelSize;           // 1.0 / textureSize
-    uniform float outlineWidth;        // 0..8 px
+    uniform int outlineWidth;        // 0..8 px
     uniform vec4 backgroundColor;
     uniform vec4 outlineColor;        // color (rgb) + power (a) [0..1]
     uniform float threshold;           // background similarity tolerance (0.02..0.08)
@@ -210,8 +216,9 @@ std::string outline_shader_source = R"(
         vec4 base = texture2D(u_tex, uv);
 
         float isBg = step(colorDistance(base.rgb, backgroundColor.rgb), threshold);
-
-        int r = int(ceil(clamp(outlineWidth, 0.0, 8.0)));
+        
+        float ow = (float)outlineWidth;
+        int r = int(ceil(clamp(ow, 0.0, 8.0)));
 
         float hasNonBgNeighbor = 0.0;
         if (r > 0) {
@@ -337,9 +344,9 @@ std::string invert_hsv_shader_source = R"(
 )";
 
 
-void set_rotation(sf::Image& image, float angle, bool set_smooth, sf::Color backgroundColor) {
+void set_rotation(sf::Image& image, int angle, bool set_smooth, sf::Color backgroundColor) {
 
-    angle = angle * 3.14159265f / 180.f;
+    
 
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
@@ -359,7 +366,8 @@ void set_rotation(sf::Image& image, float angle, bool set_smooth, sf::Color back
         exit(0);
     }
 
-    sh.setUniform("angle", angle);
+    float a = (float)angle * 3.14159265f / 180.f;
+    sh.setUniform("angle", a);
 	sh.setUniform("backgroundColor", sf::Glsl::Vec4(backgroundColor.r / 255.0f, backgroundColor.g / 255.0f, backgroundColor.b / 255.0f, backgroundColor.a / 255.0f));
     tex.setSmooth(set_smooth);
 
@@ -371,7 +379,7 @@ void set_rotation(sf::Image& image, float angle, bool set_smooth, sf::Color back
     image = rtex.getTexture().copyToImage();
 }
 
-void set_brightness(sf::Image& image, float value) {
+void set_brightness(sf::Image& image, int value) {
 
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
@@ -401,9 +409,9 @@ void set_brightness(sf::Image& image, float value) {
     image = rtex.getTexture().copyToImage();
 }
 
-void set_contrast(sf::Image& image, float value) {
+void set_contrast(sf::Image& image, int value) {
 
-    value = 1.0f + value;
+	
 
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
@@ -433,7 +441,7 @@ void set_contrast(sf::Image& image, float value) {
     image = rtex.getTexture().copyToImage();
 }
 
-void set_saturation(sf::Image& image, float value) {
+void set_saturation(sf::Image& image, int value) {
 
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {
@@ -462,7 +470,7 @@ void set_saturation(sf::Image& image, float value) {
     image = rtex.getTexture().copyToImage();
 }
 
-void set_sepia(sf::Image& image, float value) {
+void set_sepia(sf::Image& image, int value) {
 
     sf::Texture tex;
     if (!tex.loadFromImage(image)) {

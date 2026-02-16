@@ -71,18 +71,20 @@ void Dialog_Brightness_Contrast::saveOriginalLayers(std::vector<std::shared_ptr<
 void Dialog_Brightness_Contrast::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
-	sf::Vector2i slider_pos;
-	slider_pos.x = getContentPosition().x + getContentSize().x / 2 - _brightness_slider->getSize().x / 2;
-	slider_pos.y = getContentPosition().y + (getContentSize().y) / 2 - _brightness_slider->getSize().y - 28;
+	sf::Vector2i first_slider_pos;
+	first_slider_pos.x = getContentPosition().x + getContentSize().x / 2 - _brightness_slider->getSize().x / 2;
+	first_slider_pos.y = getContentPosition().y + 8;
 
-	_brightness_slider->setPosition(slider_pos);
-	_contrast_slider->setPosition(slider_pos + sf::Vector2i(0, 32));
+	_brightness_slider->setPosition(first_slider_pos);
+	_contrast_slider->setPosition(first_slider_pos + sf::Vector2i(0, 32));
 
 	sf::Vector2i button_pos;
 	button_pos.x = _position.x + getSize().x / 2 - _confirm->getSize().x / 2;
-	button_pos.y = _position.y + 160 - _confirm->getSize().y - 16;
+	button_pos.y = getContentPosition().y + getContentSize().y - _confirm->getSize().y - 16;
+
 	_reset->setPosition(button_pos - sf::Vector2i(48, 0));
 	_confirm->setPosition(button_pos + sf::Vector2i(48, 0));
+
 }
 
 void Dialog_Brightness_Contrast::setTheFilter() {
@@ -90,8 +92,8 @@ void Dialog_Brightness_Contrast::setTheFilter() {
 	_edited_layers.clear();
 	for (auto& org : _original_layers) {
 		_edited_layers.push_back(std::make_shared<Layer>(org));
-		set_brightness(_edited_layers.back()->_image, float(_brightness_slider->getValue()) / 100.0f);
-		set_contrast(_edited_layers.back()->_image, float(_contrast_slider->getValue()) / 100.0f);
+		set_brightness(_edited_layers.back()->_image, _brightness_slider->getValue());
+		set_contrast(_edited_layers.back()->_image, _contrast_slider->getValue());
 	}
 
 	// TO-DO

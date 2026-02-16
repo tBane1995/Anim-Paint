@@ -83,7 +83,7 @@ void Dialog_Sepia::setTheFilter() {
 
 	for (auto& org : _original_layers) {
 		_edited_layers.push_back(std::make_shared<Layer>(org));
-		set_sepia(_edited_layers.back()->_image, float(_sepia_slider->getValue()) / 100.0f);
+		set_sepia(_edited_layers.back()->_image, _sepia_slider->getValue());
 	}
 
 	// TO-DO
