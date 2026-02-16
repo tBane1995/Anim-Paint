@@ -54,7 +54,9 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (_hoveredElementGUI != canvas && _hoveredElementGUI == ElementGUI_hovered)
+	if (_hoveredElementGUI != canvas && 
+		(toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state != SelectionState::Selected &&
+		_hoveredElementGUI == ElementGUI_hovered)
 		return;
 
 	_hoveredElementGUI = ElementGUI_hovered;
