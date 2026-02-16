@@ -6,6 +6,7 @@
 #include "Dialogs/Palette.hpp"
 #include "Tools/Selection.hpp"
 #include "ElementGUI/Slider.hpp"
+#include "MainMenu.hpp"
 
 Cursor::Cursor() {
 
@@ -57,6 +58,9 @@ void Cursor::handleEvent(const sf::Event& event) {
 	if (_hoveredElementGUI != canvas && 
 		(toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state != SelectionState::Selected &&
 		_hoveredElementGUI == ElementGUI_hovered)
+		return;
+
+	if(main_menu->_state != MainMenuStates::Closed)
 		return;
 
 	_hoveredElementGUI = ElementGUI_hovered;
