@@ -564,7 +564,7 @@ void set_outline(sf::Image& image, int width, sf::Color backgroundColor, sf::Col
         exit(0);
 	}
 
-    sh.setUniform("outlineWidth", (float)(width));
+    sh.setUniform("outlineWidth", width);
     sh.setUniform("texelSize", sf::Vector2f(1.0f / float(image.getSize().x), 1.0f / float(image.getSize().y)));
     sh.setUniform("threshold", 0.02f);
     sh.setUniform("backgroundColor", sf::Glsl::Vec4(float(backgroundColor.r)/255.0f, float(backgroundColor.g)/255.0f, float(backgroundColor.b)/255.0f, float(backgroundColor.a)/255.0f));

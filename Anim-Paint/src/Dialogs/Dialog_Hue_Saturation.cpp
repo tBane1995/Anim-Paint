@@ -6,6 +6,37 @@
 #include "Window.hpp"
 #include "History.hpp"
 
+sf::Color AverageColorAlphaWeighted(const sf::Image& image, uint8_t alphaThreshold = 1)
+{
+	const auto size = image.getSize();
+
+	uint64_t sumR = 0, sumG = 0, sumB = 0;
+	uint64_t sumW = 0; // suma wag (alpha)
+
+	for (unsigned y = 0; y < size.y; ++y)
+	{
+		for (unsigned x = 0; x < size.x; ++x)
+		{
+			sf::Color p = image.getPixel({ x, y });
+			if (p.a < alphaThreshold) continue;
+
+			uint64_t w = p.a; // 0..255
+			sumR += uint64_t(p.r) * w;
+			sumG += uint64_t(p.g) * w;
+			sumB += uint64_t(p.b) * w;
+			sumW += w;
+		}
+	}
+
+	if (sumW == 0) return sf::Color(0, 0, 0, 0);
+
+	uint8_t r = (uint8_t)std::clamp<uint64_t>(sumR / sumW, 0, 255);
+	uint8_t g = (uint8_t)std::clamp<uint64_t>(sumG / sumW, 0, 255);
+	uint8_t b = (uint8_t)std::clamp<uint64_t>(sumB / sumW, 0, 255);
+
+	return sf::Color(r, g, b, 255);
+}
+
 Dialog_Hue_Saturation::Dialog_Hue_Saturation(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"hue - saturation", sf::Vector2i(256, 192), sf::Vector2i(8, 120)) {
 
 	_state = HueSaturationState::Idle;
@@ -152,6 +183,18 @@ void Dialog_Hue_Saturation::draw() {
 	_hue_slider->draw();
 	_brightness_slider->draw();
 	_saturation_slider->draw();
+
+	sf::RectangleShape previewRect;
+	sf::Vector2f position;
+	position.x = getContentPosition().x + 8;
+	position.y = getContentPosition().y + getContentSize().y - 48;
+	previewRect.setPosition(position);
+	previewRect.setSize(sf::Vector2f(32, 32));
+
+	sf::Image& image = _edited_layers.back()->_image;
+	sf::Color color = AverageColorAlphaWeighted(image);
+	previewRect.setFillColor(color);
+	window->draw(previewRect);
 
 	_reset->draw();
 	_confirm->draw();
