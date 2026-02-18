@@ -195,7 +195,7 @@ std::string sepia_shader_source = R"(
         sepiaColor.b *= 0.4;   // -60% blue
 
         float s = (float)sepia / 100.0;
-        vec3 finalColor = mix(color.rgb, sepiaColor, sepia);
+        vec3 finalColor = mix(color.rgb, sepiaColor, s);
 
         gl_FragColor = vec4(finalColor, color.a);
     }
@@ -377,6 +377,46 @@ std::string hue_shader_source = R"(
 
         color.rgb = hsv2rgb(hsv);
         gl_FragColor = color;
+    }
+)";
+
+std::string smoothing_shader_source = R"(
+    uniform sampler2D texture;
+    uniform vec2 texSize;
+    uniform int smoothness; // 0..100
+    uniform int radius;     // 0..8
+
+    void main()
+    {
+        vec2 uv = gl_TexCoord[0].xy;
+        vec4 base = texture2D(texture, uv);
+
+        float a = clamp(float(smoothness) / 100.0, 0.0, 1.0);
+
+        int r = clamp(radius, 0, 8);
+        if (r <= 0 || a <= 0.0001) { gl_FragColor = base; return; }
+
+        vec2 px = vec2(1.0 / texSize.x, 1.0 / texSize.y);
+
+        vec4 sum = vec4(0.0);
+        float wsum = 0.0;
+
+        // IMPORTANT: constant loop bounds for older GLSL
+        for (int y = -8; y <= 8; ++y) {
+            if (y < -r || y > r) continue;
+            for (int x = -8; x <= 8; ++x) {
+                if (x < -r || x > r) continue;
+                if (x*x + y*y > r*r) continue;
+
+                vec2 off = vec2(float(x), float(y)) * px;
+                sum += texture2D(texture, uv + off);
+                wsum += 1.0;
+            }
+        }
+
+        vec4 blur = sum / wsum;
+
+        gl_FragColor = mix(base, blur, a);
     }
 )";
 
@@ -723,6 +763,40 @@ void set_hue(sf::Image& image, int value) {
     }
 
     sh.setUniform("hue", value);
+
+    sf::Sprite spr(tex);
+    rtex.clear(sf::Color::Transparent);
+    rtex.draw(spr, &sh);
+    rtex.display();
+    image = rtex.getTexture().copyToImage();
+}
+
+void set_smoothing(sf::Image& image, int smoothness, int radius) {
+
+    smoothness = std::clamp(smoothness, 0, 100);
+	radius = std::clamp(radius, 0, 8);
+
+    sf::Texture tex;
+    if (!tex.loadFromImage(image)) {
+        DebugError(L"Filter set_smoothing: failed to load texture from image.");
+        exit(0);
+    }
+
+    sf::RenderTexture rtex;
+    if (!rtex.resize(tex.getSize())) {
+        DebugError(L"Filter set_smoothing: failed to resize render texture.");
+        exit(0);
+    }
+
+    sf::Shader sh;
+    if (!sh.loadFromMemory(smoothing_shader_source, sf::Shader::Type::Fragment)) {
+        DebugError(L"Filter set_smoothing: failed to load shader from memory.");
+        exit(0);
+    }
+
+    sh.setUniform("texSize", sf::Glsl::Vec2((float)tex.getSize().x, (float)tex.getSize().y));
+    sh.setUniform("smoothness", smoothness);
+    sh.setUniform("radius", radius);
 
     sf::Sprite spr(tex);
     rtex.clear(sf::Color::Transparent);

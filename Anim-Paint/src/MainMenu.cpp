@@ -19,6 +19,7 @@
 #include "Dialogs/Dialog_Resize.hpp"
 #include "Dialogs/Dialog_Chessboard.hpp"
 #include "Dialogs/Dialog_Invert_Colors.hpp"
+#include "Dialogs/Dialog_Smoothing.hpp"
 
 #include "Dialogs/FramesDialog.hpp"
 #include "Dialogs/LayersDialog.hpp"
@@ -416,6 +417,12 @@ MainMenu::MainMenu() : ElementGUI() {
 		closeMenu();
 		};
 
+	std::shared_ptr<OptionBox> tools_smoothing = std::make_shared<OptionBox>(L"smoothing");
+	tools_smoothing->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Smoothing>(getCurrentAnimation()->getLayers()));
+		closeMenu();
+		};
+
 	tools->addOption(tools_resize);
 	tools->addOption(tools_rotation);
 	tools->addOption(tools_brightness_contrast);
@@ -426,6 +433,7 @@ MainMenu::MainMenu() : ElementGUI() {
 	tools->addOption(tools_outline);
 	tools->addOption(tools_invert);
 	tools->addOption(tools_chessboard);
+	tools->addOption(tools_smoothing);
 
 	// SELECT
 	std::shared_ptr<MenuBox> select = std::make_shared<MenuBox>(L"select");

@@ -16,3 +16,4 @@ void set_chessboard(sf::Image& image, int tileCount, int transparency, sf::Color
 void set_invert_rgb(sf::Image& image);
 void set_invert_hsv(sf::Image& image);
 void set_hue(sf::Image& image, int value);
+void set_smoothing(sf::Image& image, int smoothness, int radius);
