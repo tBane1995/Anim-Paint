@@ -387,8 +387,6 @@ MainMenu::MainMenu() : ElementGUI() {
 		closeMenu();
 		};
 
-
-	std::shared_ptr<OptionBox> tools_hue = std::make_shared<OptionBox>(L"hue");
 	std::shared_ptr<OptionBox> tools_gray = std::make_shared<OptionBox>(L"grayscale mode");
 
 	std::shared_ptr<OptionBox> tools_sepia = std::make_shared<OptionBox>(L"sepia");
@@ -427,7 +425,6 @@ MainMenu::MainMenu() : ElementGUI() {
 	tools->addOption(tools_rotation);
 	tools->addOption(tools_brightness_contrast);
 	tools->addOption(tools_hue_saturation);
-	tools->addOption(tools_hue);
 	tools->addOption(tools_gray);
 	tools->addOption(tools_sepia);
 	tools->addOption(tools_outline);

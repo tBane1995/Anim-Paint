@@ -54,6 +54,8 @@ Dialog_Hue_Saturation::Dialog_Hue_Saturation(std::vector<std::shared_ptr<Layer>>
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
+		_hue_slider->setValue(0);
+
 		_saturation_slider->setValue(100);
 		setTheFilter();
 		};
