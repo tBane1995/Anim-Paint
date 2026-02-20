@@ -4,11 +4,11 @@
 #include "DebugLog.hpp"
 #include "Textures.hpp"
 #include "Animation/Animation.hpp"
-#include "Toolbar.hpp"
+#include "Components/Toolbar.hpp"
 #include "Tools/Line.hpp"
 #include "WorldToTileConverter.hpp"
 #include "Cursor.hpp"
-#include "Canvas.hpp"
+#include "Components/Canvas.hpp"
 #include "Theme.hpp"
 
 std::string mask_shader_source = R"(

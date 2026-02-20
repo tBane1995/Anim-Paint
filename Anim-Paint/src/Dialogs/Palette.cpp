@@ -3,12 +3,12 @@
 #include "Time.hpp"
 #include "Window.hpp"
 #include "Cursor.hpp"
-#include "Toolbar.hpp"
+#include "Components/Toolbar.hpp"
 #include "SFML/Graphics.hpp"
 #include "Theme.hpp"
 #include <iostream>
-#include "MainMenu.hpp"
-#include "BottomBar.hpp"
+#include "Components/MainMenu.hpp"
+#include "Components/BottomBar.hpp"
 #include "DebugLog.hpp"
 #include "Tools/Selection.hpp"
 

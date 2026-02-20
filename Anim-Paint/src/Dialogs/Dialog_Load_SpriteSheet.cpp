@@ -1,17 +1,17 @@
 ﻿#include "Dialogs/Dialog_Load_SpriteSheet.hpp"
-#include "MainMenu.hpp"
+#include "Components/MainMenu.hpp"
 #include <iostream>
 #include "Animation/Animation.hpp"
 #include "Theme.hpp"
 #include "Cursor.hpp"
 #include "Window.hpp"
 #include "Time.hpp"
-#include "Canvas.hpp"
+#include "Components/Canvas.hpp"
 #include "Dialogs/FramesDialog.hpp"
 #include "Dialogs/AnimationsDialog.hpp"
 #include "DebugLog.hpp"
 #include "History.hpp"
-#include "BottomBar.hpp"
+#include "Components/BottomBar.hpp"
 
 Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : Dialog(L"Import Animation", sf::Vector2i(256+16, 256+16+80)) {
 	

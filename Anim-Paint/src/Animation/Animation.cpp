@@ -1,6 +1,6 @@
 ﻿#include "Animation/Animation.hpp"
 #include <iostream>
-#include "Canvas.hpp"
+#include "Components/Canvas.hpp"
 
 Animation::Animation() {
 

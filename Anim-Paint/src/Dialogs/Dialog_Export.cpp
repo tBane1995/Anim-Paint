@@ -1,5 +1,5 @@
 #include "Dialogs/Dialog_Export.hpp"
-#include "MainMenu.hpp"
+#include "Components/MainMenu.hpp"
 #include <iostream>
 
 Dialog_Export::Dialog_Export() : FileDialog(L"Export As File", L"export") {

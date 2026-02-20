@@ -42,16 +42,16 @@
 #include "Dialogs/Dialog_Hue_Saturation.hpp"
 #include "Dialogs/Dialog_Sepia.hpp"
 
-#include "MainMenu.hpp"
-#include "BottomBar.hpp"
+#include "Components/MainMenu.hpp"
+#include "Components/BottomBar.hpp"
 
-#include "Tooltip.hpp"
+#include "Components/Tooltip.hpp"
 
 #include "Tools/Selection.hpp"
 #include "Tools/Lasso.hpp"
 #include "Tools/Brush.hpp"
-#include "Toolbar.hpp"
-#include "Canvas.hpp"
+#include "Components/Toolbar.hpp"
+#include "Components/Canvas.hpp"
 
 void createDialogs() {
 	

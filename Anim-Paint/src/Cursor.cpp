@@ -1,12 +1,12 @@
 ﻿ #include "Cursor.hpp"
 #include "SFML/Graphics.hpp"
 #include "Dialogs/FileDialog.hpp"
-#include "Canvas.hpp"
+#include "Components/Canvas.hpp"
 #include "Tools/Brush.hpp"
 #include "Dialogs/Palette.hpp"
 #include "Tools/Selection.hpp"
 #include "ElementGUI/Slider.hpp"
-#include "MainMenu.hpp"
+#include "Components/MainMenu.hpp"
 
 Cursor::Cursor() {
 

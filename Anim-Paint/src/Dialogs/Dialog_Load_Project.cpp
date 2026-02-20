@@ -1,12 +1,12 @@
 #include "Dialogs/Dialog_Load_Project.hpp"
-#include "MainMenu.hpp"
+#include "Components/MainMenu.hpp"
 #include <iostream>
 #include "Animation/Animation.hpp"
-#include "Canvas.hpp"
+#include "Components/Canvas.hpp"
 #include "Dialogs/AnimationsDialog.hpp"
 #include "Dialogs/FramesDialog.hpp"
 #include "Dialogs/LayersDialog.hpp"
-#include "Canvas.hpp"
+#include "Components/Canvas.hpp"
 #include "History.hpp"
 
 Dialog_Load_Project::Dialog_Load_Project() : FileDialog(L"Load Project", L"load") {

@@ -4,9 +4,9 @@
 #include "Cursor.hpp"
 #include "ElementGUI/TextInput.hpp"
 #include "ElementGUI/NumberInput.hpp"
-#include "MainMenu.hpp"
-#include "Toolbar.hpp"
-#include "Bottombar.hpp"
+#include "Components/MainMenu.hpp"
+#include "Components/Toolbar.hpp"
+#include "Components/BottomBar.hpp"
 #include "Time.hpp"
 
 Dialog::Dialog() : Dialog(L"Dialog", sf::Vector2i(128, 128)) {

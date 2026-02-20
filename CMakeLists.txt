@@ -47,16 +47,16 @@ set(SOURCES
     Anim-Paint/src/Dialogs/Dialog_Chessboard.cpp
     Anim-Paint/src/Dialogs/Dialog_Invert_Colors.cpp
     Anim-Paint/src/Dialogs/Dialog_Smoothing.cpp
-    Anim-Paint/src/MainMenu.cpp
-    Anim-Paint/src/BottomBar.cpp
-    Anim-Paint/src/Tooltip.cpp
+    Anim-Paint/src/Components/MainMenu.cpp
+    Anim-Paint/src/Components/BottomBar.cpp
+    Anim-Paint/src/Components/Tooltip.cpp
     Anim-Paint/src/Tools/Clipboard.cpp
     Anim-Paint/src/Tools/Filters.cpp
     Anim-Paint/src/Tools/Selection.cpp
     Anim-Paint/src/Tools/Brush.cpp
     Anim-Paint/src/Tools/Line.cpp
-    Anim-Paint/src/Toolbar.cpp
-    Anim-Paint/src/Canvas.cpp
+    Anim-Paint/src/Components/Toolbar.cpp
+    Anim-Paint/src/Components/Canvas.cpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
@@ -106,16 +106,16 @@ set(HEADERS
     Anim-Paint/include/Dialogs/Dialog_Chessboard.hpp
     Anim-Paint/include/Dialogs/Dialog_Invert_Colors.hpp
     Anim-Paint/include/Dialogs/Dialog_Smoothing.hpp
-    Anim-Paint/include/MainMenu.hpp
-    Anim-Paint/include/BottomBar.hpp
-    Anim-Paint/include/Tooltip.hpp
+    Anim-Paint/include/Components/MainMenu.hpp
+    Anim-Paint/include/Components/BottomBar.hpp
+    Anim-Paint/include/Components/Tooltip.hpp
     Anim-Paint/include/Tools/Clipboard.hpp
     Anim-Paint/include/Tools/Filters.hpp
     Anim-Paint/include/Tools/Selection.hpp
     Anim-Paint/include/Tools/Brush.hpp
     Anim-Paint/include/Tools/Line.hpp
-    Anim-Paint/include/Toolbar.hpp
-    Anim-Paint/include/Canvas.hpp
+    Anim-Paint/include/Components/Toolbar.hpp
+    Anim-Paint/include/Components/Canvas.hpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${HEADERS})

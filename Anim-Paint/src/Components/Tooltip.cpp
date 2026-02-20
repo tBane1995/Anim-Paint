@@ -1,4 +1,4 @@
-#include "../include/Tooltip.hpp"
+#include "../include/Components/Tooltip.hpp"
 #include "../include/Cursor.hpp"
 #include "../include/Time.hpp"
 

@@ -1,5 +1,5 @@
 #include "Animation/Frame.hpp"
-#include "Canvas.hpp"
+#include "Components/Canvas.hpp"
 
 Frame::Frame() {
 	

@@ -1,4 +1,4 @@
-﻿#include "MainMenu.hpp"
+﻿#include "Components/MainMenu.hpp"
 #include "Theme.hpp"
 #include "Time.hpp"
 #include "Cursor.hpp"
@@ -28,7 +28,7 @@
 #include <filesystem>
 #include "Tools/Lasso.hpp"
 #include "Tools/Selection.hpp"
-#include "Canvas.hpp"
+#include "Components/Canvas.hpp"
 #include "History.hpp"
 #include <fstream>
 #include <DebugLog.hpp>

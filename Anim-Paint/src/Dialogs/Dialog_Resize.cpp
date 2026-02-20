@@ -4,8 +4,8 @@
 #include "Dialogs/LayersDialog.hpp"
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
-#include "Toolbar.hpp"
-#include "Canvas.hpp"
+#include "Components/Toolbar.hpp"
+#include "Components/Canvas.hpp"
 #include "History.hpp"
 
 Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"resize", sf::Vector2i(256, 160+64), sf::Vector2i(8, 120)) {

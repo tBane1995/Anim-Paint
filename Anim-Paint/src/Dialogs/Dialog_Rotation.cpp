@@ -4,7 +4,7 @@
 #include "Dialogs/LayersDialog.hpp"
 #include "Window.hpp"
 #include "Tools/Filters.hpp"
-#include "Toolbar.hpp"
+#include "Components/Toolbar.hpp"
 #include "History.hpp"
 
 Dialog_Rotation::Dialog_Rotation(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"rotation", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {

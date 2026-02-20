@@ -4,7 +4,7 @@
 #include "Dialogs/LayersDialog.hpp"
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
-#include "Toolbar.hpp"
+#include "Components/Toolbar.hpp"
 #include "History.hpp"
 
 Dialog_Smoothing::Dialog_Smoothing(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"smoothing", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {

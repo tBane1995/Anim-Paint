@@ -2,9 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include "Window.hpp"
 #include "ElementGUI/TextInput.hpp"
-#include "Toolbar.hpp"
+#include "Components/Toolbar.hpp"
 #include "Tools/Lasso.hpp"
-#include "Canvas.hpp"
+#include "Components/Canvas.hpp"
 #include <iostream>
 #include "WorldToTileConverter.hpp"
 
