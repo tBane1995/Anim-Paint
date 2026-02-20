@@ -17,7 +17,7 @@ Dialog_Rotation::Dialog_Rotation(std::vector<std::shared_ptr<Layer>> layers) : D
 	_rotation_slider->setValue(0);
 
 	_smoothness_slider = std::make_shared<Slider>(L"smoothness", 0, 100);
-	_smoothness_slider->setValue(100);
+	_smoothness_slider->setValue(50);
 
 	_radius_slider = std::make_shared<Slider>(L"radius", 0, 8, L"px");
 	_radius_slider->setValue(1);
@@ -27,7 +27,7 @@ Dialog_Rotation::Dialog_Rotation(std::vector<std::shared_ptr<Layer>> layers) : D
 	_reset =std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
 		_rotation_slider->setValue(0);
-		_smoothness_slider->setValue(100);
+		_smoothness_slider->setValue(50);
 		_radius_slider->setValue(1);
 		setTheFilter();
 		};
