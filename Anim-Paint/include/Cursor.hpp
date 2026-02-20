@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Window.hpp"
 #include "ElementGUI/TextInput.hpp"
-#include "Tools/Toolbar.hpp"
+#include "Toolbar.hpp"
 #include "Tools/Lasso.hpp"
 #include "Canvas.hpp"
 #include <iostream>

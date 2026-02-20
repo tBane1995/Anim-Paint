@@ -1,4 +1,4 @@
-﻿#include "Tools/Toolbar.hpp"
+﻿#include "Toolbar.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
 #include "MainMenu.hpp"

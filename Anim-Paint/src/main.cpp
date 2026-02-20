@@ -50,7 +50,7 @@
 #include "Tools/Selection.hpp"
 #include "Tools/Lasso.hpp"
 #include "Tools/Brush.hpp"
-#include "Tools/Toolbar.hpp"
+#include "Toolbar.hpp"
 #include "Canvas.hpp"
 
 void createDialogs() {

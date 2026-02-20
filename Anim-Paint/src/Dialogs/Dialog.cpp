@@ -5,7 +5,7 @@
 #include "ElementGUI/TextInput.hpp"
 #include "ElementGUI/NumberInput.hpp"
 #include "MainMenu.hpp"
-#include "Tools/Toolbar.hpp"
+#include "Toolbar.hpp"
 #include "Bottombar.hpp"
 #include "Time.hpp"
 

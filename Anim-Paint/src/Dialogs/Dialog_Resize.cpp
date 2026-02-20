@@ -4,7 +4,7 @@
 #include "Dialogs/LayersDialog.hpp"
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
-#include "Tools/Toolbar.hpp"
+#include "Toolbar.hpp"
 #include "Canvas.hpp"
 #include "History.hpp"
 

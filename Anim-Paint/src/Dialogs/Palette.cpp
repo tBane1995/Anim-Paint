@@ -3,7 +3,7 @@
 #include "Time.hpp"
 #include "Window.hpp"
 #include "Cursor.hpp"
-#include "Tools/Toolbar.hpp"
+#include "Toolbar.hpp"
 #include "SFML/Graphics.hpp"
 #include "Theme.hpp"
 #include <iostream>
