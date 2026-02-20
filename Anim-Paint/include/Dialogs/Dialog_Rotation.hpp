@@ -11,6 +11,9 @@ public:
 	RotationState _state;
 
 	std::shared_ptr<Slider> _rotation_slider;
+	std::shared_ptr<Slider> _smoothness_slider;
+	std::shared_ptr<Slider> _radius_slider;
+
 	std::shared_ptr<ColoredButtonWithText> _reset;
 	std::shared_ptr<ColoredButtonWithText> _confirm;
 

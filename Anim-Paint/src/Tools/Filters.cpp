@@ -445,7 +445,6 @@ void set_rotation(sf::Image& image, int angle, bool set_smooth, sf::Color backgr
     float a = (float)angle * 3.14159265f / 180.f;
     sh.setUniform("angle", a);
 	sh.setUniform("backgroundColor", sf::Glsl::Vec4(backgroundColor.r / 255.0f, backgroundColor.g / 255.0f, backgroundColor.b / 255.0f, backgroundColor.a / 255.0f));
-    tex.setSmooth(set_smooth);
 
     sf::Sprite spr(tex);
     rtex.clear(sf::Color::Transparent);
