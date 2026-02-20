@@ -160,10 +160,8 @@ void Dialog_Resize::setTheFilter() {
 		set_resize(_edited_layers.back()->_image, _width_input->getValue(), _height_input->getValue(), toolbar->_second_color->_color);
 	}
 
-	// TO-DO
 	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-	//layers_dialog->loadLayersFromCurrentFrame();
 }
 
 void Dialog_Resize::cursorHover() {

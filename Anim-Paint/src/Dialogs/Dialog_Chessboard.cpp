@@ -94,10 +94,8 @@ void Dialog_Chessboard::setTheFilter() {
 		set_chessboard(_edited_layers.back()->_image, _tileCount_slider->getValue(), _transparency_slider->getValue(), toolbar->_first_color->_color, toolbar->_second_color->_color);
 	}
 
-	// TO-DO
 	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-	//layers_dialog->loadLayersFromCurrentFrame();
 }
 
 void Dialog_Chessboard::cursorHover() {

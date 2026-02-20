@@ -40,10 +40,8 @@ Dialog_Rotation::~Dialog_Rotation() {
 		_rotation_slider->setValue(0);
 		setTheFilter();
 
-		// TO-DO
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-		//layers_dialog->loadLayersFromCurrentFrame();
 	}
 	else {
 		// is Edited

@@ -96,10 +96,8 @@ void Dialog_Brightness_Contrast::setTheFilter() {
 		set_contrast(_edited_layers.back()->_image, _contrast_slider->getValue());
 	}
 
-	// TO-DO
 	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-	//layers_dialog->loadLayersFromCurrentFrame();
 
 }
 

@@ -96,10 +96,8 @@ void Dialog_Smoothing::setTheFilter() {
 		set_smoothing(_edited_layers.back()->_image, _smoothness_slider->getValue(), _radius_slider->getValue());
 	}
 
-	// TO-DO
 	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-	//layers_dialog->loadLayersFromCurrentFrame();
 }
 
 void Dialog_Smoothing::cursorHover() {

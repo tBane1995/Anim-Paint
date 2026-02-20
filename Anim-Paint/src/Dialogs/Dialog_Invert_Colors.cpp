@@ -133,10 +133,8 @@ void Dialog_Invert_Colors::setTheFilter() {
 		}
 	}
 
-	// TO-DO
 	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-	//layers_dialog->loadLayersFromCurrentFrame();
 }
 
 void Dialog_Invert_Colors::cursorHover() {

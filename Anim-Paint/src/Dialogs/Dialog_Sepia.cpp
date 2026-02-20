@@ -86,10 +86,8 @@ void Dialog_Sepia::setTheFilter() {
 		set_sepia(_edited_layers.back()->_image, _sepia_slider->getValue());
 	}
 
-	// TO-DO
 	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-	//layers_dialog->loadLayersFromCurrentFrame();
 }
 
 void Dialog_Sepia::cursorHover() {

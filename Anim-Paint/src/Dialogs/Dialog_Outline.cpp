@@ -89,10 +89,8 @@ void Dialog_Outline::setTheFilter() {
 		set_outline(_edited_layers.back()->_image, _outline_slider->getValue(), toolbar->_second_color->_color, toolbar->_first_color->_color);
 	}
 
-	// TO-DO
 	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-	//layers_dialog->loadLayersFromCurrentFrame();
 }
 
 void Dialog_Outline::cursorHover() {

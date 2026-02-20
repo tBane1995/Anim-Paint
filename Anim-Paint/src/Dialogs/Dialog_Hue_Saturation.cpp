@@ -132,10 +132,8 @@ void Dialog_Hue_Saturation::setTheFilter() {
 		set_saturation(_edited_layers.back()->_image, _saturation_slider->getValue());
 	}
 
-	// TO-DO
 	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-	//layers_dialog->loadLayersFromCurrentFrame();
 }
 
 void Dialog_Hue_Saturation::cursorHover() {
