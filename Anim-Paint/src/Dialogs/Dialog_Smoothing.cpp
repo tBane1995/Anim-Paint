@@ -14,7 +14,7 @@ Dialog_Smoothing::Dialog_Smoothing(std::vector<std::shared_ptr<Layer>> layers) :
 
 	
 	_smoothness_slider = std::make_shared<Slider>(L"smoothness", 0, 100);
-	_smoothness_slider->setValue(50);
+	_smoothness_slider->setValue(100);
 
 	_radius_slider = std::make_shared<Slider>(L"radius", 0, 8, L"px");
 	_radius_slider->setValue(1);
@@ -23,7 +23,7 @@ Dialog_Smoothing::Dialog_Smoothing(std::vector<std::shared_ptr<Layer>> layers) :
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
-		_smoothness_slider->setValue(50);
+		_smoothness_slider->setValue(100);
 		_radius_slider->setValue(1);
 		setTheFilter();
 		};
