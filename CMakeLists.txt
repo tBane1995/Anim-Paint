@@ -51,6 +51,7 @@ set(SOURCES
     Anim-Paint/src/Dialogs/Dialog_Smoothing.cpp
     Anim-Paint/src/MainMenu.cpp
     Anim-Paint/src/BottomBar.cpp
+    Anim-Paint/src/Tooltip.cpp
     Anim-Paint/src/Tools/Selection.cpp
     Anim-Paint/src/Tools/Brush.cpp
     Anim-Paint/src/Tools/Line.cpp
@@ -109,6 +110,7 @@ set(HEADERS
     Anim-Paint/include/Dialogs/Dialog_Smoothing.hpp
     Anim-Paint/include/MainMenu.hpp
     Anim-Paint/include/BottomBar.hpp
+    Anim-Paint/include/Tooltip.hpp
     Anim-Paint/include/Tools/Selection.hpp
     Anim-Paint/include/Tools/Brush.hpp
     Anim-Paint/include/Tools/Line.hpp

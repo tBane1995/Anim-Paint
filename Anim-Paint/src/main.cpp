@@ -45,6 +45,8 @@
 #include "MainMenu.hpp"
 #include "BottomBar.hpp"
 
+#include "Tooltip.hpp"
+
 #include "Tools/Selection.hpp"
 #include "Tools/Lasso.hpp"
 #include "Tools/Brush.hpp"
@@ -126,7 +128,7 @@ void resize() {
 }
 
 int main() {
-	_setmode(_fileno(stdout), _O_U16TEXT); // wide char UTF-16 output
+	(void)_setmode(_fileno(stdout), _O_U16TEXT); // wide char UTF-16 output
 	window = std::make_unique<sf::RenderWindow>(sf::VideoMode(sf::Vector2u(mainView.getSize())), "Anim Paint", sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
 	
 	//window->setKeyRepeatEnabled(false);
@@ -153,6 +155,8 @@ int main() {
 	createDialogs();
 	canvas = std::make_shared<Canvas>();
 	bottom_bar = std::make_shared<BottomBar>();
+	tooltip = std::make_shared<Tooltip>();
+
 	// FPS counter
 	sf::Clock fpsClock;
 	float fps = 0.0f;
@@ -220,6 +224,7 @@ int main() {
 			palette->update();
 		main_menu->update();
 		bottom_bar->update();
+		tooltip->update();
 
 		// handle events
 		while (const std::optional event = window->pollEvent()) {
@@ -255,6 +260,8 @@ int main() {
 
 			cursor->handleEvent(*event);
 			bottom_bar->handleEvent(*event);
+
+			tooltip->handleEvent(*event);
 		}
 		
 		// update
@@ -276,6 +283,8 @@ int main() {
 
 		for (auto& dialog : dialogs)
 			dialog->draw();
+
+		tooltip->draw();
 
 		cursor->draw();
 
