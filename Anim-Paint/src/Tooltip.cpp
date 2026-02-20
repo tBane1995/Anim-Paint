@@ -5,6 +5,9 @@
 Tooltip::Tooltip(){
 	_button = nullptr;
 	_timer = sf::Time::Zero;
+
+	_title = L"";
+	_description = L"";
 }
 
 Tooltip::~Tooltip(){
@@ -17,6 +20,9 @@ void Tooltip::setButton(std::shared_ptr<Button> button){
 
 	_button = button;
 	_timer = currentTime;
+
+	//_title = _button->_title;
+	//_description = _button->_description;
 }
 
 void Tooltip::handleEvent(const sf::Event& event){

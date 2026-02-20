@@ -1,5 +1,5 @@
 ﻿#include "Tools/Selection.hpp"
-#include "Clipboard.hpp"
+#include "Tools/Clipboard.hpp"
 #include "Window.hpp"
 #include "DebugLog.hpp"
 #include "Textures.hpp"

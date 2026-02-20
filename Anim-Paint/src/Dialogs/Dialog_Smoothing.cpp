@@ -2,7 +2,7 @@
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
 #include "Dialogs/LayersDialog.hpp"
-#include "Filters.hpp"
+#include "Tools/Filters.hpp"
 #include "Window.hpp"
 #include "Tools/Toolbar.hpp"
 #include "History.hpp"

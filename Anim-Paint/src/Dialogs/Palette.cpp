@@ -1,5 +1,5 @@
 ﻿#include "Dialogs/Palette.hpp"
-#include "Filters.hpp"
+#include "Tools/Filters.hpp"
 #include "Time.hpp"
 #include "Window.hpp"
 #include "Cursor.hpp"

@@ -1,4 +1,4 @@
-﻿#include "ClipBoard.hpp"
+﻿#include "Tools/ClipBoard.hpp"
 #include "SFML/Graphics.hpp"
 #include <iostream>
 #include "Windows.h"

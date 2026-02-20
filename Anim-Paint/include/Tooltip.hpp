@@ -7,6 +7,9 @@ public:
 	std::shared_ptr<Button> _button;
 	sf::Time _timer;
 
+	std::wstring _title;
+	std::wstring _description;
+
 	Tooltip();
 	~Tooltip();
 

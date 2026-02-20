@@ -23,9 +23,7 @@ set(SOURCES
     Anim-Paint/src/ElementGUI/NumberInput.cpp
     Anim-Paint/src/ElementGUI/EdgePoint.cpp
     Anim-Paint/src/WorldToTileConverter.cpp
-    Anim-Paint/src/Clipboard.cpp
     Anim-Paint/src/History.cpp
-    Anim-Paint/src/Filters.cpp
     Anim-Paint/src/Animation/Layer.cpp
     Anim-Paint/src/Animation/Frame.cpp
     Anim-Paint/src/Animation/Animation.cpp
@@ -52,6 +50,8 @@ set(SOURCES
     Anim-Paint/src/MainMenu.cpp
     Anim-Paint/src/BottomBar.cpp
     Anim-Paint/src/Tooltip.cpp
+    Anim-Paint/src/Tools/Clipboard.cpp
+    Anim-Paint/src/Tools/Filters.cpp
     Anim-Paint/src/Tools/Selection.cpp
     Anim-Paint/src/Tools/Brush.cpp
     Anim-Paint/src/Tools/Line.cpp
@@ -82,9 +82,7 @@ set(HEADERS
     Anim-Paint/include/ElementGUI/NumberInput.hpp
     Anim-Paint/include/ElementGUI/EdgePoint.hpp
     Anim-Paint/include/WorldToTileConverter.hpp
-    Anim-Paint/include/Clipboard.hpp
     Anim-Paint/include/History.hpp
-    Anim-Paint/include/Filters.hpp
     Anim-Paint/include/Animation/Layer.hpp
     Anim-Paint/include/Animation/Frame.hpp
     Anim-Paint/include/Animation/Animation.hpp
@@ -111,6 +109,8 @@ set(HEADERS
     Anim-Paint/include/MainMenu.hpp
     Anim-Paint/include/BottomBar.hpp
     Anim-Paint/include/Tooltip.hpp
+    Anim-Paint/include/Tools/Clipboard.hpp
+    Anim-Paint/include/Tools/Filters.hpp
     Anim-Paint/include/Tools/Selection.hpp
     Anim-Paint/include/Tools/Brush.hpp
     Anim-Paint/include/Tools/Line.hpp

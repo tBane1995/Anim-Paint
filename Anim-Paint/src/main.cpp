@@ -23,9 +23,9 @@
 
 
 #include "WorldToTileConverter.hpp"
-#include "ClipBoard.hpp"
 #include "History.hpp"
-#include "Filters.hpp"
+#include "Tools/ClipBoard.hpp"
+#include "Tools/Filters.hpp"
 
 #include "Animation/Layer.hpp"
 #include "Animation/Frame.hpp"

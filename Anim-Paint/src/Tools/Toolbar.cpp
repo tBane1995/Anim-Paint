@@ -8,11 +8,11 @@
 #include "Tools/Brush.hpp"
 #include "Cursor.hpp"
 #include "Dialogs/Dialog.hpp"
-#include "Filters.hpp"
+#include "Tools/Filters.hpp"
 #include "Time.hpp"
 #include "Dialogs/Palette.hpp"
 #include "DebugLog.hpp"
-#include "ClipBoard.hpp"
+#include "Tools/ClipBoard.hpp"
 
 Separator::Separator() {
 	_rect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(2, tools_separator_height));
