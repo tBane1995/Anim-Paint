@@ -456,19 +456,20 @@ MainMenu::MainMenu() : ElementGUI() {
 
 	std::shared_ptr<OptionBox> select_invert = std::make_shared<OptionBox>(L"invert selection");
 
-	std::shared_ptr<OptionBox> select_align = std::make_shared<OptionBox>(L"align center");
-	select_align->_onclick_func = [this, select]() {
-		selection->_outlineOffset = (canvas->_size - selection->_rect.size) / 2;
-		selection->generateRect();
-		selection->generateOutline();
-		selection->generateMask();
+	std::shared_ptr<OptionBox> select_align_center = std::make_shared<OptionBox>(L"align center");
+	select_align_center->_onclick_func = [this, select]() {
+		sf::Vector2i oldPos = selection->_rect.position;
+		selection->_rect.position = (canvas->_size - selection->_rect.size) / 2;
+		selection->_resizedRect.position = selection->_rect.position;
+		selection->_outlineOffset = selection->_rect.position - oldPos + selection->_outlineOffset;
+		selection->generateEdgePoints();
 		closeMenu();
 		};
 
 	select->addOption(select_all);
 	select->addOption(select_none);
 	select->addOption(select_invert);
-	select->addOption(select_align);
+	select->addOption(select_align_center);
 
 	// SETTINGS
 	std::shared_ptr<MenuBox> settings = std::make_shared<MenuBox>(L"settings");
