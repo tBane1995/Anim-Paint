@@ -418,7 +418,6 @@ void Selection::copy(sf::Image& canvas, sf::Color emptyColor)
 	if (_state != SelectionState::Selected)
 		return;
 
-	generateRect();
 
 	sf::IntRect r = _rect;
 	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
