@@ -426,6 +426,8 @@ void Canvas::mouseLeftButtonPressedEvent() {
 					}
 					selection->_state = SelectionState::Selecting;
 					selection->unselect();
+					selection->generateRect();
+					selection->_resizedRect = selection->_rect;
 					selection->_outlineOffset = tile;
 				}
 				else {
@@ -438,6 +440,8 @@ void Canvas::mouseLeftButtonPressedEvent() {
 
 					selection->_state = SelectionState::None;
 					selection->unselect();
+					selection->generateRect();
+					selection->_resizedRect = selection->_rect;
 				}
 			}
 
