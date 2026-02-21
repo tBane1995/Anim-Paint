@@ -112,48 +112,57 @@ void copyImage(sf::Image& dst, sf::Image& src, sf::IntRect srcRect) {
 	}
 }
 
-void copyImageWithAlpha(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf::Color alphaColor) {
+void copyImageWithAlpha(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf::Color alphaColor)
+{
+	// (opcjonalnie, ale bezpiecznie) normalizacja, gdyby size był ujemny
+	sf::IntRect r = srcRect;
+	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
+	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
 
-	sf::IntRect srcB(sf::Vector2i(0,0), sf::Vector2i(src.getSize()));
-
-	if (!srcRect.findIntersection(srcB).has_value())
+	if (r.size.x <= 0 || r.size.y <= 0)
 		return;
 
-	sf::IntRect s = srcRect.findIntersection(srcB).value();
-
-	if (s.size.x < (int)(dst.getSize().x))
-		s.size.x = (int)(dst.getSize().x);
-
-	if (s.size.y > (int)(dst.getSize().y))
-		s.size.y = (int)(dst.getSize().y);
-
-	if (s.size.x <= 0 || s.size.y<= 0)
+	sf::IntRect srcB(sf::Vector2i(0, 0), sf::Vector2i(src.getSize()));
+	auto inter = r.findIntersection(srcB);
+	if (!inter.has_value())
 		return;
+
+	sf::IntRect s = inter.value();
+	if (s.size.x <= 0 || s.size.y <= 0)
+		return;
+
+	if (dst.getSize().x < s.size.x || dst.getSize().y < s.size.y)
+		dst.resize(sf::Vector2u(s.size.x, s.size.y), sf::Color::Transparent);
 
 	sf::Image img;
-	img.resize(src.getSize(), sf::Color::Transparent);
+	img.resize(sf::Vector2u(s.size.x, s.size.y), sf::Color::Transparent);
 
-	for (int y = 0; y < (int)(img.getSize().y); y++) {
-		for (int x = 0; x < (int)(img.getSize().x); x++) {
-			if (!(src.getPixel(sf::Vector2u(x, y)) == sf::Color::Transparent || src.getPixel(sf::Vector2u(x,y)) == alphaColor)) {
-				img.setPixel(sf::Vector2u(x, y), src.getPixel(sf::Vector2u(x, y)));
-			}
+	for (int y = 0; y < s.size.y; ++y) {
+		for (int x = 0; x < s.size.x; ++x) {
+			int xx = s.position.x + x;
+			int yy = s.position.y + y;
+
+			sf::Color c = src.getPixel(sf::Vector2u(xx, yy));
+			if (c == sf::Color::Transparent || c == alphaColor)
+				continue;
+
+			img.setPixel(sf::Vector2u(x, y), c);
 		}
 	}
 
-	if(!dst.copy(img, sf::Vector2u(0, 0), s, false)) {
+	sf::IntRect local(sf::Vector2i(0, 0), sf::Vector2i(s.size));
+	if (!dst.copy(img, sf::Vector2u(0, 0), local, false)) {
 		DebugError(L"copyImageWithAlpha: image copy failed");
 		exit(0);
 	}
-
 }
 
 void copyImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, int srcX, int srcY, sf::Image& mask, sf::Color alphaColor)
 {
-	const int dw = (int)dst.getSize().x;
-	const int dh = (int)dst.getSize().y;
-	const int sw = (int)src.getSize().x;
-	const int sh = (int)src.getSize().y;
+	int dw = (int)dst.getSize().x;
+	int dh = (int)dst.getSize().y;
+	int sw = (int)src.getSize().x;
+	int sh = (int)src.getSize().y;
 
 	if (dw <= 0 || dh <= 0 || sw <= 0 || sh <= 0) return;
 
@@ -180,22 +189,22 @@ void copyImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, int s
 	if (maxW <= 0 || maxH <= 0) return;
 
 	for (int y = 0; y < maxH; ++y) {
-		const int sy = srcY + y;
-		const int dy = dstY + y;
-		const int my = my0 + y;
+		int sy = srcY + y;
+		int dy = dstY + y;
+		int my = my0 + y;
 
 		for (int x = 0; x < maxW; ++x) {
-			const int sx = srcX + x;
-			const int dx = dstX + x;
-			const int mx = mx0 + x;
+			int sx = srcX + x;
+			int dx = dstX + x;
+			int mx = mx0 + x;
 
-			const sf::Color m = mask.getPixel({ (unsigned)mx, (unsigned)my });
+			const sf::Color m = mask.getPixel(sf::Vector2u(mx, my));
 			if (m != sf::Color::White) continue; // tylko białe = kopiuj
 
-			const sf::Color c = src.getPixel({ (unsigned)sx, (unsigned)sy });
+			const sf::Color c = src.getPixel(sf::Vector2u(sx, sy));
 			if (c.a == 0 || c == alphaColor) continue;
 
-			dst.setPixel({ (unsigned)dx, (unsigned)dy }, c);
+			dst.setPixel(sf::Vector2u(dx, dy), c);
 		}
 	}
 } 
