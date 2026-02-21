@@ -178,16 +178,7 @@ Toolbar::Toolbar() : ElementGUI() {
 	_btn_paste->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
 	_btn_paste->_onclick_func = [this]() {
-		//selection->paste(&animation->getCurrentLayer()->image, selection->img);
-		selection->unselect();
 		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent)) {
-			selection->_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(selection->_image->getSize()));
-			selection->_outlineOffset = sf::Vector2i(0,0);
-			selection->_resizedRect = selection->_rect;
-			selection->generateRect();
-			selection->generateEdgePoints();
-			selection->generateMask();
-			selection->generateResizedMask();
 			_toolType = ToolType::Selector;
 			selection->_state = SelectionState::Selected;
 			selectToolButton(_btn_select);

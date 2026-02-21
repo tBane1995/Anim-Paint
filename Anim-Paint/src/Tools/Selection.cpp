@@ -413,19 +413,19 @@ bool Selection::clickOnSelection(sf::Vector2i point) {
 	return _resizedRect.contains(point);
 }
 
-void Selection::copy(sf::Image& canvas, sf::Color emptyColor)
+void Selection::copy(sf::Image& canvas, sf::Color alphaColor)
 {
 
 	if (_state != SelectionState::Selected)
 		return;
 
 
-	sf::IntRect r = _rect;
+	sf::IntRect r = _resizedRect;
 	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
 	if (r.size.y < 0) { r.position.y += r.size.y; r.size.y = -r.size.y; }
 
-	pasteImageWithMask(canvas, *_image, r.position.x, r.position.y, *_maskImage, emptyColor);
-	copyImageWithAlpha(*_image, canvas, _rect, emptyColor);
+	pasteImageWithMask(canvas, *_resizedImage, r.position.x, r.position.y, *_resizedMaskImage, alphaColor);
+	copyImageWithAlpha(*_resizedImage, canvas, r, alphaColor);
 
 	sf::IntRect canvasRect(sf::Vector2i(0, 0), sf::Vector2i(canvas.getSize()));
 
@@ -445,15 +445,28 @@ void Selection::copy(sf::Image& canvas, sf::Color emptyColor)
 	for (int y = 0; y < s.size.y; ++y)
 		for (int x = 0; x < s.size.x; ++x) {
 
-			if (_maskImage->getPixel(sf::Vector2u(x, y)) != sf::Color::White)
-				copiedImage.setPixel(sf::Vector2u(x, y), sf::Color::Transparent);
-			else {
+			int ox = s.position.x - r.position.x;
+			int oy = s.position.y - r.position.y;
 
-				if (_image->getPixel(sf::Vector2u(x, y)) == emptyColor)
+			int sx = x + ox;
+			int sy = y + oy;
+
+			int xx = sx * _rect.size.x / r.size.x;
+			int yy = sy * _rect.size.y / r.size.y;
+
+			if (xx < 0) xx = 0;
+			if (yy < 0) yy = 0;
+			if (xx >= _rect.size.x) xx = _rect.size.x - 1;
+			if (yy >= _rect.size.y) yy = _rect.size.y - 1;
+
+			if (_maskImage->getPixel(sf::Vector2u(xx, yy)) != sf::Color::White)
+				copiedImage.setPixel(sf::Vector2u(x, y), sf::Color::Transparent);
+			else
+			{
+				if (_image->getPixel(sf::Vector2u(xx, yy)) == alphaColor)
 					copiedImage.setPixel(sf::Vector2u(x, y), sf::Color::Transparent);
 				else
-					copiedImage.setPixel(sf::Vector2u(x, y), _image->getPixel(sf::Vector2u(x, y)));
-
+					copiedImage.setPixel(sf::Vector2u(x, y), _image->getPixel(sf::Vector2u(xx, yy)));
 			}
 		}
 
@@ -508,8 +521,8 @@ void Selection::paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Im
 bool Selection::paste(sf::Image& canvas, sf::Color emptyColor)
 {
 
-	if (_image != nullptr) {
-		paste(canvas, *_resizedImage, _rect.position.x, _rect.position.y, *_resizedMaskImage, emptyColor);
+	if (_image != nullptr && _resizedImage != nullptr) {
+		paste(canvas, *_image, _rect.position.x, _rect.position.y, *_maskImage, emptyColor);
 	}
 	else {
 		_image = std::make_shared<sf::Image>();
@@ -530,9 +543,14 @@ bool Selection::paste(sf::Image& canvas, sf::Color emptyColor)
 	addPoint(sf::Vector2i(_image->getSize().x - 1, _image->getSize().y - 1));
 	addPoint(sf::Vector2i(_image->getSize().x - 1, 0));
 
-	_rect.position = sf::Vector2i(0, 0);
-	_resizedRect.position = sf::Vector2i(0, 0);
+	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(selection->_image->getSize()));
+	_outlineOffset = sf::Vector2i(0, 0);
+	_resizedRect = selection->_rect;
+	generateRect();
 	generateEdgePoints();
+	generateMask();
+	generateResizedMask();
+	_resizedImage = _image;
 	return true;
 }
 

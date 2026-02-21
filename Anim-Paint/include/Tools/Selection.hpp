@@ -67,7 +67,7 @@ public:
 	void selectAll();
 	void generateRect();
 	bool clickOnSelection(sf::Vector2i point);
-	void copy(sf::Image& canvas, sf::Color emptyColor);
+	void copy(sf::Image& canvas, sf::Color alphaColor);
 	void paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor);
 	bool paste(sf::Image& canvas, sf::Color emptyColor);
 	void cut(sf::Image& canvas, sf::Color emptyColor);
