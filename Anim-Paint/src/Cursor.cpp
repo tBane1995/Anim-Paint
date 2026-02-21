@@ -280,8 +280,8 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 	if (selection->_state == SelectionState::Selected || selection->_state == SelectionState::Moving) {
+		sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 		if (selection->clickOnSelection(tile)) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);

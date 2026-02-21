@@ -470,7 +470,6 @@ void Canvas::mouseLeftButtonReleasedEvent() {
 		selection->generateRect();
 		selection->generateMask();
 		
-		
 		if (selection->_state == SelectionState::Selecting) {
 			selection->_resizedRect = selection->_rect;
 			selection->_resizedMaskImage = selection->_maskImage;
@@ -480,9 +479,7 @@ void Canvas::mouseLeftButtonReleasedEvent() {
 		if (selection->_state == SelectionState::Selecting) {
 			if (selection->_rect.size.x < 2 || selection->_rect.size.y < 2) {
 				selection->_state = SelectionState::None;
-				selection->generateRect();
-				selection->_resizedRect = selection->_rect;
-
+				selection->unselect();
 			}
 			else {
 				if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
