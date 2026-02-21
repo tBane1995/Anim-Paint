@@ -419,7 +419,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 			if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
 				if (_rect.contains(cursor->_worldMousePosition)) {
 					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
-						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_rect.position.x, selection->_rect.position.y, 0, 0, *selection->_resizedMaskImage, toolbar->_second_color->_color);
+						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, 0, 0, *selection->_resizedMaskImage, toolbar->_second_color->_color);
 						selection->_image = nullptr;
 						selection->_resizedImage = nullptr;
 						history->saveStep();
