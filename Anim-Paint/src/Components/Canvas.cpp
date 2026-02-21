@@ -425,7 +425,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 						history->saveStep();
 					}
 					selection->_state = SelectionState::Selecting;
-					selection->unselect();
+					selection->_points.clear();
 					selection->generateRect();
 					selection->_resizedRect = selection->_rect;
 					selection->_outlineOffset = tile;
@@ -439,7 +439,8 @@ void Canvas::mouseLeftButtonPressedEvent() {
 					}
 
 					selection->_state = SelectionState::None;
-					selection->unselect();
+					selection->_points.clear();
+					selection->_outlineOffset = sf::Vector2i(0, 0);
 					selection->generateRect();
 					selection->_resizedRect = selection->_rect;
 				}
@@ -483,7 +484,8 @@ void Canvas::mouseLeftButtonReleasedEvent() {
 		if (selection->_state == SelectionState::Selecting) {
 			if (selection->_rect.size.x < 2 || selection->_rect.size.y < 2) {
 				selection->_state = SelectionState::None;
-				selection->unselect();
+				selection->_points.clear();
+				selection->_outlineOffset = sf::Vector2i(0, 0);
 			}
 			else {
 				if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {

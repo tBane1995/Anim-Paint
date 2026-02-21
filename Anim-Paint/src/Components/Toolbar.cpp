@@ -221,7 +221,8 @@ Toolbar::Toolbar() : ElementGUI() {
 	_btn_lasso->_onclick_func = [this]() {
 		_toolType = ToolType::Lasso;
 		selectToolButton(_btn_lasso);
-		selection->unselect();
+		selection->_points.clear();
+		selection->_outlineOffset = sf::Vector2i(0, 0);
 		selection->generateRect();
 		selection->generateMask();
 		};

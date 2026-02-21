@@ -450,7 +450,8 @@ MainMenu::MainMenu() : ElementGUI() {
 
 	std::shared_ptr<OptionBox> select_none = std::make_shared<OptionBox>(L"none");
 	select_none->_onclick_func = [this]() {
-		selection->unselect();
+		selection->_points.clear();
+		selection->_outlineOffset = sf::Vector2i(0, 0);
 		closeMenu();
 		};
 

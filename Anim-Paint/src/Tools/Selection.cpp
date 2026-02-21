@@ -343,14 +343,9 @@ void Selection::addPoint(sf::Vector2i point) {
 	_points.push_back(point);
 }
 
-void Selection::unselect() {
+void Selection::selectAll() {
 	_points.clear();
 	_outlineOffset = sf::Vector2i(0, 0);
-	
-}
-
-void Selection::selectAll() {
-	unselect();
 
 	std::shared_ptr<Animation> anim = getCurrentAnimation();
 	int width = anim->getCurrentLayer()->_image.getSize().x - 1;
@@ -537,7 +532,9 @@ bool Selection::paste(sf::Image& canvas, sf::Color emptyColor)
 
 	_state = SelectionState::Selected;
 
-	unselect();
+	_points.clear();
+	_outlineOffset = sf::Vector2i(0, 0);
+
 	addPoint(sf::Vector2i(0, 0));
 	addPoint(sf::Vector2i(0, _image->getSize().y - 1));
 	addPoint(sf::Vector2i(_image->getSize().x - 1, _image->getSize().y - 1));
