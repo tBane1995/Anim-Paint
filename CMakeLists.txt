@@ -34,9 +34,9 @@ set(SOURCES
     Anim-Paint/src/Dialogs/Dialog_Import.cpp
     Anim-Paint/src/Dialogs/Dialog_Load_SpriteSheet.cpp
     Anim-Paint/src/Dialogs/Dialog_Export.cpp
-    Anim-Paint/src/Components/FramesDialog.cpp
-    Anim-Paint/src/Components/LayersDialog.cpp
-    Anim-Paint/src/Components/AnimationsDialog.cpp
+    Anim-Paint/src/Components/FramesPanel.cpp
+    Anim-Paint/src/Components/LayersPanel.cpp
+    Anim-Paint/src/Components/AnimationsPanel.cpp
     Anim-Paint/src/Dialogs/Palette.cpp
     Anim-Paint/src/Dialogs/Dialog_Rotation.cpp
     Anim-Paint/src/Dialogs/Dialog_Brightness_Contrast.cpp
@@ -93,9 +93,9 @@ set(HEADERS
     Anim-Paint/include/Dialogs/Dialog_Import.hpp
     Anim-Paint/include/Dialogs/Dialog_Load_SpriteSheet.hpp
     Anim-Paint/include/Dialogs/Dialog_Export.hpp
-    Anim-Paint/include/Components/FramesDialog.hpp
-    Anim-Paint/include/Components/LayersDialog.hpp
-    Anim-Paint/include/Components/AnimationsDialog.hpp
+    Anim-Paint/include/Components/FramesPanel.hpp
+    Anim-Paint/include/Components/LayersPanel.hpp
+    Anim-Paint/include/Components/AnimationsPanel.hpp
     Anim-Paint/include/Dialogs/Palette.hpp
     Anim-Paint/include/Dialogs/Dialog_Rotation.hpp
     Anim-Paint/include/Dialogs/Dialog_Brightness_Contrast.hpp

@@ -1,7 +1,7 @@
 #include "Dialogs/Dialog_Rotation.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
-#include "../include/Components/LayersDialog.hpp"
+#include "../include/Components/LayersPanel.hpp"
 #include "Window.hpp"
 #include "Tools/Filters.hpp"
 #include "Components/Toolbar.hpp"
@@ -39,7 +39,7 @@ Dialog_Rotation::Dialog_Rotation(std::vector<std::shared_ptr<Layer>> layers) : D
 
 		getCurrentAnimation()->getCurrentFrame()->getLayers().clear();
 		getCurrentAnimation()->getCurrentFrame()->getLayers() = _edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 		};
 
 	setPosition(_position);
@@ -104,7 +104,7 @@ void Dialog_Rotation::setTheFilter() {
 
 	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-	layers_dialog->loadLayersFromCurrentFrame();
+	layers_panel->loadLayersFromCurrentFrame();
 }
 
 void Dialog_Rotation::cursorHover() {

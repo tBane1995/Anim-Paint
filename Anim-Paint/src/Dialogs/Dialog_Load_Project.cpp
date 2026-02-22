@@ -3,9 +3,9 @@
 #include <iostream>
 #include "Animation/Animation.hpp"
 #include "Components/Canvas.hpp"
-#include "../include/Components/AnimationsDialog.hpp"
-#include "../include/Components/FramesDialog.hpp"
-#include "../include/Components/LayersDialog.hpp"
+#include "../include/Components/AnimationsPanel.hpp"
+#include "../include/Components/FramesPanel.hpp"
+#include "../include/Components/LayersPanel.hpp"
 #include "Components/Canvas.hpp"
 #include "History.hpp"
 
@@ -30,9 +30,9 @@ Dialog_Load_Project::Dialog_Load_Project() : FileDialog(L"Load Project", L"load"
 		sf::Vector2i newCanvasSize = sf::Vector2i(getCurrentAnimation()->getCurrentLayer()->_image.getSize());
 		canvas->resize(newCanvasSize);
 
-		animations_dialog->updateText();
-		frames_dialog->updateText();
-		layers_dialog->loadLayersFromCurrentFrame();
+		animations_panel->updateText();
+		frames_panel->updateText();
+		layers_panel->loadLayersFromCurrentFrame();
 		};
 
 	_onTabElements.push_back(_filenameInput);

@@ -28,13 +28,13 @@ public:
 	void draw();
 };
 
-class LayersDialog : public Dialog {
+class LayersPanel : public Dialog {
 public:
 
 	std::vector<std::shared_ptr<LayerBox>> layersBoxes;
 
-	LayersDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(0, 0));
-	~LayersDialog();
+	LayersPanel(std::wstring title, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(0, 0));
+	~LayersPanel();
 
 	void loadLayersFromCurrentFrame();
 	void setPosition(sf::Vector2i position);
@@ -46,4 +46,4 @@ public:
 
 };
 
-extern std::shared_ptr<LayersDialog> layers_dialog;
+extern std::shared_ptr<LayersPanel> layers_panel;

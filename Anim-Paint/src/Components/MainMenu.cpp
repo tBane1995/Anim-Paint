@@ -21,8 +21,8 @@
 #include "Dialogs/Dialog_Invert_Colors.hpp"
 #include "Dialogs/Dialog_Smoothing.hpp"
 
-#include "../include/Components/FramesDialog.hpp"
-#include "../include/Components/LayersDialog.hpp"
+#include "../include/Components/FramesPanel.hpp"
+#include "../include/Components/LayersPanel.hpp"
 #include "Animation/Animation.hpp"
 #include <iostream>
 #include <filesystem>
@@ -822,7 +822,7 @@ void MainMenu::importAnimation(std::vector<std::shared_ptr<Animation>> newAnimat
 	animations = newAnimations;
 
 	canvas->resize(sf::Vector2i(getAnimation(0)->getLayer(0)->_image.getSize()));
-	layers_dialog->loadLayersFromCurrentFrame();
+	layers_panel->loadLayersFromCurrentFrame();
 }
 
 void MainMenu::cursorHover() {

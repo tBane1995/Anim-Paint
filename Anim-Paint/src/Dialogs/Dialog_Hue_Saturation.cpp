@@ -1,7 +1,7 @@
 #include "Dialogs/Dialog_Hue_Saturation.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
-#include "../include/Components/LayersDialog.hpp"
+#include "../include/Components/LayersPanel.hpp"
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
 #include "History.hpp"
@@ -67,7 +67,7 @@ Dialog_Hue_Saturation::Dialog_Hue_Saturation(std::vector<std::shared_ptr<Layer>>
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 		};
 
 	setPosition(_position);
@@ -83,7 +83,7 @@ Dialog_Hue_Saturation::~Dialog_Hue_Saturation() {
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 	}
 	else {
 		// is Edited

@@ -1,7 +1,7 @@
 #include "Dialogs/Dialog_Smoothing.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
-#include "../include/Components/LayersDialog.hpp"
+#include "../include/Components/LayersPanel.hpp"
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
 #include "Components/Toolbar.hpp"
@@ -35,7 +35,7 @@ Dialog_Smoothing::Dialog_Smoothing(std::vector<std::shared_ptr<Layer>> layers) :
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 		};
 
 	
@@ -51,7 +51,7 @@ Dialog_Smoothing::~Dialog_Smoothing() {
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 	}
 	else {
 		// is Edited

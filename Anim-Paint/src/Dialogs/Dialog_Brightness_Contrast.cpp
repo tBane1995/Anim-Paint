@@ -1,7 +1,7 @@
 #include "Dialogs/Dialog_Brightness_Contrast.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
-#include "../include/Components/LayersDialog.hpp"
+#include "../include/Components/LayersPanel.hpp"
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
 #include "History.hpp"
@@ -32,7 +32,7 @@ Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector<std::shared_p
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 		};
 
 	
@@ -50,7 +50,7 @@ Dialog_Brightness_Contrast::~Dialog_Brightness_Contrast() {
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 	}else{
 		// is Edited
 		history->saveStep();

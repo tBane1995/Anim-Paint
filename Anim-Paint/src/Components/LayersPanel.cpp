@@ -1,4 +1,4 @@
-#include "../include/Components/LayersDialog.hpp"
+#include "../include/Components/LayersPanel.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
 #include "Cursor.hpp"
@@ -98,16 +98,16 @@ void LayerBox::draw() {
 
 /////////////////////////////////////////////////////////////
 
-LayersDialog::LayersDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
+LayersPanel::LayersPanel(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
 
 	loadLayersFromCurrentFrame();
 }
 
-LayersDialog::~LayersDialog() {
+LayersPanel::~LayersPanel() {
 
 }
 
-void LayersDialog::loadLayersFromCurrentFrame() {
+void LayersPanel::loadLayersFromCurrentFrame() {
 
 	layersBoxes.clear();
 
@@ -134,7 +134,7 @@ void LayersDialog::loadLayersFromCurrentFrame() {
 	setPosition(this->getPosition());
 }
 
-void LayersDialog::setPosition(sf::Vector2i position) {
+void LayersPanel::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
 	for (int i = 0; i < layersBoxes.size(); i++) {
@@ -146,7 +146,7 @@ void LayersDialog::setPosition(sf::Vector2i position) {
 
 }
 
-void LayersDialog::cursorHover() {
+void LayersPanel::cursorHover() {
 
 	if (selection->_state == SelectionState::Selecting)
 		return;
@@ -158,7 +158,7 @@ void LayersDialog::cursorHover() {
 	}
 }
 
-void LayersDialog::handleEvent(const sf::Event& event) {
+void LayersPanel::handleEvent(const sf::Event& event) {
 
 	if (!dialogs.empty())
 		return;
@@ -171,7 +171,7 @@ void LayersDialog::handleEvent(const sf::Event& event) {
 
 }
 
-void LayersDialog::update() {
+void LayersPanel::update() {
 	Dialog::update();
 
 	for (auto& layerbox : layersBoxes) {
@@ -179,7 +179,7 @@ void LayersDialog::update() {
 	}
 }
 
-void LayersDialog::draw() {
+void LayersPanel::draw() {
 	Dialog::draw();
 
 	for (auto& layerbox : layersBoxes) {
@@ -187,4 +187,4 @@ void LayersDialog::draw() {
 	}
 }
 
-std::shared_ptr<LayersDialog> layers_dialog = nullptr;
+std::shared_ptr<LayersPanel> layers_panel;

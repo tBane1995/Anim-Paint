@@ -1,12 +1,12 @@
-#include "../include/Components/AnimationsDialog.hpp"
+#include "../include/Components/AnimationsPanel.hpp"
 #include "SFML/Graphics.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
 #include "Window.hpp"
-#include "../include/Components/FramesDialog.hpp"
+#include "../include/Components/FramesPanel.hpp"
 #include "Tools/Selection.hpp"
 
-AnimationsDialog::AnimationsDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
+AnimationsPanel::AnimationsPanel(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
 
 
 	_text = std::make_unique<sf::Text>(basicFont, std::to_wstring(getCurrentAnimationId()+1) + L"/" + std::to_wstring(getAnimationsCount()), 17);
@@ -19,25 +19,25 @@ AnimationsDialog::AnimationsDialog(std::wstring title, sf::Vector2i size, sf::Ve
 	_first_btn->_onclick_func = [this, position]() {
 		firstAnimation();
 		updateText();
-		frames_dialog->_first_btn->_onclick_func();
+		frames_panel->_first_btn->_onclick_func();
 		};
 
 	_prev_btn->_onclick_func = [this, position]() {
 		prevAnimation();
 		updateText();
-		frames_dialog->_first_btn->_onclick_func();
+		frames_panel->_first_btn->_onclick_func();
 		};
 
 	_next_btn->_onclick_func = [this, position]() {
 		nextAnimation();
 		updateText();
-		frames_dialog->_first_btn->_onclick_func();
+		frames_panel->_first_btn->_onclick_func();
 		};
 
 	_last_btn->_onclick_func = [this, position]() {
 		lastAnimation();
 		updateText();
-		frames_dialog->_first_btn->_onclick_func();
+		frames_panel->_first_btn->_onclick_func();
 	};
 
 	_add_anim = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\add_frame.png"), getTexture(L"tex\\btn32\\add_frame_hover.png"));
@@ -50,7 +50,7 @@ AnimationsDialog::AnimationsDialog(std::wstring title, sf::Vector2i size, sf::Ve
 			addAnimation();
 			nextAnimation();
 			updateText();
-			frames_dialog->_first_btn->_onclick_func();
+			frames_panel->_first_btn->_onclick_func();
 		}
 		};
 
@@ -59,7 +59,7 @@ AnimationsDialog::AnimationsDialog(std::wstring title, sf::Vector2i size, sf::Ve
 			deleteAnimation();
 			prevAnimation();
 			updateText();
-			frames_dialog->_first_btn->_onclick_func();
+			frames_panel->_first_btn->_onclick_func();
 		}
 		};
 
@@ -67,24 +67,24 @@ AnimationsDialog::AnimationsDialog(std::wstring title, sf::Vector2i size, sf::Ve
 		moveBackAnimation();
 		prevAnimation();
 		updateText();
-		frames_dialog->_first_btn->_onclick_func();
+		frames_panel->_first_btn->_onclick_func();
 		};
 
 	_move_next->_onclick_func = [this]() {
 		moveNextAnimation();
 		nextAnimation();
 		updateText();
-		frames_dialog->_first_btn->_onclick_func();
+		frames_panel->_first_btn->_onclick_func();
 		};
 
 	setPosition(position);
 }
 
-AnimationsDialog::~AnimationsDialog() {
+AnimationsPanel::~AnimationsPanel() {
 
 }
 
-void AnimationsDialog::setPosition(sf::Vector2i position) {
+void AnimationsPanel::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
 	_first_btn->setPosition(_position + sf::Vector2i(dialog_padding, 32 + dialog_padding));
@@ -100,7 +100,7 @@ void AnimationsDialog::setPosition(sf::Vector2i position) {
 	_move_next->setPosition(_position + sf::Vector2i(getSize().x - dialog_padding - 32, 64 + dialog_padding));
 }
 
-void AnimationsDialog::updateText() {
+void AnimationsPanel::updateText() {
 	_text->setString(std::to_wstring(getCurrentAnimationId() + 1) + L"/" + std::to_wstring(getAnimationsCount()));
 	int pos_slash = (int)(_text->getString().find(L'/'));
 	_text->setPosition(sf::Vector2f(0, 0));
@@ -116,7 +116,7 @@ void AnimationsDialog::updateText() {
 
 }
 
-void AnimationsDialog::cursorHover() {
+void AnimationsPanel::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
@@ -136,7 +136,7 @@ void AnimationsDialog::cursorHover() {
 	_move_next->cursorHover();
 }
 
-void AnimationsDialog::handleEvent(const sf::Event& event) {
+void AnimationsPanel::handleEvent(const sf::Event& event) {
 
 	if (!dialogs.empty())
 		return;
@@ -165,7 +165,7 @@ void AnimationsDialog::handleEvent(const sf::Event& event) {
 	_move_next->handleEvent(event);
 }
 
-void AnimationsDialog::update() {
+void AnimationsPanel::update() {
 	Dialog::update();
 
 
@@ -180,7 +180,7 @@ void AnimationsDialog::update() {
 	_move_next->update();
 }
 
-void AnimationsDialog::draw() {
+void AnimationsPanel::draw() {
 	Dialog::draw();
 
 	_first_btn->draw();
@@ -196,4 +196,4 @@ void AnimationsDialog::draw() {
 	window->draw(*_text);
 }
 
-std::shared_ptr<AnimationsDialog> animations_dialog;
+std::shared_ptr<AnimationsPanel> animations_panel;

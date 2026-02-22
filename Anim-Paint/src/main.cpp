@@ -32,9 +32,9 @@
 #include "Animation/Animation.hpp"
 
 #include "Dialogs/Dialog.hpp"
-#include "../include/Components/FramesDialog.hpp"
-#include "../include/Components/LayersDialog.hpp"
-#include "../include/Components/AnimationsDialog.hpp"
+#include "../include/Components/FramesPanel.hpp"
+#include "../include/Components/LayersPanel.hpp"
+#include "../include/Components/AnimationsPanel.hpp"
 #include "Dialogs/Palette.hpp"
 #include "Dialogs/FileDialog.hpp"
 #include "Dialogs/Dialog_Rotation.hpp"
@@ -64,7 +64,7 @@ void createDialogs() {
 		position.x = int(mainView.getSize().x) - 192 - dialog_margin;
 		position.y = int(main_menu->getSize().y) + toolbar->_rect.size.y + dialog_margin;
 
-		animations_dialog = std::make_shared<AnimationsDialog>(L"Animations", size, position);
+		animations_panel = std::make_shared<AnimationsPanel>(L"Animations", size, position);
 	}
 
 	{
@@ -74,9 +74,9 @@ void createDialogs() {
 		
 		sf::Vector2i position;
 		position.x = int(mainView.getSize().x) - 192 - dialog_margin;
-		position.y = animations_dialog->getPosition().y + animations_dialog->getSize().y + dialog_margin;
+		position.y = animations_panel->getPosition().y + animations_panel->getSize().y + dialog_margin;
 		
-		frames_dialog = std::make_shared<FramesDialog>(L"Frames", size, position);
+		frames_panel = std::make_shared<FramesPanel>(L"Frames", size, position);
 	}
 
 	{
@@ -86,9 +86,9 @@ void createDialogs() {
 
 		sf::Vector2i position;
 		position.x = int(mainView.getSize().x) - 160 - dialog_margin;
-		position.y = frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin;
+		position.y = frames_panel->getPosition().y + frames_panel->getSize().y + dialog_margin;
 
-		layers_dialog = std::make_shared<LayersDialog>(L"Layers", size, position);
+		layers_panel = std::make_shared<LayersPanel>(L"Layers", size, position);
 	}
 
 	
@@ -108,21 +108,21 @@ void resize() {
 		sf::Vector2i position;
 		position.x = int(mainView.getSize().x) - 192 - dialog_margin;
 		position.y = int(main_menu->getSize().y) + toolbar->_rect.size.y + dialog_margin;
-		animations_dialog->setPosition(position);
+		animations_panel->setPosition(position);
 	}
 
 	{
 		sf::Vector2i position;
 		position.x = int(mainView.getSize().x) - 192 - dialog_margin;
-		position.y = animations_dialog->getPosition().y + animations_dialog->getSize().y + dialog_margin;
-		frames_dialog->setPosition(position);
+		position.y = animations_panel->getPosition().y + animations_panel->getSize().y + dialog_margin;
+		frames_panel->setPosition(position);
 	}
 
 	{
 		sf::Vector2i position;
 		position.x = int(mainView.getSize().x) - 160 - dialog_margin;
-		position.y = frames_dialog->getPosition().y + frames_dialog->getSize().y + dialog_margin;
-		layers_dialog->setPosition(position);
+		position.y = frames_panel->getPosition().y + frames_panel->getSize().y + dialog_margin;
+		layers_panel->setPosition(position);
 	}
 	
 }
@@ -198,9 +198,9 @@ int main() {
 		canvas->cursorHover();
 	
 		toolbar->cursorHover();
-		frames_dialog->cursorHover();
-		layers_dialog->cursorHover();
-		animations_dialog->cursorHover();
+		frames_panel->cursorHover();
+		layers_panel->cursorHover();
+		animations_panel->cursorHover();
 
 		if (palette)
 			palette->cursorHover();
@@ -217,9 +217,9 @@ int main() {
 
 		
 		canvas->update();
-		frames_dialog->update();
-		layers_dialog->update();
-		animations_dialog->update();
+		frames_panel->update();
+		layers_panel->update();
+		animations_panel->update();
 		if (palette)
 			palette->update();
 		main_menu->update();
@@ -251,9 +251,9 @@ int main() {
 			canvas->handleEvent(*event);
 			toolbar->handleEvent(*event);
 
-			frames_dialog->handleEvent(*event);
-			layers_dialog->handleEvent(*event);
-			animations_dialog->handleEvent(*event);
+			frames_panel->handleEvent(*event);
+			layers_panel->handleEvent(*event);
+			animations_panel->handleEvent(*event);
 
 			if (palette)
 				palette->handleEvent(*event);
@@ -274,9 +274,9 @@ int main() {
 		if (palette)
 			palette->draw();
 
-		frames_dialog->draw();
-		layers_dialog->draw();
-		animations_dialog->draw();
+		frames_panel->draw();
+		layers_panel->draw();
+		animations_panel->draw();
 
 		bottom_bar->draw();
 		main_menu->draw();

@@ -7,8 +7,8 @@
 #include "Window.hpp"
 #include "Time.hpp"
 #include "Components/Canvas.hpp"
-#include "../include/Components/FramesDialog.hpp"
-#include "../include/Components/AnimationsDialog.hpp"
+#include "../include/Components/FramesPanel.hpp"
+#include "../include/Components/AnimationsPanel.hpp"
 #include "DebugLog.hpp"
 #include "History.hpp"
 #include "Components/BottomBar.hpp"
@@ -142,8 +142,8 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 			main_menu->importAnimation(_animations);
 			history->clear();
 			history->saveStep();
-			animations_dialog->updateText();
-			frames_dialog->updateText();
+			animations_panel->updateText();
+			frames_panel->updateText();
 			bottom_bar->updateText();
 			_state = DialogState::ToClose;
 		}

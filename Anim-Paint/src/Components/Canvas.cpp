@@ -8,7 +8,7 @@
 #include "Components/Toolbar.hpp"
 #include "Tools/Selection.hpp"
 #include "Tools/Lasso.hpp"
-#include "../include/Components/LayersDialog.hpp"
+#include "../include/Components/LayersPanel.hpp"
 #include "Dialogs/Dialog.hpp"
 #include "DebugLog.hpp"
 #include "Components/MainMenu.hpp"
@@ -875,7 +875,7 @@ void Canvas::draw() {
 
 	for (int i = 0; i < getCurrentAnimation()->getLayersCount(); i++) {
 
-		if (layers_dialog->layersBoxes[i]->_visibling->_value == 0) {	// 0 - visible, 1 - invisible
+		if (layers_panel->layersBoxes[i]->_visibling->_value == 0) {	// 0 - visible, 1 - invisible
 			sf::Texture tex;
 			if (!tex.loadFromImage(getCurrentAnimation()->getLayer(i)->_image)) {
 				DebugError(L"Canvas::draw: Failed to load texture from image.");

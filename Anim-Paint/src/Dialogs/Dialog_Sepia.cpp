@@ -1,7 +1,7 @@
 #include "Dialogs/Dialog_Sepia.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
-#include "../include/Components/LayersDialog.hpp"
+#include "../include/Components/LayersPanel.hpp"
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
 #include "History.hpp"
@@ -30,7 +30,7 @@ Dialog_Sepia::Dialog_Sepia(std::vector<std::shared_ptr<Layer>> layers) : Dialog(
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 		};
 
 	setPosition(_position);
@@ -43,7 +43,7 @@ Dialog_Sepia::~Dialog_Sepia() {
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 	}
 	else {
 		// is Edited

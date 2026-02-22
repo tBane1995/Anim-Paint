@@ -1,7 +1,7 @@
 #pragma once
 #include "../Dialogs/Dialog.hpp"
 
-class AnimationsDialog : public Dialog {
+class FramesPanel : public Dialog {
 public:
 
 	std::shared_ptr<NormalButton> _first_btn;
@@ -10,13 +10,13 @@ public:
 	std::shared_ptr<NormalButton> _last_btn;
 	std::unique_ptr<sf::Text> _text;
 
-	std::shared_ptr<NormalButton> _add_anim;
-	std::shared_ptr<NormalButton> _sub_anim;
+	std::shared_ptr<NormalButton> _add_frame;
+	std::shared_ptr<NormalButton> _sub_frame;
 	std::shared_ptr<NormalButton> _move_back;
 	std::shared_ptr<NormalButton> _move_next;
 
-	AnimationsDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(0, 0));
-	~AnimationsDialog();
+	FramesPanel(std::wstring title, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(0, 0));
+	~FramesPanel();
 
 	void setPosition(sf::Vector2i position);
 	void updateText();
@@ -28,4 +28,4 @@ public:
 
 };
 
-extern std::shared_ptr<AnimationsDialog> animations_dialog;
+extern std::shared_ptr<FramesPanel> frames_panel;

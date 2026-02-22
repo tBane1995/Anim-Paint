@@ -1,7 +1,7 @@
 #include "Dialogs/Dialog_Invert_Colors.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
-#include "../include/Components/LayersDialog.hpp"
+#include "../include/Components/LayersPanel.hpp"
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
 #include "Components/Toolbar.hpp"
@@ -57,7 +57,7 @@ Dialog_Invert_Colors::Dialog_Invert_Colors(std::vector<std::shared_ptr<Layer>> l
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 		};
 
 	setPosition(_position);
@@ -70,7 +70,7 @@ Dialog_Invert_Colors::~Dialog_Invert_Colors() {
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 	}
 	else {
 		// is Edited

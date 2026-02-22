@@ -1,11 +1,11 @@
-#include "../include/Components/FramesDialog.hpp"
+#include "../include/Components/FramesPanel.hpp"
 #include "Animation/Animation.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
-#include "../include/Components/LayersDialog.hpp"
+#include "../include/Components/LayersPanel.hpp"
 #include "Tools/Selection.hpp"
 
-FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
+FramesPanel::FramesPanel(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
 
 
 	_text = std::make_unique<sf::Text>(basicFont, std::to_wstring(getCurrentAnimation()->getCurrentFrameID() + 1) + L"/" + std::to_wstring(getCurrentAnimation()->getFramesCount()), 17);
@@ -18,28 +18,28 @@ FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i p
 	_first_btn->_onclick_func = [this, position]() {
 		selection->unselect();
 		getCurrentAnimation()->firstFrame();
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 		updateText();
 		};
 
 	_prev_btn->_onclick_func = [this, position]() {
 		selection->unselect();
 		getCurrentAnimation()->prevFrame();
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 		updateText();
 		};
 
 	_next_btn->_onclick_func = [this, position]() {
 		selection->unselect();
 		getCurrentAnimation()->nextFrame();
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 		updateText();
 		};
 
 	_last_btn->_onclick_func = [this, position]() {
 		selection->unselect();
 		getCurrentAnimation()->lastFrame();
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 		updateText();
 	};
 
@@ -54,7 +54,7 @@ FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i p
 			getCurrentAnimation()->addFrame();
 			getCurrentAnimation()->nextFrame();
 			updateText();
-			layers_dialog->loadLayersFromCurrentFrame();
+			layers_panel->loadLayersFromCurrentFrame();
 		}
 		};
 
@@ -64,7 +64,7 @@ FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i p
 			getCurrentAnimation()->subFrame();
 			getCurrentAnimation()->prevFrame();
 			updateText();
-			layers_dialog->loadLayersFromCurrentFrame();
+			layers_panel->loadLayersFromCurrentFrame();
 		}
 		};
 
@@ -73,7 +73,7 @@ FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i p
 		getCurrentAnimation()->moveBackFrame();
 		getCurrentAnimation()->prevFrame();
 		updateText();
-		layers_dialog->loadLayersFromCurrentFrame();		
+		layers_panel->loadLayersFromCurrentFrame();		
 		};
 
 	_move_next->_onclick_func = [this]() {
@@ -81,17 +81,17 @@ FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i p
 		getCurrentAnimation()->moveNextFrame();
 		getCurrentAnimation()->nextFrame();
 		updateText();
-		layers_dialog->loadLayersFromCurrentFrame();
+		layers_panel->loadLayersFromCurrentFrame();
 		};
 
 	setPosition(position);
 }
 
-FramesDialog::~FramesDialog() {
+FramesPanel::~FramesPanel() {
 
 }
 
-void FramesDialog::setPosition(sf::Vector2i position) {
+void FramesPanel::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
 	_first_btn->setPosition(_position + sf::Vector2i(dialog_padding, 32 + dialog_padding));
@@ -107,7 +107,7 @@ void FramesDialog::setPosition(sf::Vector2i position) {
 	_move_next->setPosition(_position + sf::Vector2i(getSize().x - dialog_padding - 32, 64 + dialog_padding));
 }
 
-void FramesDialog::updateText() {
+void FramesPanel::updateText() {
 	_text->setString(std::to_wstring(getCurrentAnimation()->getCurrentFrameID() + 1) + L"/" + std::to_wstring(getCurrentAnimation()->getFramesCount()));
 
 	int pos_slash = (int)_text->getString().find(L'/');
@@ -124,7 +124,7 @@ void FramesDialog::updateText() {
 
 }
 
-void FramesDialog::cursorHover() {
+void FramesPanel::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
@@ -145,7 +145,7 @@ void FramesDialog::cursorHover() {
 	_move_next->cursorHover();
 }
 
-void FramesDialog::handleEvent(const sf::Event& event) {
+void FramesPanel::handleEvent(const sf::Event& event) {
 
 	if (!dialogs.empty())
 		return;
@@ -174,7 +174,7 @@ void FramesDialog::handleEvent(const sf::Event& event) {
 	_move_next->handleEvent(event);
 }
 
-void FramesDialog::update() {
+void FramesPanel::update() {
 	Dialog::update();
 
 
@@ -189,7 +189,7 @@ void FramesDialog::update() {
 	_move_next->update();
 }
 
-void FramesDialog::draw() {
+void FramesPanel::draw() {
 	Dialog::draw();
 
 	_first_btn->draw();
@@ -205,4 +205,4 @@ void FramesDialog::draw() {
 	_move_next->draw();
 }
 
-std::shared_ptr<FramesDialog> frames_dialog;
+std::shared_ptr<FramesPanel> frames_panel;
