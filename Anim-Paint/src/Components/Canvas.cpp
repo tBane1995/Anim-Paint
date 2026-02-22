@@ -8,7 +8,7 @@
 #include "Components/Toolbar.hpp"
 #include "Tools/Selection.hpp"
 #include "Tools/Lasso.hpp"
-#include "Dialogs/LayersDialog.hpp"
+#include "../include/Components/LayersDialog.hpp"
 #include "Dialogs/Dialog.hpp"
 #include "DebugLog.hpp"
 #include "Components/MainMenu.hpp"

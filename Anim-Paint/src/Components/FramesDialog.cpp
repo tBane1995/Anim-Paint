@@ -1,8 +1,8 @@
-#include "Dialogs/FramesDialog.hpp"
+#include "../include/Components/FramesDialog.hpp"
 #include "Animation/Animation.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
-#include "Dialogs/LayersDialog.hpp"
+#include "../include/Components/LayersDialog.hpp"
 #include "Tools/Selection.hpp"
 
 FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {

@@ -3,9 +3,9 @@
 #include <iostream>
 #include "Animation/Animation.hpp"
 #include "Components/Canvas.hpp"
-#include "Dialogs/AnimationsDialog.hpp"
-#include "Dialogs/FramesDialog.hpp"
-#include "Dialogs/LayersDialog.hpp"
+#include "../include/Components/AnimationsDialog.hpp"
+#include "../include/Components/FramesDialog.hpp"
+#include "../include/Components/LayersDialog.hpp"
 #include "Components/Canvas.hpp"
 #include "History.hpp"
 

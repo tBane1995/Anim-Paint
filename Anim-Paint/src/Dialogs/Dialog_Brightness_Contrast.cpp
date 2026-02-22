@@ -1,7 +1,7 @@
 #include "Dialogs/Dialog_Brightness_Contrast.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
-#include "Dialogs/LayersDialog.hpp"
+#include "../include/Components/LayersDialog.hpp"
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
 #include "History.hpp"

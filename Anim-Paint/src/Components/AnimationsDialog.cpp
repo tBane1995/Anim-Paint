@@ -1,9 +1,9 @@
-#include "Dialogs/AnimationsDialog.hpp"
+#include "../include/Components/AnimationsDialog.hpp"
 #include "SFML/Graphics.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
 #include "Window.hpp"
-#include "Dialogs/FramesDialog.hpp"
+#include "../include/Components/FramesDialog.hpp"
 #include "Tools/Selection.hpp"
 
 AnimationsDialog::AnimationsDialog(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {

@@ -1,5 +1,5 @@
 #pragma once
-#include "Dialog.hpp"
+#include "../Dialogs/Dialog.hpp"
 
 class AnimationsDialog : public Dialog {
 public:

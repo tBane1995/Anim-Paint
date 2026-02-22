@@ -1,4 +1,4 @@
-#include "Dialogs/LayersDialog.hpp"
+#include "../include/Components/LayersDialog.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
 #include "Cursor.hpp"

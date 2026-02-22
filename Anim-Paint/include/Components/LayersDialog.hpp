@@ -3,7 +3,7 @@
 #include "ElementGUI/Checkbox.hpp"
 #include "Animation/Layer.hpp"
 #include <functional>
-#include "Dialog.hpp"
+#include "../Dialogs/Dialog.hpp"
 
 
 class LayerBox : public ElementGUI {
