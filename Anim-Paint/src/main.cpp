@@ -261,7 +261,6 @@ int main() {
 			cursor->handleEvent(*event);
 			bottom_bar->handleEvent(*event);
 
-			tooltip->handleEvent(*event);
 		}
 		
 		// update

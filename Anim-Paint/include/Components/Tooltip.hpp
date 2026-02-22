@@ -10,12 +10,14 @@ public:
 	std::wstring _title;
 	std::wstring _description;
 
+	std::shared_ptr<sf::Text> _title_text;
+	std::shared_ptr<sf::Text> _description_text;
+
 	Tooltip();
 	~Tooltip();
 
 	void setButton(std::shared_ptr<Button> button);
 
-	void handleEvent(const sf::Event& event);
 	void update();
 	void draw();
 };

@@ -6,6 +6,7 @@
 #include "Window.hpp"
 #include <iostream>
 #include <memory>
+#include "../include/Components/Tooltip.hpp"
 
 //////////////////////////////////////////////////////////////////
 // Button
@@ -30,6 +31,9 @@ Button::Button() : ElementGUI() {
 	_hover_func = {};
 	_onclick_func = {};
 	_clickTime = sf::Time::Zero;
+
+	_title = L"";
+	_description = L"";
 }
 
 
@@ -64,6 +68,10 @@ sf::Vector2i Button::getSize() {
 	return _rect.size; 
 }
 
+sf::Vector2i Button::getPosition() {
+	return _rect.position;
+}
+
 void Button::select() {
 	_isSelected = true;
 }
@@ -76,12 +84,20 @@ void Button::activateByEnter(bool activate) {
 	_activatedByEnter = activate;
 }
 
+void Button::setTooltip(std::wstring title, std::wstring description) {
+	_title = title;
+	_description = description;
+}
+
 void Button::setPosition(sf::Vector2i position) {
 	_rect.position = position;
 }
 
 void Button::cursorHover() {
-
+	if (_rect.contains(cursor->_worldMousePosition)) {
+		ElementGUI_hovered = this->shared_from_this();
+		tooltip->setButton(std::dynamic_pointer_cast<Button>(this->shared_from_this()));
+	}
 }
 
 void Button::handleEvent(const sf::Event& event) {
@@ -144,11 +160,7 @@ void NormalButton::click() {
 }
 
 void NormalButton::cursorHover() {
-
-	if (_rect.contains(cursor->_worldMousePosition)) {
-		ElementGUI_hovered = this->shared_from_this();
-	}
-
+	Button::cursorHover();
 
 }
 
@@ -306,12 +318,7 @@ void ColoredButtonWithText::click() {
 
 
 void ColoredButtonWithText::cursorHover() {
-
-	if (_rect.contains(cursor->_worldMousePosition)) {
-		ElementGUI_hovered = this->shared_from_this();
-	}
-
-
+	Button::cursorHover();
 }
 
 void ColoredButtonWithText::handleEvent(const sf::Event& event) {
@@ -466,12 +473,7 @@ void ButtonWithBottomText::click() {
 
 
 void ButtonWithBottomText::cursorHover() {
-
-	if (_rect.contains(cursor->_worldMousePosition)) {
-		ElementGUI_hovered = this->shared_from_this();
-	}
-
-
+	Button::cursorHover();
 }
 
 void ButtonWithBottomText::handleEvent(const sf::Event& event) {
@@ -620,12 +622,7 @@ void ButtonWithRightText::click() {
 
 
 void ButtonWithRightText::cursorHover() {
-
-	if (_rect.contains(cursor->_worldMousePosition)) {
-		ElementGUI_hovered = this->shared_from_this();
-	}
-
-
+	Button::cursorHover();
 }
 
 void ButtonWithRightText::handleEvent(const sf::Event& event) {
@@ -762,10 +759,7 @@ void Option::click() {
 
 void Option::cursorHover() {
 
-	if (_rect.contains(cursor->_worldMousePosition)) {
-		ElementGUI_hovered = this->shared_from_this();
-	}
-
+	Button::cursorHover();
 
 }
 
@@ -956,9 +950,7 @@ void ButtonWithTopTextAndList::click() {
 
 void ButtonWithTopTextAndList::cursorHover() {
 
-	if (_rect.contains(cursor->_worldMousePosition)) {
-		ElementGUI_hovered = this->shared_from_this();
-	}
+	Button::cursorHover();
 
 	if (_isOpen) {
 		for (auto& option : _options)

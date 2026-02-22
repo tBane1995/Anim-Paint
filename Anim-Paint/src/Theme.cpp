@@ -80,6 +80,14 @@ sf::Color tools_button_idle_border_color;
 sf::Color tools_button_hover_border_color;
 sf::Color tools_button_press_border_color;
 
+// Tooltip
+sf::Color tooltip_rect_color;
+int tooltip_rect_border_width;
+sf::Color tooltip_rect_border_color;
+int tooltip_padding;
+sf::Color tooltip_text_color;
+int tooltip_text_font_size;
+
 // normal text
 sf::Color normal_text_color;
 int normal_text_font_size;
@@ -200,6 +208,14 @@ void loadTheme() {
 	tools_button_idle_border_color = sf::Color::Transparent;
 	tools_button_hover_border_color = sf::Color(95, 47, 47);
 	tools_button_press_border_color = sf::Color(127, 47, 47);
+
+	// Tooltip
+	tooltip_rect_color = sf::Color(31, 31, 31);
+	tooltip_rect_border_width = 1;
+	tooltip_rect_border_color = sf::Color(63, 63, 63);
+	tooltip_padding = 4;
+	tooltip_text_color = sf::Color(191, 191, 191);
+	tooltip_text_font_size = 13;
 
 	// normal text
 	normal_text_color = sf::Color(191, 191, 191);

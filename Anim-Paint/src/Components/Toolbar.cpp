@@ -184,6 +184,8 @@ Toolbar::Toolbar() : ElementGUI() {
 			selectToolButton(_btn_select);
 		}
 		};
+	_btn_paste->setTooltip(L"paste", L"paste the selection from clipboard to canvas");
+
 	_btn_paste_2 = std::make_shared<ButtonWithTopTextAndList>(L"paste", tools_text_color, tools_text_hover_color);
 	_btn_paste_2->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);

@@ -79,6 +79,14 @@ extern sf::Color tools_button_idle_border_color;
 extern sf::Color tools_button_hover_border_color;
 extern sf::Color tools_button_press_border_color;
 
+// Tooltip
+extern sf::Color tooltip_rect_color;
+extern int tooltip_rect_border_width;
+extern sf::Color tooltip_rect_border_color;
+extern int tooltip_padding;
+extern sf::Color tooltip_text_color;
+extern int tooltip_text_font_size;
+
 // normal text
 extern sf::Color normal_text_color;
 extern int normal_text_font_size;

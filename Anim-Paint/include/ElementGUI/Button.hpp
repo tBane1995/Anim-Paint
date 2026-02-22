@@ -29,16 +29,20 @@ public:
 	std::function<void()> _onclick_func;
 	sf::Time _clickTime;
 
+	std::wstring _title;
+	std::wstring _description;
+
 	Button();
 	virtual ~Button();
 
 	void setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor);
-	void setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor,
-		int borderWidth, sf::Color idleBorderColor, sf::Color hoverBorderColor, sf::Color pressBorderColor, sf::Color selectBorderColor);
+	void setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor, int borderWidth, sf::Color idleBorderColor, sf::Color hoverBorderColor, sf::Color pressBorderColor, sf::Color selectBorderColor);
 	virtual sf::Vector2i getSize();
+	virtual sf::Vector2i getPosition();
 	void select();
 	void unselect();
 	void activateByEnter(bool activate);
+	void setTooltip(std::wstring title, std::wstring description);
 	virtual void setPosition(sf::Vector2i position);
 	virtual void cursorHover();
 	virtual void handleEvent(const sf::Event& event);
