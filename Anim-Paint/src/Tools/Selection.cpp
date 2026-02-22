@@ -352,6 +352,16 @@ void Selection::addPoint(sf::Vector2i point) {
 	_points.push_back(point);
 }
 
+void Selection::unselect() {
+	_points.clear();
+	_outlineOffset = sf::Vector2i(0, 0);
+	generateRect();
+	_resizedRect = _rect;
+	generateMask();
+	_resizedMaskImage = _maskImage;
+	_state = SelectionState::None;
+}
+
 void Selection::selectAll() {
 	_points.clear();
 	_outlineOffset = sf::Vector2i(0, 0);

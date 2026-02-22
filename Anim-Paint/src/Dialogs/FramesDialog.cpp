@@ -16,24 +16,28 @@ FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i p
 	_last_btn = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\last.png"), getTexture(L"tex\\btn32\\last_hover.png"));
 
 	_first_btn->_onclick_func = [this, position]() {
+		selection->unselect();
 		getCurrentAnimation()->firstFrame();
 		layers_dialog->loadLayersFromCurrentFrame();
 		updateText();
 		};
 
 	_prev_btn->_onclick_func = [this, position]() {
+		selection->unselect();
 		getCurrentAnimation()->prevFrame();
 		layers_dialog->loadLayersFromCurrentFrame();
 		updateText();
 		};
 
 	_next_btn->_onclick_func = [this, position]() {
+		selection->unselect();
 		getCurrentAnimation()->nextFrame();
 		layers_dialog->loadLayersFromCurrentFrame();
 		updateText();
 		};
 
 	_last_btn->_onclick_func = [this, position]() {
+		selection->unselect();
 		getCurrentAnimation()->lastFrame();
 		layers_dialog->loadLayersFromCurrentFrame();
 		updateText();
@@ -46,6 +50,7 @@ FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i p
 
 	_add_frame->_onclick_func = [this]() {
 		if (getCurrentAnimation()->getFramesCount() < maxFramesCount) {
+			selection->unselect();
 			getCurrentAnimation()->addFrame();
 			getCurrentAnimation()->nextFrame();
 			updateText();
@@ -55,6 +60,7 @@ FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i p
 
 	_sub_frame->_onclick_func = [this]() {
 		if (getCurrentAnimation()->getFramesCount() > 0) {
+			selection->unselect();
 			getCurrentAnimation()->subFrame();
 			getCurrentAnimation()->prevFrame();
 			updateText();
@@ -63,6 +69,7 @@ FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i p
 		};
 
 	_move_back->_onclick_func = [this]() {
+		selection->unselect();
 		getCurrentAnimation()->moveBackFrame();
 		getCurrentAnimation()->prevFrame();
 		updateText();
@@ -70,6 +77,7 @@ FramesDialog::FramesDialog(std::wstring title, sf::Vector2i size, sf::Vector2i p
 		};
 
 	_move_next->_onclick_func = [this]() {
+		selection->unselect();
 		getCurrentAnimation()->moveNextFrame();
 		getCurrentAnimation()->nextFrame();
 		updateText();

@@ -19,6 +19,9 @@ LayerBox::LayerBox(std::shared_ptr<Layer> layer) : ElementGUI() {
 	_visibling = std::make_shared<Checkbox>(getTexture(L"tex\\btn32\\visible.png"), getTexture(L"tex\\btn32\\visible_hover.png"));
 	_visibling->addValue(getTexture(L"tex\\btn32\\unvisible.png"), getTexture(L"tex\\btn32\\unvisible_hover.png"));
 	_visibling->setValue(0);
+	_visibling->_onclick_func = [this]() {
+		selection->unselect();
+		};
 }
 
 LayerBox::~LayerBox() {
@@ -115,6 +118,7 @@ void LayersDialog::loadLayersFromCurrentFrame() {
 	for (int i = 0; i < count_layers; i++) {
 		layersBoxes.push_back(std::make_shared<LayerBox>(getCurrentAnimation()->getLayer(i)));
 		layersBoxes.back()->_onclick_func = [this, i]() {
+			selection->unselect();
 			layersBoxes[getCurrentAnimation()->getCurrentLayerID()]->_isActive = false;
 			getCurrentAnimation()->setCurrentLayerID(i);
 			layersBoxes[i]->_isActive = true;

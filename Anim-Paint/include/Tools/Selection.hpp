@@ -63,6 +63,7 @@ public:
 
 	void shiftOriginIfNeeded(sf::Vector2i& point);
 	void addPoint(sf::Vector2i point);
+	void unselect();
 	void selectAll();
 	void generateRect();
 	bool clickOnSelection(sf::Vector2i point);

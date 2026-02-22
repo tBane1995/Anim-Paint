@@ -214,6 +214,7 @@ Toolbar::Toolbar() : ElementGUI() {
 	_btn_select->_onclick_func = [this]() {
 		_toolType = ToolType::Selector;
 		selectToolButton(_btn_select);
+		selection->unselect();
 		};
 	_btn_lasso = std::make_shared<ButtonWithBottomText>(L"lasso", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_lasso.png"), getTexture(L"tex\\tools\\btn_lasso_hover.png"));
 	_btn_lasso->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -221,10 +222,7 @@ Toolbar::Toolbar() : ElementGUI() {
 	_btn_lasso->_onclick_func = [this]() {
 		_toolType = ToolType::Lasso;
 		selectToolButton(_btn_lasso);
-		selection->_points.clear();
-		selection->_outlineOffset = sf::Vector2i(0, 0);
-		selection->generateRect();
-		selection->generateMask();
+		selection->unselect();
 		};
 
 	_clipboard.clear();
