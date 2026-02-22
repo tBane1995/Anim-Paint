@@ -26,6 +26,8 @@ public:
 	float _max_zoom;
 
 	bool _isEdited;		// if brush/eraser/fill was used, then true
+	
+	sf::Time _selectionMoveTime; // to limit selection move
 
 	std::vector<std::shared_ptr<EdgePoint>> _edgePoints;	// points use to resize of canvas
 	std::shared_ptr<EdgePoint> _point_left_top;

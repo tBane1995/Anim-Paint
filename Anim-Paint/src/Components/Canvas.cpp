@@ -16,6 +16,7 @@
 #include "Tools/Line.hpp"
 #include "History.hpp"
 #include "Components/BottomBar.hpp"
+#include "Time.hpp"
 
 Canvas::Canvas() : ElementGUI() {
 	_minSize = sf::Vector2i(16, 16);
@@ -42,6 +43,8 @@ Canvas::Canvas() : ElementGUI() {
 	setPosition((sf::Vector2i(window->getSize()) - sf::Vector2i(getZoomedSize(_size))) / 2);
 
 	_isEdited = false;
+
+	_selectionMoveTime = sf::Time::Zero;
 }
 
 Canvas::~Canvas() {
@@ -791,8 +794,6 @@ void Canvas::handleEvent(const sf::Event& event) {
 			_state = CanvasState::Idle;
 		}
 	}
-
-
 	
 }
 
@@ -829,6 +830,41 @@ void Canvas::update() {
 		setPosition(sf::Vector2i(x, y));
 	}
 	
+	if (selection->_state == SelectionState::Selected) {
+
+		if ((currentTime - _selectionMoveTime).asSeconds() > 0.075f) {
+
+			_selectionMoveTime = currentTime;
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
+				selection->_rect.position.x = std::clamp(selection->_rect.position.x - 1, -selection->_resizedRect.size.x, _size.x);
+				selection->_rect.position.y = std::clamp(selection->_rect.position.y, -selection->_resizedRect.size.y, _size.y);
+				selection->_resizedRect.position = selection->_rect.position;
+				selection->generateEdgePoints();
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
+				selection->_rect.position.x = std::clamp(selection->_rect.position.x + 1, -selection->_resizedRect.size.x, _size.x);
+				selection->_rect.position.y = std::clamp(selection->_rect.position.y, -selection->_resizedRect.size.y, _size.y);
+				selection->_resizedRect.position = selection->_rect.position;
+				selection->generateEdgePoints();
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
+				selection->_rect.position.x = std::clamp(selection->_rect.position.x, -selection->_resizedRect.size.x, _size.x);
+				selection->_rect.position.y = std::clamp(selection->_rect.position.y - 1, -selection->_resizedRect.size.y, _size.y);
+				selection->_resizedRect.position = selection->_rect.position;
+				selection->generateEdgePoints();
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
+				selection->_rect.position.x = std::clamp(selection->_rect.position.x, -selection->_resizedRect.size.x, _size.x);
+				selection->_rect.position.y = std::clamp(selection->_rect.position.y + 1, -selection->_resizedRect.size.y, _size.y);
+				selection->_resizedRect.position = selection->_rect.position;
+				selection->generateEdgePoints();
+			}
+		}
+	}
 }
 
 void Canvas::draw() {
