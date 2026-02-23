@@ -184,7 +184,7 @@ Toolbar::Toolbar() : ElementGUI() {
 			selectToolButton(_btn_select);
 		}
 		};
-	_btn_paste->setTooltip(L"paste", L"paste the selection from clipboard to canvas");
+	_btn_paste->setTooltip(L"Paste", L"Paste the selection from the clipboard onto the canvas");
 
 	_btn_paste_2 = std::make_shared<ButtonWithTopTextAndList>(L"paste", tools_text_color, tools_text_hover_color);
 	_btn_paste_2->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -192,6 +192,7 @@ Toolbar::Toolbar() : ElementGUI() {
 	_btn_paste_2->_onclick_func = [this]() {
 
 		};
+
 	_btn_cut = std::make_shared<ButtonWithRightText>(L"cut", tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_cut.png"), getTexture(L"tex\\tools\\btn_cut_hover.png"));
 	_btn_cut->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
@@ -201,6 +202,8 @@ Toolbar::Toolbar() : ElementGUI() {
 			selection->cut(getCurrentAnimation()->getCurrentLayer()->_image, _second_color->_color);
 		}
 		};
+	_btn_cut->setTooltip(L"Cut", L"Cut the selection from the canvas and place it on the clipboard");
+
 	_btn_copy = std::make_shared<ButtonWithRightText>(L"copy", tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));
 	_btn_copy->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
@@ -210,6 +213,8 @@ Toolbar::Toolbar() : ElementGUI() {
 			removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_resizedRect, *selection->_resizedMaskImage, toolbar->_second_color->_color);
 		}
 		};
+	_btn_copy->setTooltip(L"Copy", L"Copy the selection from the canvas to the clipboard");
+
 	_btn_select = std::make_shared<ButtonWithBottomText>(L"select", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_select.png"), getTexture(L"tex\\tools\\btn_select_hover.png"));
 	_btn_select->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
@@ -218,6 +223,8 @@ Toolbar::Toolbar() : ElementGUI() {
 		selectToolButton(_btn_select);
 		selection->unselect();
 		};
+	_btn_select->setTooltip(L"Selection Tool", L"Select an area of the canvas to move, copy, cut, or apply filters");
+
 	_btn_lasso = std::make_shared<ButtonWithBottomText>(L"lasso", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_lasso.png"), getTexture(L"tex\\tools\\btn_lasso_hover.png"));
 	_btn_lasso->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
@@ -226,6 +233,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		selectToolButton(_btn_lasso);
 		selection->unselect();
 		};
+	_btn_lasso->setTooltip(L"Lasso Tool", L"Select an area of the canvas with a freehand selection to move, copy, cut, or apply filters");
 
 	_clipboard.clear();
 	_clipboard.push_back(_btn_paste);
