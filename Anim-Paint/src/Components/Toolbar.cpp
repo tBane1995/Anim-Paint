@@ -202,7 +202,7 @@ Toolbar::Toolbar() : ElementGUI() {
 			selection->cut(getCurrentAnimation()->getCurrentLayer()->_image, _second_color->_color);
 		}
 		};
-	_btn_cut->setTooltip(L"Cut", L"Cut the selection from the canvas and place it on the clipboard");
+	_btn_cut->setTooltip(L"Cut", L"Cut the selection from the canvas and place it\non the clipboard");
 
 	_btn_copy = std::make_shared<ButtonWithRightText>(L"copy", tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));
 	_btn_copy->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -223,7 +223,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		selectToolButton(_btn_select);
 		selection->unselect();
 		};
-	_btn_select->setTooltip(L"Selection Tool", L"Select an area of the canvas to move, copy, cut, or apply filters");
+	_btn_select->setTooltip(L"Selection Tool", L"Select an area of the canvas to\nmove, copy, or cut");
 
 	_btn_lasso = std::make_shared<ButtonWithBottomText>(L"lasso", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_lasso.png"), getTexture(L"tex\\tools\\btn_lasso_hover.png"));
 	_btn_lasso->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -233,7 +233,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		selectToolButton(_btn_lasso);
 		selection->unselect();
 		};
-	_btn_lasso->setTooltip(L"Lasso Tool", L"Select an area of the canvas with a freehand selection to move, copy, cut, or apply filters");
+	_btn_lasso->setTooltip(L"Lasso Tool", L"Select an area of the canvas with\na freehand selection to move, copy, cut, or apply filters");
 
 	_clipboard.clear();
 	_clipboard.push_back(_btn_paste);
@@ -257,6 +257,8 @@ Toolbar::Toolbar() : ElementGUI() {
 		brush->setBrushType(BrushType::Circle);
 		selectToolButton(_btn_brush);
 		};
+	_btn_brush->setTooltip(L"Brush Tool", L"Draw on the canvas using the primary color\nwith LMB or the secondary color with RMB");
+
 	_btn_picker = std::make_shared<NormalButton>(getTexture(L"tex\\tools\\btn_picker.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"));
 	_btn_picker->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
@@ -265,6 +267,8 @@ Toolbar::Toolbar() : ElementGUI() {
 		brush->setBrushType(BrushType::Circle);
 		selectToolButton(_btn_picker);
 		};
+	_btn_picker->setTooltip(L"Color Picker Tool", L"Pick a color from the canvas and\nset it as the active color");
+
 	_btn_fill = std::make_shared<NormalButton>(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"));
 	_btn_fill->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
@@ -272,6 +276,8 @@ Toolbar::Toolbar() : ElementGUI() {
 		_toolType = ToolType::Fill;
 		selectToolButton(_btn_fill);
 		};
+	_btn_fill->setTooltip(L"Fill Tool", L"Fill an area of the canvas using the\nprimary color with LMB or the secondary color with RMB");
+
 	_btn_eraser = std::make_shared<NormalButton>(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"));
 	_btn_eraser->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
@@ -280,6 +286,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		brush->setBrushType(BrushType::Square);
 		selectToolButton(_btn_eraser);
 		};
+	_btn_eraser->setTooltip(L"Eraser Tool", L"Erase parts of the canvas using\nthe secondary color with LMB or the primary color with RMB");
 
 	_tools.clear();
 	_tools.push_back(_btn_brush);

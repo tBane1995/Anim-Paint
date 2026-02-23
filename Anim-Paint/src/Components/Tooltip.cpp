@@ -36,6 +36,26 @@ void Tooltip::setButton(std::shared_ptr<Button> button){
 	_description_text->setString(_description);
 }
 
+float Tooltip::getHeightOfTitleAndDescription() {
+
+	float height = 0.f;
+	
+	if (_title != L"") height += basicFont.getLineSpacing(tooltip_text_font_size);
+
+	for(wchar_t c : _title) {
+		if (c == L'\n') height += basicFont.getLineSpacing(tooltip_text_font_size);
+	}
+
+	if (_description != L"") height += basicFont.getLineSpacing(tooltip_text_font_size);
+
+	for (wchar_t c : _description) {
+		if (c == L'\n') height += basicFont.getLineSpacing(tooltip_text_font_size);
+	}
+
+	return height;
+
+}
+
 void Tooltip::update(){
 	if (_button == nullptr) return;
 
@@ -55,9 +75,10 @@ void Tooltip::draw(){
 		rectSize.x += 2 * tooltip_padding + 2 * tooltip_rect_border_width;
 		
 		if (_title != L"" && _description != L"")
-			rectSize.y = int(2 * basicFont.getLineSpacing(tooltip_text_font_size) + 3 * tooltip_padding + 2 * tooltip_rect_border_width);
+			rectSize.y = int(getHeightOfTitleAndDescription() + 3 * tooltip_padding + 2 * tooltip_rect_border_width);
 		else
-			rectSize.y = int(basicFont.getLineSpacing(tooltip_text_font_size) + 2 * tooltip_padding + 2 * tooltip_rect_border_width);
+			rectSize.y = int(getHeightOfTitleAndDescription() + 2 * tooltip_padding + 2 * tooltip_rect_border_width);
+
 
 		sf::RectangleShape rect(sf::Vector2f(rectSize.x - 2*tooltip_rect_border_width, rectSize.y - 2*tooltip_rect_border_width));
 		

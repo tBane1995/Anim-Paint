@@ -17,7 +17,7 @@ public:
 	~Tooltip();
 
 	void setButton(std::shared_ptr<Button> button);
-
+	float getHeightOfTitleAndDescription();
 	void update();
 	void draw();
 };
