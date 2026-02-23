@@ -184,7 +184,7 @@ Toolbar::Toolbar() : ElementGUI() {
 			selectToolButton(_btn_select);
 		}
 		};
-	_btn_paste->setTooltip(L"Paste", L"Paste the selection from the clipboard onto the canvas");
+	_btn_paste->setTooltip(L"Paste", L"Paste the selection from the clipboard\nonto the canvas");
 
 	_btn_paste_2 = std::make_shared<ButtonWithTopTextAndList>(L"paste", tools_text_color, tools_text_hover_color);
 	_btn_paste_2->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -202,7 +202,7 @@ Toolbar::Toolbar() : ElementGUI() {
 			selection->cut(getCurrentAnimation()->getCurrentLayer()->_image, _second_color->_color);
 		}
 		};
-	_btn_cut->setTooltip(L"Cut", L"Cut the selection from the canvas and place it\non the clipboard");
+	_btn_cut->setTooltip(L"Cut", L"Cut the selection from the canvas\nand place it on the clipboard");
 
 	_btn_copy = std::make_shared<ButtonWithRightText>(L"copy", tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));
 	_btn_copy->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -213,7 +213,7 @@ Toolbar::Toolbar() : ElementGUI() {
 			removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_resizedRect, *selection->_resizedMaskImage, toolbar->_second_color->_color);
 		}
 		};
-	_btn_copy->setTooltip(L"Copy", L"Copy the selection from the canvas to the clipboard");
+	_btn_copy->setTooltip(L"Copy", L"Copy the selection from the canvas\nto the clipboard");
 
 	_btn_select = std::make_shared<ButtonWithBottomText>(L"select", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_select.png"), getTexture(L"tex\\tools\\btn_select_hover.png"));
 	_btn_select->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -223,7 +223,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		selectToolButton(_btn_select);
 		selection->unselect();
 		};
-	_btn_select->setTooltip(L"Selection Tool", L"Select an area of the canvas to\nmove, copy, or cut");
+	_btn_select->setTooltip(L"Selection Tool", L"Select an area of the canvas move,\ncopy, or cut");
 
 	_btn_lasso = std::make_shared<ButtonWithBottomText>(L"lasso", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_lasso.png"), getTexture(L"tex\\tools\\btn_lasso_hover.png"));
 	_btn_lasso->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -233,7 +233,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		selectToolButton(_btn_lasso);
 		selection->unselect();
 		};
-	_btn_lasso->setTooltip(L"Lasso Tool", L"Select an area of the canvas with\na freehand selection to move, copy, cut, or apply filters");
+	_btn_lasso->setTooltip(L"Lasso Tool", L"Select an area of the canvas with\na freehand selection to move, copy\nor cut");
 
 	_clipboard.clear();
 	_clipboard.push_back(_btn_paste);
@@ -257,7 +257,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		brush->setBrushType(BrushType::Circle);
 		selectToolButton(_btn_brush);
 		};
-	_btn_brush->setTooltip(L"Brush Tool", L"Draw on the canvas using the primary color\nwith LMB or the secondary color with RMB");
+	_btn_brush->setTooltip(L"Brush Tool", L"Draw on the canvas using the\nprimary color with LMB or the\nsecondary color with RMB");
 
 	_btn_picker = std::make_shared<NormalButton>(getTexture(L"tex\\tools\\btn_picker.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"));
 	_btn_picker->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -267,7 +267,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		brush->setBrushType(BrushType::Circle);
 		selectToolButton(_btn_picker);
 		};
-	_btn_picker->setTooltip(L"Color Picker Tool", L"Pick a color from the canvas and\nset it as the active color");
+	_btn_picker->setTooltip(L"Color Picker Tool", L"Pick a color from the canvas\nand set it as the active color");
 
 	_btn_fill = std::make_shared<NormalButton>(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"));
 	_btn_fill->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -276,7 +276,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		_toolType = ToolType::Fill;
 		selectToolButton(_btn_fill);
 		};
-	_btn_fill->setTooltip(L"Fill Tool", L"Fill an area of the canvas using the\nprimary color with LMB or the secondary color with RMB");
+	_btn_fill->setTooltip(L"Fill Tool", L"Fill an area of the canvas using\nthe primary color with LMB\nor the secondary color with RMB");
 
 	_btn_eraser = std::make_shared<NormalButton>(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"));
 	_btn_eraser->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -286,7 +286,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		brush->setBrushType(BrushType::Square);
 		selectToolButton(_btn_eraser);
 		};
-	_btn_eraser->setTooltip(L"Eraser Tool", L"Erase parts of the canvas using\nthe secondary color with LMB or the primary color with RMB");
+	_btn_eraser->setTooltip(L"Eraser Tool", L"Erase parts of the canvas using\nthe secondary color with LMB\nor the primary color with RMB");
 
 	_tools.clear();
 	_tools.push_back(_btn_brush);
@@ -309,7 +309,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		if (_toolType == ToolType::Brush || _toolType == ToolType::Eraser)
 			brush->decrease();
 		};
-	_size_decrease->setTooltip(L"Decrease Brush Size", L"Decrease the size of the brush or eraser");
+	_size_decrease->setTooltip(L"Decrease Brush Size", L"Decrease the size of the brush\nor eraser");
 
 	_size_increase = std::make_shared<NormalButton>(getTexture(L"tex\\tools\\btn_size_increase.png"), getTexture(L"tex\\tools\\btn_size_increase_hover.png"));
 	_size_increase->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -318,7 +318,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		if (_toolType == ToolType::Brush || _toolType == ToolType::Eraser)
 			brush->increase();
 		};
-	_size_increase->setTooltip(L"Increase Brush Size", L"Increase the size of the brush or eraser");
+	_size_increase->setTooltip(L"Increase Brush Size", L"Increase the size of the brush\nor eraser");
 
 	_sizes.clear();
 	_sizes.push_back(_size_decrease);
@@ -348,8 +348,8 @@ Toolbar::Toolbar() : ElementGUI() {
 		selectColorButton(_second_color);
 		};
 
-	_first_color->setTooltip(L"Primary Color", L"The primary color is used for drawing with the left mouse button");
-	_second_color->setTooltip(L"Secondary Color", L"The secondary color is used for drawing with the right mouse button");
+	_first_color->setTooltip(L"Primary Color", L"The primary color is used\nfor drawing with the left\nmouse button");
+	_second_color->setTooltip(L"Secondary Color", L"The secondary color is used\nfor drawing with the right\nmouse button");
 
 	_first_color_text_col = std::make_unique<sf::Text>(basicFont, L"color", 13);
 	_first_color_text_col->setFillColor(tools_text_color);
@@ -424,7 +424,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		if(palette == nullptr)
 			palette = std::make_shared<Palette>();
 		};
-	_btn_palette_colors->setTooltip(L"Color Palette", L"Open the color palette dialog to create and manage custom colors");
+	_btn_palette_colors->setTooltip(L"Color Palette", L"Open the color palette dialog\nto create and manage custom\ncolors");
 
 	//////////////////////////////////////////////////////////////////////////////
 
