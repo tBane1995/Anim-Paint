@@ -3,6 +3,101 @@
 #include "../include/Time.hpp"
 #include "Theme.hpp"
 
+std::wstring wrap_text(int line_width, sf::Font& font, float characterSize, std::wstring text) {
+
+	std::wstring wrapped_text = L"";
+
+	std::wstring line = L"";
+	std::wstring word = L"";
+
+	for (auto& character : text) {
+
+		std::shared_ptr<sf::Text> text_word = std::make_shared<sf::Text>(font, word + character, characterSize);
+
+		if (text_word->getGlobalBounds().size.x > line_width) {
+
+			if (line != L"") {
+				wrapped_text += line + L"\n";
+				line = L"";
+			}
+
+			// word longer than line
+			std::wstring l = L"";
+			word = word + character;
+			for (wchar_t& c : word) {
+				std::shared_ptr<sf::Text> text_line_plus_character = std::make_shared<sf::Text>(font, l + c, characterSize);
+				if (text_line_plus_character->getGlobalBounds().size.x > line_width) {
+					wrapped_text += l + L"\n";
+					l = c;
+				}
+				else
+					l = l + c;
+			}
+
+			std::shared_ptr<sf::Text> text_line = std::make_shared<sf::Text>(font, l, characterSize);
+			wrapped_text += l + L"\n";
+
+			word = L"";
+			continue;
+		}
+		
+		std::shared_ptr<sf::Text> text_line_plus_word_plus_character = std::make_shared<sf::Text>(font, line + word + character, characterSize);
+		if (text_line_plus_word_plus_character->getGlobalBounds().size.x > line_width)
+		{
+			wrapped_text += line + L"\n";
+			line = L"";
+			word = word + character;
+			continue;
+		}
+		
+		if (character == L'\n') {
+
+			std::shared_ptr<sf::Text> text_line_plus_word = std::make_shared<sf::Text>(font, line + word, characterSize);
+			if (text_line_plus_word->getGlobalBounds().size.x > line_width) {
+				wrapped_text += line + L"\n";
+				wrapped_text += word + L"\n";
+
+				line = L"";
+				word = L"";
+			}
+			else {
+				wrapped_text += line + word + L"\n";
+				line = L"";
+				word = L"";
+			}
+
+			continue;
+		}
+
+		if (character == L' ' || character == L'\t') {
+
+			std::shared_ptr<sf::Text> text_line_plus_word = std::make_shared<sf::Text>(font, line + word, characterSize);
+
+			if (text_line_plus_word->getGlobalBounds().size.x > line_width) {
+				wrapped_text += line + L"\n";
+				line = L"";
+			}
+			else {
+				line = line + word + character;
+			}
+
+			word = L"";
+		}
+		else {
+			word = word + character;
+		}
+	}
+
+	if (line != L"" || word != L"") {
+		wrapped_text += line + word;
+	}
+
+	return wrapped_text;
+
+}
+
+
+
 Tooltip::Tooltip(){
 	_button = nullptr;
 	_timer = sf::Time::Zero;
@@ -30,7 +125,7 @@ void Tooltip::setButton(std::shared_ptr<Button> button){
 	_timer = currentTime;
 
 	_title = _button->_title;
-	_description = _button->_description;
+	_description = wrap_text(192, basicFont, tooltip_text_font_size, _button->_description);
 
 	_title_text->setString(_title);
 	_description_text->setString(_description);
