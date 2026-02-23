@@ -309,6 +309,8 @@ Toolbar::Toolbar() : ElementGUI() {
 		if (_toolType == ToolType::Brush || _toolType == ToolType::Eraser)
 			brush->decrease();
 		};
+	_size_decrease->setTooltip(L"Decrease Brush Size", L"Decrease the size of the brush or eraser");
+
 	_size_increase = std::make_shared<NormalButton>(getTexture(L"tex\\tools\\btn_size_increase.png"), getTexture(L"tex\\tools\\btn_size_increase_hover.png"));
 	_size_increase->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
@@ -316,6 +318,8 @@ Toolbar::Toolbar() : ElementGUI() {
 		if (_toolType == ToolType::Brush || _toolType == ToolType::Eraser)
 			brush->increase();
 		};
+	_size_increase->setTooltip(L"Increase Brush Size", L"Increase the size of the brush or eraser");
+
 	_sizes.clear();
 	_sizes.push_back(_size_decrease);
 	_sizes.push_back(_size_increase);
