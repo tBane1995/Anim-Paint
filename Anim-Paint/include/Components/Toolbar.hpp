@@ -16,10 +16,9 @@ public:
 class ColorButton : public NormalButton {
 public:
 
-	std::wstring _name;
 	sf::Color _color;
 
-	ColorButton(std::wstring color_name, sf::Color color);
+	ColorButton(sf::Color color);
 	~ColorButton();
 
 	void setPosition(sf::Vector2i position);

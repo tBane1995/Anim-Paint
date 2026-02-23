@@ -38,8 +38,7 @@ void Separator::draw() {
 
 ///////////////////////////////////////////////////////////////////////////
 
-ColorButton::ColorButton(std::wstring color_name, sf::Color color) : NormalButton(getTexture(L"tex\\tools\\frame.png"), getTexture(L"tex\\tools\\frame_hover.png")) {
-	_name = color_name;
+ColorButton::ColorButton(sf::Color color) : NormalButton(getTexture(L"tex\\tools\\frame.png"), getTexture(L"tex\\tools\\frame_hover.png")) {
 	_color = color;
 
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32, 32));
@@ -366,40 +365,58 @@ Toolbar::Toolbar() : ElementGUI() {
 	// colors
 	
 	// black - grey - white
-	_colors.push_back(std::make_shared<ColorButton>(L"black", sf::Color(0, 0, 0)));
-	_colors.push_back(std::make_shared<ColorButton>(L"white", sf::Color(255, 255, 255)));
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 0, 0)));
+	_colors.back()->setTooltip(L"Black", L"");
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(255, 255, 255)));
+	_colors.back()->setTooltip(L"White", L"");
 
 	// greys
-	_colors.push_back(std::make_shared<ColorButton>(L"dark grey", sf::Color(63, 63, 63)));
-	_colors.push_back(std::make_shared<ColorButton>(L"light grey", sf::Color(159, 159, 159)));
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(63, 63, 63)));
+	_colors.back()->setTooltip(L"Dark Grey", L"");
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(159, 159, 159)));
+	_colors.back()->setTooltip(L"Light Grey", L"");
 
 	// red
-	_colors.push_back(std::make_shared<ColorButton>(L"dark red", sf::Color(63, 0, 0)));
-	_colors.push_back(std::make_shared<ColorButton>(L"light red", sf::Color(191, 0, 0)));
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(63, 0, 0)));
+	_colors.back()->setTooltip(L"Dark Red", L"");
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(191, 0, 0)));
+	_colors.back()->setTooltip(L"Light Red", L"");
 
 	// orange
-	_colors.push_back(std::make_shared<ColorButton>(L"dark orange", sf::Color(127, 63, 0)));
-	_colors.push_back(std::make_shared<ColorButton>(L"light orange", sf::Color(255, 127, 0)));
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(127, 63, 0)));
+	_colors.back()->setTooltip(L"Dark Orange", L"");
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(255, 127, 0)));
+	_colors.back()->setTooltip(L"Light Orange", L"");
 
 	// yellow
-	_colors.push_back(std::make_shared<ColorButton>(L"dark yellow", sf::Color(63, 63, 0)));
-	_colors.push_back(std::make_shared<ColorButton>(L"light yellow", sf::Color(191, 191, 0)));
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(63, 63, 0)));
+	_colors.back()->setTooltip(L"Dark Yellow", L"");
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(191, 191, 0)));
+	_colors.back()->setTooltip(L"Light Yellow", L"");
 
 	// green
-	_colors.push_back(std::make_shared<ColorButton>(L"dark green", sf::Color(0, 63, 0)));
-	_colors.push_back(std::make_shared<ColorButton>(L"light green", sf::Color(0, 191, 0)));
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 63, 0)));
+	_colors.back()->setTooltip(L"Dark Green", L"");
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 191, 0)));
+	_colors.back()->setTooltip(L"Light Green", L"");
 
 	// cyan
-	_colors.push_back(std::make_shared<ColorButton>(L"dark cyan", sf::Color(0, 63, 63)));
-	_colors.push_back(std::make_shared<ColorButton>(L"light cyan", sf::Color(0, 191, 191)));
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 63, 63)));
+	_colors.back()->setTooltip(L"Dark Cyan", L"");
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 191, 191)));
+	_colors.back()->setTooltip(L"Light Cyan", L"");
 
 	// blue
-	_colors.push_back(std::make_shared<ColorButton>(L"dark blue", sf::Color(0, 0, 63)));
-	_colors.push_back(std::make_shared<ColorButton>(L"light blue", sf::Color(0, 0, 191)));
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 0, 63)));
+	_colors.back()->setTooltip(L"Dark Blue", L"");
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(0, 0, 191)));
+	_colors.back()->setTooltip(L"Light Blue", L"");
 
 	// magenta
-	_colors.push_back(std::make_shared<ColorButton>(L"dark magenta", sf::Color(63, 0, 63)));
-	_colors.push_back(std::make_shared<ColorButton>(L"light magenta", sf::Color(191, 0, 191)));
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(63, 0, 63)));
+	_colors.back()->setTooltip(L"Dark Magenta", L"");
+	_colors.push_back(std::make_shared<ColorButton>(sf::Color(191, 0, 191)));
+	_colors.back()->setTooltip(L"Light Magenta", L"");
 
 	for (auto& c : _colors) {
 		c->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -411,7 +428,7 @@ Toolbar::Toolbar() : ElementGUI() {
 				palette->loadColorFromRGBInputs();
 			}
 			};
-		c->setTooltip(c->_name, L"");
+		
 	}
 
 	_colors_text = std::make_unique<sf::Text>(basicFont, L"colors", 13);
