@@ -89,8 +89,10 @@ void Tooltip::draw(){
 		sf::Vector2i pos;
 		pos.x = _button->getPosition().x + _button->getSize().x / 2 + tooltip_rect_border_width;
 		pos.y = _button->getPosition().y + _button->getSize().y + tooltip_rect_border_width;
+		pos.x = std::clamp(pos.x, 0, int(window->getSize().x - rectSize.x));
+		pos.y = std::clamp(pos.y, 0, int(window->getSize().y - rectSize.y));
 		rect.setPosition(sf::Vector2f(pos));
-		
+	
 		window->draw(rect);
 
 		if (_title != L"") {
