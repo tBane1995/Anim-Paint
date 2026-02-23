@@ -348,6 +348,9 @@ Toolbar::Toolbar() : ElementGUI() {
 		selectColorButton(_second_color);
 		};
 
+	_first_color->setTooltip(L"Primary Color", L"The primary color is used for drawing with the left mouse button");
+	_second_color->setTooltip(L"Secondary Color", L"The secondary color is used for drawing with the right mouse button");
+
 	_first_color_text_col = std::make_unique<sf::Text>(basicFont, L"color", 13);
 	_first_color_text_col->setFillColor(tools_text_color);
 	_first_color_text_val = std::make_unique<sf::Text>(basicFont, L"1", 13);
@@ -408,6 +411,7 @@ Toolbar::Toolbar() : ElementGUI() {
 				palette->loadColorFromRGBInputs();
 			}
 			};
+		c->setTooltip(c->_name, L"");
 	}
 
 	_colors_text = std::make_unique<sf::Text>(basicFont, L"colors", 13);
@@ -420,6 +424,7 @@ Toolbar::Toolbar() : ElementGUI() {
 		if(palette == nullptr)
 			palette = std::make_shared<Palette>();
 		};
+	_btn_palette_colors->setTooltip(L"Color Palette", L"Open the color palette dialog to create and manage custom colors");
 
 	//////////////////////////////////////////////////////////////////////////////
 
