@@ -30,4 +30,4 @@ public:
 	void draw();
 };
 
-extern Cursor* cursor;
+extern std::shared_ptr<Cursor> cursor;

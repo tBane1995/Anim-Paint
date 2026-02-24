@@ -139,7 +139,7 @@ int main() {
 	window->setView(mainView);
 	window->setMinimumSize(sf::Vector2u(mainView.getSize()));
 
-	cursor = new Cursor();
+	cursor = std::make_shared<Cursor>();
 	main_menu = std::make_shared<MainMenu>();
 	
 	std::shared_ptr<Animation> animation = std::make_shared<Animation>();

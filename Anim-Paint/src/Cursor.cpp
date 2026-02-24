@@ -378,4 +378,4 @@ void Cursor::draw() {
 	}
 }
 
-Cursor* cursor = nullptr;
+std::shared_ptr<Cursor> cursor;
