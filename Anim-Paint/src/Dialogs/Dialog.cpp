@@ -157,9 +157,6 @@ void Dialog::deactivateOnTabElement() {
 		return;
 	}
 
-	sf::Image img;
-	const uint8_t* pixels = img.getPixelsPtr();
-
 }
 
 
