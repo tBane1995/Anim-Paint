@@ -248,6 +248,9 @@ int main() {
 
 			main_menu->handleEvent(*event);
 
+			if (palette)
+				palette->handleEvent(*event);
+
 			canvas->handleEvent(*event);
 			toolbar->handleEvent(*event);
 
@@ -255,8 +258,7 @@ int main() {
 			layers_panel->handleEvent(*event);
 			animations_panel->handleEvent(*event);
 
-			if (palette)
-				palette->handleEvent(*event);
+			
 
 			cursor->handleEvent(*event);
 			bottom_bar->handleEvent(*event);

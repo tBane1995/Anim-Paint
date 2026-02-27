@@ -427,8 +427,8 @@ void Dialog_Load_SpriteSheet::loadAnimationsByFrameSize(sf::Vector2i frameSize) 
 			img.resize(sf::Vector2u(frameSize), sf::Color::White);
 			
 			if (!img.copy(spriteSheet, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(x, y), frameSize), true)) {
-				DebugError(L"Dialog_Load_SpriteSheet::loadAnimationsByFrameSize: cant copy image from spritesheet");
-				exit(0);
+				//DebugError(L"Dialog_Load_SpriteSheet::loadAnimationsByFrameSize: cant copy image from spritesheet");
+				//exit(0);
 			}
 
 			frame->_layers.push_back(std::make_shared<Layer>(L"sprite", img));

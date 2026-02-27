@@ -217,9 +217,14 @@ void Dialog::handleEvent(const sf::Event& event) {
 			_is_moved = true;
 			_offset = _titleRect.position - cursor->_worldMousePosition;
 		}
+
+		if(_rect.contains(cursor->_worldMousePosition))
+			ElementGUI_pressed = this->shared_from_this();
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		_is_moved = false;
+		if(ElementGUI_pressed.get() == this)
+			ElementGUI_pressed = nullptr;
 	}else if(const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Escape){
 		_state = DialogState::ToClose;
 	}else if (_onTabElements.size() > 0) {
