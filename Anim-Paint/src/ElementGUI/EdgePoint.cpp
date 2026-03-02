@@ -31,7 +31,8 @@ void EdgePoint::cursorHover() {
 void EdgePoint::handleEvent(const sf::Event& event) {
 	if (ElementGUI_pressed.get() == this) {
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			ElementGUI_pressed = nullptr;
+			if (ElementGUI_pressed.get() == this)
+				ElementGUI_pressed = nullptr;
 			return;
 		}
 	}

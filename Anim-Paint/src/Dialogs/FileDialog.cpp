@@ -332,7 +332,8 @@ void LocationRect::update() {
 					_onclick_location_func();
 			}
 
-			ElementGUI_pressed = nullptr;
+			if (ElementGUI_pressed.get() == this)
+				ElementGUI_pressed = nullptr;
 			unclick();
 		}
 	}
@@ -557,7 +558,9 @@ void FileRect::update() {
 			if (_onclick_func) {
 				_onclick_func();
 			}
-			ElementGUI_pressed = nullptr;
+
+			if (ElementGUI_pressed.get() == this)
+				ElementGUI_pressed = nullptr;
 			unclick();
 		}
 	}

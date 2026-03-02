@@ -108,7 +108,9 @@ void OptionBox::update() {
 			if (_onclick_func) {
 				_onclick_func();
 			}
-			ElementGUI_pressed = nullptr;
+
+			if(ElementGUI_pressed.get() == this)
+				ElementGUI_pressed = nullptr;
 			unclick();
 		}
 	}
@@ -239,7 +241,9 @@ void MenuBox::update() {
 			if (_onclick_func) {
 				_onclick_func();
 			}
-			ElementGUI_pressed = nullptr;
+
+			if (ElementGUI_pressed.get() == this)
+				ElementGUI_pressed = nullptr;
 			unclick();
 		}
 	}

@@ -25,5 +25,5 @@ void ElementGUI::draw() {
 
 }
 
-std::shared_ptr<ElementGUI> ElementGUI_hovered = nullptr;
-std::shared_ptr<ElementGUI> ElementGUI_pressed = nullptr;
+std::shared_ptr<ElementGUI> ElementGUI_hovered;
+std::shared_ptr<ElementGUI> ElementGUI_pressed;

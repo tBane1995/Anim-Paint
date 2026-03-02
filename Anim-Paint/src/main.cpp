@@ -162,6 +162,9 @@ int main() {
 	float fps = 0.0f;
 	int frameCount = 0;
 
+	// Elements GUI
+	ElementGUI_hovered = nullptr;
+	ElementGUI_pressed = nullptr;
 
 	while (window->isOpen()) {
 

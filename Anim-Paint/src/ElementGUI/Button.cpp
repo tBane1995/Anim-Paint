@@ -194,7 +194,9 @@ void NormalButton::update() {
 			if (_onclick_func) {
 				_onclick_func();
 			}
-			ElementGUI_pressed = nullptr;
+
+			if (ElementGUI_pressed.get() == this)
+				ElementGUI_pressed = nullptr;
 			unclick();
 		}
 	}
@@ -351,7 +353,9 @@ void ColoredButtonWithText::update() {
 			if (_onclick_func) {
 				_onclick_func();
 			}
-			ElementGUI_pressed = nullptr;
+
+			if (ElementGUI_pressed.get() == this)
+				ElementGUI_pressed = nullptr;
 			unclick();
 		}
 	}
@@ -497,7 +501,9 @@ void ButtonWithBottomText::update() {
 			if (_onclick_func) {
 				_onclick_func();
 			}
-			ElementGUI_pressed = nullptr;
+
+			if (ElementGUI_pressed.get() == this)
+				ElementGUI_pressed = nullptr;
 			unclick();
 		}
 	}
@@ -646,7 +652,9 @@ void ButtonWithRightText::update() {
 			if (_onclick_func) {
 				_onclick_func();
 			}
-			ElementGUI_pressed = nullptr;
+
+			if (ElementGUI_pressed.get() == this)
+				ElementGUI_pressed = nullptr;
 			unclick();
 		}
 	}
@@ -784,7 +792,9 @@ void Option::update() {
 			if (_onclick_func) {
 				_onclick_func();
 			}
-			ElementGUI_pressed = nullptr;
+
+			if (ElementGUI_pressed.get() == this)
+				ElementGUI_pressed = nullptr;
 			unclick();
 		}
 	}
@@ -1000,7 +1010,9 @@ void ButtonWithTopTextAndList::update() {
 			if (_onclick_func) {
 				_onclick_func();
 			}
-			ElementGUI_pressed = nullptr;
+
+			if (ElementGUI_pressed.get() == this)
+				ElementGUI_pressed = nullptr;
 			unclick();
 		}
 	}
