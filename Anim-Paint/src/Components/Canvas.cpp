@@ -682,7 +682,11 @@ void Canvas::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if ((_clickedEdgePoint != nullptr && ElementGUI_hovered != _clickedEdgePoint) && ElementGUI_hovered.get() != nullptr && ElementGUI_hovered.get() != this && selection->_state != SelectionState::Selecting) {
+	if (_clickedEdgePoint != nullptr && ElementGUI_hovered != _clickedEdgePoint) {
+		return;
+	}
+
+	if (!(ElementGUI_hovered.get() == this || ElementGUI_hovered == nullptr)) {
 		return;
 	}
 
