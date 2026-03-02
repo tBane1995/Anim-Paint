@@ -33,7 +33,7 @@ public:
 
 	std::vector<std::shared_ptr<LayerBox>> layersBoxes;
 
-	LayersPanel(std::wstring title, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(0, 0));
+	LayersPanel();
 	~LayersPanel();
 
 	void loadLayersFromCurrentFrame();

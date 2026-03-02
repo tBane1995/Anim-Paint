@@ -4,8 +4,14 @@
 #include "Window.hpp"
 #include "../include/Components/LayersPanel.hpp"
 #include "Tools/Selection.hpp"
+#include "../include/Components/AnimationsPanel.hpp"
 
-FramesPanel::FramesPanel(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
+FramesPanel::FramesPanel() 
+	: Dialog(
+		L"Frames", 
+		sf::Vector2i(192, dialog_title_rect_height + 32 + 32 + dialog_padding * 2),
+		sf::Vector2i(int(mainView.getSize().x) - 192 - dialog_margin, animations_panel->getPosition().y + animations_panel->getSize().y + dialog_margin)
+	) {
 
 
 	_text = std::make_unique<sf::Text>(basicFont, std::to_wstring(getCurrentAnimation()->getCurrentFrameID() + 1) + L"/" + std::to_wstring(getCurrentAnimation()->getFramesCount()), 17);
@@ -15,7 +21,7 @@ FramesPanel::FramesPanel(std::wstring title, sf::Vector2i size, sf::Vector2i pos
 	_next_btn = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\next.png"), getTexture(L"tex\\btn32\\next_hover.png"));
 	_last_btn = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\last.png"), getTexture(L"tex\\btn32\\last_hover.png"));
 
-	_first_btn->_onclick_func = [this, position]() {
+	_first_btn->_onclick_func = [this]() {
 		selection->unselect();
 		getCurrentAnimation()->firstFrame();
 		layers_panel->loadLayersFromCurrentFrame();
@@ -23,7 +29,7 @@ FramesPanel::FramesPanel(std::wstring title, sf::Vector2i size, sf::Vector2i pos
 		};
 	_first_btn->setTooltip(L"First frame", L"Go to the first frame");
 
-	_prev_btn->_onclick_func = [this, position]() {
+	_prev_btn->_onclick_func = [this]() {
 		selection->unselect();
 		getCurrentAnimation()->prevFrame();
 		layers_panel->loadLayersFromCurrentFrame();
@@ -31,7 +37,7 @@ FramesPanel::FramesPanel(std::wstring title, sf::Vector2i size, sf::Vector2i pos
 		};
 	_prev_btn->setTooltip(L"Previous frame", L"Go to the previous frame");
 
-	_next_btn->_onclick_func = [this, position]() {
+	_next_btn->_onclick_func = [this]() {
 		selection->unselect();
 		getCurrentAnimation()->nextFrame();
 		layers_panel->loadLayersFromCurrentFrame();
@@ -39,7 +45,7 @@ FramesPanel::FramesPanel(std::wstring title, sf::Vector2i size, sf::Vector2i pos
 		};
 	_next_btn->setTooltip(L"Next frame", L"Go to the next frame");
 
-	_last_btn->_onclick_func = [this, position]() {
+	_last_btn->_onclick_func = [this]() {
 		selection->unselect();
 		getCurrentAnimation()->lastFrame();
 		layers_panel->loadLayersFromCurrentFrame();
@@ -92,7 +98,7 @@ FramesPanel::FramesPanel(std::wstring title, sf::Vector2i size, sf::Vector2i pos
 		};
 	_move_next->setTooltip(L"Move frame next", L"Move the current frame one position forward");
 
-	setPosition(position);
+	setPosition(_position);
 }
 
 FramesPanel::~FramesPanel() {

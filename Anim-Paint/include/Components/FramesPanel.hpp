@@ -15,7 +15,7 @@ public:
 	std::shared_ptr<NormalButton> _move_back;
 	std::shared_ptr<NormalButton> _move_next;
 
-	FramesPanel(std::wstring title, sf::Vector2i size, sf::Vector2i position = sf::Vector2i(0, 0));
+	FramesPanel();
 	~FramesPanel();
 
 	void setPosition(sf::Vector2i position);

@@ -5,9 +5,15 @@
 #include "Window.hpp"
 #include "../include/Components/FramesPanel.hpp"
 #include "Tools/Selection.hpp"
+#include "../include/Components/MainMenu.hpp"
+#include "../include/Components/Toolbar.hpp"
 
-AnimationsPanel::AnimationsPanel(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
-
+AnimationsPanel::AnimationsPanel() : 
+	Dialog(
+		L"Animations", 
+		sf::Vector2i(192, dialog_title_rect_height + 32 + 32 + dialog_padding * 2), 
+		sf::Vector2i(int(mainView.getSize().x) - 192 - dialog_margin, int(main_menu->getSize().y) + toolbar->_rect.size.y + dialog_margin)
+	) {
 
 	_text = std::make_unique<sf::Text>(basicFont, std::to_wstring(getCurrentAnimationId()+1) + L"/" + std::to_wstring(getAnimationsCount()), 17);
 
@@ -16,28 +22,28 @@ AnimationsPanel::AnimationsPanel(std::wstring title, sf::Vector2i size, sf::Vect
 	_next_btn = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\next.png"), getTexture(L"tex\\btn32\\next_hover.png"));
 	_last_btn = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\last.png"), getTexture(L"tex\\btn32\\last_hover.png"));
 
-	_first_btn->_onclick_func = [this, position]() {
+	_first_btn->_onclick_func = [this]() {
 		firstAnimation();
 		updateText();
 		frames_panel->_first_btn->_onclick_func();
 		};
 	_first_btn->setTooltip(L"First animation", L"Go to the first animation");
 
-	_prev_btn->_onclick_func = [this, position]() {
+	_prev_btn->_onclick_func = [this]() {
 		prevAnimation();
 		updateText();
 		frames_panel->_first_btn->_onclick_func();
 		};
 	_prev_btn->setTooltip(L"Previous animation", L"Go to the previous animation");
 
-	_next_btn->_onclick_func = [this, position]() {
+	_next_btn->_onclick_func = [this]() {
 		nextAnimation();
 		updateText();
 		frames_panel->_first_btn->_onclick_func();
 		};
 	_next_btn->setTooltip(L"Next animation", L"Go to the next animation");
 
-	_last_btn->_onclick_func = [this, position]() {
+	_last_btn->_onclick_func = [this]() {
 		lastAnimation();
 		updateText();
 		frames_panel->_first_btn->_onclick_func();
@@ -85,7 +91,7 @@ AnimationsPanel::AnimationsPanel(std::wstring title, sf::Vector2i size, sf::Vect
 		};
 	_move_next->setTooltip(L"Move animation next", L"Move the current animation one position forward");
 
-	setPosition(position);
+	setPosition(_position);
 }
 
 AnimationsPanel::~AnimationsPanel() {

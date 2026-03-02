@@ -53,47 +53,6 @@
 #include "Components/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
-void createDialogs() {
-	
-	{
-		sf::Vector2i size;
-		size.x = 192;
-		size.y = dialog_title_rect_height + 32 + 32 + dialog_padding * 2;
-
-		sf::Vector2i position;
-		position.x = int(mainView.getSize().x) - 192 - dialog_margin;
-		position.y = int(main_menu->getSize().y) + toolbar->_rect.size.y + dialog_margin;
-
-		animations_panel = std::make_shared<AnimationsPanel>(L"Animations", size, position);
-	}
-
-	{
-		sf::Vector2i size;
-		size.x = 192;
-		size.y = dialog_title_rect_height + 32 + 32 + dialog_padding * 2;
-		
-		sf::Vector2i position;
-		position.x = int(mainView.getSize().x) - 192 - dialog_margin;
-		position.y = animations_panel->getPosition().y + animations_panel->getSize().y + dialog_margin;
-		
-		frames_panel = std::make_shared<FramesPanel>(L"Frames", size, position);
-	}
-
-	{
-		sf::Vector2i size;
-		size.x = 160;
-		size.y = dialog_title_rect_height + 4 * 32 + 32 + dialog_padding * 2;
-
-		sf::Vector2i position;
-		position.x = int(mainView.getSize().x) - 160 - dialog_margin;
-		position.y = frames_panel->getPosition().y + frames_panel->getSize().y + dialog_margin;
-
-		layers_panel = std::make_shared<LayersPanel>(L"Layers", size, position);
-	}
-
-	
-}
-
 void resize() {
 
 	main_menu->resize();
@@ -152,7 +111,9 @@ int main() {
 	selection = std::make_shared<Selection>();
 	brush = std::make_shared<Brush>(2);
 	toolbar = std::make_shared<Toolbar>();
-	createDialogs();
+	animations_panel = std::make_shared<AnimationsPanel>();
+	frames_panel = std::make_shared<FramesPanel>();
+	layers_panel = std::make_shared<LayersPanel>();
 	canvas = std::make_shared<Canvas>();
 	bottom_bar = std::make_shared<BottomBar>();
 	tooltip = std::make_shared<Tooltip>();

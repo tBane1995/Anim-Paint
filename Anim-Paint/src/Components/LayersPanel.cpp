@@ -4,6 +4,7 @@
 #include "Cursor.hpp"
 #include "Window.hpp"
 #include "Tools/Selection.hpp"
+#include "../include/Components/FramesPanel.hpp"
 
 LayerBox::LayerBox(std::shared_ptr<Layer> layer) : ElementGUI() {
 
@@ -98,7 +99,12 @@ void LayerBox::draw() {
 
 /////////////////////////////////////////////////////////////
 
-LayersPanel::LayersPanel(std::wstring title, sf::Vector2i size, sf::Vector2i position) : Dialog(title, size, position) {
+LayersPanel::LayersPanel() 
+	: Dialog(
+		L"Layers",
+		sf::Vector2i(160, dialog_title_rect_height + 4 * 32 + 32 + dialog_padding * 2),
+		sf::Vector2i(int(mainView.getSize().x) - 160 - dialog_margin, frames_panel->getPosition().y + frames_panel->getSize().y + dialog_margin)
+		) {
 
 	loadLayersFromCurrentFrame();
 }
