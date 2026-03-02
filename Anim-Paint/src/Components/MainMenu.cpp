@@ -80,14 +80,14 @@ void OptionBox::click() {
 
 
 void OptionBox::cursorHover() {
-	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_position))) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 }
 
 void OptionBox::handleEvent(const sf::Event& event)
 {
-	if (!_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition)))
+	if (!_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_position)))
 		return;
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left)
@@ -202,7 +202,7 @@ void MenuBox::click() {
 
 
 void MenuBox::cursorHover() {
-	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_position))) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 
@@ -213,7 +213,7 @@ void MenuBox::cursorHover() {
 }
 
 void MenuBox::handleEvent(const sf::Event& event) {
-	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_position))) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this->shared_from_this();
@@ -833,7 +833,7 @@ void MainMenu::cursorHover() {
 	if (selection->_state == SelectionState::Selecting)
 		return;
 
-	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_worldMousePosition))) {
+	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_position))) {
   		ElementGUI_hovered = this->shared_from_this();
 	}
 

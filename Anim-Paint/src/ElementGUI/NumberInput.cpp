@@ -84,7 +84,7 @@ void NumberInput::cursorHover() {
 void NumberInput::handleEvent(const sf::Event& event) {
 
 	if (const auto* mp = event.getIf<sf::Event::MouseButtonPressed>(); mp) {
-		if (_rect.contains(cursor->_worldMousePosition)) {
+		if (_rect.contains(cursor->_position)) {
 
 			if (_editState == TextInputEditState::TextEntered) {
 				if ((currentTime - _lastCLickTime).asSeconds() < 0.2f) {

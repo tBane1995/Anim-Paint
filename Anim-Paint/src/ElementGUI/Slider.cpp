@@ -75,14 +75,14 @@ void Slider::setPosition(sf::Vector2i position) {
 }
 
 void Slider::cursorHover() {
-	if(_barRect.contains(cursor->_worldMousePosition))
+	if(_barRect.contains(cursor->_position))
 		ElementGUI_hovered = this->shared_from_this();
 }
 
 void Slider::handleEvent(const sf::Event& event) {
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_barRect.contains(cursor->_worldMousePosition)) {
+		if (_barRect.contains(cursor->_position)) {
 			ElementGUI_pressed = this->shared_from_this();
 			_editState = SliderEditState::Changed;
 
@@ -99,7 +99,7 @@ void Slider::handleEvent(const sf::Event& event) {
 
 void Slider::update() {
 	if (_editState == SliderEditState::Changed) {
-		_thumbRect.size.x = cursor->_worldMousePosition.x - _barRect.position.x;
+		_thumbRect.size.x = cursor->_position.x - _barRect.position.x;
 		_thumbRect.size.x = std::max(0, std::min(_thumbRect.size.x, _barRect.size.x));
 		int newValue = (int)((float)_thumbRect.size.x / (float)_barRect.size.x * float(_max_value - _min_value) + float(_min_value));
 		setValue(newValue);

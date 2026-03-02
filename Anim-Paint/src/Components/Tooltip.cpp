@@ -154,7 +154,7 @@ float Tooltip::getHeightOfTitleAndDescription() {
 void Tooltip::update(){
 	if (_button == nullptr) return;
 
-	if (!_button->_rect.contains(cursor->_worldMousePosition)) {
+	if (!_button->_rect.contains(cursor->_position)) {
 		_button = nullptr;
 	}
 }

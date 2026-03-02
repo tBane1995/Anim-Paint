@@ -92,7 +92,7 @@ int Scrollbar::getValue() {
 }
 
 void Scrollbar::cursorHover() {
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 }
@@ -105,17 +105,17 @@ void Scrollbar::handleEvent(const sf::Event& event) {
 		}
 	}
 	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_slider.contains(cursor->_worldMousePosition)) {
+		if (_slider.contains(cursor->_position)) {
 			ElementGUI_pressed = this->shared_from_this();
 			if (_slider.size.y < _rect.size.y) {
 				_state = ScrollbarState::Dragging;
-				_dragOffset = cursor->_worldMousePosition - _slider.position;
+				_dragOffset = cursor->_position - _slider.position;
 			}
 		}
 		
 	}
 	else if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>(); mws) {
-		if (_rect.contains(cursor->_worldMousePosition) || _scrollArea->contains(cursor->_worldMousePosition)) {
+		if (_rect.contains(cursor->_position) || _scrollArea->contains(cursor->_position)) {
 			_state = ScrollbarState::Scrolled;
 			_deltaScroll = -(int)mws->delta;
 		}
@@ -128,7 +128,7 @@ void Scrollbar::update() {
 	if (_state == ScrollbarState::Dragging) {
 		sf::Vector2f position;
 		position.x = float(_slider.position.x);
-		position.y = float(cursor->_worldMousePosition.y - _dragOffset.y);
+		position.y = float(cursor->_position.y - _dragOffset.y);
 		position.y = std::clamp(position.y, float(_rect.position.y), float(_rect.position.y + _rect.size.y - _slider.size.y));
 		int val = (int)(((position.y - _rect.position.y) / (_rect.size.y - _slider.size.y)) * (_max_value - _min_value)) + _min_value;
 

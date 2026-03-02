@@ -81,7 +81,7 @@ void TextInput::positioningCursorByMouse() {
 
 	for (int i = 0; i < (int)(_textStr.length()); i++) {
 		sf::Vector2f charPos = _text->findCharacterPos(i);
-		if (cursor->_worldMousePosition.x > charPos.x) {
+		if (cursor->_position.x > charPos.x) {
 			newCursorPosition = i + 1;
 		}
 	}
@@ -90,7 +90,7 @@ void TextInput::positioningCursorByMouse() {
 }
 
 void TextInput::cursorHover() {
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		ElementGUI_hovered = this->shared_from_this();
 		return;
 	}
@@ -105,7 +105,7 @@ void TextInput::cursorHover() {
 void TextInput::handleEvent(const sf::Event& event) {
 	
 	if (const auto* mp = event.getIf<sf::Event::MouseButtonPressed>(); mp) {
-		if (_rect.contains(cursor->_worldMousePosition)) {
+		if (_rect.contains(cursor->_position)) {
 
 			if (_editState == TextInputEditState::TextEntered) {
 				if ((currentTime - _lastCLickTime).asSeconds() < 0.2f) {

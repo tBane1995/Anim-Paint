@@ -45,7 +45,7 @@ void LayerBox::cursorHover() {
 
 	_visibling->cursorHover();
 
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 }
@@ -55,7 +55,7 @@ void LayerBox::handleEvent(const sf::Event& event) {
 	_visibling->handleEvent(event);
 
 	if (ElementGUI_pressed != _visibling) {
-		if (_rect.contains(cursor->_worldMousePosition)) {
+		if (_rect.contains(cursor->_position)) {
 			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 				ElementGUI_pressed = this->shared_from_this();
 				_onclick_func();

@@ -768,7 +768,7 @@ void Selection::resizeRect() {
 
 	float scale = (float)(canvas->_zoom * canvas->_zoom_delta);
 
-	sf::Vector2f p = (sf::Vector2f(cursor->_worldMousePosition) + sf::Vector2f(_edgePoints[0]->getSize()) / 2.0f - sf::Vector2f(_clickedEdgePoint->getPosition())) / scale;
+	sf::Vector2f p = (sf::Vector2f(cursor->_position) + sf::Vector2f(_edgePoints[0]->getSize()) / 2.0f - sf::Vector2f(_clickedEdgePoint->getPosition())) / scale;
 
 	float minX = (float)_point_left->getPosition().x;
 	float minY = (float)_point_top->getPosition().y;

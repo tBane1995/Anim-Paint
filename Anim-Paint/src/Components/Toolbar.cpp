@@ -595,7 +595,7 @@ void Toolbar::cursorHover() {
 	if (selection->_state == SelectionState::Selecting)
 		return;
 
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 
@@ -626,7 +626,7 @@ void Toolbar::handleEvent(const sf::Event& event) {
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this->shared_from_this();
 		}

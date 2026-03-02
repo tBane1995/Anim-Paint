@@ -11,8 +11,7 @@
 Cursor::Cursor() {
 
 	_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Arrow);
-	_mousePosition = sf::Mouse::getPosition(*window);
-	_worldMousePosition = sf::Vector2i(window->mapPixelToCoords(_mousePosition));
+	_position = sf::Mouse::getPosition(*window);
 	window->setMouseCursor(*_cursor);
 	_hoveredElementGUI = nullptr;
 	_brushIsVisible = false;
@@ -34,15 +33,12 @@ Cursor::~Cursor() {
 }
 
 void Cursor::update() {
-	_mousePosition = sf::Mouse::getPosition(*window);
-	_worldMousePosition = sf::Vector2i(window->mapPixelToCoords(_mousePosition));
-
-
+	_position = sf::Mouse::getPosition(*window);
 }
 
 void Cursor::handleEvent(const sf::Event& event) {
 
-	brush->setPosition(worldToTile(_worldMousePosition, canvas->_position, canvas->_zoom, canvas->_zoom_delta));
+	brush->setPosition(worldToTile(_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta));
 
 	std::shared_ptr<TextInput> input = dynamic_pointer_cast<TextInput>(ElementGUI_pressed);
 	if (input != nullptr && input->_editState == TextInputEditState::Selecting) {
@@ -281,7 +277,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 	}
 
 	if (selection->_state == SelectionState::Selected || selection->_state == SelectionState::Moving) {
-		sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+		sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 		if (selection->clickOnSelection(tile)) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
@@ -353,7 +349,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 
 void Cursor::draw() {
 
-	if (_mousePosition.x < 0 || _mousePosition.y < 0 || _mousePosition.x >= int(window->getSize().x) || _mousePosition.y >= int(window->getSize().y)) {
+	if (_position.x < 0 || _position.y < 0 || _position.x >= int(window->getSize().x) || _position.y >= int(window->getSize().y)) {
 		return;
 	}
 
@@ -366,12 +362,12 @@ void Cursor::draw() {
 		sprite.setOrigin(sf::Vector2f(_offset));
 		
 		if (_hoveredElementGUI == canvas) {
-			sf::Vector2i p = worldToTile(_worldMousePosition, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+			sf::Vector2i p = worldToTile(_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 			sf::Vector2f p2 = sf::Vector2f(canvas->_position) + (sf::Vector2f(p) + sf::Vector2f(0.5f, 0.5f)) * canvas->_zoom * canvas->_zoom_delta;
 			sprite.setPosition(p2);
 		}
 		else {
-			sprite.setPosition(sf::Vector2f(_worldMousePosition));
+			sprite.setPosition(sf::Vector2f(_position));
 		}
 
 		window->draw(sprite);

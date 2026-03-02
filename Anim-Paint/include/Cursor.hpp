@@ -12,8 +12,7 @@
 class Cursor {
 public:
 	std::shared_ptr<sf::Cursor> _cursor;
-	sf::Vector2i _mousePosition;
-	sf::Vector2i _worldMousePosition;
+	sf::Vector2i _position;
 	std::shared_ptr<ElementGUI> _hoveredElementGUI;
 	sf::Vector2i _offset;
 	std::shared_ptr<Texture> _ico;

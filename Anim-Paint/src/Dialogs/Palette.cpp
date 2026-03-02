@@ -115,7 +115,7 @@ void PaletteValues::setPosition(sf::Vector2i position) {
 }
 
 void PaletteValues::cursorHover() {
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 }
@@ -134,7 +134,7 @@ void PaletteValues::handleEvent(const sf::Event& event) {
 			ElementGUI_pressed = nullptr;
 	}
 	
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			_state = PaletteState::Selecting;
 			ElementGUI_pressed = this->shared_from_this();
@@ -176,8 +176,8 @@ Palette::Palette() : Dialog(L"Palette", sf::Vector2i(192 + 24 + 8, dialog_title_
 	_hues->_function = [this]() {
 		sf::Image pixels = _hues->_renderTexture.getTexture().copyToImage();
 
-		_huesCursor.x = std::clamp(cursor->_worldMousePosition.x - _hues->_rect.position.x, 0, _hues->_rect.size.x - 1);
-		_huesCursor.y = std::clamp(cursor->_worldMousePosition.y - _hues->_rect.position.y, 0, _hues->_rect.size.y - 1);
+		_huesCursor.x = std::clamp(cursor->_position.x - _hues->_rect.position.x, 0, _hues->_rect.size.x - 1);
+		_huesCursor.y = std::clamp(cursor->_position.y - _hues->_rect.position.y, 0, _hues->_rect.size.y - 1);
 
 		sf::Color color = pixels.getPixel(sf::Vector2u(_huesCursor));
 		_values->loadTexture(color);
@@ -193,7 +193,7 @@ Palette::Palette() : Dialog(L"Palette", sf::Vector2i(192 + 24 + 8, dialog_title_
 		sf::Image pixels = _values->_renderTexture.getTexture().copyToImage();
 
 		_valuesCursor.x = 0;
-		_valuesCursor.y = std::clamp(cursor->_worldMousePosition.y - _values->_rect.position.y, 0, _values->_rect.size.y - 1);
+		_valuesCursor.y = std::clamp(cursor->_position.y - _values->_rect.position.y, 0, _values->_rect.size.y - 1);
 
 		sf::Color color = pixels.getPixel(sf::Vector2u(_valuesCursor));
 		toolbar->_selectedColorButton->setColor(color);

@@ -150,7 +150,7 @@ void Canvas::setCenter() {
 
 void Canvas::setZoom(float mouseWheelScrolllDelta) {
 
-	sf::Vector2i mouseBeforeZoom = cursor->_worldMousePosition - _position;
+	sf::Vector2i mouseBeforeZoom = cursor->_position - _position;
 	float oldZoom = _zoom;
 
 	_zoom += 0.0625f * mouseWheelScrolllDelta;
@@ -159,13 +159,13 @@ void Canvas::setZoom(float mouseWheelScrolllDelta) {
 	generateBackground(_size);
 
 	sf::Vector2i mouseAfterZoom = sf::Vector2i(sf::Vector2f(mouseBeforeZoom) * (_zoom / oldZoom));
-	_position += (cursor->_worldMousePosition - (_position + mouseAfterZoom));
+	_position += (cursor->_position - (_position + mouseAfterZoom));
 	setPosition(_position);
 }
 
 void Canvas::resize() {
 	sf::Vector2f p;
-	p = (sf::Vector2f(cursor->_worldMousePosition) + sf::Vector2f(_edgePoints[0]->getSize()) / 2.0f - sf::Vector2f(_clickedEdgePoint->getPosition())) / (_zoom * _zoom_delta);
+	p = (sf::Vector2f(cursor->_position) + sf::Vector2f(_edgePoints[0]->getSize()) / 2.0f - sf::Vector2f(_clickedEdgePoint->getPosition())) / (_zoom * _zoom_delta);
 	sf::Vector2i pp = sf::Vector2i(p);
 	//std::cout << pp.x << ", " << pp.y << "\n";
 
@@ -360,7 +360,7 @@ void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelC
 }
 
 void Canvas::fillPixels(sf::Color color) {
-	sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
+	sf::Vector2i tile = worldToTile(cursor->_position, _position, _zoom, _zoom_delta);
 	sf::IntRect imageRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(getCurrentAnimation()->getCurrentLayer()->_image.getSize()));
 
 	if (!imageRect.contains(tile))
@@ -373,7 +373,7 @@ void Canvas::fillPixels(sf::Color color) {
 void Canvas::pickPixel() {
 	sf::Image image = getCurrentAnimation()->getCurrentLayer()->_image;
 	sf::IntRect imageRect(sf::Vector2i(0, 0), sf::Vector2i(image.getSize()));
-	sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _rect.position, _zoom, _zoom_delta);
+	sf::Vector2i tile = worldToTile(cursor->_position, _rect.position, _zoom, _zoom_delta);
 	
 	if (!imageRect.contains(tile))
 		return;
@@ -411,7 +411,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 
 	if (ElementGUI_pressed.get() == nullptr || ElementGUI_pressed.get() == this || selection->_state == SelectionState::Selected) {
 
-		sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
+		sf::Vector2i tile = worldToTile(cursor->_position, _position, _zoom, _zoom_delta);
 
 		if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->clickOnSelection(tile)) {
 			selection->_state = SelectionState::Moving;
@@ -420,7 +420,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 		else if (toolbar->_toolType == ToolType::Lasso || toolbar->_toolType == ToolType::Selector) {
 
 			if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
-				if (_rect.contains(cursor->_worldMousePosition)) {
+				if (_rect.contains(cursor->_position)) {
 					if (selection->_rect.size.x > 1 && selection->_rect.size.y > 1) {
 						copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, 0, 0, *selection->_resizedMaskImage, toolbar->_second_color->_color);
 						selection->_image = nullptr;
@@ -539,7 +539,7 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 	}
 
 	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == SelectionState::Moving) {
-		sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _zoom, _zoom_delta);
+		sf::Vector2i tile = worldToTile(cursor->_position, _position, _zoom, _zoom_delta);
 
 		sf::Vector2i desiredRectPos = tile - selection->_offset;
 		desiredRectPos.x = std::clamp(desiredRectPos.x, -selection->_resizedRect.size.x, _size.x);
@@ -559,7 +559,7 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 	else if (toolbar->_toolType == ToolType::Selector) {
 		if (selection->_state == SelectionState::Selecting) {
 
-			sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
+			sf::Vector2i tile = worldToTile(cursor->_position, _position, _size, _zoom, _zoom_delta);
 
 			if (selection->_image != nullptr) {
 				selection->_image = nullptr;
@@ -595,7 +595,7 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 	else if (toolbar->_toolType == ToolType::Lasso) {
 		
 		if (selection->_state == SelectionState::Selecting) {
-			sf::Vector2i tile = worldToTile(cursor->_worldMousePosition, _position, _size, _zoom, _zoom_delta);
+			sf::Vector2i tile = worldToTile(cursor->_position, _position, _size, _zoom, _zoom_delta);
 
 			if (selection->_image != nullptr) {
 				selection->_image = nullptr;
@@ -640,7 +640,7 @@ void Canvas::cursorHover() {
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 
@@ -687,7 +687,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 	}
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_rect.contains(cursor->_worldMousePosition)) {
+		if (_rect.contains(cursor->_position)) {
 			ElementGUI_pressed = this->shared_from_this();
 		}
 	}
@@ -767,7 +767,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 		}
 		else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {
 			_state = CanvasState::Moving; 
-			_offset = _rect.position - cursor->_worldMousePosition;
+			_offset = _rect.position - cursor->_position;
 		}
 
 		else if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
@@ -824,7 +824,7 @@ void Canvas::update() {
 		resize();
 	}
 	else if (_state == CanvasState::Moving) {
-		sf::Vector2f target = sf::Vector2f(cursor->_worldMousePosition + _offset);
+		sf::Vector2f target = sf::Vector2f(cursor->_position + _offset);
 		int x = (int)(clampAxisOverscroll(target.x, (float)(_rect.size.x), (float)(window->getSize().x), 0.5f));
 		int y = (int)(clampAxisOverscroll(target.y, (float)(_rect.size.y), (float)(window->getSize().y), 0.5f));
 		setPosition(sf::Vector2i(x, y));

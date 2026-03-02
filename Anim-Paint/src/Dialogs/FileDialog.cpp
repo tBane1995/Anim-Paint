@@ -264,7 +264,7 @@ void LocationRect::arrowClick() {
 void LocationRect::cursorHover() {
 	
 	
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 
@@ -279,13 +279,13 @@ void LocationRect::cursorHover() {
 void LocationRect::handleEvent(const sf::Event& event) {
 	
 	
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 
 			float indent = _rect.position.x + _depth * _indentDelta;
 
-			if ( indent < cursor->_worldMousePosition.x && cursor->_worldMousePosition.x < indent + _arrowMargin + 8) {
+			if ( indent < cursor->_position.x && cursor->_position.x < indent + _arrowMargin + 8) {
 				ElementGUI_pressed = this->shared_from_this();
 				_clickType = LocationRectClickType::ClickArrow;
 			}
@@ -423,7 +423,7 @@ void LocationAndFilesSeparator::setRange(int minX, int maxX) {
 }
 
 void LocationAndFilesSeparator::cursorHover() {
-	if (_rect.contains(cursor->_worldMousePosition) || _state == LocationAndFilesSeparatorState::Moving) {
+	if (_rect.contains(cursor->_position) || _state == LocationAndFilesSeparatorState::Moving) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 }
@@ -436,10 +436,10 @@ void LocationAndFilesSeparator::handleEvent(const sf::Event& event) {
 		}
 	}
 	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_rect.contains(cursor->_worldMousePosition)) {
+		if (_rect.contains(cursor->_position)) {
 			ElementGUI_pressed = this->shared_from_this();
 			_state = LocationAndFilesSeparatorState::Moving;
-			_offset = cursor->_worldMousePosition - _rect.position;
+			_offset = cursor->_position - _rect.position;
 
 		}
 	}
@@ -449,7 +449,7 @@ void LocationAndFilesSeparator::update() {
 
 	if (_state == LocationAndFilesSeparatorState::Moving) {
 
-		sf::Vector2i newPos = cursor->_worldMousePosition - _offset;
+		sf::Vector2i newPos = cursor->_position - _offset;
 		newPos.x = std::clamp(newPos.x, _minX, _maxX);
 		_rect.position = sf::Vector2i(newPos.x, _rect.position.y);
 		if (_func)
@@ -525,7 +525,7 @@ void FileRect::click() {
 void FileRect::cursorHover() {
 
 	if (_path != std::filesystem::path()) {
-		if (_rect.contains(cursor->_worldMousePosition)) {
+		if (_rect.contains(cursor->_position)) {
 			ElementGUI_hovered = this->shared_from_this();
 		}
 	}
@@ -535,7 +535,7 @@ void FileRect::handleEvent(const sf::Event& event) {
 
 	
 	if (_path != std::filesystem::path()) {
-		if (_rect.contains(cursor->_worldMousePosition)) {
+		if (_rect.contains(cursor->_position)) {
 			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 				ElementGUI_pressed = this->shared_from_this();
 
@@ -1068,7 +1068,7 @@ void FileDialog::cursorHover() {
 	Dialog::cursorHover();
 
 	if (_rightScrollbar->_state == ScrollbarState::Idle && _leftScrollbar->_state == ScrollbarState::Idle) {
-		if (_rightRect->contains(cursor->_worldMousePosition)) {
+		if (_rightRect->contains(cursor->_position)) {
 			for (auto& file : _files)
 				file->cursorHover();
 		}
@@ -1095,12 +1095,12 @@ void FileDialog::handleEvent(const sf::Event& event) {
 	_leftScrollbar->handleEvent(event);
 	_rightScrollbar->handleEvent(event);
 
-	if (_rightRect->contains(cursor->_worldMousePosition)) {
+	if (_rightRect->contains(cursor->_position)) {
 		for (auto& file : _files)
 			file->handleEvent(event);
 	}
 
-	if (_leftRect->contains(cursor->_worldMousePosition)) {
+	if (_leftRect->contains(cursor->_position)) {
 		for (auto& fav : _locations) {
 			handleEventLocations(fav, event);
 		}

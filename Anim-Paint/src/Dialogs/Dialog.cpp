@@ -196,7 +196,7 @@ void Dialog::activateOnTabElement(int id) {
 }
 
 void Dialog::cursorHover() {
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		ElementGUI_hovered = this->shared_from_this();
 	}
 
@@ -205,7 +205,7 @@ void Dialog::cursorHover() {
 
 void Dialog::handleEvent(const sf::Event& event) {
 
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		_clickArea = DialogClickArea::Inside;
 		_startFlashTime = currentTime;
 	} else {
@@ -213,12 +213,12 @@ void Dialog::handleEvent(const sf::Event& event) {
 	 }
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (ElementGUI_hovered.get() == this && _titleRect.contains(cursor->_worldMousePosition)) {
+		if (ElementGUI_hovered.get() == this && _titleRect.contains(cursor->_position)) {
 			_is_moved = true;
-			_offset = _titleRect.position - cursor->_worldMousePosition;
+			_offset = _titleRect.position - cursor->_position;
 		}
 
-		if(_rect.contains(cursor->_worldMousePosition))
+		if(_rect.contains(cursor->_position))
 			ElementGUI_pressed = this->shared_from_this();
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
@@ -239,7 +239,7 @@ void Dialog::handleEvent(const sf::Event& event) {
 
 void Dialog::update() {
 	if (_is_moved) {
-		setPosition(cursor->_worldMousePosition + _offset);
+		setPosition(cursor->_position + _offset);
 	}
 	else {
 		clampPosition();

@@ -64,7 +64,7 @@ void BottomBar::updateText() {
 	_hoveredElementGUI = ElementGUI_hovered;
 
 	if (_hoveredElementGUI == canvas) {
-		sf::Vector2i coords = worldToTile(cursor->_worldMousePosition, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+		sf::Vector2i coords = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 		std::wstring text = std::to_wstring(coords.x) + L" x " + std::to_wstring(coords.y);
 		_textCursorPosition->setString(text);
 	}

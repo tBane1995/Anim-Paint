@@ -94,7 +94,7 @@ void Button::setPosition(sf::Vector2i position) {
 }
 
 void Button::cursorHover() {
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		ElementGUI_hovered = this->shared_from_this();
 		tooltip->setButton(std::dynamic_pointer_cast<Button>(this->shared_from_this()));
 	}
@@ -165,7 +165,7 @@ void NormalButton::cursorHover() {
 }
 
 void NormalButton::handleEvent(const sf::Event& event) {
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left)	{		
 			ElementGUI_pressed = this->shared_from_this();
@@ -322,7 +322,7 @@ void ColoredButtonWithText::cursorHover() {
 }
 
 void ColoredButtonWithText::handleEvent(const sf::Event& event) {
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this->shared_from_this();
 			return;
@@ -477,7 +477,7 @@ void ButtonWithBottomText::cursorHover() {
 }
 
 void ButtonWithBottomText::handleEvent(const sf::Event& event) {
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this->shared_from_this();
 		}
@@ -626,7 +626,7 @@ void ButtonWithRightText::cursorHover() {
 }
 
 void ButtonWithRightText::handleEvent(const sf::Event& event) {
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this->shared_from_this();
 		}
@@ -764,7 +764,7 @@ void Option::cursorHover() {
 }
 
 void Option::handleEvent(const sf::Event& event) {
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this->shared_from_this();
 		}
@@ -962,7 +962,7 @@ void ButtonWithTopTextAndList::cursorHover() {
 
 void ButtonWithTopTextAndList::handleEvent(const sf::Event& event) {
 
-	if (_rect.contains(cursor->_worldMousePosition)) {
+	if (_rect.contains(cursor->_position)) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			ElementGUI_pressed = this->shared_from_this();
