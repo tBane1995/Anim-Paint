@@ -127,6 +127,8 @@ public:
 	std::vector <std::shared_ptr<FileRect>> _files;
 	std::shared_ptr<Scrollbar> _rightScrollbar;
 
+	std::wstring _acceptableExtension;
+
 	std::vector <std::filesystem::path> _filesPaths;
 	std::wstring currentPath;
 
@@ -138,7 +140,7 @@ public:
 	std::shared_ptr<ColoredButtonWithText> _selectBtn;
 	std::shared_ptr<ColoredButtonWithText> _cancelBtn;
 
-	FileDialog(std::wstring dialogName, std::wstring selectButtonText);
+	FileDialog(std::wstring dialogName, std::wstring selectButtonText, std::wstring acceptableExtension = L"");
 	~FileDialog();
 
 	float calculateLeftScrollbarHeight();

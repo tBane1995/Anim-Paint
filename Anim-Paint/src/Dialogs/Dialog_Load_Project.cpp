@@ -9,7 +9,7 @@
 #include "Components/Canvas.hpp"
 #include "History.hpp"
 
-Dialog_Load_Project::Dialog_Load_Project() : FileDialog(L"Load Project", L"load") {
+Dialog_Load_Project::Dialog_Load_Project() : FileDialog(L"Load Project", L"load", L".animproj") {
 
 	this->_selectBtn->_onclick_func = [this]() {
 		std::wstring name = _filenameInput->getText();

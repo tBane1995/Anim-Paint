@@ -2,7 +2,7 @@
 #include "Dialogs/Dialog_Load_SpriteSheet.hpp"
 #include <iostream>
 
-Dialog_Import::Dialog_Import() : FileDialog(L"Import From File", L"import") {
+Dialog_Import::Dialog_Import() : FileDialog(L"Import From File", L"import", L".png") {
 
 	this->_selectBtn->_onclick_func = [this]() {
 

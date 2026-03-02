@@ -2,7 +2,7 @@
 #include "Components/MainMenu.hpp"
 #include <iostream>
 
-Dialog_Save_Project::Dialog_Save_Project() : FileDialog(L"Save Project", L"save") {
+Dialog_Save_Project::Dialog_Save_Project() : FileDialog(L"Save Project", L"save", L".animproj") {
 
 	this->_selectBtn->_onclick_func = [this]() {
 		std::wstring name = _filenameInput->getText();

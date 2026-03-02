@@ -2,7 +2,7 @@
 #include "Components/MainMenu.hpp"
 #include <iostream>
 
-Dialog_Export::Dialog_Export() : FileDialog(L"Export As File", L"export") {
+Dialog_Export::Dialog_Export() : FileDialog(L"Export As File", L"export", L".png") {
 
 	this->_selectBtn->_onclick_func = [this]() {
 		std::wstring name = _filenameInput->getText();

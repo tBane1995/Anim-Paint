@@ -610,7 +610,9 @@ void FileRect::draw() {
 
 //////////////////////////////////////////////////////////////////////////////
 
-FileDialog::FileDialog(std::wstring dialogName, std::wstring selectButtonText) : Dialog(dialogName, sf::Vector2i(400, 284), sf::Vector2i(8, 120), true) {
+FileDialog::FileDialog(std::wstring dialogName, std::wstring selectButtonText, std::wstring acceptableExtention) : Dialog(dialogName, sf::Vector2i(400, 284), sf::Vector2i(8, 120), true) {
+
+	_acceptableExtension = acceptableExtention;
 
 	_files.clear();
 	
@@ -816,6 +818,9 @@ void FileDialog::loadDirectory() {
 
 		auto name = p.filename().wstring();
 		if (name.empty() || onlyWhitespace(name) || name == L"." || name == L"..")
+			continue;
+
+		if(!(std::filesystem::is_directory(p) || _acceptableExtension.empty() || isExtension(name, _acceptableExtension)))
 			continue;
 
 		_filesPaths.push_back(p);
