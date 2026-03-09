@@ -3,7 +3,6 @@
 #include "Window.hpp"
 #include "ElementGUI/TextInput.hpp"
 #include "Components/Toolbar.hpp"
-#include "Tools/Lasso.hpp"
 #include "Components/Canvas.hpp"
 #include <iostream>
 #include "WorldToTileConverter.hpp"

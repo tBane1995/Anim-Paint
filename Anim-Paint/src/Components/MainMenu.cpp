@@ -26,7 +26,6 @@
 #include "Animation/Animation.hpp"
 #include <iostream>
 #include <filesystem>
-#include "Tools/Lasso.hpp"
 #include "Tools/Selection.hpp"
 #include "Components/Canvas.hpp"
 #include "History.hpp"

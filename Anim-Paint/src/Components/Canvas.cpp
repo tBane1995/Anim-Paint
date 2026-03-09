@@ -7,7 +7,6 @@
 #include "WorldToTileConverter.hpp"
 #include "Components/Toolbar.hpp"
 #include "Tools/Selection.hpp"
-#include "Tools/Lasso.hpp"
 #include "../include/Components/LayersPanel.hpp"
 #include "Dialogs/Dialog.hpp"
 #include "DebugLog.hpp"

@@ -2,7 +2,6 @@
 #include "Theme.hpp"
 #include "Window.hpp"
 #include "Components/MainMenu.hpp"
-#include "Tools/Lasso.hpp"
 #include "Animation/Animation.hpp"
 #include "Tools/Selection.hpp"
 #include "Tools/Brush.hpp"

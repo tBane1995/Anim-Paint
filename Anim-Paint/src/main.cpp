@@ -48,7 +48,6 @@
 #include "Components/Tooltip.hpp"
 
 #include "Tools/Selection.hpp"
-#include "Tools/Lasso.hpp"
 #include "Tools/Brush.hpp"
 #include "Components/Toolbar.hpp"
 #include "Components/Canvas.hpp"
