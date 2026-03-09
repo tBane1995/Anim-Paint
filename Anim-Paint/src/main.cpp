@@ -107,8 +107,7 @@ int main() {
 	history = std::make_shared<History>();
 	history->saveStep();
 
-	selection = std::make_shared<Selection>();
-	brush = std::make_shared<Brush>(2);
+	
 	toolbar = std::make_shared<Toolbar>();
 	animations_panel = std::make_shared<AnimationsPanel>();
 	frames_panel = std::make_shared<FramesPanel>();
@@ -116,6 +115,10 @@ int main() {
 	canvas = std::make_shared<Canvas>();
 	bottom_bar = std::make_shared<BottomBar>();
 	tooltip = std::make_shared<Tooltip>();
+
+	
+	brush = std::make_shared<Brush>(2);
+	selection = std::make_shared<Selection>();
 
 	// FPS counter
 	sf::Clock fpsClock;
@@ -159,7 +162,8 @@ int main() {
 		Element_hovered = nullptr;
 
 		canvas->cursorHover();
-	
+		
+
 		toolbar->cursorHover();
 		frames_panel->cursorHover();
 		layers_panel->cursorHover();
@@ -169,6 +173,7 @@ int main() {
 			palette->cursorHover();
 
 		main_menu->cursorHover();
+		selection->cursorHover();
 
 		for (auto& dialog : dialogs)
 			dialog->cursorHover();
@@ -178,6 +183,7 @@ int main() {
 			dialog->update();
 		toolbar->update();
 
+		
 		
 		canvas->update();
 		frames_panel->update();
@@ -208,6 +214,7 @@ int main() {
 			}
 
 			history->handleEvent(*event);
+			selection->handleEvent(*event);
 
 			main_menu->handleEvent(*event);
 
@@ -229,6 +236,7 @@ int main() {
 		}
 		
 		// update
+		selection->update();
 		
 		// render
 		window->clear(sf::Color(56, 56, 56));
@@ -248,6 +256,7 @@ int main() {
 		for (auto& dialog : dialogs)
 			dialog->draw();
 
+		selection->draw(toolbar->_second_color->_color);
 		tooltip->draw();
 
 		cursor->draw();

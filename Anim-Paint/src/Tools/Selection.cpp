@@ -10,6 +10,9 @@
 #include "Cursor.hpp"
 #include "Components/Canvas.hpp"
 #include "Theme.hpp"
+#include "History.hpp"
+#include "Time.hpp"
+
 
 std::string mask_shader_source = R"(
     uniform sampler2D texture;
@@ -288,7 +291,7 @@ void pasteImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::
 
 
 
-Selection::Selection() {
+Selection::Selection() : Element() {
 
 	_state = SelectionState::None;
 
@@ -317,6 +320,8 @@ Selection::Selection() {
 		DebugError(L"Lasso::Lasso: Failed to load shader from memory.");
 		exit(0);
 	}
+
+	_moveTime = sf::Time::Zero;
 }
 
 Selection::~Selection() {
@@ -1055,6 +1060,267 @@ void Selection::drawRect() {
 	window->draw(rect);
 }
 
+void Selection::cursorHover() {
+	if (_state == SelectionState::Selecting ||
+		_state == SelectionState::Resizing ||
+		_state == SelectionState::Selected ||
+		_state == SelectionState::Moving) {
+		Element_hovered = this->shared_from_this();
+	}
+}
+
+void Selection::handleEvent(const sf::Event& event) {
+
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+		if (Element_hovered.get() == this) {
+			Element_pressed = this->shared_from_this();
+		}
+	}
+
+	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+		sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+		if (Element_pressed.get() == this && !clickOnSelection(tile)) {
+			Element_pressed = nullptr;
+		}
+	}
+
+	// selection resizing
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+		if (_state == SelectionState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
+			_clickedEdgePoint = _hoveredEdgePoint;
+			_orginalEdgePointPosition = _point_left_top->getPosition();
+			_state = SelectionState::Resizing;
+			
+		}
+	}
+	else if (_state == SelectionState::Resizing) {
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			_clickedEdgePoint = nullptr;
+			_state = SelectionState::Selected;
+		}
+		return;
+	}
+
+	// other selection interactions
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+
+		if (Element_pressed.get() == this || Element_pressed.get() == nullptr || _state == SelectionState::None || _state == SelectionState::Selected) {
+
+			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+
+			if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && clickOnSelection(tile)) {
+				_state = SelectionState::Moving;
+				_offset = tile - _resizedRect.position;
+				
+			}
+			else if (toolbar->_toolType == ToolType::Lasso || toolbar->_toolType == ToolType::Selector) {
+
+				if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
+					if (canvas->_rect.contains(cursor->_position)) {
+						if (_rect.size.x > 1 && _rect.size.y > 1) {
+							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, toolbar->_second_color->_color);
+							_image = nullptr;
+							_resizedImage = nullptr;
+							history->saveStep();
+						}
+						_state = SelectionState::Selecting;
+						_points.clear();
+						generateRect();
+						_resizedRect = _rect;
+						_outlineOffset = tile;
+						
+					}
+					else {
+						if (_rect.size.x > 1 && _rect.size.y > 1) {
+							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _rect.position.x, _rect.position.y, 0, 0, *_resizedMaskImage, toolbar->_second_color->_color);
+							_image = nullptr;
+							_resizedImage = nullptr;
+							history->saveStep();
+						}
+
+						_state = SelectionState::None;
+						_points.clear();
+						_outlineOffset = sf::Vector2i(0, 0);
+						generateRect();
+						_resizedRect = _rect;
+					}
+				}
+
+			}
+		}
+	}
+
+	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+		if (toolbar->_toolType == ToolType::Lasso || toolbar->_toolType == ToolType::Selector) {
+
+			selection->generateRect();
+			selection->generateMask();
+
+			if (_state == SelectionState::Selecting) {
+				_resizedRect = _rect;
+				_resizedMaskImage = _maskImage;
+				_resizedImage = _image;
+			}
+
+			if (_state == SelectionState::Selecting) {
+				if (_rect.size.x < 2 || _rect.size.y < 2) {
+					_state = SelectionState::None;
+					_points.clear();
+					_outlineOffset = sf::Vector2i(0, 0);
+				}
+				else {
+					if (_rect.size.x > 1 && _rect.size.y > 1) {
+						copyImageWithMask(*_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, _rect.position.x, _rect.position.y, *_maskImage, toolbar->_second_color->_color);
+						removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, _rect, *_maskImage, toolbar->_second_color->_color);
+						_resizedImage = _image;
+					}
+					_state = SelectionState::Selected;
+					generateEdgePoints();
+				}
+
+			}
+			else if (_state == SelectionState::Moving) {
+				_state = SelectionState::Selected;
+				generateEdgePoints();
+			}
+			else if (canvas->_isEdited) {
+				history->saveStep();
+				canvas->_isEdited = false;
+			}
+		}
+	}
+
+	if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+		if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && _state == SelectionState::Moving) {
+			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+
+			sf::Vector2i desiredRectPos = tile - _offset;
+			desiredRectPos.x = std::clamp(desiredRectPos.x, -_resizedRect.size.x, canvas->_size.x);
+			desiredRectPos.y = std::clamp(desiredRectPos.y, -_resizedRect.size.y, canvas->_size.y);
+
+			int minX = INT_MAX, minY = INT_MAX;
+			for (auto& p : selection->_points) {
+				minX = std::min(minX, p.x);
+				minY = std::min(minY, p.y);
+			}
+
+			selection->_outlineOffset = desiredRectPos - sf::Vector2i(minX, minY);
+			selection->generateRect();
+			selection->_resizedRect.position = _rect.position;
+		}
+
+		else if (toolbar->_toolType == ToolType::Selector) {
+			if (selection->_state == SelectionState::Selecting) {
+
+				sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_size, canvas->_zoom, canvas->_zoom_delta);
+
+				if (selection->_image != nullptr) {
+					selection->_image = nullptr;
+					selection->_resizedImage = nullptr;
+				}
+
+
+				// LOCAL względem punktu kliknięcia
+				sf::Vector2i local = tile - _outlineOffset;
+
+				int minX = std::min(0, local.x);
+				int minY = std::min(0, local.y);
+				int maxX = std::max(0, local.x);
+				int maxY = std::max(0, local.y);
+
+				selection->_points.clear();
+				selection->_points.push_back(sf::Vector2i(minX, minY)); // LT
+				selection->_points.push_back(sf::Vector2i(maxX, minY)); // RT
+				selection->_points.push_back(sf::Vector2i(maxX, maxY)); // RB
+				selection->_points.push_back(sf::Vector2i(minX, maxY)); // LB
+				selection->_points.push_back(sf::Vector2i(minX, minY)); // close
+
+				selection->generateRect();
+				selection->_resizedRect = _rect;
+				selection->_image = std::make_shared<sf::Image>();
+				selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
+				if (_rect.size.x > 1 && _rect.size.y > 1) {
+					_image->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
+				}
+
+			}
+		}
+		else if (toolbar->_toolType == ToolType::Lasso) {
+
+			if (_state == SelectionState::Selecting) {
+				sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_size, canvas->_zoom, canvas->_zoom_delta);
+
+				if (_image != nullptr) {
+					_image = nullptr;
+					_resizedImage = nullptr;
+				}
+
+				addPoint(tile);
+				generateRect();
+				_resizedRect = selection->_rect;
+
+				_image = std::make_shared<sf::Image>();
+				_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
+				if (_rect.size.x > 1 && _rect.size.y > 1) {
+					_image->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
+				}
+
+			}
+		}
+	}
+}
+
+void Selection::update() {
+
+	if (_state != SelectionState::None && Element_pressed.get() != this)
+		Element_pressed = nullptr;
+
+	if (_state == SelectionState::Resizing) {
+		for (auto& point : _edgePoints) {
+			point->update();
+		}
+		resizeRect();
+		generateResizedMask();
+		resizeImage();
+		return;
+	}
+
+	if (_state == SelectionState::Selected) {
+
+		if ((currentTime - _moveTime).asSeconds() > 0.075f) {
+
+			_moveTime = currentTime;
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
+				_rect.position.x = std::clamp(canvas->_rect.position.x - 1, -_resizedRect.size.x, canvas->_size.x);
+				_rect.position.y = std::clamp(canvas->_rect.position.y, -_resizedRect.size.y, canvas->_size.y);
+				_resizedRect.position = _rect.position;
+				generateEdgePoints();
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
+				_rect.position.x = std::clamp(canvas->_rect.position.x + 1, -_resizedRect.size.x, canvas->_size.x);
+				_rect.position.y = std::clamp(canvas->_rect.position.y, -_resizedRect.size.y, canvas->_size.y);
+				_resizedRect.position = selection->_rect.position;
+				generateEdgePoints();
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
+				_rect.position.x = std::clamp(canvas->_rect.position.x, -_resizedRect.size.x, canvas->_size.x);
+				_rect.position.y = std::clamp(canvas->_rect.position.y - 1, -_resizedRect.size.y, canvas->_size.y);
+				_resizedRect.position = selection->_rect.position;
+				generateEdgePoints();
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
+				_rect.position.x = std::clamp(canvas->_rect.position.x, -_resizedRect.size.x, canvas->_size.x);
+				_rect.position.y = std::clamp(canvas->_rect.position.y + 1, -_resizedRect.size.y, canvas->_size.y);
+				_resizedRect.position = _rect.position;
+				generateEdgePoints();
+			}
+		}
+	}
+}
 
 void Selection::draw(sf::Color alphaColor) {
 

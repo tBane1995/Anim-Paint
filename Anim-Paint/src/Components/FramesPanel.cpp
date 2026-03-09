@@ -22,7 +22,6 @@ FramesPanel::FramesPanel()
 	_last_btn = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\last.png"), getTexture(L"tex\\btn32\\last_hover.png"));
 
 	_first_btn->_onclick_func = [this]() {
-		selection->unselect();
 		getCurrentAnimation()->firstFrame();
 		layers_panel->loadLayersFromCurrentFrame();
 		updateText();
@@ -30,7 +29,6 @@ FramesPanel::FramesPanel()
 	_first_btn->setTooltip(L"First frame", L"Go to the first frame");
 
 	_prev_btn->_onclick_func = [this]() {
-		selection->unselect();
 		getCurrentAnimation()->prevFrame();
 		layers_panel->loadLayersFromCurrentFrame();
 		updateText();
@@ -38,7 +36,6 @@ FramesPanel::FramesPanel()
 	_prev_btn->setTooltip(L"Previous frame", L"Go to the previous frame");
 
 	_next_btn->_onclick_func = [this]() {
-		selection->unselect();
 		getCurrentAnimation()->nextFrame();
 		layers_panel->loadLayersFromCurrentFrame();
 		updateText();
@@ -46,7 +43,6 @@ FramesPanel::FramesPanel()
 	_next_btn->setTooltip(L"Next frame", L"Go to the next frame");
 
 	_last_btn->_onclick_func = [this]() {
-		selection->unselect();
 		getCurrentAnimation()->lastFrame();
 		layers_panel->loadLayersFromCurrentFrame();
 		updateText();
@@ -60,7 +56,6 @@ FramesPanel::FramesPanel()
 
 	_add_frame->_onclick_func = [this]() {
 		if (getCurrentAnimation()->getFramesCount() < maxFramesCount) {
-			selection->unselect();
 			getCurrentAnimation()->addFrame();
 			getCurrentAnimation()->nextFrame();
 			updateText();
@@ -71,7 +66,6 @@ FramesPanel::FramesPanel()
 
 	_sub_frame->_onclick_func = [this]() {
 		if (getCurrentAnimation()->getFramesCount() > 0) {
-			selection->unselect();
 			getCurrentAnimation()->subFrame();
 			getCurrentAnimation()->prevFrame();
 			updateText();
@@ -81,7 +75,6 @@ FramesPanel::FramesPanel()
 	_sub_frame->setTooltip(L"Sub frame", L"Delete the current frame");
 
 	_move_back->_onclick_func = [this]() {
-		selection->unselect();
 		getCurrentAnimation()->moveBackFrame();
 		getCurrentAnimation()->prevFrame();
 		updateText();
@@ -90,7 +83,6 @@ FramesPanel::FramesPanel()
 	_move_back->setTooltip(L"Move frame back", L"Move the current frame one position back");
 
 	_move_next->_onclick_func = [this]() {
-		selection->unselect();
 		getCurrentAnimation()->moveNextFrame();
 		getCurrentAnimation()->nextFrame();
 		updateText();

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
+#include "Element.hpp"
 #include "Controls/EdgePoint.hpp"
 
 void removeImageWithAlpha(sf::Image& image, sf::IntRect rect, sf::Color alphaColor = sf::Color::Transparent);
@@ -14,7 +15,7 @@ void pasteImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::
 
 enum class SelectionState { None, Selecting, Selected, Moving, Resizing };
 
-class Selection {
+class Selection : public Element {
 public:
 	SelectionState _state;
 
@@ -58,6 +59,8 @@ public:
 	std::shared_ptr<EdgePoint> _clickedEdgePoint;
 	sf::Vector2i _orginalEdgePointPosition;
 
+	sf::Time _moveTime; // to limit selection move
+
 	Selection();
 	~Selection();
 
@@ -83,6 +86,10 @@ public:
 	void drawResizedImage(sf::Color alphaColor, bool useMask = false);
 	void drawOutline();
 	void drawRect();
+
+	void cursorHover();
+	void handleEvent(const sf::Event& event);
+	void update();
 	void draw(sf::Color alphaColor);
 };
 

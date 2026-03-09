@@ -219,7 +219,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_select->_onclick_func = [this]() {
 		_toolType = ToolType::Selector;
 		selectToolButton(_btn_select);
-		selection->unselect();
+
 		};
 	_btn_select->setTooltip(L"Selection Tool", L"Select an area of the canvas move, copy, or cut");
 
@@ -229,7 +229,6 @@ Toolbar::Toolbar() : Element() {
 	_btn_lasso->_onclick_func = [this]() {
 		_toolType = ToolType::Lasso;
 		selectToolButton(_btn_lasso);
-		selection->unselect();
 		};
 	_btn_lasso->setTooltip(L"Lasso Tool", L"Select an area of the canvas with a freehand selection to move, copy or cut");
 

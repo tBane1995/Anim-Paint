@@ -21,7 +21,6 @@ LayerBox::LayerBox(std::shared_ptr<Layer> layer) : Element() {
 	_visibling->addValue(getTexture(L"tex\\btn32\\unvisible.png"), getTexture(L"tex\\btn32\\unvisible_hover.png"));
 	_visibling->setValue(0);
 	_visibling->_onclick_func = [this]() {
-		selection->unselect();
 		};
 }
 
