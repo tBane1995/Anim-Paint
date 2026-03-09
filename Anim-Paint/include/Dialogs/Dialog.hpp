@@ -1,5 +1,5 @@
 #pragma once
-#include "Controls/Element.hpp"
+#include "Element.hpp"
 #include "Controls/Button.hpp"
 
 enum class DialogState { Idle, ToClose };

@@ -1,5 +1,5 @@
 #pragma once
-#include "Controls/Element.hpp"
+#include "Element.hpp"
 #include <functional>
 
 enum class ScrollbarState { Idle, Dragging, Scrolled };
