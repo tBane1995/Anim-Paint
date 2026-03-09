@@ -1,6 +1,6 @@
-#include "../include/Components/Tooltip.hpp"
-#include "../include/Cursor.hpp"
-#include "../include/Time.hpp"
+#include "Components/Tooltip.hpp"
+#include "Cursor.hpp"
+#include "Time.hpp"
 #include "Theme.hpp"
 
 std::wstring wrap_text(int line_width, sf::Font& font, float characterSize, std::wstring text) {

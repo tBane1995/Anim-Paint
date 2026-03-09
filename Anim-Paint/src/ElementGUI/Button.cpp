@@ -6,7 +6,7 @@
 #include "Window.hpp"
 #include <iostream>
 #include <memory>
-#include "../include/Components/Tooltip.hpp"
+#include "Components/Tooltip.hpp"
 
 //////////////////////////////////////////////////////////////////
 // Button

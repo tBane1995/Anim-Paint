@@ -1,7 +1,7 @@
 #include "Dialogs/Dialog_Rotation.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
-#include "../include/Components/LayersPanel.hpp"
+#include "Components/LayersPanel/LayersPanel.hpp"
 #include "Window.hpp"
 #include "Tools/Filters.hpp"
 #include "Components/Toolbar.hpp"

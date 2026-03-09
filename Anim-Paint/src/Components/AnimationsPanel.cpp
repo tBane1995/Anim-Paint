@@ -1,12 +1,12 @@
-#include "../include/Components/AnimationsPanel.hpp"
+#include "Components/AnimationsPanel.hpp"
 #include "SFML/Graphics.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
 #include "Window.hpp"
-#include "../include/Components/FramesPanel.hpp"
+#include "Components/FramesPanel.hpp"
 #include "Tools/Selection.hpp"
-#include "../include/Components/MainMenu.hpp"
-#include "../include/Components/Toolbar.hpp"
+#include "Components/MainMenu.hpp"
+#include "Components/Toolbar.hpp"
 
 AnimationsPanel::AnimationsPanel() : 
 	Dialog(

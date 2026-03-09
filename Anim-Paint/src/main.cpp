@@ -32,9 +32,9 @@
 #include "Animation/Animation.hpp"
 
 #include "Dialogs/Dialog.hpp"
-#include "../include/Components/FramesPanel.hpp"
-#include "../include/Components/LayersPanel.hpp"
-#include "../include/Components/AnimationsPanel.hpp"
+#include "Components/FramesPanel.hpp"
+#include "Components/LayersPanel/LayersPanel.hpp"
+#include "Components/AnimationsPanel.hpp"
 #include "Dialogs/Palette.hpp"
 #include "Dialogs/FileDialog.hpp"
 #include "Dialogs/Dialog_Rotation.hpp"

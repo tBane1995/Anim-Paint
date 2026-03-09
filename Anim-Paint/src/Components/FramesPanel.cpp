@@ -1,10 +1,10 @@
-#include "../include/Components/FramesPanel.hpp"
+#include "Components/FramesPanel.hpp"
 #include "Animation/Animation.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
-#include "../include/Components/LayersPanel.hpp"
+#include "Components/LayersPanel/LayersPanel.hpp"
 #include "Tools/Selection.hpp"
-#include "../include/Components/AnimationsPanel.hpp"
+#include "Components/AnimationsPanel.hpp"
 
 FramesPanel::FramesPanel() 
 	: Dialog(

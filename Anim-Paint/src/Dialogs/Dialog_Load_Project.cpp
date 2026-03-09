@@ -3,9 +3,9 @@
 #include <iostream>
 #include "Animation/Animation.hpp"
 #include "Components/Canvas.hpp"
-#include "../include/Components/AnimationsPanel.hpp"
-#include "../include/Components/FramesPanel.hpp"
-#include "../include/Components/LayersPanel.hpp"
+#include "Components/AnimationsPanel.hpp"
+#include "Components/FramesPanel.hpp"
+#include "Components/LayersPanel/LayersPanel.hpp"
 #include "Components/Canvas.hpp"
 #include "History.hpp"
 

@@ -21,8 +21,8 @@
 #include "Dialogs/Dialog_Invert_Colors.hpp"
 #include "Dialogs/Dialog_Smoothing.hpp"
 
-#include "../include/Components/FramesPanel.hpp"
-#include "../include/Components/LayersPanel.hpp"
+#include "Components/FramesPanel.hpp"
+#include "Components/LayersPanel/LayersPanel.hpp"
 #include "Animation/Animation.hpp"
 #include <iostream>
 #include <filesystem>

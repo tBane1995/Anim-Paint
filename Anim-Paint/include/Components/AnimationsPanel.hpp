@@ -1,5 +1,5 @@
 #pragma once
-#include "../Dialogs/Dialog.hpp"
+#include "Dialogs/Dialog.hpp"
 
 class AnimationsPanel : public Dialog {
 public:
