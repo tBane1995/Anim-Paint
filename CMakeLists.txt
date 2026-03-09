@@ -6,57 +6,14 @@ add_executable(${PROJECT_NAME}
     Anim-Paint/ico/app.rc
 )
 
-# SOURCES FILES
-set(SOURCES
-    Anim-Paint/src/Window.cpp
-    Anim-Paint/src/DebugLog.cpp    
-    Anim-Paint/src/Textures.cpp
-    Anim-Paint/src/Theme.cpp
-    Anim-Paint/src/Cursor.cpp
-    Anim-Paint/src/Time.cpp
-    Anim-Paint/src/ElementGUI/ElementGUI.cpp
-    Anim-Paint/src/ElementGUI/Button.cpp
-    Anim-Paint/src/ElementGUI/Checkbox.cpp
-    Anim-Paint/src/ElementGUI/Slider.cpp
-    Anim-Paint/src/ElementGUI/Scrollbar.cpp
-    Anim-Paint/src/ElementGUI/TextInput.cpp
-    Anim-Paint/src/ElementGUI/NumberInput.cpp
-    Anim-Paint/src/ElementGUI/EdgePoint.cpp
-    Anim-Paint/src/WorldToTileConverter.cpp
-    Anim-Paint/src/History.cpp
-    Anim-Paint/src/Animation/Layer.cpp
-    Anim-Paint/src/Animation/Frame.cpp
-    Anim-Paint/src/Animation/Animation.cpp
-    Anim-Paint/src/Dialogs/Dialog.cpp
-    Anim-Paint/src/Dialogs/FileDialog.cpp
-    Anim-Paint/src/Dialogs/Dialog_Save_Project.cpp
-    Anim-Paint/src/Dialogs/Dialog_Load_Project.cpp
-    Anim-Paint/src/Dialogs/Dialog_Import.cpp
-    Anim-Paint/src/Dialogs/Dialog_Load_SpriteSheet.cpp
-    Anim-Paint/src/Dialogs/Dialog_Export.cpp
-    Anim-Paint/src/Components/FramesPanel.cpp
-    Anim-Paint/src/Components/LayersPanel.cpp
-    Anim-Paint/src/Components/AnimationsPanel.cpp
-    Anim-Paint/src/Dialogs/Palette.cpp
-    Anim-Paint/src/Dialogs/Dialog_Rotation.cpp
-    Anim-Paint/src/Dialogs/Dialog_Brightness_Contrast.cpp
-    Anim-Paint/src/Dialogs/Dialog_Hue_Saturation.cpp
-    Anim-Paint/src/Dialogs/Dialog_Sepia.cpp
-    Anim-Paint/src/Dialogs/Dialog_Outline.cpp
-    Anim-Paint/src/Dialogs/Dialog_Resize.cpp
-    Anim-Paint/src/Dialogs/Dialog_Chessboard.cpp
-    Anim-Paint/src/Dialogs/Dialog_Invert_Colors.cpp
-    Anim-Paint/src/Dialogs/Dialog_Smoothing.cpp
-    Anim-Paint/src/Components/MainMenu.cpp
-    Anim-Paint/src/Components/BottomBar.cpp
-    Anim-Paint/src/Components/Tooltip.cpp
-    Anim-Paint/src/Tools/Clipboard.cpp
-    Anim-Paint/src/Tools/Filters.cpp
-    Anim-Paint/src/Tools/Selection.cpp
-    Anim-Paint/src/Tools/Brush.cpp
-    Anim-Paint/src/Tools/Line.cpp
-    Anim-Paint/src/Components/Toolbar.cpp
-    Anim-Paint/src/Components/Canvas.cpp
+# SOURCES
+file(GLOB_RECURSE SOURCES
+    Anim-Paint/src/*.cpp
+)
+
+# HEADERS
+file(GLOB_RECURSE HEADERS
+    Anim-Paint/include/*.hpp
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
@@ -64,59 +21,6 @@ target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 source_group(TREE ${CMAKE_SOURCE_DIR}/Anim-Paint/src
              PREFIX "Source Files"
              FILES ${SOURCES})
-
-# HEADERS FILES
-set(HEADERS
-    Anim-Paint/include/Window.hpp
-    Anim-Paint/include/DebugLog.hpp
-    Anim-Paint/include/Textures.hpp
-    Anim-Paint/include/Theme.hpp
-    Anim-Paint/include/Cursor.hpp
-    Anim-Paint/include/Time.hpp
-    Anim-Paint/include/ElementGUI/ElementGUI.hpp
-    Anim-Paint/include/ElementGUI/Button.hpp
-    Anim-Paint/include/ElementGUI/Checkbox.hpp
-    Anim-Paint/include/ElementGUI/Slider.hpp
-    Anim-Paint/include/ElementGUI/Scrollbar.hpp
-    Anim-Paint/include/ElementGUI/TextInput.hpp
-    Anim-Paint/include/ElementGUI/NumberInput.hpp
-    Anim-Paint/include/ElementGUI/EdgePoint.hpp
-    Anim-Paint/include/WorldToTileConverter.hpp
-    Anim-Paint/include/History.hpp
-    Anim-Paint/include/Animation/Layer.hpp
-    Anim-Paint/include/Animation/Frame.hpp
-    Anim-Paint/include/Animation/Animation.hpp
-    Anim-Paint/include/Dialogs/Dialog.hpp
-    Anim-Paint/include/Dialogs/FileDialog.hpp
-    Anim-Paint/include/Dialogs/Dialog_Save_Project.hpp
-    Anim-Paint/include/Dialogs/Dialog_Load_Project.hpp
-    Anim-Paint/include/Dialogs/Dialog_Import.hpp
-    Anim-Paint/include/Dialogs/Dialog_Load_SpriteSheet.hpp
-    Anim-Paint/include/Dialogs/Dialog_Export.hpp
-    Anim-Paint/include/Components/FramesPanel.hpp
-    Anim-Paint/include/Components/LayersPanel.hpp
-    Anim-Paint/include/Components/AnimationsPanel.hpp
-    Anim-Paint/include/Dialogs/Palette.hpp
-    Anim-Paint/include/Dialogs/Dialog_Rotation.hpp
-    Anim-Paint/include/Dialogs/Dialog_Brightness_Contrast.hpp
-    Anim-Paint/include/Dialogs/Dialog_Hue_Saturation.hpp
-    Anim-Paint/include/Dialogs/Dialog_Sepia.hpp
-    Anim-Paint/include/Dialogs/Dialog_Outline.hpp
-    Anim-Paint/include/Dialogs/Dialog_Resize.hpp
-    Anim-Paint/include/Dialogs/Dialog_Chessboard.hpp
-    Anim-Paint/include/Dialogs/Dialog_Invert_Colors.hpp
-    Anim-Paint/include/Dialogs/Dialog_Smoothing.hpp
-    Anim-Paint/include/Components/MainMenu.hpp
-    Anim-Paint/include/Components/BottomBar.hpp
-    Anim-Paint/include/Components/Tooltip.hpp
-    Anim-Paint/include/Tools/Clipboard.hpp
-    Anim-Paint/include/Tools/Filters.hpp
-    Anim-Paint/include/Tools/Selection.hpp
-    Anim-Paint/include/Tools/Brush.hpp
-    Anim-Paint/include/Tools/Line.hpp
-    Anim-Paint/include/Components/Toolbar.hpp
-    Anim-Paint/include/Components/Canvas.hpp
-)
 
 target_sources(${PROJECT_NAME} PRIVATE ${HEADERS})
 
