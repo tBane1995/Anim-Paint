@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialog.hpp"
-#include "Element/Slider.hpp"
+#include "Controls/Slider.hpp"
 #include "Animation/Layer.hpp"
 
 enum class SmoothingState { Idle, Edited };

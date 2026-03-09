@@ -1,5 +1,5 @@
-﻿#include "Element/Slider.hpp"
-#include "Element/Element.hpp"
+﻿#include "Controls/Slider.hpp"
+#include "Controls/Element.hpp"
 #include "Textures.hpp"
 #include "SFML/Graphics.hpp"
 #include "Cursor.hpp"

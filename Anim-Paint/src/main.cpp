@@ -15,10 +15,10 @@
 #include "Cursor.hpp"
 #include "Time.hpp"
 
-#include "Element/Element.hpp"
-#include "Element/Button.hpp"
-#include "Element/Checkbox.hpp"
-#include "Element/Slider.hpp"
+#include "Controls/Element.hpp"
+#include "Controls/Button.hpp"
+#include "Controls/Checkbox.hpp"
+#include "Controls/Slider.hpp"
 
 
 

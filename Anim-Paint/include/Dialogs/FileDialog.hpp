@@ -1,8 +1,8 @@
 #pragma once
 #include "Dialog.hpp"
 #include <filesystem>
-#include "Element/Scrollbar.hpp"
-#include "Element/TextInput.hpp"
+#include "Controls/Scrollbar.hpp"
+#include "Controls/TextInput.hpp"
 
 std::filesystem::path resolve_lnk(const std::filesystem::path& lnkPath);
 bool isExtension(const std::filesystem::path& p, std::wstring extension);

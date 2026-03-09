@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
-#include "Element/Button.hpp"
+#include "Controls/Button.hpp"
 
 class Separator {
 public:

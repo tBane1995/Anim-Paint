@@ -1,4 +1,4 @@
-﻿#include "Element/EdgePoint.hpp"
+﻿#include "Controls/EdgePoint.hpp"
 #include "Cursor.hpp"
 
 EdgePoint::EdgePoint(sf::Vector2i position) {

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include "Window.hpp"
-#include "Element/TextInput.hpp"
+#include "Controls/TextInput.hpp"
 #include "Components/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 #include <iostream>

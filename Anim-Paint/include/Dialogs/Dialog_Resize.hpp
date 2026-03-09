@@ -1,8 +1,8 @@
 #pragma once
 #include "Dialog.hpp"
-#include "Element/Slider.hpp"
+#include "Controls/Slider.hpp"
 #include "Animation/Layer.hpp"
-#include "Element/NumberInput.hpp"
+#include "Controls/NumberInput.hpp"
 
 enum class ResizeState { Idle, Edited };
 

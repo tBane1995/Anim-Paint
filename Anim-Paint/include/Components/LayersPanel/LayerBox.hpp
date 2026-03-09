@@ -1,6 +1,6 @@
 #pragma once
-#include "Element/Element.hpp"
-#include "Element/Checkbox.hpp"
+#include "Controls/Element.hpp"
+#include "Controls/Checkbox.hpp"
 #include "Animation/Layer.hpp"
 #include <functional>
 #include "Dialogs/Dialog.hpp"

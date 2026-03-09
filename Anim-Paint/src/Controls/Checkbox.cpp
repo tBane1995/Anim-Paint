@@ -1,4 +1,4 @@
-#include "Element/Checkbox.hpp"
+#include "Controls/Checkbox.hpp"
 #include "SFML/Graphics.hpp"
 #include "Time.hpp"
 #include "Window.hpp"

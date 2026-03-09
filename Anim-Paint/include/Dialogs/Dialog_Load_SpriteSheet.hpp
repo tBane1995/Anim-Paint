@@ -1,7 +1,7 @@
 #pragma once
 #include "Dialog.hpp"
 #include "Animation/Animation.hpp"
-#include "Element/NumberInput.hpp"
+#include "Controls/NumberInput.hpp"
 
 class Dialog_Load_SpriteSheet : public Dialog {
 public:

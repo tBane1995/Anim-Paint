@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "Element/Element.hpp"
-#include "Element/Button.hpp"
+#include "Controls/Element.hpp"
+#include "Controls/Button.hpp"
 #include <filesystem>
 #include "Animation/Animation.hpp"
 

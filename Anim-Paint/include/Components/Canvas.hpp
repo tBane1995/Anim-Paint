@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "Element/Element.hpp"
+#include "Controls/Element.hpp"
 #include "Animation/Frame.hpp"
-#include "Element/EdgePoint.hpp"
+#include "Controls/EdgePoint.hpp"
 
 enum class CanvasState { Idle, Moving, Resizing };
 

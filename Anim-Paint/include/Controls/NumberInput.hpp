@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Element/TextInput.hpp"
+#include "Controls/TextInput.hpp"
 
 class NumberInput : public TextInput {
 public:

@@ -1,109 +1,88 @@
-﻿#include "Element/TextInput.hpp"
+﻿#include "Controls/NumberInput.hpp"
+#include "Time.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
-#include "Time.hpp"
-#include "SFML/Graphics.hpp"
-#include <iostream>
 #include "Cursor.hpp"
-#include "DebugLog.hpp"
 
-TextInput::TextInput(sf::Vector2i size, int limitCharacters, int characterSize) : Element() {
-	
-	_rect = sf::IntRect(sf::Vector2i(0,0), size);
-	
-	_limitCharacters = limitCharacters;
-	_characterSize = characterSize;
-	_textStr = L"";
+NumberInput::NumberInput(sf::Vector2i size, int limitCharacters, int characterSize, int value, int minValue, int maxValue) : TextInput(size, limitCharacters, characterSize) {
+	_previousText = std::to_wstring(value);
+	setText(_previousText);
+	_minValue = minValue;
+	_maxValue = maxValue;
+}
 
-	_text = std::make_unique<sf::Text>(basicFont, L"", _characterSize);
-	_text->setFillColor(sf::Color(191, 191, 191));
-	_text->setString(_textStr);
-
-	_state = TextInputState::Idle;
-	_lastCLickTime = sf::Time::Zero;
-	_editState = TextInputEditState::None;
-
-	_cursorPosition = 0;
-	_selectionStart = -1;
-	_selectionEnd = -1;
-
-	_onEditedFunction = { };
-	_onClickedFunction = { };
-	_onEnteredFunction = { };
+NumberInput::~NumberInput() {
 
 }
 
-TextInput::~TextInput() {
-	
-}
-
-void TextInput::setPosition(sf::Vector2i position) {
-	_rect.position = position;
-
-	sf::Vector2f textPosition;
-	textPosition.x = (float)_rect.position.x + (float)(textInput_border_width);
-	textPosition.y = (float)_rect.position.y + (float)(textInput_border_width);
-	textPosition.y += (float)(_rect.size.y-2*textInput_border_width - basicFont.getLineSpacing(_text->getCharacterSize())) / 2.f;
-	_text->setPosition(textPosition);
-}
-
-void TextInput::setText(std::wstring text) {
-	_textStr = text.substr(0, _limitCharacters);
-	_cursorPosition = (int)_textStr.length();
-	_text->setString(_textStr.substr(0, _limitCharacters));
-}
-
-void TextInput::setLimitCharacters(int limitCharacters) {
-	_limitCharacters = limitCharacters;
-	_textStr = _textStr.substr(0,_limitCharacters);
-
-	if(_cursorPosition > limitCharacters)
-		_cursorPosition = _limitCharacters;
-
-	_text->setString(_textStr.substr(0, _limitCharacters));
-}
-
-std::wstring TextInput::getText() {
-	return _textStr;
-}
-
-sf::Vector2i TextInput::getPosition() {
-	return _rect.position;
-}
-
-sf::Vector2i TextInput::getSize() {
-	return _rect.size;
-}
-
-void TextInput::positioningCursorByMouse() {
-
-	int newCursorPosition = 0;
-
-	for (int i = 0; i < (int)(_textStr.length()); i++) {
-		sf::Vector2f charPos = _text->findCharacterPos(i);
-		if (cursor->_position.x > charPos.x) {
-			newCursorPosition = i + 1;
+bool NumberInput::dataIsCorrect() {
+	std::wstring text = getText();
+	if (text.empty()) return false;
+	for (wchar_t c : text) {
+		if (c < L'0' || c > L'9') {
+			return false;
 		}
 	}
 
-	_cursorPosition = newCursorPosition;
+	if(std::stoi(text) < _minValue || std::stoi(text) > _maxValue)
+		return false;
+
+	return true;
 }
 
-void TextInput::cursorHover() {
-	if (_rect.contains(cursor->_position)) {
-		Element_hovered = this->shared_from_this();
-		return;
+bool NumberInput::isNumeric() {
+	std::wstring text = getText();
+	for (wchar_t c : text) {
+		if (!(c == '-' || (c >= L'0' && c <= L'9'))) {
+			return false;
+		}
 	}
-
-	if (_editState == TextInputEditState::Selecting) {
-		Element_hovered = this->shared_from_this();
-		return;
-	}
-
+	return true;
 }
 
-void TextInput::handleEvent(const sf::Event& event) {
-	
+void NumberInput::deleteStartZeros() {
+	// Zostaw jedno "0", jeśli cały tekst to same zera
+	if (_textStr.size() == 0) return;
+	if (_textStr == L"0")     return;
+
+	while (_textStr.size() > 1 && _textStr[0] == L'0') {
+		_textStr.erase(0, 1);
+	}
+}
+
+int NumberInput::zerosOnStart() {
+	int count = 0;
+	for (wchar_t c : _textStr) {
+		if (c == L'0')
+			++count;
+		else
+			break;
+	}
+	return count;
+}
+
+void NumberInput::setValue(int value) {
+	_textStr = std::to_wstring(value);
+	_previousText = _textStr;
+	_cursorPosition = (int)_textStr.length();
+	setText(_textStr);
+}
+
+int NumberInput::getValue() {
+	if (dataIsCorrect()) {
+		return std::stoi(_textStr);
+	}
+	else {
+		return std::stoi(_previousText);
+	}
+}
+
+void NumberInput::cursorHover() {
+	TextInput::cursorHover();
+}
+
+void NumberInput::handleEvent(const sf::Event& event) {
+
 	if (const auto* mp = event.getIf<sf::Event::MouseButtonPressed>(); mp) {
 		if (_rect.contains(cursor->_position)) {
 
@@ -135,12 +114,12 @@ void TextInput::handleEvent(const sf::Event& event) {
 					positioningCursorByMouse();
 					_selectionStart = _cursorPosition;
 					_selectionEnd = _cursorPosition;
-					
+
 					_editState = TextInputEditState::TextEntered;
 					if (_onClickedFunction)
 						_onClickedFunction();
 				}
-				
+
 			}
 
 			Element_pressed = this->shared_from_this();
@@ -151,19 +130,32 @@ void TextInput::handleEvent(const sf::Event& event) {
 			_selectionEnd = -1;
 			_lastCLickTime = currentTime;
 
-			if(Element_pressed.get() == this)
+			if (dataIsCorrect()) {
+				deleteStartZeros();
+				_previousText = _textStr;
+			}
+			else if (!_textStr.empty() && isNumeric()) {
+				_textStr = std::to_wstring(std::clamp(std::stoi(_textStr), _minValue, _maxValue));
+			}
+			else {
+				_textStr = _previousText;
+			}
+
+			setText(_textStr);
+
+			if (Element_pressed.get() == this)
 				Element_pressed = nullptr;
 		}
 		_lastCLickTime = currentTime;
 		return;
 	}
 
-	if(const auto* mr = event.getIf<sf::Event::MouseButtonReleased>(); mr) {
+	if (const auto* mr = event.getIf<sf::Event::MouseButtonReleased>(); mr) {
 		if (Element_pressed.get() == this) {
 			Element_pressed = nullptr;
 		}
 
-		if(_editState == TextInputEditState::Selecting)
+		if (_editState == TextInputEditState::Selecting)
 			_editState = TextInputEditState::Selected;
 
 		return;
@@ -178,7 +170,7 @@ void TextInput::handleEvent(const sf::Event& event) {
 			if (_editState == TextInputEditState::TextEntered) {
 				if (!(_selectionStart == -1 && _selectionEnd == -1) && _selectionEnd != _selectionStart) {
 					_editState = TextInputEditState::Selecting;
-					
+
 				}
 			}
 
@@ -200,109 +192,129 @@ void TextInput::handleEvent(const sf::Event& event) {
 				}
 			}
 			else if (kp->code == sf::Keyboard::Key::Enter) {
-				if (_onEnteredFunction)
+				if (dataIsCorrect()) {
+					deleteStartZeros();
+					_previousText = _textStr;
+				}
+				else if (!_textStr.empty() && isNumeric()) {
+					_textStr = std::to_wstring(std::clamp(std::stoi(_textStr), _minValue, _maxValue));
+				}
+				else {
+					_textStr = _previousText;
+				}
+
+				_cursorPosition = (int)_textStr.length();
+				setText(_textStr);
+				if (_onEnteredFunction) {
 					_onEnteredFunction();
+				}
 			}
 			return;
 		}
 		else if (const auto* te = event.getIf<sf::Event::TextEntered>(); te) {
 
-				wchar_t character = (wchar_t)te->unicode;
+			wchar_t character = (wchar_t)te->unicode;
 
-				if (character == 8) {
-					// BACKSPACE
-					if (!_textStr.empty()) {
+			if (character == 8) {
+				// BACKSPACE
+				if (!_textStr.empty()) {
 
-						if (_cursorPosition > 0 && _editState == TextInputEditState::TextEntered) {
-							_textStr.erase(_cursorPosition - 1, 1);
-							_text->setString(_textStr.substr(0, _limitCharacters));
-							_cursorPosition -= 1;
-						}
-						else {
-							int min = std::min(_selectionStart, _selectionEnd);
-							int max = std::max(_selectionStart, _selectionEnd);
-							_textStr.erase(min, max - min);
-							_text->setString(_textStr.substr(0, _limitCharacters));
-							_editState = TextInputEditState::TextEntered;
-							_cursorPosition = min;
-							_selectionStart = -1;
-							_selectionEnd = -1;
-						}
-						
-						if (_onEditedFunction)
-							_onEditedFunction();
-					
-					}
-					return;
-				}
-				else if (character == 13 || character == 10) {
-					// ENTER
-					return;
-				}
-				else if (character >= 32) {
-					std::wstring c;
-					c += character;
-					
-					if (_editState == TextInputEditState::TextEntered) {
-						_textStr.insert(_cursorPosition, c);
+					if (_cursorPosition > 0 && _editState == TextInputEditState::TextEntered) {
+						_textStr.erase(_cursorPosition - 1, 1);
 						_text->setString(_textStr.substr(0, _limitCharacters));
-						_cursorPosition += 1;
+						_cursorPosition -= 1;
 					}
 					else {
 						int min = std::min(_selectionStart, _selectionEnd);
 						int max = std::max(_selectionStart, _selectionEnd);
 						_textStr.erase(min, max - min);
-						_textStr.insert(min, c);
 						_text->setString(_textStr.substr(0, _limitCharacters));
 						_editState = TextInputEditState::TextEntered;
-						_cursorPosition = min + 1;
+						_cursorPosition = min;
 						_selectionStart = -1;
 						_selectionEnd = -1;
 					}
 
-					if (_onEditedFunction)
+					if (dataIsCorrect() && _onEditedFunction)
 						_onEditedFunction();
 
 				}
+				return;
 			}
-			
+			else if (character == 13 || character == 10) {
+				// ENTER
+				return;
+			}
+			else if (character >= 32) {
+				std::wstring c;
+				c += character;
 
+				if (_editState == TextInputEditState::TextEntered) {
+					_textStr.insert(_cursorPosition, c);
+					_cursorPosition += 1;
+				}
+				else {
+					int min = std::min(_selectionStart, _selectionEnd);
+					int max = std::max(_selectionStart, _selectionEnd);
+					_textStr.erase(min, max - min);
+					_textStr.insert(min, c);
+					
+					_editState = TextInputEditState::TextEntered;
+					_cursorPosition = min + 1;
+					_selectionStart = -1;
+					_selectionEnd = -1;
+				}
+
+				int zeros = zerosOnStart();
+
+				if (zeros == _textStr.size()) {
+					_textStr = L"0";
+					_cursorPosition = 1;
+				}
+				else if (zeros > 0) {
+					deleteStartZeros();
+
+					_cursorPosition -= zeros;
+					if (_cursorPosition < 0)
+						_cursorPosition = 0;
+				}
+
+				if (_cursorPosition > (int)_textStr.length())
+					_cursorPosition = (int)_textStr.length();
+
+				_text->setString(_textStr.substr(0, _limitCharacters));
+
+				if (dataIsCorrect() && _onEditedFunction)
+					_onEditedFunction();
+
+			}
+		}
 	}
-	
 }
 
-void TextInput::update() {
-
-	if (_editState == TextInputEditState::TextEntered) {
-	
-	}
-	
-	if (Element_hovered.get() == this) {
-		_state = TextInputState::Hover;
-	}
-	else {
-		_state = TextInputState::Idle;
-	}
+void NumberInput::update() {
+	TextInput::update();
 }
 
-void TextInput::draw() {
+void NumberInput::draw() {
+
 	// draw rect
-
 	sf::Vector2f rectSize;
 	rectSize.x = (float)(_rect.size.x - 2 * textInput_border_width);
 	rectSize.y = (float)(_rect.size.y - 2 * textInput_border_width);
+
 	sf::RectangleShape rect(rectSize);
 
 	if (_editState == TextInputEditState::TextEntered) {
 		rect.setFillColor(textinput_textentered_color);
 	}
-	else if(_state == TextInputState::Hover) {
+	else if (_state == TextInputState::Hover) {
 		rect.setFillColor(textinput_hover_color);
 	}
 	else {
 		rect.setFillColor(textinput_idle_color);
 	}
-	
+
 	rect.setOutlineThickness((float)textInput_border_width);
 	rect.setOutlineColor(textInput_border_color);
 
@@ -322,12 +334,12 @@ void TextInput::draw() {
 
 		sf::Vector2f selectionRectSize;
 		selectionRectSize.x = _text->findCharacterPos(max).x - _text->findCharacterPos(min).x;
-		selectionRectSize.y = (float)(_rect.size.y - 2 * textInput_border_width - 2* selection_margin);
+		selectionRectSize.y = (float)(_rect.size.y - 2 * textInput_border_width - 2 * selection_margin);
 
 		sf::Vector2f selectionRectPosition;
 		selectionRectPosition.x = _text->findCharacterPos(min).x;
 		selectionRectPosition.y = (float)_rect.position.y + (float)textInput_border_width + selection_margin;
-		
+
 		sf::RectangleShape selectionRect(selectionRectSize);
 
 		selectionRect.setPosition(selectionRectPosition);
@@ -337,19 +349,15 @@ void TextInput::draw() {
 
 	}
 
+
 	// draw text
 	window->draw(*_text);
 
-	
 	// draw cursor
 	if (_editState == TextInputEditState::TextEntered && int(currentTime.asSeconds() * 3) % 2 == 0) {
 		sf::RectangleShape cursor(sf::Vector2f(2, basicFont.getLineSpacing(_characterSize)));
 		cursor.setFillColor(sf::Color::Red);
-		cursor.setPosition(_text->findCharacterPos(_cursorPosition));
+		cursor.setPosition(_text->findCharacterPos(_cursorPosition));;
 		window->draw(cursor);
 	}
-		
-
 }
-
-

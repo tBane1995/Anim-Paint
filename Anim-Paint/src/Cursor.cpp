@@ -5,7 +5,7 @@
 #include "Tools/Brush.hpp"
 #include "Dialogs/Palette.hpp"
 #include "Tools/Selection.hpp"
-#include "Element/Slider.hpp"
+#include "Controls/Slider.hpp"
 #include "Components/MainMenu.hpp"
 
 Cursor::Cursor() {

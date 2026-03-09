@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Element/Element.hpp"
+#include "Controls/Element.hpp"
 
 
 class EdgePoint : public Element {

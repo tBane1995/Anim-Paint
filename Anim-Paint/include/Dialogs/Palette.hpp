@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialogs/Dialog.hpp"
-#include "Element/NumberInput.hpp"
+#include "Controls/NumberInput.hpp"
 
 struct HSV { float h, s, v; }; // zakresy 0..1
 HSV rgbToHsv(sf::Color c);
