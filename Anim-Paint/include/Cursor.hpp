@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include "Window.hpp"
-#include "ElementGUI/TextInput.hpp"
+#include "Element/TextInput.hpp"
 #include "Components/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 #include <iostream>
@@ -12,7 +12,7 @@ class Cursor {
 public:
 	std::shared_ptr<sf::Cursor> _cursor;
 	sf::Vector2i _position;
-	std::shared_ptr<ElementGUI> _hoveredElementGUI;
+	std::shared_ptr<Element> _hoveredElement;
 	sf::Vector2i _offset;
 	std::shared_ptr<Texture> _ico;
 	bool _brushIsVisible;

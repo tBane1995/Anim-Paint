@@ -15,10 +15,10 @@
 #include "Cursor.hpp"
 #include "Time.hpp"
 
-#include "ElementGUI/ElementGUI.hpp"
-#include "ElementGUI/Button.hpp"
-#include "ElementGUI/Checkbox.hpp"
-#include "ElementGUI/Slider.hpp"
+#include "Element/Element.hpp"
+#include "Element/Button.hpp"
+#include "Element/Checkbox.hpp"
+#include "Element/Slider.hpp"
 
 
 
@@ -123,8 +123,8 @@ int main() {
 	int frameCount = 0;
 
 	// Elements GUI
-	ElementGUI_hovered = nullptr;
-	ElementGUI_pressed = nullptr;
+	Element_hovered = nullptr;
+	Element_pressed = nullptr;
 
 	while (window->isOpen()) {
 
@@ -156,7 +156,7 @@ int main() {
 		}
 
 		// cursor hovering
-		ElementGUI_hovered = nullptr;
+		Element_hovered = nullptr;
 
 		canvas->cursorHover();
 	

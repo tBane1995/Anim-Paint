@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
-#include "ElementGUI/Button.hpp"
+#include "Element/Button.hpp"
 
 class Separator {
 public:
@@ -51,7 +51,7 @@ public:
 
 enum class ToolType { Brush, Eraser, Selector, Lasso, Fill, Picker };
 
-class Toolbar : public ElementGUI {
+class Toolbar : public Element {
 public:
 
 	sf::IntRect _rect;

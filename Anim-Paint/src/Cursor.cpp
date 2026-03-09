@@ -5,7 +5,7 @@
 #include "Tools/Brush.hpp"
 #include "Dialogs/Palette.hpp"
 #include "Tools/Selection.hpp"
-#include "ElementGUI/Slider.hpp"
+#include "Element/Slider.hpp"
 #include "Components/MainMenu.hpp"
 
 Cursor::Cursor() {
@@ -13,7 +13,7 @@ Cursor::Cursor() {
 	_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Arrow);
 	_position = sf::Mouse::getPosition(*window);
 	window->setMouseCursor(*_cursor);
-	_hoveredElementGUI = nullptr;
+	_hoveredElement = nullptr;
 	_brushIsVisible = false;
 
 	// cursors
@@ -40,7 +40,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 
 	brush->setPosition(worldToTile(_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta));
 
-	std::shared_ptr<TextInput> input = dynamic_pointer_cast<TextInput>(ElementGUI_pressed);
+	std::shared_ptr<TextInput> input = dynamic_pointer_cast<TextInput>(Element_pressed);
 	if (input != nullptr && input->_editState == TextInputEditState::Selecting) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Text);
@@ -51,17 +51,17 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (_hoveredElementGUI != canvas && 
+	if (_hoveredElement != canvas && 
 		(toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state != SelectionState::Selected &&
-		_hoveredElementGUI == ElementGUI_hovered)
+		_hoveredElement == Element_hovered)
 		return;
 
 	if(main_menu->_state != MainMenuStates::Closed)
 		return;
 
-	_hoveredElementGUI = ElementGUI_hovered;
+	_hoveredElement = Element_hovered;
 
-	if (dynamic_cast<TextInput*>(_hoveredElementGUI.get()) != nullptr) {
+	if (dynamic_cast<TextInput*>(_hoveredElement.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Text);
 		window->setMouseCursor(*_cursor);
@@ -71,7 +71,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (dynamic_cast<Slider*>(_hoveredElementGUI.get()) != nullptr) {
+	if (dynamic_cast<Slider*>(_hoveredElement.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Hand);
 		window->setMouseCursor(*_cursor);
@@ -81,7 +81,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (dynamic_cast<Button*>(_hoveredElementGUI.get()) != nullptr) {
+	if (dynamic_cast<Button*>(_hoveredElement.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Arrow);
 		window->setMouseCursor(*_cursor);
@@ -176,7 +176,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 	}
 
 	// canvas edge points
-	if (_hoveredElementGUI == canvas->_point_left_top || ElementGUI_pressed == canvas->_point_left_top) {
+	if (_hoveredElement == canvas->_point_left_top || Element_pressed == canvas->_point_left_top) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopLeft);
 		window->setMouseCursor(*_cursor);
@@ -186,7 +186,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (_hoveredElementGUI == canvas->_point_top || ElementGUI_pressed == canvas->_point_top) {
+	if (_hoveredElement == canvas->_point_top || Element_pressed == canvas->_point_top) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTop);
 		window->setMouseCursor(*_cursor);
@@ -196,7 +196,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (_hoveredElementGUI == canvas->_point_right_top || ElementGUI_pressed == canvas->_point_right_top) {
+	if (_hoveredElement == canvas->_point_right_top || Element_pressed == canvas->_point_right_top) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopRight);
 		window->setMouseCursor(*_cursor);
@@ -206,7 +206,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (_hoveredElementGUI == canvas->_point_left || ElementGUI_pressed == canvas->_point_left) {
+	if (_hoveredElement == canvas->_point_left || Element_pressed == canvas->_point_left) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeLeft);
 		window->setMouseCursor(*_cursor);
@@ -216,7 +216,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (_hoveredElementGUI == canvas->_point_right || ElementGUI_pressed == canvas->_point_right) {
+	if (_hoveredElement == canvas->_point_right || Element_pressed == canvas->_point_right) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeRight);
 		window->setMouseCursor(*_cursor);
@@ -226,7 +226,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (_hoveredElementGUI == canvas->_point_left_bottom || ElementGUI_pressed == canvas->_point_left_bottom) {
+	if (_hoveredElement == canvas->_point_left_bottom || Element_pressed == canvas->_point_left_bottom) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomLeft);
 		window->setMouseCursor(*_cursor);
@@ -236,7 +236,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (_hoveredElementGUI == canvas->_point_bottom || ElementGUI_pressed == canvas->_point_bottom) {
+	if (_hoveredElement == canvas->_point_bottom || Element_pressed == canvas->_point_bottom) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottom);
 		window->setMouseCursor(*_cursor);
@@ -246,7 +246,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (_hoveredElementGUI == canvas->_point_right_bottom || ElementGUI_pressed == canvas->_point_right_bottom) {
+	if (_hoveredElement == canvas->_point_right_bottom || Element_pressed == canvas->_point_right_bottom) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomRight);
 		window->setMouseCursor(*_cursor);
@@ -256,7 +256,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (dynamic_cast<LocationAndFilesSeparator*>(_hoveredElementGUI.get()) != nullptr) {
+	if (dynamic_cast<LocationAndFilesSeparator*>(_hoveredElement.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeHorizontal);
 		window->setMouseCursor(*_cursor);
@@ -266,7 +266,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (dynamic_cast<PaletteValues*>(_hoveredElementGUI.get()) != nullptr) {
+	if (dynamic_cast<PaletteValues*>(_hoveredElement.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Cross);
 		window->setMouseCursor(*_cursor);
@@ -289,7 +289,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		}
 	}
 
-	if (_hoveredElementGUI == canvas) {
+	if (_hoveredElement == canvas) {
 
 		if (canvas->_state == CanvasState::Moving) {
 			window->setMouseCursorVisible(true);
@@ -361,7 +361,7 @@ void Cursor::draw() {
 		sf::Sprite sprite(*_ico->_texture);
 		sprite.setOrigin(sf::Vector2f(_offset));
 		
-		if (_hoveredElementGUI == canvas) {
+		if (_hoveredElement == canvas) {
 			sf::Vector2i p = worldToTile(_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 			sf::Vector2f p2 = sf::Vector2f(canvas->_position) + (sf::Vector2f(p) + sf::Vector2f(0.5f, 0.5f)) * canvas->_zoom * canvas->_zoom_delta;
 			sprite.setPosition(p2);

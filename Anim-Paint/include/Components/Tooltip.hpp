@@ -1,5 +1,5 @@
 #pragma once
-#include "ElementGUI/Button.hpp"
+#include "Element/Button.hpp"
 
 std::wstring wrap_text(int line_width, sf::Font& font, float characterSize, std::wstring text);
 

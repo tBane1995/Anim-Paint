@@ -1,4 +1,4 @@
-﻿#include "ElementGUI/TextInput.hpp"
+﻿#include "Element/TextInput.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
 #include "Time.hpp"
@@ -7,7 +7,7 @@
 #include "Cursor.hpp"
 #include "DebugLog.hpp"
 
-TextInput::TextInput(sf::Vector2i size, int limitCharacters, int characterSize) : ElementGUI() {
+TextInput::TextInput(sf::Vector2i size, int limitCharacters, int characterSize) : Element() {
 	
 	_rect = sf::IntRect(sf::Vector2i(0,0), size);
 	
@@ -91,12 +91,12 @@ void TextInput::positioningCursorByMouse() {
 
 void TextInput::cursorHover() {
 	if (_rect.contains(cursor->_position)) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 		return;
 	}
 
 	if (_editState == TextInputEditState::Selecting) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 		return;
 	}
 
@@ -143,7 +143,7 @@ void TextInput::handleEvent(const sf::Event& event) {
 				
 			}
 
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 		else {
 			_editState = TextInputEditState::None;
@@ -151,16 +151,16 @@ void TextInput::handleEvent(const sf::Event& event) {
 			_selectionEnd = -1;
 			_lastCLickTime = currentTime;
 
-			if(ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if(Element_pressed.get() == this)
+				Element_pressed = nullptr;
 		}
 		_lastCLickTime = currentTime;
 		return;
 	}
 
 	if(const auto* mr = event.getIf<sf::Event::MouseButtonReleased>(); mr) {
-		if (ElementGUI_pressed.get() == this) {
-			ElementGUI_pressed = nullptr;
+		if (Element_pressed.get() == this) {
+			Element_pressed = nullptr;
 		}
 
 		if(_editState == TextInputEditState::Selecting)
@@ -277,7 +277,7 @@ void TextInput::update() {
 	
 	}
 	
-	if (ElementGUI_hovered.get() == this) {
+	if (Element_hovered.get() == this) {
 		_state = TextInputState::Hover;
 	}
 	else {

@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include "ElementGUI.hpp"
+#include "Element.hpp"
 #include "Textures.hpp"
 
 enum class SliderState { Idle, Hovered, Pressed };
 enum class SliderEditState { None, Changed };
 
-class Slider : public ElementGUI {
+class Slider : public Element {
 public:
 	std::wstring _name;
 	std::wstring _units;

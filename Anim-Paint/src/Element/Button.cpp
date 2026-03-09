@@ -1,4 +1,4 @@
-﻿#include "ElementGUI/Button.hpp"
+﻿#include "Element/Button.hpp"
 #include "SFML/Graphics.hpp"
 #include "Theme.hpp"
 #include "Time.hpp"
@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////
 // Button
 
-Button::Button() : ElementGUI() {
+Button::Button() : Element() {
 	_isSelected = false;
 
 	_rectIdleColor = sf::Color::Transparent;
@@ -95,7 +95,7 @@ void Button::setPosition(sf::Vector2i position) {
 
 void Button::cursorHover() {
 	if (_rect.contains(cursor->_position)) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 		tooltip->setButton(std::dynamic_pointer_cast<Button>(this->shared_from_this()));
 	}
 }
@@ -168,11 +168,11 @@ void NormalButton::handleEvent(const sf::Event& event) {
 	if (_rect.contains(cursor->_position)) {
 		
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left)	{		
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 			return;
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (ElementGUI_pressed.get() == this) {
+			if (Element_pressed.get() == this) {
 				click();
 				return;
 			}
@@ -195,12 +195,12 @@ void NormalButton::update() {
 				_onclick_func();
 			}
 
-			if (ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 			unclick();
 		}
 	}
-	else if (ElementGUI_hovered.get() == this) {
+	else if (Element_hovered.get() == this) {
 		hover();
 	}
 	else
@@ -326,11 +326,11 @@ void ColoredButtonWithText::cursorHover() {
 void ColoredButtonWithText::handleEvent(const sf::Event& event) {
 	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 			return;
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (ElementGUI_pressed.get() == this) {
+			if (Element_pressed.get() == this) {
 				click();
 				return;
 			}
@@ -339,7 +339,7 @@ void ColoredButtonWithText::handleEvent(const sf::Event& event) {
 
 	if (_isSelected && _activatedByEnter) {
 		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Enter) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 			click();
 			return;
 		}
@@ -354,12 +354,12 @@ void ColoredButtonWithText::update() {
 				_onclick_func();
 			}
 
-			if (ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 			unclick();
 		}
 	}
-	else if (ElementGUI_hovered.get() == this) {
+	else if (Element_hovered.get() == this) {
 		hover();
 	}
 	else
@@ -483,10 +483,10 @@ void ButtonWithBottomText::cursorHover() {
 void ButtonWithBottomText::handleEvent(const sf::Event& event) {
 	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (ElementGUI_pressed.get() == this) {
+			if (Element_pressed.get() == this) {
 				click();
 			}
 		}
@@ -502,12 +502,12 @@ void ButtonWithBottomText::update() {
 				_onclick_func();
 			}
 
-			if (ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 			unclick();
 		}
 	}
-	else if (ElementGUI_hovered.get() == this) {
+	else if (Element_hovered.get() == this) {
 		hover();
 	}
 	else
@@ -634,10 +634,10 @@ void ButtonWithRightText::cursorHover() {
 void ButtonWithRightText::handleEvent(const sf::Event& event) {
 	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (ElementGUI_pressed.get() == this) {
+			if (Element_pressed.get() == this) {
 				click();
 			}
 		}
@@ -653,12 +653,12 @@ void ButtonWithRightText::update() {
 				_onclick_func();
 			}
 
-			if (ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 			unclick();
 		}
 	}
-	else if (ElementGUI_hovered.get() == this) {
+	else if (Element_hovered.get() == this) {
 		hover();
 	}
 	else
@@ -774,10 +774,10 @@ void Option::cursorHover() {
 void Option::handleEvent(const sf::Event& event) {
 	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (ElementGUI_pressed.get() == this) {
+			if (Element_pressed.get() == this) {
 				click();
 			}
 		}
@@ -793,12 +793,12 @@ void Option::update() {
 				_onclick_func();
 			}
 
-			if (ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 			unclick();
 		}
 	}
-	else if (ElementGUI_hovered.get() == this) {
+	else if (Element_hovered.get() == this) {
 		hover();
 	}
 	else
@@ -975,10 +975,10 @@ void ButtonWithTopTextAndList::handleEvent(const sf::Event& event) {
 	if (_rect.contains(cursor->_position)) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (ElementGUI_pressed.get() == this) {
+			if (Element_pressed.get() == this) {
 				click();
 				_isOpen = !_isOpen;
 			}
@@ -990,7 +990,7 @@ void ButtonWithTopTextAndList::handleEvent(const sf::Event& event) {
 	if (_isOpen) {
 		for (auto& option : _options) {
 			option->handleEvent(event);
-			if (ElementGUI_pressed == option)
+			if (Element_pressed == option)
 				clicked_in_menu = true;
 		}
 	}
@@ -1011,12 +1011,12 @@ void ButtonWithTopTextAndList::update() {
 				_onclick_func();
 			}
 
-			if (ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 			unclick();
 		}
 	}
-	else if (ElementGUI_hovered.get() == this) {
+	else if (Element_hovered.get() == this) {
 		hover();
 	}
 	else

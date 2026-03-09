@@ -167,7 +167,7 @@ void PaletteButton::draw() {
 
 /////////////////////////////////////////////////////////////////////////////
 
-Toolbar::Toolbar() : ElementGUI() {
+Toolbar::Toolbar() : Element() {
 
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(window->getSize().x, tools_height));
 
@@ -595,7 +595,7 @@ void Toolbar::cursorHover() {
 		return;
 
 	if (_rect.contains(cursor->_position)) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 	}
 
 	for (auto& tool : _clipboard)
@@ -627,7 +627,7 @@ void Toolbar::handleEvent(const sf::Event& event) {
 
 	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 	}
 

@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include "ElementGUI/ElementGUI.hpp"
+#include "Element/Element.hpp"
 #include "Animation/Frame.hpp"
-#include "ElementGUI/EdgePoint.hpp"
+#include "Element/EdgePoint.hpp"
 
 enum class CanvasState { Idle, Moving, Resizing };
 
-class Canvas : public ElementGUI {
+class Canvas : public Element {
 public:
 
 	// background

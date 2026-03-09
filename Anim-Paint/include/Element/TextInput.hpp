@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include "ElementGUI/ElementGUI.hpp"
+#include "Element/Element.hpp"
 #include "SFML//Graphics.hpp"
 #include <functional>
 
 enum class TextInputState { Idle, Hover };
 enum class TextInputEditState { None, TextEntered, Selecting, Selected};
-class TextInput : public ElementGUI {
+class TextInput : public Element {
 public:
 
 	sf::IntRect _rect;

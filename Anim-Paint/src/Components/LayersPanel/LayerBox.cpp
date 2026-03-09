@@ -6,7 +6,7 @@
 #include "Tools/Selection.hpp"
 #include "Components/FramesPanel.hpp"
 
-LayerBox::LayerBox(std::shared_ptr<Layer> layer) : ElementGUI() {
+LayerBox::LayerBox(std::shared_ptr<Layer> layer) : Element() {
 
 	_layer = layer;
 
@@ -47,7 +47,7 @@ void LayerBox::cursorHover() {
 	_visibling->cursorHover();
 
 	if (_rect.contains(cursor->_position)) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 	}
 }
 
@@ -55,10 +55,10 @@ void LayerBox::handleEvent(const sf::Event& event) {
 
 	_visibling->handleEvent(event);
 
-	if (ElementGUI_pressed != _visibling) {
+	if (Element_pressed != _visibling) {
 		if (_rect.contains(cursor->_position)) {
 			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-				ElementGUI_pressed = this->shared_from_this();
+				Element_pressed = this->shared_from_this();
 				_onclick_func();
 			}
 		}
@@ -74,17 +74,17 @@ void LayerBox::update() {
 void LayerBox::draw() {
 	sf::RectangleShape rect(sf::Vector2f(_rect.size));
 	if (_isActive) {
-		if (ElementGUI_pressed.get() == this)
+		if (Element_pressed.get() == this)
 			rect.setFillColor(sf::Color(127, 63, 63));
-		else if (ElementGUI_hovered.get() == this)
+		else if (Element_hovered.get() == this)
 			rect.setFillColor(sf::Color(95, 63, 63));
 		else
 			rect.setFillColor(sf::Color(63, 47, 47));
 	}
 	else {
-		if (ElementGUI_pressed.get() == this)
+		if (Element_pressed.get() == this)
 			rect.setFillColor(sf::Color(95, 95, 95));
-		else if (ElementGUI_hovered.get() == this)
+		else if (Element_hovered.get() == this)
 			rect.setFillColor(sf::Color(63, 63, 63));
 		else
 			rect.setFillColor(sf::Color(47, 47, 47));

@@ -1,12 +1,12 @@
-﻿#include "ElementGUI/Slider.hpp"
-#include "ElementGUI/ElementGUI.hpp"
+﻿#include "Element/Slider.hpp"
+#include "Element/Element.hpp"
 #include "Textures.hpp"
 #include "SFML/Graphics.hpp"
 #include "Cursor.hpp"
 #include "Window.hpp"
 #include "Theme.hpp"
 
-Slider::Slider(std::wstring name, int min_value, int max_value, std::wstring units) : ElementGUI() {
+Slider::Slider(std::wstring name, int min_value, int max_value, std::wstring units) : Element() {
 	_name = name;
 	_units = units;
 
@@ -76,21 +76,21 @@ void Slider::setPosition(sf::Vector2i position) {
 
 void Slider::cursorHover() {
 	if(_barRect.contains(cursor->_position))
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 }
 
 void Slider::handleEvent(const sf::Event& event) {
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_barRect.contains(cursor->_position)) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 			_editState = SliderEditState::Changed;
 
 		}
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-		if (ElementGUI_pressed.get() == this) {
-			ElementGUI_pressed = nullptr;
+		if (Element_pressed.get() == this) {
+			Element_pressed = nullptr;
 			_state = SliderState::Idle;
 			_editState = SliderEditState::None;
 		}
@@ -107,9 +107,9 @@ void Slider::update() {
 		return;
 	}
 
-	if (ElementGUI_pressed.get() == this) {
+	if (Element_pressed.get() == this) {
 		_state = SliderState::Pressed;
-	}else if(ElementGUI_hovered .get() == this) {
+	}else if(Element_hovered .get() == this) {
 		_state = SliderState::Hovered;
 	}
 	else {

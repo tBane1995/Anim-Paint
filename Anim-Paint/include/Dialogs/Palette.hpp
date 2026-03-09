@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialogs/Dialog.hpp"
-#include "ElementGUI/NumberInput.hpp"
+#include "Element/NumberInput.hpp"
 
 struct HSV { float h, s, v; }; // zakresy 0..1
 HSV rgbToHsv(sf::Color c);
@@ -9,7 +9,7 @@ sf::Vector2i cursorOnValues(sf::Vector2i rectSize, sf::Color rgb);
 
 enum class PaletteState { None, Selecting };
 
-class PaletteValues : public ElementGUI {
+class PaletteValues : public Element {
 public:
 
 	sf::Shader _shader;

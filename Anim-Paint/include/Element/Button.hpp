@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
-#include "ElementGUI.hpp"
+#include "Element.hpp"
 #include "Textures.hpp"
 #include <functional>
 
 enum class ButtonState { Idle, Hover, Pressed };
 
-class Button : public ElementGUI {
+class Button : public Element {
 public:
 	//sf::RectangleShape _rect;
 	sf::IntRect _rect;

@@ -1,11 +1,11 @@
-#include "ElementGUI/Checkbox.hpp"
+#include "Element/Checkbox.hpp"
 #include "SFML/Graphics.hpp"
 #include "Time.hpp"
 #include "Window.hpp"
 #include "Cursor.hpp"
 #include "DebugLog.hpp"
 
-Checkbox::Checkbox(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture) : ElementGUI() {
+Checkbox::Checkbox(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture) : Element() {
 
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32, 32));
 
@@ -72,7 +72,7 @@ void Checkbox::cursorHover() {
 
 	if (_value > -1) {
 		if (_rect.contains(cursor->_position)) {
-			ElementGUI_hovered = this->shared_from_this();
+			Element_hovered = this->shared_from_this();
 		}
 	}
 
@@ -82,10 +82,10 @@ void Checkbox::handleEvent(const sf::Event& event) {
 	if (_rect.contains(cursor->_position)) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (ElementGUI_pressed.get() == this) {
+			if (Element_pressed.get() == this) {
 				click();
 			}
 		}
@@ -101,12 +101,12 @@ void Checkbox::update() {
 				_onclick_func();
 			}
 
-			if (ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 			unclick();
 		}
 	}
-	else if (ElementGUI_hovered.get() == this) {
+	else if (Element_hovered.get() == this) {
 		hover();
 	}
 	else

@@ -1,8 +1,8 @@
 ﻿#pragma once
-#include "ElementGUI/ElementGUI.hpp"
+#include "Element/Element.hpp"
 
 
-class EdgePoint : public ElementGUI {
+class EdgePoint : public Element {
 public:
 	sf::IntRect _rect;
 

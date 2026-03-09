@@ -32,7 +32,7 @@
 #include <fstream>
 #include <DebugLog.hpp>
 
-OptionBox::OptionBox(std::wstring text) : ElementGUI() {
+OptionBox::OptionBox(std::wstring text) : Element() {
 	_text = std::make_unique<sf::Text>(basicFont, text, menu_font_size);
 	_text->setFillColor(menu_text_color);
 
@@ -80,7 +80,7 @@ void OptionBox::click() {
 
 void OptionBox::cursorHover() {
 	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_position))) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 	}
 }
 
@@ -91,11 +91,11 @@ void OptionBox::handleEvent(const sf::Event& event)
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left)
 	{
-		ElementGUI_pressed = this->shared_from_this();
+		Element_pressed = this->shared_from_this();
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left)
 	{
-		if (ElementGUI_pressed.get() == this)
+		if (Element_pressed.get() == this)
 			click();
 	}
 }
@@ -108,12 +108,12 @@ void OptionBox::update() {
 				_onclick_func();
 			}
 
-			if(ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if(Element_pressed.get() == this)
+				Element_pressed = nullptr;
 			unclick();
 		}
 	}
-	else if (ElementGUI_hovered.get() == this) {
+	else if (Element_hovered.get() == this) {
 		hover();
 	}
 	else
@@ -126,7 +126,7 @@ void OptionBox::draw() {
 }
 
 /////////////////////////////////////////////////////////////////////////
-MenuBox::MenuBox(std::wstring text) : ElementGUI() {
+MenuBox::MenuBox(std::wstring text) : Element() {
 
 	_text = std::make_unique<sf::Text>(basicFont, text, menu_font_size);
 	_text->setFillColor(menu_text_color);
@@ -204,7 +204,7 @@ void MenuBox::click() {
 
 void MenuBox::cursorHover() {
 	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_position))) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 	}
 
 	if (_isOpen) {
@@ -217,10 +217,10 @@ void MenuBox::handleEvent(const sf::Event& event) {
 	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_position))) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 		else if (const auto* mbp = event.getIf < sf::Event::MouseButtonReleased > (); mbp && mbp->button == sf::Mouse::Button::Left) {
-			if (ElementGUI_pressed.get() == this) {
+			if (Element_pressed.get() == this) {
 				click();
 			}
 		}
@@ -241,12 +241,12 @@ void MenuBox::update() {
 				_onclick_func();
 			}
 
-			if (ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 			unclick();
 		}
 	}
-	else if (ElementGUI_hovered.get() == this) {
+	else if (Element_hovered.get() == this) {
 		hover();
 	}
 	else
@@ -269,7 +269,7 @@ void MenuBox::draw() {
 
 /////////////////////////////////////////////////////////////////////////
 
-MainMenu::MainMenu() : ElementGUI() {
+MainMenu::MainMenu() : Element() {
 
 	sf::Vector2f rectSize;
 	rectSize.x = (float)(window->getSize().x);
@@ -837,7 +837,7 @@ void MainMenu::cursorHover() {
 		return;
 
 	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_position))) {
-  		ElementGUI_hovered = this->shared_from_this();
+  		Element_hovered = this->shared_from_this();
 	}
 
 	for (auto& mb : _menu_boxes)
@@ -854,14 +854,14 @@ void MainMenu::handleEvent(const sf::Event& event) {
 
 	for (auto& mb : _menu_boxes) {
 		mb->handleEvent(event);
-		if (ElementGUI_pressed == mb) {
+		if (Element_pressed == mb) {
 			clicked_in_menu = true;
 		}
 
 		if (mb->_isOpen) {
 			for (auto& op : mb->_options) {
 				op->handleEvent(event);
-				if (ElementGUI_pressed == op) {
+				if (Element_pressed == op) {
 					clicked_in_menu = true;
 				}
 			}
@@ -870,7 +870,7 @@ void MainMenu::handleEvent(const sf::Event& event) {
 
 	if (_state == MainMenuStates::Opened) {
 		
-		std::shared_ptr<MenuBox> hoverBox = std::dynamic_pointer_cast<MenuBox>(ElementGUI_hovered);
+		std::shared_ptr<MenuBox> hoverBox = std::dynamic_pointer_cast<MenuBox>(Element_hovered);
 		if (hoverBox != nullptr && _open_menu_box != hoverBox) {
 			hideMenu();
 			openMenuBox(hoverBox);

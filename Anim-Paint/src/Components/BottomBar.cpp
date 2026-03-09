@@ -6,7 +6,7 @@
 #include "Cursor.hpp"
 #include "Tools/Selection.hpp"
 
-BottomBar::BottomBar() : ElementGUI() {
+BottomBar::BottomBar() : Element() {
 	
 	sf::Vector2i rectPosition;
 	rectPosition.x = 0;
@@ -61,15 +61,15 @@ void BottomBar::resize() {
 }
 
 void BottomBar::updateText() {
-	_hoveredElementGUI = ElementGUI_hovered;
+	_hoveredElement = Element_hovered;
 
-	if (_hoveredElementGUI == canvas) {
+	if (_hoveredElement == canvas) {
 		sf::Vector2i coords = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 		std::wstring text = std::to_wstring(coords.x) + L" x " + std::to_wstring(coords.y);
 		_textCursorPosition->setString(text);
 	}
 
-	if (_hoveredElementGUI == nullptr) {
+	if (_hoveredElement == nullptr) {
 		_textCursorPosition->setString(L"");
 		_textCanvasSize->setString(std::to_wstring(canvas->_size.x) + L" x " + std::to_wstring(canvas->_size.y));
 	}
@@ -94,10 +94,10 @@ void BottomBar::cursorHover() {
 
 void BottomBar::handleEvent(const sf::Event& event) {
 
-	if (ElementGUI_hovered != canvas && 
-		ElementGUI_hovered != canvas->_hoveredEdgePoint && ElementGUI_pressed != canvas->_hoveredEdgePoint &&
-		ElementGUI_hovered != selection->_hoveredEdgePoint && ElementGUI_pressed != selection->_hoveredEdgePoint &&
-		_hoveredElementGUI == ElementGUI_hovered)
+	if (Element_hovered != canvas && 
+		Element_hovered != canvas->_hoveredEdgePoint && Element_pressed != canvas->_hoveredEdgePoint &&
+		Element_hovered != selection->_hoveredEdgePoint && Element_pressed != selection->_hoveredEdgePoint &&
+		_hoveredElement == Element_hovered)
 		return;
 
 	updateText();

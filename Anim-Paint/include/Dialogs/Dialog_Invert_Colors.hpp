@@ -1,8 +1,8 @@
 #pragma once
 #include "Dialog.hpp"
-#include "ElementGUI/Slider.hpp"
+#include "Element/Slider.hpp"
 #include "Animation/Layer.hpp"
-#include "ElementGUI/Checkbox.hpp"
+#include "Element/Checkbox.hpp"
 
 enum class InvertColorsState { Idle, Edited };
 enum class PaletteTypeToInvert { None, RGB, HSV };

@@ -1,12 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "ElementGUI.hpp"
+#include "Element.hpp"
 #include "Textures.hpp"
 #include <functional>
 
 enum class CheckboxState { Idle, Hover, Pressed };
 
-class Checkbox : public ElementGUI {
+class Checkbox : public Element {
 public:
 	int _value;
 	sf::IntRect _rect;

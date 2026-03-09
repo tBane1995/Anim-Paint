@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialog.hpp"
-#include "ElementGUI/Slider.hpp"
+#include "Element/Slider.hpp"
 #include "Animation/Layer.hpp"
 
 enum class BrightnessContrastState { Idle, Edited };

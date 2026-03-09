@@ -1,4 +1,4 @@
-﻿#include "ElementGUI/NumberInput.hpp"
+﻿#include "Element/NumberInput.hpp"
 #include "Time.hpp"
 #include "Theme.hpp"
 #include "Window.hpp"
@@ -122,7 +122,7 @@ void NumberInput::handleEvent(const sf::Event& event) {
 
 			}
 
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 		else {
 			_editState = TextInputEditState::None;
@@ -143,16 +143,16 @@ void NumberInput::handleEvent(const sf::Event& event) {
 
 			setText(_textStr);
 
-			if (ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 		}
 		_lastCLickTime = currentTime;
 		return;
 	}
 
 	if (const auto* mr = event.getIf<sf::Event::MouseButtonReleased>(); mr) {
-		if (ElementGUI_pressed.get() == this) {
-			ElementGUI_pressed = nullptr;
+		if (Element_pressed.get() == this) {
+			Element_pressed = nullptr;
 		}
 
 		if (_editState == TextInputEditState::Selecting)

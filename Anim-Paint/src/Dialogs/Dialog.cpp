@@ -2,8 +2,8 @@
 #include "Theme.hpp"
 #include "Window.hpp"
 #include "Cursor.hpp"
-#include "ElementGUI/TextInput.hpp"
-#include "ElementGUI/NumberInput.hpp"
+#include "Element/TextInput.hpp"
+#include "Element/NumberInput.hpp"
 #include "Components/MainMenu.hpp"
 #include "Components/Toolbar.hpp"
 #include "Components/BottomBar.hpp"
@@ -14,7 +14,7 @@ Dialog::Dialog() : Dialog(L"Dialog", sf::Vector2i(128, 128)) {
 	_absolutePositioning = true;
 }
 
-Dialog::Dialog(std::wstring title, sf::Vector2i size, sf::Vector2i position, bool absolutePositioning) : ElementGUI() {
+Dialog::Dialog(std::wstring title, sf::Vector2i size, sf::Vector2i position, bool absolutePositioning) : Element() {
 
 	_title = title;
 
@@ -197,7 +197,7 @@ void Dialog::activateOnTabElement(int id) {
 
 void Dialog::cursorHover() {
 	if (_rect.contains(cursor->_position)) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 	}
 
 	_closeBtn->cursorHover();
@@ -213,18 +213,18 @@ void Dialog::handleEvent(const sf::Event& event) {
 	 }
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (ElementGUI_hovered.get() == this && _titleRect.contains(cursor->_position)) {
+		if (Element_hovered.get() == this && _titleRect.contains(cursor->_position)) {
 			_is_moved = true;
 			_offset = _titleRect.position - cursor->_position;
 		}
 
 		if(_rect.contains(cursor->_position))
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		_is_moved = false;
-		if(ElementGUI_pressed.get() == this)
-			ElementGUI_pressed = nullptr;
+		if(Element_pressed.get() == this)
+			Element_pressed = nullptr;
 	}else if(const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Escape){
 		_state = DialogState::ToClose;
 	}else if (_onTabElements.size() > 0) {

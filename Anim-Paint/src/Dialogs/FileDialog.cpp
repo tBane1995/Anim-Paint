@@ -107,7 +107,7 @@ bool hasChildren(std::filesystem::path& p) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-LocationRect::LocationRect(std::wstring path, int depth = 0) : ElementGUI() {
+LocationRect::LocationRect(std::wstring path, int depth = 0) : Element() {
 
 	_rect = sf::IntRect(sf::Vector2i(0,0), sf::Vector2i(0,0));
 	unclick();
@@ -265,7 +265,7 @@ void LocationRect::cursorHover() {
 	
 	
 	if (_rect.contains(cursor->_position)) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 	}
 
 	if (_isOpen && !_children.empty()) {
@@ -286,16 +286,16 @@ void LocationRect::handleEvent(const sf::Event& event) {
 			float indent = _rect.position.x + _depth * _indentDelta;
 
 			if ( indent < cursor->_position.x && cursor->_position.x < indent + _arrowMargin + 8) {
-				ElementGUI_pressed = this->shared_from_this();
+				Element_pressed = this->shared_from_this();
 				_clickType = LocationRectClickType::ClickArrow;
 			}
 			else {
-				ElementGUI_pressed = this->shared_from_this();
+				Element_pressed = this->shared_from_this();
 				_clickType = LocationRectClickType::ClickLocation;
 			}
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (ElementGUI_pressed == this->shared_from_this()) {
+			if (Element_pressed == this->shared_from_this()) {
 				if (_clickType == LocationRectClickType::ClickArrow) {
 					arrowClick();
 				}
@@ -332,12 +332,12 @@ void LocationRect::update() {
 					_onclick_location_func();
 			}
 
-			if (ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 			unclick();
 		}
 	}
-	else if (ElementGUI_hovered.get() == this) {
+	else if (Element_hovered.get() == this) {
 		hover();
 	}
 	else
@@ -396,7 +396,7 @@ void LocationRect::draw() {
 }
 ////////////////////////////////////////////////////////////////////////////
 
-LocationAndFilesSeparator::LocationAndFilesSeparator(int linesCount) : ElementGUI() {
+LocationAndFilesSeparator::LocationAndFilesSeparator(int linesCount) : Element() {
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(file_dialog_separator_width, linesCount * basic_text_rect_height));
 	_minX = _maxX = 0;
 	_state = LocationAndFilesSeparatorState::Idle;
@@ -425,20 +425,20 @@ void LocationAndFilesSeparator::setRange(int minX, int maxX) {
 
 void LocationAndFilesSeparator::cursorHover() {
 	if (_rect.contains(cursor->_position) || _state == LocationAndFilesSeparatorState::Moving) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 	}
 }
 
 void LocationAndFilesSeparator::handleEvent(const sf::Event& event) {
 	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-		if (ElementGUI_pressed.get() == this) {
-			ElementGUI_pressed = nullptr;
+		if (Element_pressed.get() == this) {
+			Element_pressed = nullptr;
 			_state = LocationAndFilesSeparatorState::Idle;
 		}
 	}
 	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_rect.contains(cursor->_position)) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 			_state = LocationAndFilesSeparatorState::Moving;
 			_offset = cursor->_position - _rect.position;
 
@@ -478,7 +478,7 @@ void LocationAndFilesSeparator::draw() {
 }
 ////////////////////////////////////////////////////////////////////////////
 
-FileRect::FileRect() : ElementGUI(){
+FileRect::FileRect() : Element(){
 
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0));
 
@@ -527,7 +527,7 @@ void FileRect::cursorHover() {
 
 	if (_path != std::filesystem::path()) {
 		if (_rect.contains(cursor->_position)) {
-			ElementGUI_hovered = this->shared_from_this();
+			Element_hovered = this->shared_from_this();
 		}
 	}
 }
@@ -538,11 +538,11 @@ void FileRect::handleEvent(const sf::Event& event) {
 	if (_path != std::filesystem::path()) {
 		if (_rect.contains(cursor->_position)) {
 			if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-				ElementGUI_pressed = this->shared_from_this();
+				Element_pressed = this->shared_from_this();
 
 			}
 			else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-				if (ElementGUI_pressed.get() == this) {
+				if (Element_pressed.get() == this) {
 					click();
 				}
 			}
@@ -559,12 +559,12 @@ void FileRect::update() {
 				_onclick_func();
 			}
 
-			if (ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 			unclick();
 		}
 	}
-	else if (ElementGUI_hovered.get() == this) {
+	else if (Element_hovered.get() == this) {
 		hover();
 	}
 	else

@@ -1,4 +1,4 @@
-﻿#include "ElementGUI/Scrollbar.hpp"
+﻿#include "Element/Scrollbar.hpp"
 #include "Window.hpp"
 #include "Cursor.hpp"
 #include <iostream>
@@ -93,20 +93,20 @@ int Scrollbar::getValue() {
 
 void Scrollbar::cursorHover() {
 	if (_rect.contains(cursor->_position)) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 	}
 }
 
 void Scrollbar::handleEvent(const sf::Event& event) {
 
 	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-		if (ElementGUI_pressed.get() == this) {
+		if (Element_pressed.get() == this) {
 			_state = ScrollbarState::Idle;
 		}
 	}
 	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_slider.contains(cursor->_position)) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 			if (_slider.size.y < _rect.size.y) {
 				_state = ScrollbarState::Dragging;
 				_dragOffset = cursor->_position - _slider.position;

@@ -2,11 +2,11 @@
 #include "SFML/Graphics.hpp"
 
 // std::enable_shared_from_this for this->shared_from_this
-class ElementGUI : public std::enable_shared_from_this<ElementGUI> {
+class Element : public std::enable_shared_from_this<Element> {
 public:
 
-	ElementGUI();
-	virtual ~ElementGUI();
+	Element();
+	virtual ~Element();
 
 	virtual void cursorHover();
 	virtual void handleEvent(const sf::Event& event);
@@ -14,5 +14,5 @@ public:
 	virtual void draw();
 };
 
-extern std::shared_ptr<ElementGUI> ElementGUI_hovered;
-extern std::shared_ptr<ElementGUI> ElementGUI_pressed;
+extern std::shared_ptr<Element> Element_hovered;
+extern std::shared_ptr<Element> Element_pressed;

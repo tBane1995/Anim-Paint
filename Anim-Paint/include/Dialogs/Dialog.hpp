@@ -1,11 +1,11 @@
 #pragma once
-#include "ElementGUI/ElementGUI.hpp"
-#include "ElementGUI/Button.hpp"
+#include "Element/Element.hpp"
+#include "Element/Button.hpp"
 
 enum class DialogState { Idle, ToClose };
 enum class DialogClickArea { Inside, OutSide };
 
-class Dialog : public ElementGUI {
+class Dialog : public Element {
 public:
 	sf::Vector2i _position;
 	std::wstring _title;
@@ -28,7 +28,7 @@ public:
 	bool _is_moved;
 	sf::Vector2i _offset;
 
-	std::vector<std::shared_ptr<ElementGUI>> _onTabElements;
+	std::vector<std::shared_ptr<Element>> _onTabElements;
 	int _currentOnTabElement;
 
 	Dialog();

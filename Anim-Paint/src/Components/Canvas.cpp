@@ -17,7 +17,7 @@
 #include "Components/BottomBar.hpp"
 #include "Time.hpp"
 
-Canvas::Canvas() : ElementGUI() {
+Canvas::Canvas() : Element() {
 	_minSize = sf::Vector2i(16, 16);
 	_maxSize = sf::Vector2i(256, 256);
 	_size = sf::Vector2i(64, 64);
@@ -389,7 +389,7 @@ void Canvas::pickPixel() {
 }
 
 void Canvas::mouseLeftButtonPressedEvent() {
-	if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
+	if (Element_pressed.get() == this || Element_pressed.get() == nullptr) {
 		if (toolbar->_toolType == ToolType::Brush) {
 			drawPixels(toolbar->_first_color->_color);
 			_isEdited = true;
@@ -408,7 +408,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 		}
 	}
 
-	if (ElementGUI_pressed.get() == nullptr || ElementGUI_pressed.get() == this || selection->_state == SelectionState::Selected) {
+	if (Element_pressed.get() == nullptr || Element_pressed.get() == this || selection->_state == SelectionState::Selected) {
 
 		sf::Vector2i tile = worldToTile(cursor->_position, _position, _zoom, _zoom_delta);
 
@@ -453,7 +453,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 }
 
 void Canvas::mouseRightButtonPressedEvent() {
-	if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
+	if (Element_pressed.get() == this || Element_pressed.get() == nullptr) {
 		if (toolbar->_toolType == ToolType::Brush) {
 			drawPixels(toolbar->_second_color->_color);
 			_isEdited = true;
@@ -521,7 +521,7 @@ void Canvas::mouseRightButtonReleasedEvent() {
 void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 
 	if (_state == CanvasState::Idle) {
-		if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
+		if (Element_pressed.get() == this || Element_pressed.get() == nullptr) {
 			if (toolbar->_toolType == ToolType::Brush) {
 				drawPixels(toolbar->_first_color->_color);
 				return;
@@ -618,7 +618,7 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 void Canvas::mouseMovedWithRightButtonPressedEvent() {
 
 	if (_state == CanvasState::Idle) {
-		if (ElementGUI_pressed.get() == this || ElementGUI_pressed.get() == nullptr) {
+		if (Element_pressed.get() == this || Element_pressed.get() == nullptr) {
 			if (toolbar->_toolType == ToolType::Brush) {
 				drawPixels(toolbar->_second_color->_color);
 			}
@@ -640,13 +640,13 @@ void Canvas::cursorHover() {
 		return;
 
 	if (_rect.contains(cursor->_position)) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 	}
 
 	if (toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
 		for (auto& point : _edgePoints) {
 			point->cursorHover();
-			if (ElementGUI_hovered == point) {
+			if (Element_hovered == point) {
 				_hoveredEdgePoint = point;
 			}
 		}
@@ -658,14 +658,14 @@ void Canvas::cursorHover() {
 
 		for (auto& point : selection->_edgePoints) {
 			point->cursorHover();
-			if (ElementGUI_hovered == point) {
+			if (Element_hovered == point) {
 				selection->_hoveredEdgePoint = point;
 			}
 		}
 	}
 
 	if(selection->_state == SelectionState::Selecting || selection->_state == SelectionState::Resizing) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 	}
 
 }
@@ -681,17 +681,17 @@ void Canvas::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (_clickedEdgePoint != nullptr && ElementGUI_hovered != _clickedEdgePoint) {
+	if (_clickedEdgePoint != nullptr && Element_hovered != _clickedEdgePoint) {
 		return;
 	}
 
-	if (!(ElementGUI_hovered.get() == this || ElementGUI_hovered == nullptr)) {
+	if (!(Element_hovered.get() == this || Element_hovered == nullptr)) {
 		return;
 	}
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_rect.contains(cursor->_position)) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 	}
 
@@ -709,7 +709,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 	
 	// selection resizing
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (selection->_state == SelectionState::Selected && selection->_hoveredEdgePoint != nullptr && ElementGUI_hovered == selection->_hoveredEdgePoint) {
+		if (selection->_state == SelectionState::Selected && selection->_hoveredEdgePoint != nullptr && Element_hovered == selection->_hoveredEdgePoint) {
 			selection->_clickedEdgePoint = selection->_hoveredEdgePoint;
 			selection->_orginalEdgePointPosition = selection->_point_left_top->getPosition();
 			selection->_state = SelectionState::Resizing;
@@ -726,7 +726,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 	// canvas resizing
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (dialogs.empty() && toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
-			if (_hoveredEdgePoint != nullptr && ElementGUI_hovered == _hoveredEdgePoint) {
+			if (_hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
 				_clickedEdgePoint = _hoveredEdgePoint;
 				_orginalEdgePointPosition = _point_left_top->getPosition();
 
@@ -757,7 +757,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (ElementGUI_hovered.get() == this || ElementGUI_hovered.get() == nullptr) {
+	if (Element_hovered.get() == this || Element_hovered.get() == nullptr) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			mouseLeftButtonPressedEvent();

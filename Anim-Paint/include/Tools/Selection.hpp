@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
-#include "ElementGUI/EdgePoint.hpp"
+#include "Element/EdgePoint.hpp"
 
 void removeImageWithAlpha(sf::Image& image, sf::IntRect rect, sf::Color alphaColor = sf::Color::Transparent);
 void removeImageWithMask(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf::Color alphaColor = sf::Color::Transparent);

@@ -1,8 +1,8 @@
 #pragma once
 #include "Dialog.hpp"
 #include <filesystem>
-#include "ElementGUI/Scrollbar.hpp"
-#include "ElementGUI/TextInput.hpp"
+#include "Element/Scrollbar.hpp"
+#include "Element/TextInput.hpp"
 
 std::filesystem::path resolve_lnk(const std::filesystem::path& lnkPath);
 bool isExtension(const std::filesystem::path& p, std::wstring extension);
@@ -15,7 +15,7 @@ bool hasChildren(std::filesystem::path& p);
 
 enum class LocationRectClickType { None, ClickArrow, ClickLocation };
 
-class LocationRect : public ElementGUI {
+class LocationRect : public Element {
 public:
 
 	const float _arrowMargin = 4;
@@ -61,7 +61,7 @@ public:
 
 enum class LocationAndFilesSeparatorState { Idle, Hover, Moving };
 
-class LocationAndFilesSeparator : public ElementGUI {
+class LocationAndFilesSeparator : public Element {
 public:
 	sf::IntRect _rect;
 	int _minX;
@@ -85,7 +85,7 @@ public:
 	void draw();
 };
 
-class FileRect : public ElementGUI {
+class FileRect : public Element {
 public:
 	std::filesystem::path _path;
 	sf::IntRect _rect;

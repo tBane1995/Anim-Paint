@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "ElementGUI/ElementGUI.hpp"
-#include "ElementGUI/Button.hpp"
+#include "Element/Element.hpp"
+#include "Element/Button.hpp"
 #include <filesystem>
 #include "Animation/Animation.hpp"
 
-class OptionBox : public ElementGUI {
+class OptionBox : public Element {
 public:
 	sf::RectangleShape _rect;
 	std::unique_ptr<sf::Text> _text;
@@ -26,7 +26,7 @@ public:
 	void draw();
 };
 
-class MenuBox : public ElementGUI {
+class MenuBox : public Element {
 public:
 	sf::RectangleShape _rect;
 	std::unique_ptr<sf::Text> _text;
@@ -53,7 +53,7 @@ public:
 
 enum class MainMenuStates { Opened, Closing, Closed };
 
-class MainMenu : public ElementGUI {
+class MainMenu : public Element {
 public:
 
 	sf::RectangleShape _rect;

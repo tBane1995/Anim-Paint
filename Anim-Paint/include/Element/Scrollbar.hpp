@@ -1,10 +1,10 @@
 #pragma once
-#include "ElementGUI/ElementGUI.hpp"
+#include "Element/Element.hpp"
 #include <functional>
 
 enum class ScrollbarState { Idle, Dragging, Scrolled };
 
-class Scrollbar : public ElementGUI {
+class Scrollbar : public Element {
 public:
 
 	sf::IntRect _rect;

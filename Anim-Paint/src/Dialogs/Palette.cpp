@@ -116,7 +116,7 @@ void PaletteValues::setPosition(sf::Vector2i position) {
 
 void PaletteValues::cursorHover() {
 	if (_rect.contains(cursor->_position)) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 	}
 }
 
@@ -130,19 +130,19 @@ void PaletteValues::handleEvent(const sf::Event& event) {
 
 	if(const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		_state = PaletteState::None;
-		if(ElementGUI_pressed.get() == this)
-			ElementGUI_pressed = nullptr;
+		if(Element_pressed.get() == this)
+			Element_pressed = nullptr;
 	}
 	
 	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			_state = PaletteState::Selecting;
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 
-		if (const auto* mbp = event.getIf<sf::Event::MouseMoved>(); ElementGUI_pressed.get() == this && mbp && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+		if (const auto* mbp = event.getIf<sf::Event::MouseMoved>(); Element_pressed.get() == this && mbp && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 			_state = PaletteState::Selecting;
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 
 		
@@ -150,7 +150,7 @@ void PaletteValues::handleEvent(const sf::Event& event) {
 }
 
 void PaletteValues::update() {
-	if (_state == PaletteState::Selecting && ElementGUI_pressed.get() == this) {
+	if (_state == PaletteState::Selecting && Element_pressed.get() == this) {
 		_function();
 	}
 

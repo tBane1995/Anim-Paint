@@ -1,13 +1,13 @@
 #pragma once
-#include "ElementGUI/ElementGUI.hpp"
+#include "Element/Element.hpp"
 
-class BottomBar : public ElementGUI {
+class BottomBar : public Element {
 public:
 	sf::IntRect _rect;
 	std::unique_ptr<sf::Text> _textCursorPosition;
 	std::unique_ptr<sf::Text> _textCanvasSize;
 	std::unique_ptr<sf::Text> _textSelectionSize;
-	std::shared_ptr<ElementGUI> _hoveredElementGUI;
+	std::shared_ptr<Element> _hoveredElement;
 
 	BottomBar();
 	~BottomBar();

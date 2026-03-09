@@ -1,4 +1,4 @@
-﻿#include "ElementGUI/EdgePoint.hpp"
+﻿#include "Element/EdgePoint.hpp"
 #include "Cursor.hpp"
 
 EdgePoint::EdgePoint(sf::Vector2i position) {
@@ -24,15 +24,15 @@ void EdgePoint::cursorHover() {
 
 	sf::IntRect r(_rect.position - _rect.size / 2, _rect.size);
 	if (r.contains(cursor->_position)) {
-		ElementGUI_hovered = this->shared_from_this();
+		Element_hovered = this->shared_from_this();
 	}
 }
 
 void EdgePoint::handleEvent(const sf::Event& event) {
-	if (ElementGUI_pressed.get() == this) {
+	if (Element_pressed.get() == this) {
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (ElementGUI_pressed.get() == this)
-				ElementGUI_pressed = nullptr;
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 			return;
 		}
 	}
@@ -41,7 +41,7 @@ void EdgePoint::handleEvent(const sf::Event& event) {
 	if (r.contains(cursor->_position)) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			ElementGUI_pressed = this->shared_from_this();
+			Element_pressed = this->shared_from_this();
 		}
 	}
 }
