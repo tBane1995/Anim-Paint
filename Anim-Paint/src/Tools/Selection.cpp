@@ -1061,6 +1061,15 @@ void Selection::drawRect() {
 }
 
 void Selection::cursorHover() {
+
+	for (auto& edgePoint : _edgePoints) {
+		edgePoint->cursorHover();
+	}
+
+	if(_hoveredEdgePoint != nullptr) {
+		return;
+	}
+
 	if (_state == SelectionState::Selecting ||
 		_state == SelectionState::Resizing ||
 		_state == SelectionState::Selected ||
@@ -1070,6 +1079,23 @@ void Selection::cursorHover() {
 }
 
 void Selection::handleEvent(const sf::Event& event) {
+
+	// selection resizing
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+		if (_state == SelectionState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
+			_clickedEdgePoint = _hoveredEdgePoint;
+			_orginalEdgePointPosition = _point_left_top->getPosition();
+			_state = SelectionState::Resizing;
+			return;
+		}
+	}
+	else if (_state == SelectionState::Resizing) {
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			_clickedEdgePoint = nullptr;
+			_state = SelectionState::Selected;
+		}
+		return;
+	}
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (Element_hovered.get() == this) {
@@ -1084,22 +1110,7 @@ void Selection::handleEvent(const sf::Event& event) {
 		}
 	}
 
-	// selection resizing
-	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_state == SelectionState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
-			_clickedEdgePoint = _hoveredEdgePoint;
-			_orginalEdgePointPosition = _point_left_top->getPosition();
-			_state = SelectionState::Resizing;
-			
-		}
-	}
-	else if (_state == SelectionState::Resizing) {
-		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			_clickedEdgePoint = nullptr;
-			_state = SelectionState::Selected;
-		}
-		return;
-	}
+	
 
 	// other selection interactions
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
@@ -1272,7 +1283,9 @@ void Selection::handleEvent(const sf::Event& event) {
 
 void Selection::update() {
 
-	if (_state != SelectionState::None && Element_pressed.get() != this)
+	if (Element_pressed == _clickedEdgePoint) {
+
+	}else if ((_state != SelectionState::None && Element_pressed.get() != this))
 		Element_pressed = nullptr;
 
 	if (_state == SelectionState::Resizing) {
