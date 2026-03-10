@@ -1,6 +1,7 @@
 #pragma once
 #include "Dialog.hpp"
 #include <filesystem>
+#include "Controls/ColoredButtonWithText.hpp"
 #include "Controls/Scrollbar.hpp"
 #include "Controls/TextInput.hpp"
 

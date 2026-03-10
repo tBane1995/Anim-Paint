@@ -4,16 +4,16 @@
 class FramesPanel : public Dialog {
 public:
 
-	std::shared_ptr<NormalButton> _first_btn;
-	std::shared_ptr<NormalButton> _prev_btn;
-	std::shared_ptr<NormalButton> _next_btn;
-	std::shared_ptr<NormalButton> _last_btn;
+	std::shared_ptr<ButtonWithSprite> _first_btn;
+	std::shared_ptr<ButtonWithSprite> _prev_btn;
+	std::shared_ptr<ButtonWithSprite> _next_btn;
+	std::shared_ptr<ButtonWithSprite> _last_btn;
 	std::unique_ptr<sf::Text> _text;
 
-	std::shared_ptr<NormalButton> _add_frame;
-	std::shared_ptr<NormalButton> _sub_frame;
-	std::shared_ptr<NormalButton> _move_back;
-	std::shared_ptr<NormalButton> _move_next;
+	std::shared_ptr<ButtonWithSprite> _add_frame;
+	std::shared_ptr<ButtonWithSprite> _sub_frame;
+	std::shared_ptr<ButtonWithSprite> _move_back;
+	std::shared_ptr<ButtonWithSprite> _move_next;
 
 	FramesPanel();
 	~FramesPanel();

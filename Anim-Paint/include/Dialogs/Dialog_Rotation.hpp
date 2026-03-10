@@ -1,6 +1,7 @@
 #pragma once
 #include "Dialog.hpp"
 #include "Controls/Slider.hpp"
+#include "Controls/ColoredButtonWithText.hpp"
 #include "Animation/Layer.hpp"
 
 enum class RotationState { Idle, Edited };

@@ -1,6 +1,6 @@
 #pragma once
 #include "Element.hpp"
-#include "Controls/Button.hpp"
+#include "Controls/ButtonWithSprite.hpp"
 
 enum class DialogState { Idle, ToClose };
 enum class DialogClickArea { Inside, OutSide };
@@ -14,7 +14,7 @@ public:
 	sf::IntRect _titleRect;
 	std::unique_ptr<sf::Text> _titleText;
 	sf::IntRect _contentRect;
-	std::shared_ptr<NormalButton> _closeBtn;
+	std::shared_ptr<ButtonWithSprite> _closeBtn;
 
 	DialogState _state;
 	bool _absolutePositioning;

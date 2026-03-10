@@ -28,7 +28,7 @@ Dialog::Dialog(std::wstring title, sf::Vector2i size, sf::Vector2i position, boo
 	sf::Vector2i p = position + sf::Vector2i(dialog_border_width, dialog_border_width + _titleRect.size.y);
 	_contentRect = sf::IntRect(p, sf::Vector2i(size.x - 2 * dialog_border_width, size.y - 2 * dialog_border_width - _titleRect.size.y));
 
-	_closeBtn = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\close.png"), getTexture(L"tex\\btn32\\close_hover.png"));
+	_closeBtn = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\close.png"), getTexture(L"tex\\btn32\\close_hover.png"));
 	_closeBtn->_onclick_func = [this]() {
 		_state = DialogState::ToClose;
 		};

@@ -16,10 +16,10 @@ FramesPanel::FramesPanel()
 
 	_text = std::make_unique<sf::Text>(basicFont, std::to_wstring(getCurrentAnimation()->getCurrentFrameID() + 1) + L"/" + std::to_wstring(getCurrentAnimation()->getFramesCount()), 17);
 
-	_first_btn = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\first.png"), getTexture(L"tex\\btn32\\first_hover.png"));
-	_prev_btn = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\prev.png"), getTexture(L"tex\\btn32\\prev_hover.png"));
-	_next_btn = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\next.png"), getTexture(L"tex\\btn32\\next_hover.png"));
-	_last_btn = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\last.png"), getTexture(L"tex\\btn32\\last_hover.png"));
+	_first_btn = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\first.png"), getTexture(L"tex\\btn32\\first_hover.png"));
+	_prev_btn = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\prev.png"), getTexture(L"tex\\btn32\\prev_hover.png"));
+	_next_btn = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\next.png"), getTexture(L"tex\\btn32\\next_hover.png"));
+	_last_btn = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\last.png"), getTexture(L"tex\\btn32\\last_hover.png"));
 
 	_first_btn->_onclick_func = [this]() {
 		getCurrentAnimation()->firstFrame();
@@ -49,10 +49,10 @@ FramesPanel::FramesPanel()
 	};
 	_last_btn->setTooltip(L"Last frame", L"Go to the last frame");
 
-	_add_frame = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\add_frame.png"), getTexture(L"tex\\btn32\\add_frame_hover.png"));
-	_sub_frame = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\sub_frame.png"), getTexture(L"tex\\btn32\\sub_frame_hover.png"));
-	_move_back = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\move_back.png"), getTexture(L"tex\\btn32\\move_back_hover.png"));
-	_move_next = std::make_shared<NormalButton>(getTexture(L"tex\\btn32\\move_next.png"), getTexture(L"tex\\btn32\\move_next_hover.png"));
+	_add_frame = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\add_frame.png"), getTexture(L"tex\\btn32\\add_frame_hover.png"));
+	_sub_frame = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\sub_frame.png"), getTexture(L"tex\\btn32\\sub_frame_hover.png"));
+	_move_back = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\move_back.png"), getTexture(L"tex\\btn32\\move_back_hover.png"));
+	_move_next = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\move_next.png"), getTexture(L"tex\\btn32\\move_next_hover.png"));
 
 	_add_frame->_onclick_func = [this]() {
 		if (getCurrentAnimation()->getFramesCount() < maxFramesCount) {

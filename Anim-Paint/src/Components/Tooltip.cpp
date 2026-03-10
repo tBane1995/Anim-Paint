@@ -2,6 +2,7 @@
 #include "Cursor.hpp"
 #include "Time.hpp"
 #include "Theme.hpp"
+#include <typeinfo> // TO-DO
 
 std::wstring wrap_text(int line_width, sf::Font& font, float characterSize, std::wstring text) {
 
@@ -124,7 +125,13 @@ void Tooltip::setButton(std::shared_ptr<Button> button){
 	_button = button;
 	_timer = currentTime;
 
-	_title = _button->_title;
+	// TO-DO
+	// get class name of button object
+	std::string className = typeid(*_button).name();
+	std::wstring wClassName(className.begin(), className.end());
+
+	_title = _button->_title + L"(" + wClassName + L")";
+
 	_description = wrap_text(192, basicFont, tooltip_text_font_size, _button->_description);
 
 	_title_text->setString(_title);

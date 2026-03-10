@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
-#include "Controls/Button.hpp"
+#include "Controls/ButtonWithSprite.hpp"
 
 class Separator {
 public:
@@ -13,7 +13,7 @@ public:
 	void draw();
 };
 
-class ColorButton : public NormalButton {
+class ColorButton : public ButtonWithSprite {
 public:
 
 	sf::Color _color;
@@ -25,7 +25,7 @@ public:
 	void draw();
 };
 
-class LargeColorButton : public NormalButton {
+class LargeColorButton : public ButtonWithSprite {
 public:
 
 	sf::Color _color;
@@ -60,24 +60,24 @@ public:
 
 	std::vector<std::shared_ptr<Button>> _clipboard;
 	std::unique_ptr<sf::Text> _clipboard_text;
-	std::shared_ptr<NormalButton> _btn_paste;
+	std::shared_ptr<ButtonWithSprite> _btn_paste;
 	std::shared_ptr<ButtonWithTopTextAndList> _btn_paste_2;
 	std::shared_ptr<ButtonWithRightText> _btn_cut;
 	std::shared_ptr<ButtonWithRightText> _btn_copy;
 	std::shared_ptr<ButtonWithBottomText> _btn_select;
 	std::shared_ptr<ButtonWithBottomText> _btn_lasso;
 	
-	std::vector<std::shared_ptr<NormalButton>> _tools;
+	std::vector<std::shared_ptr<ButtonWithSprite>> _tools;
 	std::unique_ptr<sf::Text> _tools_text;
-	std::shared_ptr<NormalButton> _btn_brush;
-	std::shared_ptr<NormalButton> _btn_picker;
-	std::shared_ptr<NormalButton> _btn_fill;
-	std::shared_ptr<NormalButton> _btn_eraser;
+	std::shared_ptr<ButtonWithSprite> _btn_brush;
+	std::shared_ptr<ButtonWithSprite> _btn_picker;
+	std::shared_ptr<ButtonWithSprite> _btn_fill;
+	std::shared_ptr<ButtonWithSprite> _btn_eraser;
 
-	std::vector<std::shared_ptr<NormalButton>> _sizes;
+	std::vector<std::shared_ptr<ButtonWithSprite>> _sizes;
 	std::unique_ptr<sf::Text> _sizes_text;
-	std::shared_ptr<NormalButton> _size_decrease;
-	std::shared_ptr<NormalButton> _size_increase;
+	std::shared_ptr<ButtonWithSprite> _size_decrease;
+	std::shared_ptr<ButtonWithSprite> _size_increase;
 
 	std::shared_ptr<LargeColorButton> _first_color;
 	std::shared_ptr<LargeColorButton> _second_color;

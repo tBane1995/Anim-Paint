@@ -2,6 +2,7 @@
 #include "Dialog.hpp"
 #include "Animation/Animation.hpp"
 #include "Controls/NumberInput.hpp"
+#include "Controls/ColoredButtonWithText.hpp"
 
 class Dialog_Load_SpriteSheet : public Dialog {
 public:
