@@ -39,7 +39,7 @@ void LayersPanel::loadLayersFromCurrentFrame() {
 
 
 	int id = getCurrentAnimation()->getCurrentLayerID();
-	if (id > 0 && id < getCurrentAnimation()->getLayersCount()) {
+	if (id >= 0 && id < getCurrentAnimation()->getLayersCount()) {
 		layersBoxes[id]->_isActive = true;
 	}
 
