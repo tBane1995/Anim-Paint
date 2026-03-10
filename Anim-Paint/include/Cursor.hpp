@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Window.hpp"
 #include "Controls/TextInput.hpp"
-#include "Components/Toolbar.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 #include <iostream>
 #include "WorldToTileConverter.hpp"

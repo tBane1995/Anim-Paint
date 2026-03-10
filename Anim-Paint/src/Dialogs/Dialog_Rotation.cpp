@@ -4,7 +4,7 @@
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Window.hpp"
 #include "Tools/Filters.hpp"
-#include "Components/Toolbar.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 #include "History.hpp"
 
 Dialog_Rotation::Dialog_Rotation(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"rotation", sf::Vector2i(256, 192), sf::Vector2i(8, 120)) {
@@ -99,7 +99,7 @@ void Dialog_Rotation::setTheFilter() {
 	for (auto& org : _original_layers) {
 		_edited_layers.push_back(std::make_shared<Layer>(org));
 		set_smoothing(_edited_layers.back()->_image, _smoothness_slider->getValue(), _radius_slider->getValue());
-		set_rotation(_edited_layers.back()->_image, (float)(_rotation_slider->getValue()), true, toolbar->_second_color->_color);
+		set_rotation(_edited_layers.back()->_image, _rotation_slider->getValue(), true, toolbar->_second_color->_color);
 	}
 
 	getCurrentAnimation()->getCurrentFrame()->_layers.clear();

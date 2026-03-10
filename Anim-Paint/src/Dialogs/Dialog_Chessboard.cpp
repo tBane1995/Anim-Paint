@@ -4,7 +4,7 @@
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
-#include "Components/Toolbar.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 #include "History.hpp"
 
 Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"chessboard", sf::Vector2i(256+16, 160), sf::Vector2i(8, 120)) {

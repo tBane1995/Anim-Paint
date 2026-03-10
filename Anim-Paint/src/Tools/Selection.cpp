@@ -4,7 +4,7 @@
 #include "DebugLog.hpp"
 #include "Textures.hpp"
 #include "Animation/Animation.hpp"
-#include "Components/Toolbar.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 #include "Tools/Line.hpp"
 #include "WorldToTileConverter.hpp"
 #include "Cursor.hpp"

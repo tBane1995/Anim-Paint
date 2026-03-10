@@ -4,7 +4,7 @@
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
-#include "Components/Toolbar.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 #include "History.hpp"
 

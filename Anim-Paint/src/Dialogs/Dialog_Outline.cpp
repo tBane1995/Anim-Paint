@@ -4,7 +4,7 @@
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
-#include "Components/Toolbar.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 #include "History.hpp"
 
 Dialog_Outline::Dialog_Outline(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"outline", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {

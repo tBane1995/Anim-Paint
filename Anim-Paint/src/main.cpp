@@ -49,7 +49,7 @@
 
 #include "Tools/Selection.hpp"
 #include "Tools/Brush.hpp"
-#include "Components/Toolbar.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
 void resize() {

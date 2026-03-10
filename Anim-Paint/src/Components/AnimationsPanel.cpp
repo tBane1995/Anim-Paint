@@ -6,7 +6,7 @@
 #include "Components/FramesPanel.hpp"
 #include "Tools/Selection.hpp"
 #include "Components/MainMenu.hpp"
-#include "Components/Toolbar.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 
 AnimationsPanel::AnimationsPanel() : 
 	Dialog(

@@ -5,7 +5,7 @@
 #include "Tools/Brush.hpp"
 #include "Animation/Animation.hpp"
 #include "WorldToTileConverter.hpp"
-#include "Components/Toolbar.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 #include "Tools/Selection.hpp"
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Dialogs/Dialog.hpp"

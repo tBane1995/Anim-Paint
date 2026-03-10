@@ -1,6 +1,6 @@
 ﻿#include "Tools/Brush.hpp"
 #include "Window.hpp"
-#include "Components/Toolbar.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 
 std::vector<std::vector<std::vector<bool>>> circle_brushes = {
 

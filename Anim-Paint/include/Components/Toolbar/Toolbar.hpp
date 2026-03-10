@@ -1,53 +1,11 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
+#include "Controls/Button.hpp"
 #include "Controls/ButtonWithSprite.hpp"
-
-class Separator {
-public:
-	sf::IntRect _rect;
-	Separator();
-	~Separator();
-
-	void setPosition(sf::Vector2i position);
-	sf::Vector2i getSize();
-	void draw();
-};
-
-class ColorButton : public ButtonWithSprite {
-public:
-
-	sf::Color _color;
-
-	ColorButton(sf::Color color);
-	~ColorButton();
-
-	void setPosition(sf::Vector2i position);
-	void draw();
-};
-
-class LargeColorButton : public ButtonWithSprite {
-public:
-
-	sf::Color _color;
-
-	LargeColorButton(sf::Color color);
-	~LargeColorButton();
-	
-	void setPosition(sf::Vector2i position);
-	void setColor(sf::Color color);
-	void draw();
-};
-
-class PaletteButton : public ButtonWithBottomText {
-public:
-
-	sf::Shader _shader;
-
-	PaletteButton(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position);
-	~PaletteButton();
-
-	void draw();
-};
+#include "Components/Toolbar/Separator.hpp"
+#include "Components/Toolbar/ColorButton.hpp"
+#include "Components/Toolbar/LargeColorButton.hpp"
+#include "Components/Toolbar/PaletteButton.hpp"
 
 enum class ToolType { Brush, Eraser, Selector, Lasso, Fill, Picker };
 
