@@ -1,5 +1,5 @@
 #include "Dialogs/Dialog_Save_Project.hpp"
-#include "Components/MainMenu.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 #include <iostream>
 
 Dialog_Save_Project::Dialog_Save_Project() : FileDialog(L"Save Project", L"save", L".animproj") {

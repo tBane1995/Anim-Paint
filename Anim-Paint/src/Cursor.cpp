@@ -6,7 +6,7 @@
 #include "Dialogs/Palette.hpp"
 #include "Tools/Selection.hpp"
 #include "Controls/Slider.hpp"
-#include "Components/MainMenu.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 
 Cursor::Cursor() {
 

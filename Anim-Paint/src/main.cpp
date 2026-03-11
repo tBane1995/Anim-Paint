@@ -42,7 +42,7 @@
 #include "Dialogs/Dialog_Hue_Saturation.hpp"
 #include "Dialogs/Dialog_Sepia.hpp"
 
-#include "Components/MainMenu.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 #include "Components/BottomBar.hpp"
 
 #include "Components/Tooltip.hpp"

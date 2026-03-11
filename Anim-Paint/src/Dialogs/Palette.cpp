@@ -7,7 +7,7 @@
 #include "SFML/Graphics.hpp"
 #include "Theme.hpp"
 #include <iostream>
-#include "Components/MainMenu.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 #include "Components/BottomBar.hpp"
 #include "DebugLog.hpp"
 #include "Tools/Selection.hpp"

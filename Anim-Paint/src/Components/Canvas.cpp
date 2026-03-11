@@ -10,7 +10,7 @@
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Dialogs/Dialog.hpp"
 #include "DebugLog.hpp"
-#include "Components/MainMenu.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 #include "Dialogs/Palette.hpp"
 #include "Tools/Line.hpp"
 #include "History.hpp"

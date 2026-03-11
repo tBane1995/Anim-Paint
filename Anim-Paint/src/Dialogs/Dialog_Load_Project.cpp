@@ -1,5 +1,5 @@
 #include "Dialogs/Dialog_Load_Project.hpp"
-#include "Components/MainMenu.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 #include <iostream>
 #include "Animation/Animation.hpp"
 #include "Components/Canvas.hpp"

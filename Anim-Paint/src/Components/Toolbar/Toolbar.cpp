@@ -5,7 +5,7 @@
 #include "Animation/Animation.hpp"
 #include "Tools/Brush.hpp"
 #include "Dialogs/Palette.hpp"
-#include "Components/MainMenu.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 #include "Cursor.hpp"
 
 Toolbar::Toolbar() : Element() {

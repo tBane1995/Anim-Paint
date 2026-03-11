@@ -1,5 +1,5 @@
 ﻿#include "Dialogs/Dialog_Load_SpriteSheet.hpp"
-#include "Components/MainMenu.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 #include <iostream>
 #include "Animation/Animation.hpp"
 #include "Theme.hpp"
