@@ -5,7 +5,7 @@
 #include "Window.hpp"
 
 #include "Dialogs/Dialog.hpp"
-#include "Dialogs/FileDialog.hpp"
+#include "Dialogs/FileDialog/FileDialog.hpp"
 #include "Dialogs/Dialog_Save_Project.hpp"
 #include "Dialogs/Dialog_Load_Project.hpp"
 #include "Dialogs/Dialog_Import.hpp"

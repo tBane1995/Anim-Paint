@@ -36,7 +36,7 @@
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Components/AnimationsPanel.hpp"
 #include "Dialogs/Palette.hpp"
-#include "Dialogs/FileDialog.hpp"
+#include "Dialogs/FileDialog/FileDialog.hpp"
 #include "Dialogs/Dialog_Rotation.hpp"
 #include "Dialogs/Dialog_Brightness_Contrast.hpp"
 #include "Dialogs/Dialog_Hue_Saturation.hpp"

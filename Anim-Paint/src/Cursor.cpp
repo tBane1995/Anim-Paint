@@ -1,6 +1,6 @@
 ﻿ #include "Cursor.hpp"
 #include "SFML/Graphics.hpp"
-#include "Dialogs/FileDialog.hpp"
+#include "Dialogs/FileDialog/FileDialog.hpp"
 #include "Components/Canvas.hpp"
 #include "Tools/Brush.hpp"
 #include "Dialogs/Palette.hpp"

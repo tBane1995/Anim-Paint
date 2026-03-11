@@ -1,5 +1,5 @@
 #pragma once
-#include "FileDialog.hpp"
+#include "Dialogs/FileDialog/FileDialog.hpp"
 
 class Dialog_Import : public FileDialog {
 public:
