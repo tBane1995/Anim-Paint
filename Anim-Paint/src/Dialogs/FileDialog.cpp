@@ -91,6 +91,9 @@ bool isDrive(const std::wstring& path) {
 }
 
 bool hasChildren(std::filesystem::path& p) {
+
+	return false;
+
 	std::error_code ec;
 	if (!std::filesystem::exists(p, ec) || !std::filesystem::is_directory(p, ec))
 		return false;
@@ -370,6 +373,7 @@ void LocationRect::draw() {
 	window->draw(rect);
 
 	float indent = _depth * _indentDelta;
+
 
 	sf::Sprite arrow(*getTexture(_isOpen ? L"tex\\file_dialog\\dictionaryIsOpened.png" : hasChildren(_path) ? L"tex\\file_dialog\\dictionaryIsClosed.png" : L"tex\\file_dialog\\dictionaryIsEmpty.png")->_texture);
 	arrow.setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(indent, 6));
@@ -943,7 +947,7 @@ void FileDialog::drawLeftPanel() {
 	for (auto& fav : _locations)
 		fav->draw();
 
-	window->setView(mainView);
+	
 }
 
 void FileDialog::drawRightPanel() {
@@ -980,7 +984,6 @@ void FileDialog::drawRightPanel() {
 	for (auto& file : _files)
 		file->draw();
 
-	window->setView(mainView);
 }
 
 void FileDialog::drawBottomPanel() {
@@ -1069,7 +1072,7 @@ void FileDialog::updateLocations(std::shared_ptr<LocationRect> location)
 		}
 	}
 
-	_filenameInput->update();
+	//_filenameInput->update();
 }
 
 void FileDialog::cursorHover() {
@@ -1081,8 +1084,10 @@ void FileDialog::cursorHover() {
 				file->cursorHover();
 		}
 		
-		for (auto& fav : _locations) {
-			cursorHoverLocations(fav);
+		if (_leftRect->contains(cursor->_position)) {
+			for (auto& fav : _locations) {
+				cursorHoverLocations(fav);
+			}
 		}
 	}
 		
@@ -1153,6 +1158,7 @@ void FileDialog::draw() {
 	drawLeftPanel();
 	drawRightPanel();
 
+	window->setView(mainView);
 	// left scrollbar
 	sf::Vector2i leftScrollbarPos(_leftRect->position.x + _leftRect->size.x, _leftRect->position.y);
 	_leftScrollbar->setPosition(leftScrollbarPos);

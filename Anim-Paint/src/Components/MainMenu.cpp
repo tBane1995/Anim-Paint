@@ -491,6 +491,11 @@ MainMenu::MainMenu() : Element() {
 		};
 	_menu_boxes.push_back(settings);
 
+	std::shared_ptr<OptionBox> preferences = std::make_shared<OptionBox>(L"preferences");
+	std::shared_ptr<OptionBox> help = std::make_shared<OptionBox>(L"help");
+
+	settings->addOption(preferences);
+	settings->addOption(help);
 
 	// POSITIONING
 	_state = MainMenuStates::Closed;
