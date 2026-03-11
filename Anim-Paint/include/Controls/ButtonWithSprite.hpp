@@ -12,13 +12,7 @@ public:
 
 	sf::Vector2i getSize();
 	void setPosition(sf::Vector2i position);
-	void unclick();
-	void hover();
-	void click();
 
-	void cursorHover();
-	void handleEvent(const sf::Event& event);
-	void update();
 	void draw();
 
 };

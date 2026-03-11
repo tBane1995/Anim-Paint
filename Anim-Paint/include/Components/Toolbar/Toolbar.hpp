@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
-#include "Controls/Button.hpp"
-#include "Controls/ButtonWithSprite.hpp"
+#include "Components/Toolbar/ButtonWithTopTextAndList.hpp"
+#include "Components/Toolbar/ButtonWithRightText.hpp"
 #include "Components/Toolbar/Separator.hpp"
 #include "Components/Toolbar/ColorButton.hpp"
 #include "Components/Toolbar/LargeColorButton.hpp"

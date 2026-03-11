@@ -1,17 +1,32 @@
-﻿#include "Controls/ButtonWithSprite.hpp"
+﻿#include "Components/Toolbar/ButtonWithRightText.hpp"
 #include "Theme.hpp"
 #include "Time.hpp"
 #include "Cursor.hpp"
 #include "Window.hpp"
 
-ButtonWithSprite::ButtonWithSprite(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position)
-: Button() {
+ButtonWithRightText::ButtonWithRightText(std::wstring text, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position) : Button()
+{
+	_rectIdleColor = tools_button_idle_color;
+	_rectHoverColor = tools_button_hover_color;
+	_rectPressColor = tools_button_press_color;
+	_rectSelectColor = tools_button_select_color;
+
+	_rectBorderWidth = tools_border_width;
+	_rectIdleBorderColor = tools_button_idle_border_color;
+	_rectHoverBorderColor = tools_button_hover_border_color;
+	_rectPressBorderColor = tools_button_press_border_color;
+	_rectSelectBorderColor = tools_button_select_border_color;
+
+	_textColor = textColor;
+	_hoverTextColor = hoverTextColor;
 
 	_texture = texture;
 	_hoverTexture = hoverTexture;
 
-	sf::Vector2i rectSize = sf::Vector2i(_texture->_texture->getSize());
-	_rect = sf::IntRect(sf::Vector2i(0, 0), rectSize);
+	_text = std::make_unique<sf::Text>(basicFont, text, 13);
+	_text->setFillColor(_textColor);
+
+	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(64, 32));
 
 	setPosition(position);
 
@@ -23,19 +38,36 @@ ButtonWithSprite::ButtonWithSprite(std::shared_ptr<Texture> texture, std::shared
 
 }
 
-ButtonWithSprite::~ButtonWithSprite() {
-	
+ButtonWithRightText::~ButtonWithRightText() {
+
 }
 
-sf::Vector2i ButtonWithSprite::getSize() {
+sf::Vector2i ButtonWithRightText::getSize() {
 	return _rect.size;
 }
 
-void ButtonWithSprite::setPosition(sf::Vector2i position) {
+void ButtonWithRightText::setPosition(sf::Vector2i position) {
 	_rect.position = position;
+	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32, 24 - basicFont.getLineSpacing(13)));
 }
 
-void ButtonWithSprite::draw() {
+void ButtonWithRightText::unclick() {
+	_state = ButtonState::Idle;
+	_text->setFillColor(_textColor);
+}
+
+void ButtonWithRightText::hover() {
+	_state = ButtonState::Hover;
+	_text->setFillColor(_hoverTextColor);
+}
+
+void ButtonWithRightText::click() {
+	_state = ButtonState::Pressed;
+	_clickTime = currentTime;
+	_text->setFillColor(_hoverTextColor);
+}
+
+void ButtonWithRightText::draw() {
 
 	sf::Vector2f rectSize;
 	rectSize.x = float(_rect.size.x - 2 * _rectBorderWidth);
@@ -77,4 +109,5 @@ void ButtonWithSprite::draw() {
 	sprite.setPosition(sf::Vector2f(_rect.position));
 	window->draw(sprite);
 
+	window->draw(*_text);
 }

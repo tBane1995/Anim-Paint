@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Controls/Button.hpp"
+#include "Components/Toolbar/ButtonWithBottomText.hpp"
 
 class PaletteButton : public ButtonWithBottomText {
 public:
