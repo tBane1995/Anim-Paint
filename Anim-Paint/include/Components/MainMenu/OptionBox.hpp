@@ -4,24 +4,14 @@
 #include <filesystem>
 #include "Animation/Animation.hpp"
 
-class OptionBox : public Element {
+class OptionBox : public Button {
 public:
-	sf::RectangleShape _rect;
 	std::unique_ptr<sf::Text> _text;
-	ButtonState _state;
-	std::function<void()> _onclick_func;
-	sf::Time _clickTime;
 
 	OptionBox(std::wstring text);
 	~OptionBox();
 
 	void setPosition(sf::Vector2i position);
-	void unclick();
-	void hover();
-	void click();
-
-	void cursorHover();
-	void handleEvent(const sf::Event& event);
-	void update();
+	void setSize(sf::Vector2i size);
 	void draw();
 };

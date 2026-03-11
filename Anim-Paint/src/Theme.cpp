@@ -55,8 +55,11 @@ sf::Color menubox_open_color;
 sf::Color menubox_idle_color;
 sf::Color menubox_hover_color;
 sf::Color menubox_press_color;
-int menuoptions_border_width;
-sf::Color menuoptions_border_color;
+
+int optionbox_left_margin;
+int optionbox_right_margin;
+int optionbox_border_width;
+sf::Color optionbox_border_color;
 sf::Color optionbox_select_color;
 sf::Color optionbox_idle_color;
 sf::Color optionbox_hover_color;
@@ -183,9 +186,10 @@ void loadTheme() {
 	menubox_hover_color = sf::Color(47, 47, 47);
 	menubox_press_color = sf::Color(39, 39, 39);
 
-	menuoptions_border_width = 2;
-	menuoptions_border_color = sf::Color(63, 63, 63);
-
+	optionbox_left_margin = 8;
+	optionbox_right_margin = 8;
+	optionbox_border_width = 2;
+	optionbox_border_color = sf::Color(63, 63, 63);
 	optionbox_select_color = sf::Color(79, 31, 31);
 	optionbox_idle_color = sf::Color(31, 31, 31);
 	optionbox_hover_color = sf::Color(47, 47, 47);

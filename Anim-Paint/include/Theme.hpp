@@ -54,8 +54,11 @@ extern sf::Color menubox_open_color;
 extern sf::Color menubox_idle_color;
 extern sf::Color menubox_hover_color;
 extern sf::Color menubox_press_color;
-extern int menuoptions_border_width;
-extern sf::Color menuoptions_border_color;
+
+extern int optionbox_left_margin;
+extern int optionbox_right_margin;
+extern int optionbox_border_width;
+extern sf::Color optionbox_border_color;
 extern sf::Color optionbox_select_color;
 extern sf::Color optionbox_idle_color;
 extern sf::Color optionbox_hover_color;

@@ -32,7 +32,7 @@ ButtonWithTopTextAndList::ButtonWithTopTextAndList(std::wstring text, sf::Color 
 	setPosition(position);
 
 	_list_rect = sf::RectangleShape();
-	_list_rect.setFillColor(menuoptions_border_color);
+	_list_rect.setFillColor(optionbox_border_color);
 	_options.clear();
 	_isOpen = false;
 
@@ -62,14 +62,14 @@ void ButtonWithTopTextAndList::addOption(std::wstring text) {
 		_options.push_back(o);
 		sf::Vector2f rectSize;
 		rectSize.x = 0;
-		rectSize.y = float(o->_rect.size.y + menuoptions_border_width);
+		rectSize.y = float(o->_rect.size.y + optionbox_border_width);
 		_list_rect.setSize(rectSize);
 		return;
 	}
 
 	int wdt = (_options.back()->_rect.size.x > o->_rect.size.x) ? _options.back()->_rect.size.x : o->_rect.size.x;
 	sf::Vector2f rectSize;
-	rectSize.x = float(wdt + 2 * menuoptions_border_width);
+	rectSize.x = float(wdt + 2 * optionbox_border_width);
 	rectSize.y = float(_list_rect.getSize().y + o->_rect.size.y);
 	_list_rect.setSize(rectSize);
 
@@ -88,7 +88,7 @@ void ButtonWithTopTextAndList::setPosition(sf::Vector2i position) {
 	sf::Vector2i ipos = _rect.position + sf::Vector2i(0, _rect.size.y);
 
 	sf::Vector2f rectPos;
-	rectPos.x = float(ipos.x - menuoptions_border_width);
+	rectPos.x = float(ipos.x - optionbox_border_width);
 	rectPos.y = float(ipos.y);
 
 	_list_rect.setPosition(rectPos);

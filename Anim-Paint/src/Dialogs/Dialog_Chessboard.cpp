@@ -17,7 +17,7 @@ Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers)
 	_tileCount_slider = std::make_shared<Slider>(L"tile count",1, maxTileCount);
 	_tileCount_slider->setValue(2);
 
-	_transparency_slider = std::make_shared<Slider>(L"transparency", 0, 100, L"%");
+	_transparency_slider = std::make_shared<Slider>(L"alpha", 0, 100, L"%");
 	_transparency_slider->setValue(20);
 
 	setTheFilter();

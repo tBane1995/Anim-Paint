@@ -701,13 +701,13 @@ void MainMenu::draw() {
 		if (_open_menu_box->_options.size() > 0) {
 
 			sf::Vector2f rectSize;
-			rectSize.x = _open_menu_box->_options.front()->_rect.getSize().x;
+			rectSize.x = _open_menu_box->_options.front()->getSize().x;
 			rectSize.y = (float)(_open_menu_box->_options.size()) * (float)(menu_height);
 
 			sf::RectangleShape rect(rectSize);
-			rect.setPosition(_open_menu_box->_options.front()->_rect.getPosition());
-			rect.setOutlineThickness((float)(menuoptions_border_width));
-			rect.setOutlineColor(menuoptions_border_color);
+			rect.setPosition((sf::Vector2f)(_open_menu_box->_options.front()->getPosition()));
+			rect.setOutlineThickness((float)(optionbox_border_width));
+			rect.setOutlineColor(optionbox_border_color);
 			window->draw(rect);
 		}
 	}

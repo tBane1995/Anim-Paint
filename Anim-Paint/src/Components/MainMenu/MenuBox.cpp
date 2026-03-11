@@ -27,15 +27,15 @@ void MenuBox::addOption(std::shared_ptr<OptionBox> option) {
 
 	int max_wdt = 0;
 	for (auto& o : _options) {
-		if ((int)(o->_rect.getSize().x) > max_wdt)
-			max_wdt = (int)(o->_rect.getSize().x);
+		if ((int)(o->getSize().x) > max_wdt)
+			max_wdt = (int)(o->getSize().x);
 	}
 
 	for (auto& o : _options) {
-		sf::Vector2f size;
-		size.x = (float)(max_wdt);
-		size.y = (float)(menu_height);
-		o->_rect.setSize(size);
+		sf::Vector2i size;
+		size.x = max_wdt;
+		size.y = menu_height;
+		o->setSize(size);
 	}
 
 

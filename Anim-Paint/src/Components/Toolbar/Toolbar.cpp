@@ -304,8 +304,8 @@ sf::Vector2i Toolbar::getSize() {
 void Toolbar::setPosition(sf::Vector2i position) {
 	_rect.position = position;
 
-	position = sf::Vector2i(_rect.position) + sf::Vector2i(menuoptions_border_width, 0);
-
+	position = sf::Vector2i(_rect.position) + sf::Vector2i(optionbox_border_width, 0);
+	
 	// clipboard 
 	_clipboard[0]->setPosition(position + sf::Vector2i(0, 0));
 	_clipboard[1]->setPosition(position + sf::Vector2i(0, 32));
