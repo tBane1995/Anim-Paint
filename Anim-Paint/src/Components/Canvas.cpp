@@ -530,7 +530,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (!(Element_hovered.get() == this || Element_hovered == nullptr)) {
+	if (!(Element_hovered.get() == this || Element_hovered == nullptr || Element_hovered == selection)) {
 		return;
 	}
 
@@ -582,6 +582,18 @@ void Canvas::handleEvent(const sf::Event& event) {
 		return;
 	}
 
+	if(Element_hovered.get() == this ||  Element_hovered.get() == nullptr || Element_hovered == selection) {
+		if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>()) {
+			setZoom(mws->delta);
+		}
+		else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {
+			if(_rect.contains(cursor->_position)) {
+				_state = CanvasState::Moving;
+				_offset = _rect.position - cursor->_position;
+			}
+		}
+	}
+
 	if (Element_hovered.get() == this || Element_hovered.get() == nullptr) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
@@ -593,21 +605,10 @@ void Canvas::handleEvent(const sf::Event& event) {
 		else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Right) {
 			mouseRightButtonPressedEvent();
 		}
-		else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Middle) {
-			_state = CanvasState::Moving; 
-			_offset = _rect.position - cursor->_position;
-		}
-
 		else if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv && sf::Mouse::isButtonPressed(sf::Mouse::Button::Right)) {
 			mouseMovedWithRightButtonPressedEvent();
 		}
 
-		else if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>()) {
-			setZoom(mws->delta);
-		}
-		else {
-
-		}
 	}
 
 

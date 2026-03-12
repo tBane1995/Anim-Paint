@@ -12,6 +12,5 @@ public:
 	~OptionBox();
 
 	void setPosition(sf::Vector2i position);
-	void setSize(sf::Vector2i size);
 	void draw();
 };

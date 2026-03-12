@@ -36,10 +36,6 @@ void OptionBox::setPosition(sf::Vector2i position) {
 	_text->setPosition(textPos);
 }
 
-void OptionBox::setSize(sf::Vector2i size) {
-	_rect.size = size;
-}
-
 void OptionBox::draw() {
 
 	// draw rectangle

@@ -61,6 +61,10 @@ void Button::setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color 
 	_rectSelectBorderColor = selectBorderColor;
 }
 
+void Button::setSize(sf::Vector2i size) {
+	_rect.size = size;
+}
+
 sf::Vector2i Button::getSize() { 
 	return _rect.size; 
 }

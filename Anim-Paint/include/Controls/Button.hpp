@@ -38,6 +38,7 @@ public:
 	void setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor);
 	void setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor, int borderWidth, sf::Color idleBorderColor, sf::Color hoverBorderColor, sf::Color pressBorderColor, sf::Color selectBorderColor);
 	
+	virtual void setSize(sf::Vector2i size);
 	virtual sf::Vector2i getSize();
 	virtual sf::Vector2i getPosition();
 	virtual void setPosition(sf::Vector2i position);
