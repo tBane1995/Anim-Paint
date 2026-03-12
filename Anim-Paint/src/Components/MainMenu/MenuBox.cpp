@@ -67,6 +67,10 @@ void MenuBox::setPosition(sf::Vector2i position) {
 void MenuBox::cursorHover() {
 	Button::cursorHover();
 
+	if (Element_pressed.get() == this) {
+		_isSelected = true;
+	}
+
 	if (_isSelected) {
 		for (auto& option : _options)
 			option->cursorHover();

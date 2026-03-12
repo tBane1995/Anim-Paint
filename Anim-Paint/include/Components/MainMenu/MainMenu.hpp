@@ -10,8 +10,7 @@ enum class MainMenuStates { Opened, Closing, Closed };
 class MainMenu : public Element {
 public:
 
-	sf::RectangleShape _rect;
-	std::shared_ptr<sf::Sprite> _logo;
+	sf::IntRect _rect;
 	std::vector<std::shared_ptr<MenuBox>> _menu_boxes;
 
 	MainMenuStates _state;
@@ -20,7 +19,7 @@ public:
 	MainMenu();
 	~MainMenu();
 
-	sf::Vector2f getSize();
+	sf::Vector2i getSize();
 	void resize();
 	void setPosition(sf::Vector2i position);
 	void hideMenu();	// hide menu - start closing animation - used when opening another menu
@@ -30,6 +29,7 @@ public:
 	void loadProject(const std::filesystem::path& path);
 	void exportAsFile(const std::filesystem::path& path);
 	void importAnimation(std::vector<std::shared_ptr<Animation>> newAnimations);
+	bool cursorOnAnyMenuBox();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

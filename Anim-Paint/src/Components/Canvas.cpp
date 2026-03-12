@@ -582,7 +582,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if(Element_hovered.get() == this ||  Element_hovered.get() == nullptr || Element_hovered == selection) {
+	if(Element_hovered.get() == this || Element_hovered.get() == nullptr || Element_hovered == selection) {
 		if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>()) {
 			setZoom(mws->delta);
 		}

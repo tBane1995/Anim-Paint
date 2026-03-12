@@ -12,6 +12,7 @@
 #include "Theme.hpp"
 #include "History.hpp"
 #include "Time.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 
 
 std::string mask_shader_source = R"(
@@ -1080,6 +1081,14 @@ void Selection::cursorHover() {
 
 void Selection::handleEvent(const sf::Event& event) {
 
+	if (main_menu->cursorOnAnyMenuBox()) {
+		return;
+	}
+
+	if(main_menu->_state != MainMenuStates::Closed) {
+		return;
+	}
+
 	// selection resizing
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_state == SelectionState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
@@ -1121,6 +1130,7 @@ void Selection::handleEvent(const sf::Event& event) {
 
 			if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && clickOnSelection(tile)) {
 				_state = SelectionState::Moving;
+				Element_pressed = this->shared_from_this();
 				_offset = tile - _resizedRect.position;
 				
 			}
@@ -1135,6 +1145,7 @@ void Selection::handleEvent(const sf::Event& event) {
 							history->saveStep();
 						}
 						_state = SelectionState::Selecting;
+						Element_pressed = this->shared_from_this();
 						_points.clear();
 						generateRect();
 						_resizedRect = _rect;
@@ -1186,12 +1197,14 @@ void Selection::handleEvent(const sf::Event& event) {
 						_resizedImage = _image;
 					}
 					_state = SelectionState::Selected;
+					Element_pressed = this->shared_from_this();
 					generateEdgePoints();
 				}
 
 			}
 			else if (_state == SelectionState::Moving) {
 				_state = SelectionState::Selected;
+				Element_pressed = this->shared_from_this();
 				generateEdgePoints();
 			}
 			else if (canvas->_isEdited) {
@@ -1283,10 +1296,13 @@ void Selection::handleEvent(const sf::Event& event) {
 
 void Selection::update() {
 
-	if (Element_pressed == _clickedEdgePoint) {
+	if (main_menu->cursorOnAnyMenuBox()) {
+		return;
+	}
 
-	}else if ((_state != SelectionState::None && Element_pressed.get() != this))
-		Element_pressed = nullptr;
+	if (main_menu->_state != MainMenuStates::Closed) {
+		return;
+	}
 
 	if (_state == SelectionState::Resizing) {
 		for (auto& point : _edgePoints) {
@@ -1351,7 +1367,6 @@ void Selection::draw(sf::Color alphaColor) {
 		if (_points.size() >= 3) {
 			drawResizedImage(alphaColor, false);
 			drawRect();
-			
 			if (_state == SelectionState::Selected || _state == SelectionState::Resizing) {
 				for (auto& point : _edgePoints) {
 					point->draw();

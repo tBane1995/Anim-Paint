@@ -164,16 +164,19 @@ int main() {
 		canvas->cursorHover();
 		
 
-		toolbar->cursorHover();
-		frames_panel->cursorHover();
-		layers_panel->cursorHover();
-		animations_panel->cursorHover();
+		
+		
 
 		if (palette)
 			palette->cursorHover();
 
-		main_menu->cursorHover();
 		selection->cursorHover();
+		frames_panel->cursorHover();
+		layers_panel->cursorHover();
+		animations_panel->cursorHover();
+		toolbar->cursorHover();
+		main_menu->cursorHover();
+		
 
 		for (auto& dialog : dialogs)
 			dialog->cursorHover();
@@ -214,9 +217,8 @@ int main() {
 			}
 
 			history->handleEvent(*event);
-			selection->handleEvent(*event);
-
 			main_menu->handleEvent(*event);
+			selection->handleEvent(*event);
 
 			if (palette)
 				palette->handleEvent(*event);

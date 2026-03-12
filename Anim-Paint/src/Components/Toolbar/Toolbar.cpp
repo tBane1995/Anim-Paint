@@ -428,12 +428,6 @@ void Toolbar::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
-	if (main_menu->_state != MainMenuStates::Closed)
-		return;
-
-	if (selection->_state == SelectionState::Selecting)
-		return;
-
 	if (_rect.contains(cursor->_position)) {
 		Element_hovered = this->shared_from_this();
 	}

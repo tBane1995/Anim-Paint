@@ -34,16 +34,6 @@
 
 MainMenu::MainMenu() : Element() {
 
-	sf::Vector2f rectSize;
-	rectSize.x = (float)(window->getSize().x);
-	rectSize.y = (float)(menu_height);
-
-	_rect = sf::RectangleShape(rectSize);
-	_rect.setFillColor(menu_bar_color);
-	_rect.setPosition(sf::Vector2f(0,0));
-
-	_logo = std::make_shared<sf::Sprite>(*getTexture(L"tex\\logo\\small_logo.png")->_texture);
-
 	// FILE
 	std::shared_ptr<MenuBox> file = std::make_shared<MenuBox>(L"file");
 	file->_onclick_func = [this, file]() {
@@ -263,6 +253,8 @@ MainMenu::MainMenu() : Element() {
 	// POSITIONING
 	_state = MainMenuStates::Closed;
 	_open_menu_box = nullptr;
+
+	resize();
 	setPosition(sf::Vector2i(0, 0));
 }
 
@@ -271,21 +263,19 @@ MainMenu::~MainMenu() {
 }
 
 void MainMenu::resize() {
-	sf::Vector2f rectSize;
-	rectSize.x = mainView.getSize().x;
-	rectSize.y = (float)(menu_height);
+	sf::Vector2i rectSize;
+	rectSize.x = (int)(mainView.getSize().x);
+	rectSize.y = menu_height;
 
-	_rect.setSize(rectSize);
-	_rect.setPosition(sf::Vector2f(0, 0));
+	_rect.size = rectSize;
+	_rect.position = sf::Vector2i(0, 0);
 }
 
-sf::Vector2f MainMenu::getSize() {
-	return _rect.getSize();
+sf::Vector2i MainMenu::getSize() {
+	return _rect.size;
 }
 
 void MainMenu::setPosition(sf::Vector2i position) {
-	_rect.setPosition(sf::Vector2f(position));
-	_logo->setPosition(sf::Vector2f(0, ((float)(menu_height) - _logo->getGlobalBounds().size.y) / 2.0f));
 
 	int x = 24;
 	int y = position.y + menu_padding;
@@ -299,8 +289,8 @@ void MainMenu::hideMenu() {
 	if (_open_menu_box != nullptr)
 		_open_menu_box->_isSelected = false;
 
-	_state = MainMenuStates::Closing;
 	_open_menu_box = nullptr;
+	_state = MainMenuStates::Closing;
 }
 
 void MainMenu::closeMenu() {
@@ -596,15 +586,20 @@ void MainMenu::importAnimation(std::vector<std::shared_ptr<Animation>> newAnimat
 	layers_panel->loadLayersFromCurrentFrame();
 }
 
+bool MainMenu::cursorOnAnyMenuBox() {
+	for(auto& mb : _menu_boxes)
+		if (mb->_rect.contains(cursor->_position))
+			return true;
+
+	return false;
+}
+
 void MainMenu::cursorHover() {
 
 	if (!dialogs.empty())
 		return;
 
-	if (selection->_state == SelectionState::Selecting)
-		return;
-
-	if (_rect.getGlobalBounds().contains(sf::Vector2f(cursor->_position))) {
+	if (_rect.contains(cursor->_position)) {
   		Element_hovered = this->shared_from_this();
 	}
 
@@ -694,8 +689,14 @@ void MainMenu::update() {
 }
 
 void MainMenu::draw() {
-	window->draw(_rect);
-	window->draw(*_logo);
+	sf::RectangleShape rect(sf::Vector2f(_rect.size));
+	rect.setFillColor(menu_bar_color);
+	rect.setPosition(sf::Vector2f(_rect.position));
+	window->draw(rect);
+	
+	sf::Sprite logo(*getTexture(L"tex\\logo\\small_logo.png")->_texture);
+	logo.setPosition(sf::Vector2f(0, ((float)(menu_height)-logo.getGlobalBounds().size.y) / 2.0f));
+	window->draw(logo);
 
 	if (_open_menu_box != nullptr) {
 		if (_open_menu_box->_options.size() > 0) {
