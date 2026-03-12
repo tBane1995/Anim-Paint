@@ -1095,6 +1095,34 @@ void Selection::handleEvent(const sf::Event& event) {
 		return;
 	}
 
+	bool clickedOnColor = false;
+	for (auto& c : toolbar->_colors) {
+		if (c->_rect.contains(cursor->_position)) {
+			clickedOnColor = true;
+			break;
+		}
+	}
+
+	bool clickedOnFirstOrSecondColor = toolbar->_first_color->_rect.contains(cursor->_position) || toolbar->_second_color->_rect.contains(cursor->_position);
+	
+	bool clickedOnSameSelectionButton = false;
+	if (toolbar->_selectedToolButton == toolbar->_btn_lasso && toolbar->_btn_lasso->_rect.contains(cursor->_position)) {
+		clickedOnSameSelectionButton = true;
+	}
+
+	if (toolbar->_selectedToolButton == toolbar->_btn_select && toolbar->_btn_select->_rect.contains(cursor->_position)) {
+		clickedOnSameSelectionButton = true;
+	}
+	
+	bool clickedOnPaletteButton = false;
+	if(toolbar->_btn_palette_colors->_rect.contains(cursor->_position)) {
+		clickedOnPaletteButton = true;
+	}
+
+	if(clickedOnSameSelectionButton || clickedOnFirstOrSecondColor || clickedOnColor || clickedOnPaletteButton) {
+		return;
+	}
+
 	// selection resizing
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_state == SelectionState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {

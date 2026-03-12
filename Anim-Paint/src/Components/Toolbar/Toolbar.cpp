@@ -60,7 +60,6 @@ Toolbar::Toolbar() : Element() {
 	_btn_select->_onclick_func = [this]() {
 		_toolType = ToolType::Selector;
 		selectToolButton(_btn_select);
-
 		};
 	_btn_select->setTooltip(L"Selection Tool", L"Select an area of the canvas move, copy, or cut");
 
