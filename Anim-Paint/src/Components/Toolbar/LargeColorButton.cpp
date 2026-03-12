@@ -9,10 +9,6 @@ LargeColorButton::~LargeColorButton() {
 
 }
 
-void LargeColorButton::setPosition(sf::Vector2i position) {
-	ButtonWithSprite::setPosition(position);
-}
-
 void LargeColorButton::setColor(sf::Color color) {
 	_color = color;
 }

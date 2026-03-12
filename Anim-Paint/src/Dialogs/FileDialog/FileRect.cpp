@@ -51,7 +51,6 @@ void FileRect::setText(std::wstring text) {
 void FileRect::unclick() {
 	_state = ButtonState::Idle;
 }
-
 void FileRect::hover() {
 	_state = ButtonState::Hover;
 }

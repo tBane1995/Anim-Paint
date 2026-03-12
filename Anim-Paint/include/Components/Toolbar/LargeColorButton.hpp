@@ -9,8 +9,8 @@ public:
 	LargeColorButton(sf::Color color);
 	~LargeColorButton();
 	
-	void setPosition(sf::Vector2i position);
 	void setColor(sf::Color color);
+
 	void draw();
 };
 

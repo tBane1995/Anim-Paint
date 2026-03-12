@@ -43,10 +43,6 @@ ButtonWithBottomText::~ButtonWithBottomText() {
 
 }
 
-sf::Vector2i ButtonWithBottomText::getSize() {
-	return _rect.size;
-}
-
 void ButtonWithBottomText::setPosition(sf::Vector2i position) {
 	_rect.position = position;
 	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(48 / 2 - _text->getGlobalBounds().size.x / 2.0f, _rect.size.y - basicFont.getLineSpacing(13) - 4));

@@ -40,10 +40,6 @@ ColoredButtonWithText::~ColoredButtonWithText() {
 	
 }
 
-sf::Vector2i ColoredButtonWithText::getSize() {
-	return _rect.size;
-}
-
 void ColoredButtonWithText::setPosition(sf::Vector2i position) {
 	_rect.position = sf::Vector2i(position);
 
@@ -65,54 +61,6 @@ void ColoredButtonWithText::hover() {
 void ColoredButtonWithText::click() {
 	_state = ButtonState::Pressed;
 	_clickTime = currentTime;
-}
-
-
-void ColoredButtonWithText::cursorHover() {
-	Button::cursorHover();
-}
-
-void ColoredButtonWithText::handleEvent(const sf::Event& event) {
-	if (_rect.contains(cursor->_position)) {
-		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			Element_pressed = this->shared_from_this();
-			return;
-		}
-		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (Element_pressed.get() == this) {
-				click();
-				return;
-			}
-		}
-	}
-
-	if (_isSelected && _activatedByEnter) {
-		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Enter) {
-			Element_pressed = this->shared_from_this();
-			click();
-			return;
-		}
-	}
-}
-
-void ColoredButtonWithText::update() {
-
-	if (_state == ButtonState::Pressed) {
-		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
-			if (_onclick_func) {
-				_onclick_func();
-			}
-
-			if (Element_pressed.get() == this)
-				Element_pressed = nullptr;
-			unclick();
-		}
-	}
-	else if (Element_hovered.get() == this) {
-		hover();
-	}
-	else
-		unclick();
 }
 
 void ColoredButtonWithText::draw() {

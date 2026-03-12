@@ -9,7 +9,6 @@ public:
 	ColorButton(sf::Color color);
 	~ColorButton();
 
-	void setPosition(sf::Vector2i position);
 	void draw();
 };
 

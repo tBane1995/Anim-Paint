@@ -27,14 +27,6 @@ ButtonWithSprite::~ButtonWithSprite() {
 	
 }
 
-sf::Vector2i ButtonWithSprite::getSize() {
-	return _rect.size;
-}
-
-void ButtonWithSprite::setPosition(sf::Vector2i position) {
-	_rect.position = position;
-}
-
 void ButtonWithSprite::draw() {
 
 	sf::Vector2f rectSize;

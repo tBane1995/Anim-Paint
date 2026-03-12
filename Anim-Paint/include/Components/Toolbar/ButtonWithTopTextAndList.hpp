@@ -20,8 +20,6 @@ public:
 	ButtonWithTopTextAndList(std::wstring text, sf::Color textColor, sf::Color hoverTextColor, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithTopTextAndList();
 
-	sf::Vector2i getSize();
-
 	void addOption(std::wstring text);
 	void setPosition(sf::Vector2i position);
 	void unclick();

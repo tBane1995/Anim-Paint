@@ -14,6 +14,7 @@ MenuBox::MenuBox(std::wstring text) : Element() {
 	rectSize.y = (float)(menu_height);
 	_rect = sf::RectangleShape(rectSize);
 
+	_state = ButtonState::Idle;
 	_isOpen = false;
 	_options.clear();
 }

@@ -32,10 +32,6 @@ Option::Option(std::wstring text, std::shared_ptr<Texture> texture, std::shared_
 Option::~Option() {
 }
 
-sf::Vector2i Option::getSize() {
-	return _rect.size;
-}
-
 void Option::setPosition(sf::Vector2i position) {
 	_rect.position = position;
 	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32, (32 - basicFont.getLineSpacing(13)) / 2 - 1));

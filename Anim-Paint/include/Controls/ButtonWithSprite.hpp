@@ -10,9 +10,6 @@ public:
 	ButtonWithSprite(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithSprite();
 
-	sf::Vector2i getSize();
-	void setPosition(sf::Vector2i position);
-
 	void draw();
 
 };

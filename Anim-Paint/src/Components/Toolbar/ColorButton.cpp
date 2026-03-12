@@ -11,11 +11,6 @@ ColorButton::~ColorButton() {
 
 }
 
-void ColorButton::setPosition(sf::Vector2i position) {
-	ButtonWithSprite::setPosition(position);
-
-}
-
 void ColorButton::draw() {
 	ButtonWithSprite::draw();
 	sf::RectangleShape rect(sf::Vector2f(24,24));

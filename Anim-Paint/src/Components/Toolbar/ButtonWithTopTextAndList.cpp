@@ -51,10 +51,6 @@ ButtonWithTopTextAndList::~ButtonWithTopTextAndList() {
 
 }
 
-sf::Vector2i ButtonWithTopTextAndList::getSize() {
-	return _rect.size;
-}
-
 void ButtonWithTopTextAndList::addOption(std::wstring text) {
 	std::shared_ptr<Option> o = std::make_shared<Option>(text, getTexture(L"tex\\tools\\btn_none.png"), getTexture(L"tex\\tools\\btn_none_hover.png"));
 

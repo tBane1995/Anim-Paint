@@ -42,10 +42,6 @@ ButtonWithRightText::~ButtonWithRightText() {
 
 }
 
-sf::Vector2i ButtonWithRightText::getSize() {
-	return _rect.size;
-}
-
 void ButtonWithRightText::setPosition(sf::Vector2i position) {
 	_rect.position = position;
 	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32, 24 - basicFont.getLineSpacing(13)));
