@@ -291,13 +291,13 @@ void MainMenu::setPosition(sf::Vector2i position) {
 	int y = position.y + menu_padding;
 	for (int i = 0; i < _menu_boxes.size(); i++) {
 		_menu_boxes[i]->setPosition(sf::Vector2i(position.x + x, y));
-		x = x + (int)(_menu_boxes[i]->_rect.getSize().x);
+		x = x + (int)(_menu_boxes[i]->getSize().x);
 	}
 }
 
 void MainMenu::hideMenu() {
 	if (_open_menu_box != nullptr)
-		_open_menu_box->_isOpen = false;
+		_open_menu_box->_isSelected = false;
 
 	_state = MainMenuStates::Closing;
 	_open_menu_box = nullptr;
@@ -305,7 +305,7 @@ void MainMenu::hideMenu() {
 
 void MainMenu::closeMenu() {
 	if (_open_menu_box != nullptr)
-		_open_menu_box->_isOpen = false;
+		_open_menu_box->_isSelected = false;
 
 	_state = MainMenuStates::Closed;
 	_open_menu_box = nullptr;
@@ -315,7 +315,7 @@ void MainMenu::closeMenu() {
 void MainMenu::openMenuBox(std::shared_ptr<MenuBox> menuBox) {
 	_state = MainMenuStates::Opened;
 	_open_menu_box = menuBox;
-	_open_menu_box->_isOpen = true;
+	_open_menu_box->_isSelected = true;
 }
 
 void MainMenu::saveProject(const std::filesystem::path& path) {
@@ -626,7 +626,7 @@ void MainMenu::handleEvent(const sf::Event& event) {
 			clicked_in_menu = true;
 		}
 
-		if (mb->_isOpen) {
+		if (mb->_isSelected) {
 			for (auto& op : mb->_options) {
 				op->handleEvent(event);
 				if (Element_pressed == op) {
@@ -701,7 +701,7 @@ void MainMenu::draw() {
 		if (_open_menu_box->_options.size() > 0) {
 
 			sf::Vector2f rectSize;
-			rectSize.x = _open_menu_box->_options.front()->getSize().x;
+			rectSize.x = (float)(_open_menu_box->_options.front()->getSize().x);
 			rectSize.y = (float)(_open_menu_box->_options.size()) * (float)(menu_height);
 
 			sf::RectangleShape rect(rectSize);
