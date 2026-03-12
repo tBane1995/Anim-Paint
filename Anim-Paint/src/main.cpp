@@ -161,16 +161,11 @@ int main() {
 		// cursor hovering
 		Element_hovered = nullptr;
 
-		canvas->cursorHover();
-		
-
-		
-		
-
 		if (palette)
 			palette->cursorHover();
 
 		selection->cursorHover();
+		canvas->cursorHover();
 		frames_panel->cursorHover();
 		layers_panel->cursorHover();
 		animations_panel->cursorHover();

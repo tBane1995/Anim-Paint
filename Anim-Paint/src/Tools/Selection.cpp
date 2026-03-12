@@ -369,6 +369,11 @@ void Selection::unselect() {
 }
 
 void Selection::selectAll() {
+
+	if (_state == SelectionState::Selected) {
+		copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _rect.position.x, _rect.position.y, 0, 0, *_resizedMaskImage, toolbar->_second_color->_color);
+	}
+
 	_points.clear();
 	_outlineOffset = sf::Vector2i(0, 0);
 
