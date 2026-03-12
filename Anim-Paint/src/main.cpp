@@ -161,8 +161,7 @@ int main() {
 		// cursor hovering
 		Element_hovered = nullptr;
 
-		if (palette)
-			palette->cursorHover();
+		
 
 		selection->cursorHover();
 		canvas->cursorHover();
@@ -172,6 +171,8 @@ int main() {
 		toolbar->cursorHover();
 		main_menu->cursorHover();
 		
+		if (palette)
+			palette->cursorHover();
 
 		for (auto& dialog : dialogs)
 			dialog->cursorHover();
@@ -211,13 +212,14 @@ int main() {
 				resize();
 			}
 
+			
+
 			history->handleEvent(*event);
 			main_menu->handleEvent(*event);
-			selection->handleEvent(*event);
-
+			
 			if (palette)
 				palette->handleEvent(*event);
-
+			selection->handleEvent(*event);
 			canvas->handleEvent(*event);
 			toolbar->handleEvent(*event);
 
@@ -238,6 +240,7 @@ int main() {
 		// render
 		window->clear(sf::Color(56, 56, 56));
 		canvas->draw();
+		selection->draw(toolbar->_second_color->_color);
 		toolbar->draw();
 		
 		if (palette)
@@ -253,7 +256,7 @@ int main() {
 		for (auto& dialog : dialogs)
 			dialog->draw();
 
-		selection->draw(toolbar->_second_color->_color);
+		
 		tooltip->draw();
 
 		cursor->draw();

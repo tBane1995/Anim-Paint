@@ -289,7 +289,7 @@ void Palette::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
-	if (selection->_state == SelectionState::Selecting)
+	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
 		return;
 
 	Dialog::cursorHover();

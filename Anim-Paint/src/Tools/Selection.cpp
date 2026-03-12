@@ -13,7 +13,7 @@
 #include "History.hpp"
 #include "Time.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
-
+#include "Dialogs/Palette.hpp"
 
 std::string mask_shader_source = R"(
     uniform sampler2D texture;
@@ -1076,10 +1076,7 @@ void Selection::cursorHover() {
 		return;
 	}
 
-	if (_state == SelectionState::Selecting ||
-		_state == SelectionState::Resizing ||
-		_state == SelectionState::Selected ||
-		_state == SelectionState::Moving) {
+	if (_rect.contains(cursor->_position)) {
 		Element_hovered = this->shared_from_this();
 	}
 }
@@ -1091,6 +1088,10 @@ void Selection::handleEvent(const sf::Event& event) {
 	}
 
 	if(main_menu->_state != MainMenuStates::Closed) {
+		return;
+	}
+
+	if((_state == SelectionState::None || _state == SelectionState::Selected) && palette && palette->_rect.contains(cursor->_position)) {
 		return;
 	}
 

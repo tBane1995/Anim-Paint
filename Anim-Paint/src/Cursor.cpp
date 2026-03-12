@@ -92,7 +92,9 @@ void Cursor::handleEvent(const sf::Event& event) {
 	}
 	
 	// selection edge points
-	if ((selection->_hoveredEdgePoint != nullptr || selection->_clickedEdgePoint != nullptr) && (selection->_state == SelectionState::Selected || selection->_state == SelectionState::Resizing)) {
+	if ((selection->_hoveredEdgePoint != nullptr || selection->_clickedEdgePoint != nullptr) && 
+		!(palette != nullptr && palette->_rect.contains(_position)) &&
+		(selection->_state == SelectionState::Selected || selection->_state == SelectionState::Resizing)) {
 
 		if (selection->_hoveredEdgePoint == selection->_point_left_top || selection->_clickedEdgePoint == selection->_point_left_top) {
 			window->setMouseCursorVisible(true);
@@ -176,79 +178,93 @@ void Cursor::handleEvent(const sf::Event& event) {
 	}
 
 	// canvas edge points
-	if (_hoveredElement == canvas->_point_left_top || Element_pressed == canvas->_point_left_top) {
-		window->setMouseCursorVisible(true);
-		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopLeft);
-		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
-		_brushIsVisible = false;
-		return;
-	}
+	if (!(palette != nullptr && palette->_rect.contains(_position))) {
+		if (_hoveredElement == canvas->_point_left_top || Element_pressed == canvas->_point_left_top) {
+			window->setMouseCursorVisible(true);
+			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopLeft);
+			window->setMouseCursor(*_cursor);
+			_ico = nullptr;
+			_offset = sf::Vector2i(0, 0);
+			_brushIsVisible = false;
+			return;
+		}
 
-	if (_hoveredElement == canvas->_point_top || Element_pressed == canvas->_point_top) {
-		window->setMouseCursorVisible(true);
-		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTop);
-		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
-		_brushIsVisible = false;
-		return;
-	}
+		if (_hoveredElement == canvas->_point_top || Element_pressed == canvas->_point_top) {
+			window->setMouseCursorVisible(true);
+			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTop);
+			window->setMouseCursor(*_cursor);
+			_ico = nullptr;
+			_offset = sf::Vector2i(0, 0);
+			_brushIsVisible = false;
+			return;
+		}
 
-	if (_hoveredElement == canvas->_point_right_top || Element_pressed == canvas->_point_right_top) {
-		window->setMouseCursorVisible(true);
-		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopRight);
-		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
-		_brushIsVisible = false;
-		return;
-	}
+		if (_hoveredElement == canvas->_point_right_top || Element_pressed == canvas->_point_right_top) {
+			window->setMouseCursorVisible(true);
+			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopRight);
+			window->setMouseCursor(*_cursor);
+			_ico = nullptr;
+			_offset = sf::Vector2i(0, 0);
+			_brushIsVisible = false;
+			return;
+		}
 
-	if (_hoveredElement == canvas->_point_left || Element_pressed == canvas->_point_left) {
-		window->setMouseCursorVisible(true);
-		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeLeft);
-		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
-		_brushIsVisible = false;
-		return;
-	}
+		if (_hoveredElement == canvas->_point_left || Element_pressed == canvas->_point_left) {
+			window->setMouseCursorVisible(true);
+			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeLeft);
+			window->setMouseCursor(*_cursor);
+			_ico = nullptr;
+			_offset = sf::Vector2i(0, 0);
+			_brushIsVisible = false;
+			return;
+		}
 
-	if (_hoveredElement == canvas->_point_right || Element_pressed == canvas->_point_right) {
-		window->setMouseCursorVisible(true);
-		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeRight);
-		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
-		_brushIsVisible = false;
-		return;
-	}
+		if (_hoveredElement == canvas->_point_right || Element_pressed == canvas->_point_right) {
+			window->setMouseCursorVisible(true);
+			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeRight);
+			window->setMouseCursor(*_cursor);
+			_ico = nullptr;
+			_offset = sf::Vector2i(0, 0);
+			_brushIsVisible = false;
+			return;
+		}
 
-	if (_hoveredElement == canvas->_point_left_bottom || Element_pressed == canvas->_point_left_bottom) {
-		window->setMouseCursorVisible(true);
-		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomLeft);
-		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
-		_brushIsVisible = false;
-		return;
-	}
+		if (_hoveredElement == canvas->_point_left_bottom || Element_pressed == canvas->_point_left_bottom) {
+			window->setMouseCursorVisible(true);
+			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomLeft);
+			window->setMouseCursor(*_cursor);
+			_ico = nullptr;
+			_offset = sf::Vector2i(0, 0);
+			_brushIsVisible = false;
+			return;
+		}
 
-	if (_hoveredElement == canvas->_point_bottom || Element_pressed == canvas->_point_bottom) {
-		window->setMouseCursorVisible(true);
-		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottom);
-		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
-		_brushIsVisible = false;
-		return;
-	}
+		if (_hoveredElement == canvas->_point_bottom || Element_pressed == canvas->_point_bottom) {
+			window->setMouseCursorVisible(true);
+			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottom);
+			window->setMouseCursor(*_cursor);
+			_ico = nullptr;
+			_offset = sf::Vector2i(0, 0);
+			_brushIsVisible = false;
+			return;
+		}
 
-	if (_hoveredElement == canvas->_point_right_bottom || Element_pressed == canvas->_point_right_bottom) {
+		if (_hoveredElement == canvas->_point_right_bottom || Element_pressed == canvas->_point_right_bottom) {
+			window->setMouseCursorVisible(true);
+			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomRight);
+			window->setMouseCursor(*_cursor);
+			_ico = nullptr;
+			_offset = sf::Vector2i(0, 0);
+			_brushIsVisible = false;
+			return;
+		}
+	}
+	
+	sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+	if ((selection->_state == SelectionState::Selected && selection->clickOnSelection(tile) && !(palette!=nullptr && palette->_rect.contains(_position))) || 
+		selection->_state == SelectionState::Moving) {
 		window->setMouseCursorVisible(true);
-		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomRight);
+		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
 		window->setMouseCursor(*_cursor);
 		_ico = nullptr;
 		_offset = sf::Vector2i(0, 0);
@@ -274,19 +290,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 		_offset = sf::Vector2i(0, 0);
 		_brushIsVisible = false;
 		return;
-	}
-
-	if (selection->_state == SelectionState::Selected || selection->_state == SelectionState::Moving) {
-		sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-		if (selection->clickOnSelection(tile)) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
-			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
-			_brushIsVisible = false;
-			return;
-		}
 	}
 
 	if (_hoveredElement == canvas) {
