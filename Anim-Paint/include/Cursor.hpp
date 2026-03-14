@@ -13,10 +13,9 @@ public:
 	std::shared_ptr<sf::Cursor> _cursor;
 	sf::Vector2i _position;
 	std::shared_ptr<Element> _hoveredElement;
-	sf::Vector2i _offset;
-	std::shared_ptr<Texture> _ico;
 	bool _brushIsVisible;
 	
+	std::shared_ptr<sf::Cursor> _brushCursor;
 	std::shared_ptr<sf::Cursor> _fillCursor;
 	std::shared_ptr<sf::Cursor> _pickerCursor;
 	

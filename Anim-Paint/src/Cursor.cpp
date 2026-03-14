@@ -7,6 +7,7 @@
 #include "Tools/Selection.hpp"
 #include "Controls/Slider.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
+#include "Time.hpp" // TO-DO - to remove
 
 Cursor::Cursor() {
 
@@ -17,6 +18,13 @@ Cursor::Cursor() {
 	_brushIsVisible = false;
 
 	// cursors
+	
+
+	{
+		sf::Image img = getTexture(L"tex\\cursor\\brush.png")->_texture->copyToImage();
+		_brushCursor = std::make_shared<sf::Cursor>(img.getPixelsPtr(), img.getSize(), sf::Vector2u(7, 7));
+	}
+
 	{
 		sf::Image img = getTexture(L"tex\\cursor\\fill.png")->_texture->copyToImage();
 		_fillCursor = std::make_shared<sf::Cursor>(img.getPixelsPtr(), img.getSize(), sf::Vector2u(6, 26));
@@ -45,8 +53,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Text);
 		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
 		_brushIsVisible = false;
 		return;
 	}
@@ -65,8 +71,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Text);
 		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
 		_brushIsVisible = false;
 		return;
 	}
@@ -75,8 +79,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Hand);
 		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
 		_brushIsVisible = false;
 		return;
 	}
@@ -85,8 +87,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Arrow);
 		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
 		_brushIsVisible = false;
 		return;
 	}
@@ -100,8 +100,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopLeft);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -110,8 +108,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTop);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -120,8 +116,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopRight);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -130,8 +124,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeLeft);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -140,8 +132,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeRight);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -150,8 +140,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomLeft);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -160,8 +148,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottom);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -170,8 +156,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomRight);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -183,8 +167,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopLeft);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -193,8 +175,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTop);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -203,8 +183,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopRight);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -213,8 +191,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeLeft);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -223,8 +199,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeRight);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -233,8 +207,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomLeft);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -243,8 +215,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottom);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -253,8 +223,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomRight);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 			return;
 		}
@@ -266,8 +234,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
 		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
 		_brushIsVisible = false;
 		return;
 	}
@@ -276,8 +242,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeHorizontal);
 		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
 		_brushIsVisible = false;
 		return;
 	}
@@ -286,8 +250,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Cross);
 		window->setMouseCursor(*_cursor);
-		_ico = nullptr;
-		_offset = sf::Vector2i(0, 0);
 		_brushIsVisible = false;
 		return;
 	}
@@ -298,44 +260,36 @@ void Cursor::handleEvent(const sf::Event& event) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 		}
 		else if (toolbar->_toolType == ToolType::Brush) {
-			window->setMouseCursorVisible(false);
-			_ico = getTexture(L"tex\\cursor\\brush.png");
-			_offset = sf::Vector2i(7, 7);
+			window->setMouseCursorVisible(true);
+			_cursor = _brushCursor;
+			window->setMouseCursor(*_cursor);
 			_brushIsVisible = true;
 		}
 		else if (toolbar->_toolType == ToolType::Eraser) {
-			window->setMouseCursorVisible(false);
-			_ico = getTexture(L"tex\\cursor\\brush.png");
-			_offset = sf::Vector2i(7, 7);
-			_brushIsVisible = true;
+			window->setMouseCursorVisible(true);
+			_cursor = _brushCursor;
+			window->setMouseCursor(*_cursor);
+			_brushIsVisible = true; 
 		}
 		else if (toolbar->_toolType == ToolType::Fill) {
 			window->setMouseCursorVisible(true);
 			_cursor = _fillCursor;
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
-			_brushIsVisible = false;
+			_brushIsVisible = false;	
 		}
 		else if (toolbar->_toolType == ToolType::Picker) {
 			window->setMouseCursorVisible(true);
 			_cursor = _pickerCursor;
 			window->setMouseCursor(*_cursor);
-			_ico = nullptr;
-			_offset = sf::Vector2i(0, 0);
 			_brushIsVisible = false;
 		}
 		else {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Cross);
 			window->setMouseCursor(*_cursor);
-			_offset = sf::Vector2i(0, 0);
-			_ico = nullptr;
 			_brushIsVisible = false;
 		}
 
@@ -345,8 +299,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 	window->setMouseCursorVisible(true);
 	_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Arrow);
 	window->setMouseCursor(*_cursor);
-	_ico = nullptr;
-	_offset = sf::Vector2i(0, 0);
 	_brushIsVisible = false;
 }
 
@@ -358,22 +310,6 @@ void Cursor::draw() {
 
 	if (_brushIsVisible == true) {
 		brush->draw(canvas->_position, canvas->_size, canvas->_zoom, canvas->_zoom_delta);
-	}
-
-	if (_ico != nullptr) {
-		sf::Sprite sprite(*_ico->_texture);
-		sprite.setOrigin(sf::Vector2f(_offset));
-		
-		if (_hoveredElement == canvas) {
-			sf::Vector2i p = worldToTile(_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-			sf::Vector2f p2 = sf::Vector2f(canvas->_position) + (sf::Vector2f(p) + sf::Vector2f(0.5f, 0.5f)) * canvas->_zoom * canvas->_zoom_delta;
-			sprite.setPosition(p2);
-		}
-		else {
-			sprite.setPosition(sf::Vector2f(_position));
-		}
-
-		window->draw(sprite);
 	}
 }
 
