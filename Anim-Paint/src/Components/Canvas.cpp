@@ -517,42 +517,12 @@ void Canvas::cursorHover() {
 
 void Canvas::handleEvent(const sf::Event& event) {
 
-
-	if (!dialogs.empty()) {
-		return;
-	}
-
-	if (main_menu->_state != MainMenuStates::Closed) {
-		return;
-	}
-
-	if (_clickedEdgePoint != nullptr && Element_hovered != _clickedEdgePoint) {
-		return;
-	}
-
-	if (!(Element_hovered.get() == this || Element_hovered == nullptr || Element_hovered == selection)) {
-		return;
-	}
-
-	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_rect.contains(cursor->_position)) {
-			Element_pressed = this->shared_from_this();
-		}
-	}
-
-	if (dialogs.empty() && toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
-		for (auto& point : _edgePoints) {
-			point->handleEvent(event);
-		}
-	}
-	
-	
-
 	// canvas resizing
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (dialogs.empty() && toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
 			if (_hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
 				_clickedEdgePoint = _hoveredEdgePoint;
+				Element_pressed = _clickedEdgePoint;
 				_orginalEdgePointPosition = _point_left_top->getPosition();
 
 				_state = CanvasState::Resizing;
@@ -575,12 +545,43 @@ void Canvas::handleEvent(const sf::Event& event) {
 	}
 	else if (_state == CanvasState::Resizing) {
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			if(Element_pressed == _clickedEdgePoint) {
+				Element_pressed = nullptr;
+			}
 			_clickedEdgePoint = nullptr;
 			_state = CanvasState::Idle;
 			_backupFrames.clear();
 		}
 		return;
 	}
+
+	if (!dialogs.empty()) {
+		return;
+	}
+
+	if (main_menu->_state != MainMenuStates::Closed) {
+		return;
+	}
+
+	if (!(Element_hovered.get() == this || Element_hovered == nullptr || Element_hovered == selection)) {
+		return;
+	}
+
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+		if (_rect.contains(cursor->_position)) {
+			Element_pressed = this->shared_from_this();
+		}
+	}
+
+	if (dialogs.empty() && toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
+		for (auto& point : _edgePoints) {
+			point->handleEvent(event);
+		}
+	}
+	
+	
+
+	
 
 	if(Element_hovered.get() == this || Element_hovered.get() == nullptr || Element_hovered == selection) {
 		if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>()) {
