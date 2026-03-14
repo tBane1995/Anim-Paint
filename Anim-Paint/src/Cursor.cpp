@@ -34,6 +34,11 @@ Cursor::Cursor() {
 		sf::Image img = getTexture(L"tex\\cursor\\picker.png")->_texture->copyToImage();
 		_pickerCursor = std::make_shared<sf::Cursor>(img.getPixelsPtr(), img.getSize(), sf::Vector2u(5, 26));
 	}
+
+	{
+		sf::Image img = getTexture(L"tex\\cursor\\cross.png")->_texture->copyToImage();
+		_crossCursor = std::make_shared<sf::Cursor>(img.getPixelsPtr(), img.getSize(), sf::Vector2u(11, 11));
+	}
 }
 
 Cursor::~Cursor() {
@@ -248,7 +253,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 
 	if (dynamic_cast<PaletteValues*>(_hoveredElement.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
-		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Cross);
+		_cursor = _crossCursor;
 		window->setMouseCursor(*_cursor);
 		_brushIsVisible = false;
 		return;
@@ -288,7 +293,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 		}
 		else {
 			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Cross);
+			_cursor = _crossCursor;
 			window->setMouseCursor(*_cursor);
 			_brushIsVisible = false;
 		}

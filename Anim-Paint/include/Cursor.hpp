@@ -18,6 +18,7 @@ public:
 	std::shared_ptr<sf::Cursor> _brushCursor;
 	std::shared_ptr<sf::Cursor> _fillCursor;
 	std::shared_ptr<sf::Cursor> _pickerCursor;
+	std::shared_ptr<sf::Cursor> _crossCursor;
 	
 	Cursor();
 	~Cursor();

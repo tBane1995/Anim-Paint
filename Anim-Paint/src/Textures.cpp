@@ -55,6 +55,7 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\cursor\\brush.png");
 	texturePaths.push_back(L"tex\\cursor\\fill.png");
 	texturePaths.push_back(L"tex\\cursor\\picker.png");
+	texturePaths.push_back(L"tex\\cursor\\cross.png");
 	
 	// file dialogs
 	texturePaths.push_back(L"tex\\file_dialog\\harddrive.png");
