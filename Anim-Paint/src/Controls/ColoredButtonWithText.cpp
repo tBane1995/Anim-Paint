@@ -49,20 +49,7 @@ void ColoredButtonWithText::setPosition(sf::Vector2i position) {
 	_text->setPosition(text_pos);
 	
 }
-
-void ColoredButtonWithText::unclick() {
-	_state = ButtonState::Idle;
-}
-
-void ColoredButtonWithText::hover() {
-	_state = ButtonState::Hover;
-}
-
-void ColoredButtonWithText::click() {
-	_state = ButtonState::Pressed;
-	_clickTime = currentTime;
-}
-
+                 
 void ColoredButtonWithText::draw() {
 
 	sf::Vector2f rectSize;

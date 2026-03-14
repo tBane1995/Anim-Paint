@@ -10,9 +10,6 @@ public:
 	~ColoredButtonWithText();
 
 	void setPosition(sf::Vector2i position);
-	void unclick();
-	void hover();
-	void click();
 
 	void draw();
 
