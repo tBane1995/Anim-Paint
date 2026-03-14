@@ -5,6 +5,8 @@
 #include "WorldToTileConverter.hpp"
 #include "Cursor.hpp"
 #include "Tools/Selection.hpp"
+#include "Dialogs/Dialog.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 
 BottomBar::BottomBar() : Element() {
 	
@@ -89,10 +91,20 @@ void BottomBar::updateText() {
 }
 
 void BottomBar::cursorHover() {
+	if(!dialogs.empty())
+		return;
 
+	if (main_menu->_state != MainMenuStates::Closed)
+		return;
 }
 
 void BottomBar::handleEvent(const sf::Event& event) {
+
+	if(!dialogs.empty())
+		return;
+
+	if (main_menu->_state != MainMenuStates::Closed)
+		return;
 
 	if (Element_hovered != canvas && 
 		Element_hovered != canvas->_hoveredEdgePoint && Element_pressed != canvas->_hoveredEdgePoint &&

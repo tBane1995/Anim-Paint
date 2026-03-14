@@ -5,6 +5,7 @@
 #include "Window.hpp"
 #include "Tools/Selection.hpp"
 #include "Components/FramesPanel.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 
 LayersPanel::LayersPanel() 
 	: Dialog(
@@ -60,6 +61,12 @@ void LayersPanel::setPosition(sf::Vector2i position) {
 
 void LayersPanel::cursorHover() {
 
+	if(!dialogs.empty())
+		return;
+
+	if (main_menu->_state != MainMenuStates::Closed)
+		return;
+
 	if (selection->_state == SelectionState::Selecting)
 		return;
 
@@ -71,6 +78,9 @@ void LayersPanel::cursorHover() {
 }
 
 void LayersPanel::handleEvent(const sf::Event& event) {
+
+	if (main_menu->_state != MainMenuStates::Closed)
+		return;
 
 	if (!dialogs.empty())
 		return;

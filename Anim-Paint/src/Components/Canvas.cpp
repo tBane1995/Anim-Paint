@@ -517,6 +517,12 @@ void Canvas::cursorHover() {
 
 void Canvas::handleEvent(const sf::Event& event) {
 
+	if(!dialogs.empty())
+		return;
+
+	if (main_menu->_state != MainMenuStates::Closed)
+		return;
+
 	// canvas resizing
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (dialogs.empty() && toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {

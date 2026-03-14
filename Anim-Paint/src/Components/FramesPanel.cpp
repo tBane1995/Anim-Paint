@@ -5,6 +5,7 @@
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Tools/Selection.hpp"
 #include "Components/AnimationsPanel.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 
 FramesPanel::FramesPanel() 
 	: Dialog(
@@ -134,6 +135,8 @@ void FramesPanel::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
+	if (main_menu->_state != MainMenuStates::Closed)
+		return;
 
 	if (selection->_state == SelectionState::Selecting)
 		return;
@@ -154,6 +157,9 @@ void FramesPanel::cursorHover() {
 void FramesPanel::handleEvent(const sf::Event& event) {
 
 	if (!dialogs.empty())
+		return;
+
+	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
 	Dialog::handleEvent(event);

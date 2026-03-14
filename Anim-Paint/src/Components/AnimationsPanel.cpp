@@ -131,7 +131,11 @@ void AnimationsPanel::updateText() {
 }
 
 void AnimationsPanel::cursorHover() {
+
 	if (!dialogs.empty())
+		return;
+
+	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
 	if (selection->_state == SelectionState::Selecting)
@@ -153,6 +157,9 @@ void AnimationsPanel::cursorHover() {
 void AnimationsPanel::handleEvent(const sf::Event& event) {
 
 	if (!dialogs.empty())
+		return;
+
+	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
 	Dialog::handleEvent(event);
