@@ -42,34 +42,33 @@ ButtonWithTopTextAndList::ButtonWithTopTextAndList(std::wstring text, sf::Color 
 	_onclick_func = { };
 	_clickTime = currentTime;
 
-	addOption(L"paste");
-	addOption(L"from file");
-	addOption(L"transparency");
+	
 }
 
 ButtonWithTopTextAndList::~ButtonWithTopTextAndList() {
 
 }
 
-void ButtonWithTopTextAndList::addOption(std::wstring text) {
-	std::shared_ptr<Option> o = std::make_shared<Option>(text, getTexture(L"tex\\tools\\btn_none.png"), getTexture(L"tex\\tools\\btn_none_hover.png"));
+void ButtonWithTopTextAndList::addOption(std::shared_ptr<Option> option) {
+	
+	std::wcout << L"added option " << _options.size() << L"\n";
 
 	if (_options.size() == 0) {
-		_options.push_back(o);
+		_options.push_back(option);
 		sf::Vector2f rectSize;
 		rectSize.x = 0;
-		rectSize.y = float(o->_rect.size.y + optionbox_border_width);
+		rectSize.y = float(option->_rect.size.y + optionbox_border_width);
 		_list_rect.setSize(rectSize);
 		return;
 	}
 
-	int wdt = (_options.back()->_rect.size.x > o->_rect.size.x) ? _options.back()->_rect.size.x : o->_rect.size.x;
+	int wdt = (_options.back()->_rect.size.x > option->_rect.size.x) ? _options.back()->_rect.size.x : option->_rect.size.x;
 	sf::Vector2f rectSize;
 	rectSize.x = float(wdt + 2 * optionbox_border_width);
-	rectSize.y = float(_list_rect.getSize().y + o->_rect.size.y);
+	rectSize.y = float(_list_rect.getSize().y + option->_rect.size.y);
 	_list_rect.setSize(rectSize);
 
-	_options.push_back(o);
+	_options.push_back(option);
 	for (auto& o : _options) {
 		o->_rect.size = sf::Vector2i(wdt, 32);
 	}
@@ -108,6 +107,7 @@ void ButtonWithTopTextAndList::hover() {
 void ButtonWithTopTextAndList::click() {
 	_state = ButtonState::Pressed;
 	_clickTime = currentTime;
+	_isOpen = true;
 	_text->setFillColor(_hoverTextColor);
 }
 
@@ -133,19 +133,27 @@ void ButtonWithTopTextAndList::handleEvent(const sf::Event& event) {
 		}
 		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			if (Element_pressed.get() == this) {
-				click();
-				_isOpen = !_isOpen;
+				Element_pressed = nullptr;
 			}
 		}
 	}
 
+	if (Element_pressed.get() == this) {
+		click();
+	}
+
 	bool clicked_in_menu = false;
+	if(Element_pressed.get() == this) {
+		clicked_in_menu = true;
+	}
 
 	if (_isOpen) {
 		for (auto& option : _options) {
 			option->handleEvent(event);
-			if (Element_pressed == option)
+			if (Element_pressed == option) {
 				clicked_in_menu = true;
+				break;
+			}
 		}
 	}
 

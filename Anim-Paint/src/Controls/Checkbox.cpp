@@ -79,7 +79,7 @@ void Checkbox::cursorHover() {
 }
 
 void Checkbox::handleEvent(const sf::Event& event) {
-	if (_rect.contains(cursor->_position)) {
+	if (Element_hovered.get() == this) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			Element_pressed = this->shared_from_this();

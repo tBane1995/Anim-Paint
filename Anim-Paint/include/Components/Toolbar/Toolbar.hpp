@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
+#include "Components/Toolbar/Option.hpp"
+#include "Components/Toolbar/OptionWithCheckbox.hpp"
 #include "Components/Toolbar/ButtonWithTopTextAndList.hpp"
 #include "Components/Toolbar/ButtonWithRightText.hpp"
 #include "Components/Toolbar/Separator.hpp"
@@ -19,7 +21,10 @@ public:
 	std::vector<std::shared_ptr<Button>> _clipboard;
 	std::unique_ptr<sf::Text> _clipboard_text;
 	std::shared_ptr<ButtonWithSprite> _btn_paste;
-	std::shared_ptr<ButtonWithTopTextAndList> _btn_paste_2;
+	std::shared_ptr<Option> _option_paste;
+	std::shared_ptr<Option> _option_from_file;
+	std::shared_ptr<OptionWithCheckbox> _option_transparency;
+	std::shared_ptr<ButtonWithTopTextAndList> _btn_paste_menu;
 	std::shared_ptr<ButtonWithRightText> _btn_cut;
 	std::shared_ptr<ButtonWithRightText> _btn_copy;
 	std::shared_ptr<ButtonWithBottomText> _btn_select;

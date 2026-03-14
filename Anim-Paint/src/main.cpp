@@ -219,9 +219,10 @@ int main() {
 			
 			if (palette)
 				palette->handleEvent(*event);
+			toolbar->handleEvent(*event);
 			selection->handleEvent(*event);
 			canvas->handleEvent(*event);
-			toolbar->handleEvent(*event);
+			
 
 			frames_panel->handleEvent(*event);
 			layers_panel->handleEvent(*event);

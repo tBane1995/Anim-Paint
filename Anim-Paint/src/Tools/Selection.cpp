@@ -18,15 +18,21 @@
 std::string mask_shader_source = R"(
     uniform sampler2D texture;
     uniform sampler2D mask;
-	uniform vec3 alphaColor;
+    uniform vec4 alphaColor;
 
     void main() {
         vec2 uv = gl_TexCoord[0].xy;
-		vec4 c = texture2D(texture, uv);
-		float alpha = (c.r == alphaColor.r/255.0 && c.g == alphaColor.g/255.0 && c.b == alphaColor.b/255.0)
-					  ? 0.0
-					  : texture2D(mask, uv).a;
-		gl_FragColor = vec4(c.rgb, c.a * alpha);
+		
+		if(texture2D(mask, uv) == vec4(1.0, 1.0, 1.0, 1.0)) {
+			vec4 c = texture2D(texture, uv);
+
+			if(c == alphaColor)
+				gl_FragColor = vec4(0,0,0,0);
+			else
+				gl_FragColor = c;
+		}else{
+			gl_FragColor = vec4(0,0,0,0);
+		}
     }
 )";
 
@@ -68,6 +74,7 @@ void removeImageWithAlpha(sf::Image& image, sf::IntRect rect, sf::Color alphaCol
 
 void removeImageWithMask(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf::Color alphaColor)
 {
+
 	if (rect.size.x <= 0 || rect.size.y <= 0)
 		return;
 
@@ -118,6 +125,7 @@ void copyImage(sf::Image& dst, sf::Image& src, sf::IntRect srcRect) {
 
 void copyImageWithAlpha(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf::Color alphaColor)
 {
+
 	// (opcjonalnie, ale bezpiecznie) normalizacja, gdyby size był ujemny
 	sf::IntRect r = srcRect;
 	if (r.size.x < 0) { r.position.x += r.size.x; r.size.x = -r.size.x; }
@@ -936,7 +944,7 @@ void Selection::drawImage(sf::Color alphaColor, bool useMask) {
 
 	_maskShader.setUniform("texture", _texture);
 	_maskShader.setUniform("mask", maskTexture);
-	_maskShader.setUniform("alphaColor", sf::Vector3f(alphaColor.r, alphaColor.g, alphaColor.b));
+	_maskShader.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor.r, alphaColor.g, alphaColor.b, alphaColor.a));
 
 	float scale = canvas->_zoom * canvas->_zoom_delta;
 
@@ -1009,7 +1017,7 @@ void Selection::drawResizedImage(sf::Color alphaColor, bool useMask) {
 
 	_maskShader.setUniform("texture", _texture);
 	_maskShader.setUniform("mask", maskTexture);
-	_maskShader.setUniform("alphaColor", sf::Vector3f(alphaColor.r, alphaColor.g, alphaColor.b));
+	_maskShader.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor.r/255.0f, alphaColor.g/255.0f, alphaColor.b/255.0f, alphaColor.a/255.0f));
 
 
 	_sprite = std::make_shared<sf::Sprite>(_texture);
@@ -1068,6 +1076,7 @@ void Selection::drawRect() {
 
 void Selection::cursorHover() {
 
+
 	for (auto& edgePoint : _edgePoints) {
 		edgePoint->cursorHover();
 	}
@@ -1123,6 +1132,10 @@ void Selection::handleEvent(const sf::Event& event) {
 		return;
 	}
 
+	if (toolbar->_btn_paste_menu->_isOpen || toolbar->_option_transparency->_state == ButtonState::Pressed) {
+		return;
+	}
+
 	// selection resizing
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_state == SelectionState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
@@ -1173,7 +1186,7 @@ void Selection::handleEvent(const sf::Event& event) {
 				if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
 					if (canvas->_rect.contains(cursor->_position)) {
 						if (_rect.size.x > 1 && _rect.size.y > 1) {
-							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, toolbar->_second_color->_color);
+							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
 							_image = nullptr;
 							_resizedImage = nullptr;
 							history->saveStep();
@@ -1226,7 +1239,7 @@ void Selection::handleEvent(const sf::Event& event) {
 				}
 				else {
 					if (_rect.size.x > 1 && _rect.size.y > 1) {
-						copyImageWithMask(*_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, _rect.position.x, _rect.position.y, *_maskImage, toolbar->_second_color->_color);
+						copyImageWithMask(*_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, _rect.position.x, _rect.position.y, *_maskImage, sf::Color::Transparent);
 						removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, _rect, *_maskImage, toolbar->_second_color->_color);
 						_resizedImage = _image;
 					}
@@ -1338,6 +1351,10 @@ void Selection::update() {
 		return;
 	}
 
+	if(toolbar->_btn_paste_menu->_state == ButtonState::Pressed || toolbar->_btn_paste_menu->_isOpen) {
+		return;
+	}
+
 	if (_state == SelectionState::Resizing) {
 		for (auto& point : _edgePoints) {
 			point->update();
@@ -1390,7 +1407,7 @@ void Selection::draw(sf::Color alphaColor) {
 
 	if (_state == SelectionState::Selecting) {
 		if (_points.size() >= 1) {
-			drawImage(alphaColor, false);
+			drawImage((toolbar->_option_transparency->_checkbox->_value == 1)?toolbar->_second_color->_color : sf::Color::Transparent, false);
 			generateOutline(false);
 			drawOutline();
 		}
@@ -1399,7 +1416,7 @@ void Selection::draw(sf::Color alphaColor) {
 
 	if (_state == SelectionState::Selected || _state == SelectionState::Moving || _state == SelectionState::Resizing) {
 		if (_points.size() >= 3) {
-			drawResizedImage(alphaColor, false);
+			drawResizedImage((toolbar->_option_transparency->_checkbox->_value == 1) ? toolbar->_second_color->_color : sf::Color::Transparent, false);
 			drawRect();
 			if (_state == SelectionState::Selected || _state == SelectionState::Resizing) {
 				for (auto& point : _edgePoints) {

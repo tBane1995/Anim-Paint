@@ -25,12 +25,23 @@ Toolbar::Toolbar() : Element() {
 		};
 	_btn_paste->setTooltip(L"Paste", L"Paste the selection from the clipboard onto the canvas");
 
-	_btn_paste_2 = std::make_shared<ButtonWithTopTextAndList>(L"paste", tools_text_color, tools_text_hover_color);
-	_btn_paste_2->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
-	_btn_paste_2->_onclick_func = [this]() {
+	_option_paste = std::make_shared<Option>(L"paste");
+	_option_from_file = std::make_shared<Option>(L"from file");
+	_option_transparency = std::make_shared<OptionWithCheckbox>(L"transparency", getTexture(L"tex\\tools\\btn_unchecked.png"), getTexture(L"tex\\tools\\btn_unchecked_hover.png"));
+	_option_transparency->addValue(getTexture(L"tex\\tools\\btn_checked.png"), getTexture(L"tex\\tools\\btn_checked_hover.png"));
+	_option_transparency->_onclick_func = [this]() {
 
 		};
+	_btn_paste_menu = std::make_shared<ButtonWithTopTextAndList>(L"paste", tools_text_color, tools_text_hover_color);
+	_btn_paste_menu->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color,
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_btn_paste_menu->_onclick_func = [this]() {
+			
+		};
+	_btn_paste_menu->addOption(_option_paste);
+	_btn_paste_menu->addOption(_option_from_file);
+	_btn_paste_menu->addOption(_option_transparency);
+	
 
 	_btn_cut = std::make_shared<ButtonWithRightText>(L"cut", tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_cut.png"), getTexture(L"tex\\tools\\btn_cut_hover.png"));
 	_btn_cut->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
@@ -74,7 +85,7 @@ Toolbar::Toolbar() : Element() {
 
 	_clipboard.clear();
 	_clipboard.push_back(_btn_paste);
-	_clipboard.push_back(_btn_paste_2);
+	_clipboard.push_back(_btn_paste_menu);
 	_clipboard.push_back(_btn_cut);
 	_clipboard.push_back(_btn_copy);
 	_clipboard.push_back(_btn_select);

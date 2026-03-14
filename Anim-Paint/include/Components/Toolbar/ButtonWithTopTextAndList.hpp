@@ -20,7 +20,7 @@ public:
 	ButtonWithTopTextAndList(std::wstring text, sf::Color textColor, sf::Color hoverTextColor, sf::Vector2i position = sf::Vector2i(0, 0));
 	~ButtonWithTopTextAndList();
 
-	void addOption(std::wstring text);
+	void addOption(std::shared_ptr<Option> option);
 	void setPosition(sf::Vector2i position);
 	void unclick();
 	void hover();

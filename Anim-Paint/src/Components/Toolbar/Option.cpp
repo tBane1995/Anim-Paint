@@ -4,10 +4,7 @@
 #include "Cursor.hpp"
 #include "Window.hpp"
 
-Option::Option(std::wstring text, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position) : Button() {
-
-	_texture = texture;
-	_hoverTexture = hoverTexture;
+Option::Option(std::wstring text, sf::Vector2i position) : Button() {
 
 	_rectIdleColor = optionbox_idle_color;
 	_rectHoverColor = optionbox_hover_color;
@@ -66,11 +63,6 @@ void Option::draw() {
 	rectPosition.y = float(_rect.position.y + _rectBorderWidth);
 	rect.setPosition(rectPosition);
 	window->draw(rect);
-
-	// Draw sprite
-	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
-	sprite.setPosition(sf::Vector2f(_rect.position));
-	window->draw(sprite);
 
 	// draw text
 	window->draw(*_text);

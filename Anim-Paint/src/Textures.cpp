@@ -116,8 +116,11 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\tools\\frame_large.png");
 	texturePaths.push_back(L"tex\\tools\\frame_large_hover.png");
 
-	texturePaths.push_back(L"tex\\tools\\btn_none.png");
-	texturePaths.push_back(L"tex\\tools\\btn_none_hover.png");
+	texturePaths.push_back(L"tex\\tools\\btn_unchecked.png");
+	texturePaths.push_back(L"tex\\tools\\btn_unchecked_hover.png");
+
+	texturePaths.push_back(L"tex\\tools\\btn_checked.png");
+	texturePaths.push_back(L"tex\\tools\\btn_checked_hover.png");
 
 	texturePaths.push_back(L"tex\\tools\\btn_paste.png");
 	texturePaths.push_back(L"tex\\tools\\btn_paste_hover.png");
