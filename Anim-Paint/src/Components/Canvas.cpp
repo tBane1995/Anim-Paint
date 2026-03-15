@@ -476,7 +476,7 @@ void Canvas::mouseMovedWithRightButtonPressedEvent() {
 
 void Canvas::cursorHover() {
 
-	_hoveredEdgePoint = nullptr;
+	
 
 	if (!dialogs.empty())
 		return;
@@ -484,10 +484,14 @@ void Canvas::cursorHover() {
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
+	if (toolbar->_btn_paste_menu->_isOpen)
+		return;
+
 	if (_rect.contains(cursor->_position)) {
 		Element_hovered = this->shared_from_this();
 	}
 
+	_hoveredEdgePoint = nullptr;
 	if (toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
 		for (auto& point : _edgePoints) {
 			point->cursorHover();
@@ -521,6 +525,9 @@ void Canvas::handleEvent(const sf::Event& event) {
 		return;
 
 	if (main_menu->_state != MainMenuStates::Closed)
+		return;
+
+	if (toolbar->_btn_paste_menu->_isOpen)
 		return;
 
 	// canvas resizing

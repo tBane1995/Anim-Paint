@@ -6,6 +6,7 @@
 #include "Tools/Selection.hpp"
 #include "Components/AnimationsPanel.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 
 FramesPanel::FramesPanel() 
 	: Dialog(
@@ -138,6 +139,9 @@ void FramesPanel::cursorHover() {
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
+	if (toolbar->_btn_paste_menu->_isOpen)
+		return;
+
 	if (selection->_state == SelectionState::Selecting)
 		return;
 
@@ -160,6 +164,9 @@ void FramesPanel::handleEvent(const sf::Event& event) {
 		return;
 
 	if (main_menu->_state != MainMenuStates::Closed)
+		return;
+
+	if (toolbar->_btn_paste_menu->_isOpen)
 		return;
 
 	Dialog::handleEvent(event);

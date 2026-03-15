@@ -441,6 +441,11 @@ void Toolbar::cursorHover() {
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
+	if (toolbar->_btn_paste_menu->_isOpen) {
+		toolbar->_btn_paste_menu->cursorHover();
+		return;
+	}
+	
 	if (_rect.contains(cursor->_position)) {
 		Element_hovered = this->shared_from_this();
 	}
@@ -471,6 +476,11 @@ void Toolbar::handleEvent(const sf::Event& event) {
 		
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
+
+	if (toolbar->_btn_paste_menu->_isOpen) {
+		toolbar->_btn_paste_menu->handleEvent(event);
+		return;
+	}
 
 	if (_rect.contains(cursor->_position)) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {

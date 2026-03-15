@@ -67,6 +67,9 @@ void LayersPanel::cursorHover() {
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
+	if (toolbar->_btn_paste_menu->_isOpen)
+		return;
+
 	if (selection->_state == SelectionState::Selecting)
 		return;
 
@@ -80,6 +83,9 @@ void LayersPanel::cursorHover() {
 void LayersPanel::handleEvent(const sf::Event& event) {
 
 	if (main_menu->_state != MainMenuStates::Closed)
+		return;
+
+	if (toolbar->_btn_paste_menu->_isOpen)
 		return;
 
 	if (!dialogs.empty())

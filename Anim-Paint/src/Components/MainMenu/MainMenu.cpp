@@ -599,6 +599,9 @@ void MainMenu::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
+	if (toolbar->_btn_paste_menu->_isOpen)
+		return;
+
 	if (_rect.contains(cursor->_position)) {
   		Element_hovered = this->shared_from_this();
 	}
@@ -611,6 +614,9 @@ void MainMenu::cursorHover() {
 void MainMenu::handleEvent(const sf::Event& event) {
 
 	if (!dialogs.empty())
+		return;
+
+	if (toolbar->_btn_paste_menu->_isOpen)
 		return;
 
 	bool clicked_in_menu = false;

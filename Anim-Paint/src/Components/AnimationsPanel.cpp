@@ -138,6 +138,9 @@ void AnimationsPanel::cursorHover() {
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
+	if (toolbar->_btn_paste_menu->_isOpen)
+		return;
+
 	if (selection->_state == SelectionState::Selecting)
 		return;
 
@@ -160,6 +163,9 @@ void AnimationsPanel::handleEvent(const sf::Event& event) {
 		return;
 
 	if (main_menu->_state != MainMenuStates::Closed)
+		return;
+
+	if (toolbar->_btn_paste_menu->_isOpen)
 		return;
 
 	Dialog::handleEvent(event);
