@@ -3,6 +3,7 @@
 #include "Time.hpp"
 #include "Cursor.hpp"
 #include "Window.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 
 MenuBox::MenuBox(std::wstring text) : Button() {
 
@@ -31,15 +32,25 @@ void MenuBox::addOption(std::shared_ptr<OptionBox> option) {
 	_options.push_back(option);
 
 	int max_wdt = 0;
+	int max_shortcut_wdt = 0;
 	for (auto& o : _options) {
-		if ((int)(o->getSize().x) > max_wdt)
-			max_wdt = (int)(o->getSize().x);
+
+		if ((int)(o->_text->getGlobalBounds().size.x) > max_wdt)
+			max_wdt = (int)(o->_text->getGlobalBounds().size.x);
+
+
+		if((int)(o->_shortcut_text->getGlobalBounds().size.x) > max_shortcut_wdt)
+			max_shortcut_wdt = (int)(o->_shortcut_text->getGlobalBounds().size.x);
 	}
 
+
+	sf::Vector2i size;
+	size.x = max_wdt + optionbox_left_margin + optionbox_right_margin + (float)(2 * menu_horizontal_margin);
+	if (max_shortcut_wdt > 0)
+		size.x += optionbox_spacing + max_shortcut_wdt + menu_horizontal_margin;
+	size.y = menu_height;
+
 	for (auto& o : _options) {
-		sf::Vector2i size;
-		size.x = max_wdt;
-		size.y = menu_height;
 		o->setSize(size);
 	}
 
@@ -57,19 +68,13 @@ void MenuBox::setPosition(sf::Vector2i position) {
 		sf::Vector2i optionPos;
 		optionPos.x = (int)(_rect.position.x);
 		optionPos.y = (int)(_rect.position.y + _rect.size.y) + i * menu_height;
-		_options[i]->setPosition(optionPos);
+		_options[i]->setPosition(optionPos, _options.front()->_rect.size);
 	}
 }
 
 
-
-
 void MenuBox::cursorHover() {
 	Button::cursorHover();
-
-	if (Element_pressed.get() == this) {
-		_isSelected = true;
-	}
 
 	if (_isSelected) {
 		for (auto& option : _options)
@@ -78,7 +83,25 @@ void MenuBox::cursorHover() {
 }
 
 void MenuBox::handleEvent(const sf::Event& event) {
-	Button::handleEvent(event);
+	if (Element_hovered.get() == this) {
+
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+			Element_pressed = this->shared_from_this();
+			_state = ButtonState::Pressed;
+			_isSelected = true;
+			return;
+		}
+		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			if (Element_pressed.get() == this) {
+				return;
+			}
+		}
+		else if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && main_menu->_open_menu_box) {
+			Element_pressed = this->shared_from_this();
+			_state = ButtonState::Pressed;
+			_isSelected = true;
+		}
+	}
 
 	if (_isSelected) {
 		for (auto& option : _options)

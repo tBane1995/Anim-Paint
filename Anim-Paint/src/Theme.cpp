@@ -58,6 +58,7 @@ sf::Color menubox_press_color;
 
 int optionbox_left_margin;
 int optionbox_right_margin;
+int optionbox_spacing;
 int optionbox_border_width;
 sf::Color optionbox_border_color;
 sf::Color optionbox_select_color;
@@ -188,6 +189,7 @@ void loadTheme() {
 
 	optionbox_left_margin = 8;
 	optionbox_right_margin = 8;
+	optionbox_spacing = 24;
 	optionbox_border_width = 2;
 	optionbox_border_color = sf::Color(63, 63, 63);
 	optionbox_select_color = sf::Color(79, 31, 31);
