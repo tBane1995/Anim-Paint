@@ -389,7 +389,7 @@ void Canvas::pickPixel() {
 }
 
 void Canvas::mouseLeftButtonPressedEvent() {
-	if (Element_pressed.get() == this || Element_pressed.get() == nullptr) {
+	if (Element_pressed.get() == this || (Element_pressed.get() == nullptr && Element_hovered.get() == this)) {
 		if (toolbar->_toolType == ToolType::Brush) {
 			drawPixels(toolbar->_first_color->_color);
 			_isEdited = true;
@@ -410,7 +410,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 }
 
 void Canvas::mouseRightButtonPressedEvent() {
-	if (Element_pressed.get() == this || Element_pressed.get() == nullptr) {
+	if (Element_pressed.get() == this || (Element_pressed.get() == nullptr && Element_hovered.get() == this)) {
 		if (toolbar->_toolType == ToolType::Brush) {
 			drawPixels(toolbar->_second_color->_color);
 			_isEdited = true;
@@ -443,7 +443,7 @@ void Canvas::mouseRightButtonReleasedEvent() {
 void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 
 	if (_state == CanvasState::Idle) {
-		if (Element_pressed.get() == this || Element_pressed.get() == nullptr) {
+		if (Element_pressed.get() == this || (Element_pressed.get() == nullptr && Element_hovered.get() == this)) {
 			if (toolbar->_toolType == ToolType::Brush) {
 				drawPixels(toolbar->_first_color->_color);
 				return;
@@ -463,7 +463,7 @@ void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 void Canvas::mouseMovedWithRightButtonPressedEvent() {
 
 	if (_state == CanvasState::Idle) {
-		if (Element_pressed.get() == this || Element_pressed.get() == nullptr) {
+		if (Element_pressed.get() == this || (Element_pressed.get() == nullptr && Element_hovered.get() == this)) {
 			if (toolbar->_toolType == ToolType::Brush) {
 				drawPixels(toolbar->_second_color->_color);
 			}
