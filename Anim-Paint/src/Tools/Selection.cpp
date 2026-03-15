@@ -1076,6 +1076,9 @@ void Selection::drawRect() {
 
 void Selection::cursorHover() {
 
+	if (!dialogs.empty()) {
+		return;
+	}
 
 	for (auto& edgePoint : _edgePoints) {
 		edgePoint->cursorHover();
@@ -1091,6 +1094,10 @@ void Selection::cursorHover() {
 }
 
 void Selection::handleEvent(const sf::Event& event) {
+
+	if(!dialogs.empty()) {
+		return;
+	}
 
 	if (main_menu->cursorOnAnyMenuBox()) {
 		return;
@@ -1340,6 +1347,10 @@ void Selection::handleEvent(const sf::Event& event) {
 }
 
 void Selection::update() {
+
+	if (!dialogs.empty()) {
+		return;
+	}
 
 	if (main_menu->cursorOnAnyMenuBox()) {
 		return;
