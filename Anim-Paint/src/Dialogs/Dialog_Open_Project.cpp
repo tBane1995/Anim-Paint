@@ -1,4 +1,4 @@
-#include "Dialogs/Dialog_Load_Project.hpp"
+#include "Dialogs/Dialog_Open_Project.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
 #include <iostream>
 #include "Animation/Animation.hpp"
@@ -9,7 +9,7 @@
 #include "Components/Canvas.hpp"
 #include "History.hpp"
 
-Dialog_Load_Project::Dialog_Load_Project() : FileDialog(L"Load Project", L"load", L".animproj") {
+Dialog_Open_Project::Dialog_Open_Project() : FileDialog(L"Open Project", L"open", L".animproj") {
 
 	this->_selectBtn->_onclick_func = [this]() {
 		std::wstring name = _filenameInput->getText();
@@ -40,6 +40,6 @@ Dialog_Load_Project::Dialog_Load_Project() : FileDialog(L"Load Project", L"load"
 	_onTabElements.push_back(_cancelBtn);
 }
 
-Dialog_Load_Project::~Dialog_Load_Project() {
+Dialog_Open_Project::~Dialog_Open_Project() {
 
 }

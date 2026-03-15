@@ -4,7 +4,7 @@
 #include "Theme.hpp"
 #include <typeinfo> // TO-DO
 
-std::wstring wrap_text(int line_width, sf::Font& font, float characterSize, std::wstring text) {
+std::wstring wrap_text(int line_width, sf::Font& font, int characterSize, std::wstring text) {
 
 	std::wstring wrapped_text = L"";
 
@@ -182,10 +182,12 @@ void Tooltip::draw(){
 			rectSize.y = int(getHeightOfTitleAndDescription() + 2 * tooltip_padding + 2 * tooltip_rect_border_width);
 
 
-		sf::RectangleShape rect(sf::Vector2f(rectSize.x - 2*tooltip_rect_border_width, rectSize.y - 2*tooltip_rect_border_width));
-		
+		rectSize.x = rectSize.x - 2 * tooltip_rect_border_width;
+		rectSize.y = rectSize.y - 2 * tooltip_rect_border_width;
+
+		sf::RectangleShape rect(sf::Vector2f((float)(rectSize.x), (float)(rectSize.y)));
 		rect.setFillColor(tooltip_rect_color);
-		rect.setOutlineThickness(tooltip_rect_border_width);
+		rect.setOutlineThickness((float)(tooltip_rect_border_width));
 		rect.setOutlineColor(tooltip_rect_border_color);
 
 		sf::Vector2i pos;
@@ -209,7 +211,7 @@ void Tooltip::draw(){
 			sf::Vector2i descriptionPos;
 			descriptionPos.x = pos.x + tooltip_padding;
 			descriptionPos.y = pos.y + tooltip_padding;
-			if (_title != L"") descriptionPos.y += basicFont.getLineSpacing(tooltip_text_font_size) + tooltip_padding;
+			if (_title != L"") descriptionPos.y += (int)(basicFont.getLineSpacing(tooltip_text_font_size)) + tooltip_padding;
 			_description_text->setPosition(sf::Vector2f(descriptionPos));
 			window->draw(*_description_text);
 		}

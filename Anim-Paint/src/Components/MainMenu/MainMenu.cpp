@@ -7,7 +7,7 @@
 #include "Dialogs/Dialog.hpp"
 #include "Dialogs/FileDialog/FileDialog.hpp"
 #include "Dialogs/Dialog_Save_Project.hpp"
-#include "Dialogs/Dialog_Load_Project.hpp"
+#include "Dialogs/Dialog_Open_Project.hpp"
 #include "Dialogs/Dialog_Import.hpp"
 #include "Dialogs/Dialog_Export.hpp"
 
@@ -57,7 +57,7 @@ MainMenu::MainMenu() : Element() {
 
 	std::shared_ptr<OptionBox> file_load = std::make_shared<OptionBox>(L"Open", L"Ctrl+O");
 	file_load->_onclick_func = [this]() {
-		dialogs.push_back(std::make_shared<Dialog_Load_Project>());
+		dialogs.push_back(std::make_shared<Dialog_Open_Project>());
 		closeMenu();
 		};
 	std::shared_ptr<OptionBox> file_export = std::make_shared<OptionBox>(L"Export", L"Ctrl+E");

@@ -11,10 +11,10 @@ OptionBox::OptionBox(std::wstring text, std::wstring shortcut) : Button() {
 	_shortcut_text = std::make_unique<sf::Text>(basicFont, shortcut, menu_font_size);
 	_shortcut_text->setFillColor(menu_text_color);
 
-	_rect.size.x = optionbox_left_margin + optionbox_right_margin + _text->getGlobalBounds().size.x + (float)(2 * menu_horizontal_margin);
+	_rect.size.x = optionbox_left_margin + optionbox_right_margin + (int)_text->getGlobalBounds().size.x + (2 * menu_horizontal_margin);
 	if(shortcut != L"")
 		_rect.size.x += (int)(_shortcut_text->getGlobalBounds().size.x) + menu_horizontal_margin;
-	_rect.size.y = (float)menu_height;
+	_rect.size.y = menu_height;
 
 	_rectIdleColor = optionbox_idle_color;
 	_rectHoverColor = optionbox_hover_color;

@@ -186,8 +186,8 @@ void Dialog_Hue_Saturation::draw() {
 
 	sf::RectangleShape previewRect;
 	sf::Vector2f position;
-	position.x = getContentPosition().x + 8;
-	position.y = getContentPosition().y + getContentSize().y - 48;
+	position.x = (float)(getContentPosition().x + 8);
+	position.y = (float)(getContentPosition().y + getContentSize().y - 48);
 	previewRect.setPosition(position);
 	previewRect.setSize(sf::Vector2f(32, 32));
 

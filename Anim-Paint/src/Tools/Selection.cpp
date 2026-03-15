@@ -143,7 +143,7 @@ void copyImageWithAlpha(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf:
 	if (s.size.x <= 0 || s.size.y <= 0)
 		return;
 
-	if (dst.getSize().x < s.size.x || dst.getSize().y < s.size.y)
+	if ((int)(dst.getSize().x) < s.size.x || (int)(dst.getSize().y) < s.size.y)
 		dst.resize(sf::Vector2u(s.size.x, s.size.y), sf::Color::Transparent);
 
 	sf::Image img;
@@ -756,19 +756,19 @@ void Selection::generateEdgePoints() {
 	rectPos.x = float(canvas->_position.x) + float(_resizedRect.position.x) * scale;
 	rectPos.y = float(canvas->_position.y) + float(_resizedRect.position.y) * scale;
 
-	float m = selection_border_width;
+	float m = (float)(selection_border_width);
 
 	_edgePoints.clear();
-	_point_left_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(-m, -m));
-	_point_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x/2, -m));
-	_point_right_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x+m, -m));
+	_point_left_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(-m)));
+	_point_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x/2), (int)(-m)));
+	_point_right_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x+m), (int)(-m)));
 
-	_point_left = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(-m, rectSize.y / 2));
-	_point_right = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x+m, rectSize.y / 2));
+	_point_left = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y / 2)));
+	_point_right = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x+m), (int)(rectSize.y / 2)));
 
-	_point_left_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(-m, rectSize.y+m));
-	_point_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x / 2, rectSize.y+m));
-	_point_right_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i(rectSize.x+m, rectSize.y+m));
+	_point_left_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y+m)));
+	_point_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(rectSize.y+m)));
+	_point_right_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x+m), (int)(rectSize.y+m)));
 	
 	_edgePoints.push_back(_point_left_top);
 	_edgePoints.push_back(_point_top);

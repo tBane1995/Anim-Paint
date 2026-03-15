@@ -45,7 +45,7 @@ void MenuBox::addOption(std::shared_ptr<OptionBox> option) {
 
 
 	sf::Vector2i size;
-	size.x = max_wdt + optionbox_left_margin + optionbox_right_margin + (float)(2 * menu_horizontal_margin);
+	size.x = max_wdt + optionbox_left_margin + optionbox_right_margin + (2 * menu_horizontal_margin);
 	if (max_shortcut_wdt > 0)
 		size.x += optionbox_spacing + max_shortcut_wdt + menu_horizontal_margin;
 	size.y = menu_height;
