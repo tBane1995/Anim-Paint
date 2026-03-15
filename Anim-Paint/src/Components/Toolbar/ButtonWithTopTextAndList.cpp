@@ -50,8 +50,6 @@ ButtonWithTopTextAndList::~ButtonWithTopTextAndList() {
 }
 
 void ButtonWithTopTextAndList::addOption(std::shared_ptr<Option> option) {
-	
-	std::wcout << L"added option " << _options.size() << L"\n";
 
 	if (_options.size() == 0) {
 		_options.push_back(option);

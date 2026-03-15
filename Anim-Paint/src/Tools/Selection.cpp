@@ -1189,7 +1189,7 @@ void Selection::handleEvent(const sf::Event& event) {
 							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
 							_image = nullptr;
 							_resizedImage = nullptr;
-							history->saveStep();
+							
 						}
 						_state = SelectionState::Selecting;
 						Element_pressed = this->shared_from_this();
@@ -1204,7 +1204,7 @@ void Selection::handleEvent(const sf::Event& event) {
 							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _rect.position.x, _rect.position.y, 0, 0, *_resizedMaskImage, toolbar->_second_color->_color);
 							_image = nullptr;
 							_resizedImage = nullptr;
-							history->saveStep();
+							
 						}
 
 						_state = SelectionState::None;
@@ -1252,11 +1252,9 @@ void Selection::handleEvent(const sf::Event& event) {
 			else if (_state == SelectionState::Moving) {
 				_state = SelectionState::Selected;
 				Element_pressed = this->shared_from_this();
-				generateEdgePoints();
-			}
-			else if (canvas->_isEdited) {
 				history->saveStep();
 				canvas->_isEdited = false;
+				generateEdgePoints();
 			}
 		}
 	}
