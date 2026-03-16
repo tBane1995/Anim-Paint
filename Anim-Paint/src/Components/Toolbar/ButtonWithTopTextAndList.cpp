@@ -129,11 +129,7 @@ void ButtonWithTopTextAndList::handleEvent(const sf::Event& event) {
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			Element_pressed = this->shared_from_this();
 		}
-		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (Element_pressed.get() == this) {
-				Element_pressed = nullptr;
-			}
-		}
+		
 	}
 
 	if (Element_pressed.get() == this) {
@@ -148,7 +144,8 @@ void ButtonWithTopTextAndList::handleEvent(const sf::Event& event) {
 	if (_isOpen) {
 		for (auto& option : _options) {
 			option->handleEvent(event);
-			if (Element_pressed == option) {
+
+			if (option->_rect.contains(cursor->_position)) {
 				clicked_in_menu = true;
 				break;
 			}
