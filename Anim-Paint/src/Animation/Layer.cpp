@@ -1,11 +1,11 @@
 #include "Animation/Layer.hpp"
 #include "DebugLog.hpp"
 
-Layer::Layer(std::wstring name, sf::Vector2i size) {
+Layer::Layer(std::wstring name, sf::Vector2i size, sf::Color color) {
 	_name = name;
 
 	_image = sf::Image();
-	_image.resize(sf::Vector2u(size), sf::Color::White);
+	_image.resize(sf::Vector2u(size), color);
 }
 
 Layer::Layer(std::wstring name, sf::Image image) {

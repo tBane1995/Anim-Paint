@@ -552,7 +552,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 					newFrame->_layers.reserve(frame->getLayers().size());
 
 					for (auto& layer : frame->getLayers()) {
-						std::shared_ptr<Layer> newLayer = std::make_shared<Layer>(layer->_name, sf::Vector2i(layer->_image.getSize()));
+						std::shared_ptr<Layer> newLayer = std::make_shared<Layer>(layer->_name, sf::Vector2i(layer->_image.getSize()), sf::Color::Transparent);
 						newLayer->_image = layer->_image;
 						newFrame->_layers.push_back(newLayer);
 					}

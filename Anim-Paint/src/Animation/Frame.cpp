@@ -12,7 +12,7 @@ std::vector<std::shared_ptr<Layer>>& Frame::getLayers() {
 }
 
 void Frame::addEmptyLayer() {
-	_layers.push_back(std::make_shared<Layer>(L"Layer "+std::to_wstring(_layers.size()+1), canvas->_size));
+	_layers.push_back(std::make_shared<Layer>(L"Layer "+std::to_wstring(_layers.size()+1), canvas->_size, sf::Color::Transparent));
 }
 
 std::shared_ptr<Layer> Frame::getLayer(int id) {
