@@ -50,7 +50,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_cut->_onclick_func = [this]() {
 		//selection->cut(&animation->getCurrentLayer()->image, selection->img, second_color->color);
 		if (selection->_state == SelectionState::Selected) {
-			selection->cut(getCurrentAnimation()->getCurrentLayer()->_image, _second_color->_color);
+			selection->cut(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent);
 		}
 		};
 	_btn_cut->setTooltip(L"Cut", L"Cut the selection from the canvas and place it on the clipboard");
@@ -60,7 +60,7 @@ Toolbar::Toolbar() : Element() {
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
 	_btn_copy->_onclick_func = [this]() {
 		if (selection->_state == SelectionState::Selected) {
-			selection->copy(getCurrentAnimation()->getCurrentLayer()->_image, _second_color->_color);
+			selection->copy(getCurrentAnimation()->getCurrentLayer()->_image, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent : _second_color->_color);
 			removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_resizedRect, *selection->_resizedMaskImage, toolbar->_second_color->_color);
 		}
 		};
