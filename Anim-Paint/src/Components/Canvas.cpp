@@ -495,15 +495,18 @@ void Canvas::cursorHover() {
 	}
 
 	_hoveredEdgePoint = nullptr;
-	if (toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
-		for (auto& point : _edgePoints) {
-			point->cursorHover();
-			if (Element_hovered == point) {
-				_hoveredEdgePoint = point;
+	
+	if (_state == CanvasState::Idle) {
+		if (toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
+			for (auto& point : _edgePoints) {
+				point->cursorHover();
+				if (Element_hovered == point) {
+					_hoveredEdgePoint = point;
+				}
 			}
 		}
 	}
-
+	
 	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == SelectionState::Selected) {
 
 		selection->_hoveredEdgePoint = nullptr;

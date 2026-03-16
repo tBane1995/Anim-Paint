@@ -166,6 +166,14 @@ void Cursor::handleEvent(const sf::Event& event) {
 		}
 	}
 
+	if (canvas->_state == CanvasState::Moving) {
+		window->setMouseCursorVisible(true);
+		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
+		window->setMouseCursor(*_cursor);
+		_brushIsVisible = false;
+		return;
+	}
+
 	// canvas edge points
 	if (!(palette != nullptr && palette->_rect.contains(_position))) {
 		if (_hoveredElement == canvas->_point_left_top || Element_pressed == canvas->_point_left_top) {
@@ -254,14 +262,6 @@ void Cursor::handleEvent(const sf::Event& event) {
 	if (dynamic_cast<PaletteValues*>(_hoveredElement.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
 		_cursor = _crossCursor;
-		window->setMouseCursor(*_cursor);
-		_brushIsVisible = false;
-		return;
-	}
-
-	if (canvas->_state == CanvasState::Moving) {
-		window->setMouseCursorVisible(true);
-		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
 		window->setMouseCursor(*_cursor);
 		_brushIsVisible = false;
 		return;
