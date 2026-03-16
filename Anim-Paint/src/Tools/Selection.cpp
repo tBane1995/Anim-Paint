@@ -612,6 +612,7 @@ void Selection::cut(sf::Image& canvas, sf::Color emptyColor) {
 		_image = nullptr;
 		_state = SelectionState::None;
 		_rect = sf::IntRect(sf::Vector2i(-1, -1), sf::Vector2i(-1, -1));
+		_resizedRect = _rect;
 	}
 }
 
@@ -1215,7 +1216,7 @@ void Selection::handleEvent(const sf::Event& event) {
 					}
 					else {
 						if (_rect.size.x > 1 && _rect.size.y > 1) {
-							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _rect.position.x, _rect.position.y, 0, 0, *_resizedMaskImage, toolbar->_second_color->_color);
+							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 							_image = nullptr;
 							_resizedImage = nullptr;
 							

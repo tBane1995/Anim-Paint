@@ -9,6 +9,40 @@
 #include "Cursor.hpp"
 #include "Tools/Selection.hpp"
 
+enum class VariableType { Int, Float, Double };
+
+class Variable {
+public:
+	VariableType _type;
+	Variable(VariableType type) : _type(type) {};
+	~Variable() {};
+};
+
+class VariableInt : public Variable
+{
+public:
+	int _value;
+	VariableInt(int value) : Variable(VariableType::Int), _value(value) { };
+	~VariableInt() {};
+};
+
+class VariableFloat : public Variable
+{
+public:
+	float _value;
+	VariableFloat(float value) : Variable(VariableType::Float), _value(value) {};
+	~VariableFloat() {};
+};
+
+class VariableDouble : public Variable
+{
+public:
+	double _value;
+	VariableDouble(double value) : Variable(VariableType::Double), _value(value) {};
+	~VariableDouble() {};
+};
+
+
 Toolbar::Toolbar() : Element() {
 
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(window->getSize().x, tools_height));
