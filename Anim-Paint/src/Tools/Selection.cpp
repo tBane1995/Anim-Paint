@@ -14,6 +14,7 @@
 #include "Time.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Dialogs/Palette.hpp"
+#include "Components/LayersPanel/LayersPanel.hpp"
 
 std::string mask_shader_source = R"(
     uniform sampler2D texture;
@@ -1143,6 +1144,12 @@ void Selection::handleEvent(const sf::Event& event) {
 		return;
 	}
 
+	for (auto& layerBox : layers_panel->layersBoxes) {
+		if(layerBox->_visibling->_rect.contains(cursor->_position)) {
+			return;
+		}
+	}
+
 	// selection resizing
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_state == SelectionState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
@@ -1425,7 +1432,10 @@ void Selection::draw(sf::Color alphaColor) {
 
 	if (_state == SelectionState::Selected || _state == SelectionState::Moving || _state == SelectionState::Resizing) {
 		if (_points.size() >= 3) {
-			drawResizedImage((toolbar->_option_transparency->_checkbox->_value == 1) ? toolbar->_second_color->_color : sf::Color::Transparent, false);
+
+			if(layers_panel->layersBoxes[getCurrentAnimation()->getCurrentLayerID()]->_visibling->_value == 0)
+				drawResizedImage((toolbar->_option_transparency->_checkbox->_value == 1) ? toolbar->_second_color->_color : sf::Color::Transparent, false);
+			
 			drawRect();
 			if (_state == SelectionState::Selected || _state == SelectionState::Resizing) {
 				for (auto& point : _edgePoints) {
