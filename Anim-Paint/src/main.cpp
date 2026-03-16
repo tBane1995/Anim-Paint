@@ -103,11 +103,11 @@ int main() {
 	std::shared_ptr<Animation> animation = std::make_shared<Animation>();
 	animation->addEmptyFrame(sf::Vector2i(32,32));
 	animations.push_back(animation);
+	animation->setLastLayerAsCurrent();
 
 	history = std::make_shared<History>();
 	history->saveStep();
 
-	
 	toolbar = std::make_shared<Toolbar>();
 	animations_panel = std::make_shared<AnimationsPanel>();
 	frames_panel = std::make_shared<FramesPanel>();

@@ -34,7 +34,7 @@ public:
 	void nextFrame();
 	void prevFrame();
 	void firstLayer();
-	void lastLayer();
+	void setLastLayerAsCurrent();
 
 	void addFrame();
 	void subFrame();

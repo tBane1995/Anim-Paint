@@ -73,17 +73,13 @@ void LayerBox::update() {
 void LayerBox::draw() {
 	sf::RectangleShape rect(sf::Vector2f(_rect.size));
 	if (_isActive) {
-		if (Element_pressed.get() == this)
-			rect.setFillColor(sf::Color(127, 63, 63));
-		else if (Element_hovered.get() == this)
+		if (Element_hovered.get() == this)
 			rect.setFillColor(sf::Color(95, 63, 63));
 		else
 			rect.setFillColor(sf::Color(63, 47, 47));
 	}
 	else {
-		if (Element_pressed.get() == this)
-			rect.setFillColor(sf::Color(95, 95, 95));
-		else if (Element_hovered.get() == this)
+		if (Element_hovered.get() == this)
 			rect.setFillColor(sf::Color(63, 63, 63));
 		else
 			rect.setFillColor(sf::Color(47, 47, 47));

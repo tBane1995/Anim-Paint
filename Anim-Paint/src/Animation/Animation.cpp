@@ -6,9 +6,6 @@ Animation::Animation() {
 
 	_currentFrame = 0;
 	_currentLayer = 0;
-
-	lastLayer();
-
 }
 
 Animation::~Animation() {
@@ -144,7 +141,7 @@ void Animation::firstLayer() {
 	_currentLayer = 0;
 }
 
-void Animation::lastLayer() {
+void Animation::setLastLayerAsCurrent() {
 	if (getCurrentFrame() == nullptr) {
 		_currentLayer = 0;
 		return;
