@@ -170,7 +170,8 @@ int main() {
 		animations_panel->cursorHover();
 		toolbar->cursorHover();
 		main_menu->cursorHover();
-		
+		bottom_bar->cursorHover();
+
 		if (palette)
 			palette->cursorHover();
 
@@ -241,6 +242,7 @@ int main() {
 		// render
 		window->clear(sf::Color(56, 56, 56));
 		canvas->draw();
+		cursor->draw();
 		selection->draw(toolbar->_second_color->_color);
 		toolbar->draw();
 		
@@ -260,7 +262,7 @@ int main() {
 		
 		tooltip->draw();
 
-		cursor->draw();
+		
 
 		window->display();
 	}
