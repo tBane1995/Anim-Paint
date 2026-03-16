@@ -43,11 +43,11 @@ void LayerBox::cursorHover() {
 	if (!dialogs.empty())
 		return;
 
-	_visibling->cursorHover();
-
 	if (_rect.contains(cursor->_position)) {
 		Element_hovered = this->shared_from_this();
 	}
+
+	_visibling->cursorHover();
 }
 
 void LayerBox::handleEvent(const sf::Event& event) {
