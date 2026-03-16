@@ -70,6 +70,9 @@ void LayersPanel::cursorHover() {
 	if (toolbar->_btn_paste_menu->_isOpen)
 		return;
 
+	if (canvas->_state != CanvasState::Idle)
+		return;
+
 	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
 		return;
 

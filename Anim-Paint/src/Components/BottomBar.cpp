@@ -97,6 +97,9 @@ void BottomBar::cursorHover() {
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
+	if (canvas->_state != CanvasState::Idle)
+		return;
+
 	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
 		return;
 

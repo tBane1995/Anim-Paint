@@ -259,15 +259,16 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (_hoveredElement == canvas) {
+	if (canvas->_state == CanvasState::Moving) {
+		window->setMouseCursorVisible(true);
+		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
+		window->setMouseCursor(*_cursor);
+		_brushIsVisible = false;
+		return;
+	}
 
-		if (canvas->_state == CanvasState::Moving) {
-			window->setMouseCursorVisible(true);
-			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
-			window->setMouseCursor(*_cursor);
-			_brushIsVisible = false;
-		}
-		else if (toolbar->_toolType == ToolType::Brush) {
+	if (_hoveredElement == canvas) {
+		if (toolbar->_toolType == ToolType::Brush) {
 			window->setMouseCursorVisible(true);
 			_cursor = _brushCursor;
 			window->setMouseCursor(*_cursor);

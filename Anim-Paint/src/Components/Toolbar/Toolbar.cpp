@@ -447,6 +447,9 @@ void Toolbar::cursorHover() {
 		return;
 	}
 
+	if (canvas->_state != CanvasState::Idle)
+		return;
+
 	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
 		return;
 	

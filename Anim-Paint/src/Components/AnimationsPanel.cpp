@@ -7,6 +7,7 @@
 #include "Tools/Selection.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Components/Toolbar/Toolbar.hpp"
+#include "Components/Canvas.hpp"
 
 AnimationsPanel::AnimationsPanel() : 
 	Dialog(
@@ -139,6 +140,9 @@ void AnimationsPanel::cursorHover() {
 		return;
 
 	if (toolbar->_btn_paste_menu->_isOpen)
+		return;
+
+	if (canvas->_state != CanvasState::Idle)
 		return;
 
 	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
