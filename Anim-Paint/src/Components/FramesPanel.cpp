@@ -142,7 +142,7 @@ void FramesPanel::cursorHover() {
 	if (toolbar->_btn_paste_menu->_isOpen)
 		return;
 
-	if (selection->_state == SelectionState::Selecting)
+	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
 		return;
 
 	Dialog::cursorHover();

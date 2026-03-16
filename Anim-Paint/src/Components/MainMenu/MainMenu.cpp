@@ -602,6 +602,9 @@ void MainMenu::cursorHover() {
 	if (toolbar->_btn_paste_menu->_isOpen)
 		return;
 
+	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
+		return;
+
 	if (_rect.contains(cursor->_position)) {
   		Element_hovered = this->shared_from_this();
 	}

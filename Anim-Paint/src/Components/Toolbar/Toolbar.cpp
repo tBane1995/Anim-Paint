@@ -7,6 +7,7 @@
 #include "Dialogs/Palette.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Cursor.hpp"
+#include "Tools/Selection.hpp"
 
 Toolbar::Toolbar() : Element() {
 
@@ -445,6 +446,9 @@ void Toolbar::cursorHover() {
 		toolbar->_btn_paste_menu->cursorHover();
 		return;
 	}
+
+	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
+		return;
 	
 	if (_rect.contains(cursor->_position)) {
 		Element_hovered = this->shared_from_this();
