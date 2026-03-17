@@ -293,7 +293,7 @@ void TextInput::handleEvent(const sf::Event& event) {
 		}
 	}
 
-	if (_editState == TextInputEditState::TextEntered || _editState == TextInputEditState::Selected) {
+	if (_editState == TextInputEditState::TextEntered || _editState == TextInputEditState::Selected || _editState == TextInputEditState::Selecting) {
 		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp) {
 
 			if (kp->code == sf::Keyboard::Key::Left) {
