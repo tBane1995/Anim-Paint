@@ -111,9 +111,9 @@ void NumberInput::handleEvent(const sf::Event& event) {
 					_editState = TextInputEditState::Selected;
 				}
 				else {
-					positioningCursorByMouse();
-					_selectionStart = _cursorPosition;
-					_selectionEnd = _cursorPosition;
+					_cursorPosition = _textStr.length();
+					_selectionStart = -1;
+					_selectionEnd = -1;
 
 					_editState = TextInputEditState::TextEntered;
 					if (_onClickedFunction)
