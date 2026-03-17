@@ -161,7 +161,67 @@ void NumberInput::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (_editState == TextInputEditState::Selecting || _editState == TextInputEditState::TextEntered) {
+	if (_editState == TextInputEditState::Selecting || _editState == TextInputEditState::Selected || _editState == TextInputEditState::TextEntered) {
+		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) && kp->code == sf::Keyboard::Key::Left) {
+
+				if (_editState == TextInputEditState::None || _editState == TextInputEditState::TextEntered) {
+					_editState = TextInputEditState::Selecting;
+					_selectionStart = _cursorPosition;
+					_selectionEnd = _cursorPosition;
+				}
+				_cursorPosition -= 1;
+				_selectionEnd = _cursorPosition;
+				return;
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) && kp->code == sf::Keyboard::Key::Right) {
+				if (_editState == TextInputEditState::None || _editState == TextInputEditState::TextEntered) {
+					_editState = TextInputEditState::Selecting;
+					_selectionStart = _cursorPosition;
+					_selectionEnd = _cursorPosition;
+				}
+				_cursorPosition += 1;
+				_selectionEnd = _cursorPosition;
+				return;
+			}
+		}
+	}
+
+
+	if (_editState == TextInputEditState::Selecting || _editState == TextInputEditState::Selected || _editState == TextInputEditState::TextEntered) {
+		
+		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp) {
+			if (kp->code == sf::Keyboard::Key::Left) {
+
+				if (_editState == TextInputEditState::Selecting || _editState == TextInputEditState::Selected) {
+					_selectionStart = -1;
+					_selectionEnd = -1;
+					_editState = TextInputEditState::TextEntered;
+				}
+				else if (_cursorPosition > 0) {
+					_cursorPosition -= 1;
+				}
+				return;
+
+			}
+			else if (kp->code == sf::Keyboard::Key::Right) {
+
+				if (_editState == TextInputEditState::Selecting || _editState == TextInputEditState::Selected) {
+					_selectionStart = -1;
+					_selectionEnd = -1;
+					_editState = TextInputEditState::TextEntered;
+				}
+				else if (_cursorPosition < _text->getString().getSize()) {
+					_cursorPosition += 1;
+				}
+				return;
+
+
+
+			}
+		}
+		
 		if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 
 			positioningCursorByMouse();
@@ -354,7 +414,7 @@ void NumberInput::draw() {
 	window->draw(*_text);
 
 	// draw cursor
-	if (_editState == TextInputEditState::TextEntered && int(currentTime.asSeconds() * 3) % 2 == 0) {
+	if ((_editState == TextInputEditState::TextEntered ||_editState == TextInputEditState::Selected) && int(currentTime.asSeconds() * 3) % 2 == 0) {
 		sf::RectangleShape cursor(sf::Vector2f(2, basicFont.getLineSpacing(_characterSize)));
 		cursor.setFillColor(sf::Color::Red);
 		cursor.setPosition(_text->findCharacterPos(_cursorPosition));;
