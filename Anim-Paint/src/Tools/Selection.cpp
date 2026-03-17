@@ -1254,6 +1254,7 @@ void Selection::handleEvent(const sf::Event& event) {
 				}
 				else {
 					if (_rect.size.x > 1 && _rect.size.y > 1) {
+						toolbar->_option_transparency->_checkbox->_value = 0;
 						copyImageWithMask(*_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, _rect.position.x, _rect.position.y, *_maskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
 						removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, _rect, *_maskImage, sf::Color::Transparent);
 						_resizedImage = _image;
