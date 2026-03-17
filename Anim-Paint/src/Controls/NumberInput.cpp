@@ -216,8 +216,12 @@ void NumberInput::handleEvent(const sf::Event& event) {
 					_selectionStart = _cursorPosition;
 					_selectionEnd = _cursorPosition;
 				}
-				_cursorPosition -= 1;
-				_selectionEnd = _cursorPosition;
+				
+				if (_cursorPosition > 0) {
+					_cursorPosition -= 1;
+					_selectionEnd = _cursorPosition;
+				}
+
 				return;
 			}
 
@@ -227,8 +231,12 @@ void NumberInput::handleEvent(const sf::Event& event) {
 					_selectionStart = _cursorPosition;
 					_selectionEnd = _cursorPosition;
 				}
-				_cursorPosition += 1;
-				_selectionEnd = _cursorPosition;
+				
+				if(_cursorPosition < _textStr.length()) {
+					_cursorPosition += 1;
+					_selectionEnd = _cursorPosition;
+				}
+
 				return;
 			}
 		}
@@ -258,7 +266,7 @@ void NumberInput::handleEvent(const sf::Event& event) {
 					_selectionEnd = -1;
 					_editState = TextInputEditState::TextEntered;
 				}
-				else if (_cursorPosition < _text->getString().getSize()) {
+				else if (_cursorPosition < _textStr.length()) {
 					_cursorPosition += 1;
 				}
 				return;
@@ -293,7 +301,7 @@ void NumberInput::handleEvent(const sf::Event& event) {
 				}
 			}
 			else if (kp->code == sf::Keyboard::Key::Right) {
-				if (_cursorPosition < _text->getString().getSize()) {
+				if (_cursorPosition < _textStr.length()) {
 					_cursorPosition += 1;
 				}
 			}
