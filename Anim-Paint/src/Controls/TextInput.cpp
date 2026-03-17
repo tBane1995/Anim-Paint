@@ -49,8 +49,11 @@ void TextInput::setPosition(sf::Vector2i position) {
 
 void TextInput::setText(std::wstring text) {
 	_textStr = text.substr(0, _limitCharacters);
-	_cursorPosition = (int)_textStr.length();
 	_text->setString(_textStr.substr(0, _limitCharacters));
+}
+
+void TextInput::setCursorOnEndText() {
+	_cursorPosition = (int)_textStr.length();
 }
 
 void TextInput::setLimitCharacters(int limitCharacters) {
@@ -167,6 +170,52 @@ void TextInput::handleEvent(const sf::Event& event) {
 			_editState = TextInputEditState::Selected;
 
 		return;
+	}
+
+	if (_editState == TextInputEditState::Selecting || _editState == TextInputEditState::Selected || _editState == TextInputEditState::TextEntered) {
+		if(const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::X) {
+				if (_selectionStart != -1 && _selectionEnd != -1 && _selectionStart != _selectionEnd) {
+					int min = std::min(_selectionStart, _selectionEnd);
+					int len = std::abs(_selectionEnd - _selectionStart);
+
+					sf::Clipboard::setString(_textStr.substr(min, len));
+					_textStr.erase(min, len);
+					_cursorPosition = min;
+
+					_selectionStart = -1;
+					_selectionEnd = -1;
+
+					setText(_textStr);
+					_editState = TextInputEditState::TextEntered;
+				}
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::C) {
+				if(_editState == TextInputEditState::Selected || _editState == TextInputEditState::Selecting) {
+					sf::Clipboard::setString(_textStr.substr(std::min(_selectionStart, _selectionEnd), std::abs(_selectionEnd - _selectionStart)));
+				}
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::V) {
+				if (_selectionStart != -1 && _selectionEnd != -1 && _selectionStart != _selectionEnd) {
+					int min = std::min(_selectionStart, _selectionEnd);
+					int max = std::max(_selectionStart, _selectionEnd);
+					_textStr.erase(min, max - min);
+					_cursorPosition = min;
+				}
+				_textStr.insert(_cursorPosition, sf::Clipboard::getString().toWideString());
+				_cursorPosition += (int)sf::Clipboard::getString().getSize();
+
+				_selectionStart = -1;
+				_selectionEnd = -1;
+				_editState = TextInputEditState::TextEntered;
+
+				setText(_textStr);
+				return;
+			}
+
+		}
 	}
 
 	if (_editState == TextInputEditState::Selecting || _editState == TextInputEditState::Selected || _editState == TextInputEditState::TextEntered) {

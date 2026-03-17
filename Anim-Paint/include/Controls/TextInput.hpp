@@ -32,6 +32,7 @@ public:
 	
 	void setPosition(sf::Vector2i position);
 	void setText(std::wstring text);
+	void setCursorOnEndText();
 	void setLimitCharacters(int limitCharacters);
 	std::wstring getText();
 	sf::Vector2i getPosition();
