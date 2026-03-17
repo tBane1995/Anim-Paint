@@ -335,14 +335,14 @@ void NumberInput::handleEvent(const sf::Event& event) {
 
 					if (_cursorPosition > 0 && _editState == TextInputEditState::TextEntered) {
 						_textStr.erase(_cursorPosition - 1, 1);
-						_text->setString(_textStr.substr(0, _limitCharacters));
+						setText(_textStr);
 						_cursorPosition -= 1;
 					}
-					else {
+					else if(_selectionStart != _selectionEnd){
 						int min = std::min(_selectionStart, _selectionEnd);
 						int max = std::max(_selectionStart, _selectionEnd);
 						_textStr.erase(min, max - min);
-						_text->setString(_textStr.substr(0, _limitCharacters));
+						setText(_textStr);
 						_editState = TextInputEditState::TextEntered;
 						_cursorPosition = min;
 						_selectionStart = -1;
