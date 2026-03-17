@@ -53,6 +53,7 @@ Toolbar::Toolbar() : Element() {
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
 	_btn_paste->_onclick_func = [this]() {
 		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent)) {
+			_option_transparency->_checkbox->_value = 0;
 			_toolType = ToolType::Selector;
 			selection->_state = SelectionState::Selected;
 			selectToolButton(_btn_select);
@@ -95,7 +96,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_copy->_onclick_func = [this]() {
 		if (selection->_state == SelectionState::Selected) {
 			selection->copy(getCurrentAnimation()->getCurrentLayer()->_image, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent : _second_color->_color);
-			removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_resizedRect, *selection->_resizedMaskImage, toolbar->_second_color->_color);
+			removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_resizedRect, *selection->_resizedMaskImage, sf::Color::Transparent);
 		}
 		};
 	_btn_copy->setTooltip(L"Copy", L"Copy the selection from the canvas to the clipboard");
