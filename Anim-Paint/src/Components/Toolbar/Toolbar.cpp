@@ -62,7 +62,17 @@ Toolbar::Toolbar() : Element() {
 	_btn_paste->setTooltip(L"Paste", L"Paste the selection from the clipboard onto the canvas");
 
 	_option_paste = std::make_shared<Option>(L"paste");
+	_option_paste->_onclick_func = [this]() {
+		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent)) {
+			_option_transparency->_checkbox->_value = 0;
+			_toolType = ToolType::Selector;
+			selection->_state = SelectionState::Selected;
+			selectToolButton(_btn_select);
+		}
+		};
+
 	_option_from_file = std::make_shared<Option>(L"from file");
+
 	_option_transparency = std::make_shared<OptionWithCheckbox>(L"transparency", getTexture(L"tex\\tools\\btn_unchecked.png"), getTexture(L"tex\\tools\\btn_unchecked_hover.png"));
 	_option_transparency->addValue(getTexture(L"tex\\tools\\btn_checked.png"), getTexture(L"tex\\tools\\btn_checked_hover.png"));
 	_option_transparency->_onclick_func = [this]() {
