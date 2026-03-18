@@ -287,7 +287,7 @@ void Canvas::resize() {
 			std::shared_ptr<Layer> orgLayer = org->getLayers()[l];
 
 			sf::Image newImage;
-			newImage.resize(sf::Vector2u(_size), toolbar->_second_color->_color);
+			newImage.resize(sf::Vector2u(_size), sf::Color::Transparent);
 			pasteImageWithAlpha(newImage, srcLayer->_image, dst.x, dst.y);
 			orgLayer->_image = newImage;
 		}
