@@ -52,6 +52,8 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
+#include "Dialogs/ConfirmDialog.hpp"
+
 void resize() {
 
 	main_menu->resize();
@@ -116,7 +118,6 @@ int main() {
 	bottom_bar = std::make_shared<BottomBar>();
 	tooltip = std::make_shared<Tooltip>();
 
-	
 	brush = std::make_shared<Brush>(2);
 	selection = std::make_shared<Selection>();
 

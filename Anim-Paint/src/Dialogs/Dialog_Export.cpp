@@ -1,6 +1,7 @@
 #include "Dialogs/Dialog_Export.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
 #include <iostream>
+#include "Dialogs/ConfirmDialog.hpp"
 
 Dialog_Export::Dialog_Export() : FileDialog(L"Export As File", L"export", L".png") {
 
