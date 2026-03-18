@@ -551,9 +551,14 @@ void Toolbar::handleEvent(const sf::Event& event) {
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::V) {
 			_btn_paste->click();
 		}else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::A) {
-			_toolType = ToolType::Lasso;
-			selectToolButton(_btn_lasso);
+			_toolType = ToolType::Selector;
+			selectToolButton(_btn_select);
 			selection->selectAll();
+		}else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::D) {
+			_toolType = ToolType::Selector;
+			selectToolButton(_btn_select);
+			selection->unselect();
+
 		}
 
 	}
