@@ -424,7 +424,7 @@ void Dialog_Load_SpriteSheet::loadAnimationsByFrameSize(sf::Vector2i frameSize) 
 
 			std::shared_ptr<Frame> frame = std::make_shared<Frame>();
 			sf::Image img;
-			img.resize(sf::Vector2u(frameSize), sf::Color::White);
+			img.resize(sf::Vector2u(frameSize), sf::Color::Transparent);
 			
 			if (!img.copy(spriteSheet, sf::Vector2u(0, 0), sf::IntRect(sf::Vector2i(x, y), frameSize), true)) {
 				//DebugError(L"Dialog_Load_SpriteSheet::loadAnimationsByFrameSize: cant copy image from spritesheet");
@@ -542,6 +542,11 @@ void Dialog_Load_SpriteSheet::update() {
 void Dialog_Load_SpriteSheet::draw() {
 
 	Dialog::draw();
+
+	sf::RectangleShape rect(sf::Vector2f(128, 128));
+	rect.setFillColor(sf::Color::White);
+	rect.setPosition(sf::Vector2f(getContentPosition()) + sf::Vector2f((getContentSize().x - 128) / 2 , dialog_padding));
+	window->draw(rect);
 
 	sf::Sprite frameSprite(_frameTexture);
 	frameSprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(_frameTexture.getSize())));
