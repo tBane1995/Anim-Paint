@@ -90,26 +90,25 @@ MainMenu::MainMenu() : Element() {
 	std::shared_ptr<OptionBox> edit_undo = std::make_shared<OptionBox>(L"Undo", L"Ctrl+Z");
 	edit_undo->_onclick_func = [this]() {
 		history->undo();
-		//closeMenu();
 		};
 
 	std::shared_ptr<OptionBox> edit_redo = std::make_shared<OptionBox>(L"Redo", L"Ctrl+Y");
 	edit_redo->_onclick_func = [this]() {
 		history->redo();
-		//closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> edit_cut = std::make_shared<OptionBox>(L"Cut", L"Ctrl+X");
-	std::shared_ptr<OptionBox> edit_copy = std::make_shared<OptionBox>(L"Copy", L"Ctrl+C");
-	std::shared_ptr<OptionBox> edit_paste = std::make_shared<OptionBox>(L"Paste", L"Ctrl+V");
-	std::shared_ptr<OptionBox> edit_paste_as = std::make_shared<OptionBox>(L"Paste as");
+	// TO-DO
+	//std::shared_ptr<OptionBox> edit_cut = std::make_shared<OptionBox>(L"Cut", L"Ctrl+X");
+	//std::shared_ptr<OptionBox> edit_copy = std::make_shared<OptionBox>(L"Copy", L"Ctrl+C");
+	//std::shared_ptr<OptionBox> edit_paste = std::make_shared<OptionBox>(L"Paste", L"Ctrl+V");
+	//std::shared_ptr<OptionBox> edit_paste_as = std::make_shared<OptionBox>(L"Paste as");
 
 	edit->addOption(edit_undo);
 	edit->addOption(edit_redo);
-	edit->addOption(edit_cut);
-	edit->addOption(edit_copy);
-	edit->addOption(edit_paste);
-	edit->addOption(edit_paste_as);
+	//edit->addOption(edit_cut);
+	//edit->addOption(edit_copy);
+	//edit->addOption(edit_paste);
+	//edit->addOption(edit_paste_as);
 
 	// TOOLS
 	std::shared_ptr<MenuBox> tools = std::make_shared<MenuBox>(L"Tools");
@@ -143,7 +142,8 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> tools_gray = std::make_shared<OptionBox>(L"Grayscale mode");
+	// TO-DO
+	// std::shared_ptr<OptionBox> tools_gray = std::make_shared<OptionBox>(L"Grayscale mode");
 
 	std::shared_ptr<OptionBox> tools_sepia = std::make_shared<OptionBox>(L"Sepia");
 	tools_sepia->_onclick_func = [this]() {
@@ -181,7 +181,7 @@ MainMenu::MainMenu() : Element() {
 	tools->addOption(tools_rotation);
 	tools->addOption(tools_brightness_contrast);
 	tools->addOption(tools_hue_saturation);
-	tools->addOption(tools_gray);
+	//tools->addOption(tools_gray); TO-DO
 	tools->addOption(tools_sepia);
 	tools->addOption(tools_outline);
 	tools->addOption(tools_invert);
@@ -219,7 +219,8 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> select_invert = std::make_shared<OptionBox>(L"Invert selection");
+	// TO-DO
+	//std::shared_ptr<OptionBox> select_invert = std::make_shared<OptionBox>(L"Invert selection");
 
 	std::shared_ptr<OptionBox> select_align_center = std::make_shared<OptionBox>(L"Align center");
 	select_align_center->_onclick_func = [this, select]() {
@@ -233,22 +234,22 @@ MainMenu::MainMenu() : Element() {
 
 	select->addOption(select_all);
 	select->addOption(select_none);
-	select->addOption(select_invert);
+	//select->addOption(select_invert); // TO-DO
 	select->addOption(select_align_center);
 
-	// SETTINGS
-	std::shared_ptr<MenuBox> settings = std::make_shared<MenuBox>(L"Settings");
-	settings->_onclick_func = [this, settings]() {
-		hideMenu();
-		openMenuBox(settings);
-		};
-	_menu_boxes.push_back(settings);
-
-	std::shared_ptr<OptionBox> preferences = std::make_shared<OptionBox>(L"Preferences");
-	std::shared_ptr<OptionBox> help = std::make_shared<OptionBox>(L"Help");
-
-	settings->addOption(preferences);
-	settings->addOption(help);
+	// SETTINGS - TO-DO
+	//std::shared_ptr<MenuBox> settings = std::make_shared<MenuBox>(L"Settings");
+	//settings->_onclick_func = [this, settings]() {
+	//	hideMenu();
+	//	openMenuBox(settings);
+	//	};
+	//_menu_boxes.push_back(settings);
+	//
+	//std::shared_ptr<OptionBox> preferences = std::make_shared<OptionBox>(L"Preferences");
+	//std::shared_ptr<OptionBox> help = std::make_shared<OptionBox>(L"Help");
+	//
+	//settings->addOption(preferences);
+	//settings->addOption(help);
 
 	// POSITIONING
 	_state = MainMenuStates::Closed;
@@ -621,6 +622,36 @@ void MainMenu::handleEvent(const sf::Event& event) {
 
 	if (!dialogs.empty())
 		return;
+
+	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
+			if(kp->code == sf::Keyboard::Key::N) {
+				dialogs.push_back(std::make_shared<Dialog>(L"new file", sf::Vector2i(200, 200)));
+				closeMenu();
+				return;
+			}
+			else if(kp->code == sf::Keyboard::Key::S) {
+				dialogs.push_back(std::make_shared<Dialog_Save_Project>());
+				closeMenu();
+				return;
+			}
+			else if(kp->code == sf::Keyboard::Key::O) {
+				dialogs.push_back(std::make_shared<Dialog_Open_Project>());
+				closeMenu();
+				return;
+			}
+			else if(kp->code == sf::Keyboard::Key::E) {
+				dialogs.push_back(std::make_shared<Dialog_Export>());
+				closeMenu();
+				return;
+			}
+			else if(kp->code == sf::Keyboard::Key::I) {
+				dialogs.push_back(std::make_shared<Dialog_Import>());
+				closeMenu();
+				return;
+			}
+		}
+	}
 
 	if (toolbar->_btn_paste_menu->_isOpen)
 		return;
