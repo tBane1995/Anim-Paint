@@ -24,6 +24,10 @@ Dialog_Export::Dialog_Export() : FileDialog(L"Export As File", L"export", L".png
 				};
 			dialogs.push_back(confirm);
 		}
+		else {
+			main_menu->exportAsFile(fullPath);
+			_state = DialogState::ToClose;
+		}
 	};
 
 

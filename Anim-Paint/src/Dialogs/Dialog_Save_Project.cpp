@@ -23,6 +23,10 @@ Dialog_Save_Project::Dialog_Save_Project() : FileDialog(L"Save Project", L"save"
 				};
 			dialogs.push_back(confirm);
 		}
+		else {
+			main_menu->saveProject(fullPath);
+			_state = DialogState::ToClose;
+		}
 		};
 
 	_onTabElements.push_back(_filenameInput);
