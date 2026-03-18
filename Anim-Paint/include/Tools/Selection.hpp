@@ -82,15 +82,16 @@ public:
 	void generateEdgePoints();
 	void resizeRect();
 	void resizeImage();
-	void drawImage(sf::Color alphaColor, bool useMask = false);
-	void drawResizedImage(sf::Color alphaColor, bool useMask = false);
+	void drawImage(bool useMask = false);
+	void drawResizedImage(bool useMask = false);
 	void drawOutline();
 	void drawRect();
+	void drawEdgePoints();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);
 	void update();
-	void draw(sf::Color alphaColor);
+	void draw();
 };
 
 extern std::shared_ptr<Selection> selection;

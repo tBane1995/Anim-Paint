@@ -380,7 +380,7 @@ void Selection::unselect() {
 void Selection::selectAll() {
 
 	if (_state == SelectionState::Selected) {
-		copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _rect.position.x, _rect.position.y, 0, 0, *_resizedMaskImage, toolbar->_second_color->_color);
+		copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _rect.position.x, _rect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
 	}
 
 	_points.clear();
@@ -408,8 +408,8 @@ void Selection::selectAll() {
 
 	generateEdgePoints();
 
-	copyImageWithMask(*_image, anim->getCurrentLayer()->_image, 0, 0, 0, 0, *_resizedMaskImage, toolbar->_second_color->_color);
-	removeImageWithMask(anim->getCurrentLayer()->_image, _resizedRect, *_resizedMaskImage, toolbar->_second_color->_color);
+	copyImageWithMask(*_image, anim->getCurrentLayer()->_image, 0, 0, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
+	removeImageWithMask(anim->getCurrentLayer()->_image, _resizedRect, *_resizedMaskImage, sf::Color::Transparent);
 
 	_state = SelectionState::Selected;
 }
@@ -891,7 +891,7 @@ void Selection::resizeImage() {
 		}
 	}
 }
-void Selection::drawImage(sf::Color alphaColor, bool useMask) {
+void Selection::drawImage(bool useMask) {
 	if (!_image) return;
 	if (_image->getSize().x < 1 || _image->getSize().y < 1) return;
 	if (_rect.size.x < 1 || _rect.size.y < 1) return;
@@ -944,6 +944,8 @@ void Selection::drawImage(sf::Color alphaColor, bool useMask) {
 		exit(0);
 	}
 
+	sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color;
+
 	_maskShader.setUniform("texture", _texture);
 	_maskShader.setUniform("mask", maskTexture);
 	_maskShader.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor.r, alphaColor.g, alphaColor.b, alphaColor.a));
@@ -966,7 +968,7 @@ void Selection::drawImage(sf::Color alphaColor, bool useMask) {
 }
 
 
-void Selection::drawResizedImage(sf::Color alphaColor, bool useMask) {
+void Selection::drawResizedImage(bool useMask) {
 	if (!_resizedImage) return;
 	if (_resizedImage->getSize().x < 1 || _resizedImage->getSize().y < 1) return;
 	if (_resizedRect.size.x < 1 || _resizedRect.size.y < 1) return;
@@ -1017,6 +1019,8 @@ void Selection::drawResizedImage(sf::Color alphaColor, bool useMask) {
 		exit(0);
 	}
 
+	sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color;
+
 	_maskShader.setUniform("texture", _texture);
 	_maskShader.setUniform("mask", maskTexture);
 	_maskShader.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor.r/255.0f, alphaColor.g/255.0f, alphaColor.b/255.0f, alphaColor.a/255.0f));
@@ -1040,6 +1044,12 @@ void Selection::drawResizedImage(sf::Color alphaColor, bool useMask) {
 
 void Selection::drawOutline() {
 
+	if (_state != SelectionState::Selecting)
+		return;
+
+	if(_rect.size.x <= 1 || _rect.size.y <= 1)
+		return;	
+
 	float scale = canvas->_zoom * canvas->_zoom_delta;
 
 	_outlineSprite = std::make_shared<sf::Sprite>(_outlineRenderTexture.getTexture());
@@ -1055,6 +1065,12 @@ void Selection::drawOutline() {
 }
 
 void Selection::drawRect() {
+	if (!
+		(selection->_points.size() >= 3 &&
+		(selection->_state == SelectionState::Selected ||
+			selection->_state == SelectionState::Moving ||
+			selection->_state == SelectionState::Resizing)))
+		return;
 
 	float scale = canvas->_zoom * canvas->_zoom_delta;
 
@@ -1074,6 +1090,20 @@ void Selection::drawRect() {
 	rect.setOutlineThickness((float)(selection_border_width));
 
 	window->draw(rect);
+}
+
+void Selection::drawEdgePoints() {
+
+	if (!(
+		selection->_points.size() >= 3 &&
+		(selection->_state == SelectionState::Selected ||
+			selection->_state == SelectionState::Resizing)))
+		return;
+
+
+	for (auto& point : _edgePoints) {
+		point->draw();
+	}
 }
 
 void Selection::cursorHover() {
@@ -1420,33 +1450,12 @@ void Selection::update() {
 	}
 }
 
-void Selection::draw(sf::Color alphaColor) {
+void Selection::draw() {
 
-
-	if (_state == SelectionState::Selecting) {
-		if (_points.size() >= 1) {
-			drawImage((toolbar->_option_transparency->_checkbox->_value == 1)?toolbar->_second_color->_color : sf::Color::Transparent, false);
-			generateOutline(false);
-			drawOutline();
-		}
-
-	}
-
-	if (_state == SelectionState::Selected || _state == SelectionState::Moving || _state == SelectionState::Resizing) {
-		if (_points.size() >= 3) {
-
-			if(layers_panel->layersBoxes[getCurrentAnimation()->getCurrentLayerID()]->_visibling->_value == 0)
-				drawResizedImage((toolbar->_option_transparency->_checkbox->_value == 1) ? toolbar->_second_color->_color : sf::Color::Transparent, false);
-			
-			drawRect();
-			if (_state == SelectionState::Selected || _state == SelectionState::Resizing) {
-				for (auto& point : _edgePoints) {
-					point->draw();
-				}
-					
-			}
-		}
-	}
+	generateOutline(false);
+	drawOutline();
+	drawRect();
+	drawEdgePoints();
 
 }
 

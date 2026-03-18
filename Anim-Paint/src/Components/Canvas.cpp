@@ -691,6 +691,11 @@ void Canvas::draw() {
 			spr.setPosition(sf::Vector2f(_rect.position));
 			spr.setScale(sf::Vector2f(_zoom * _zoom_delta, _zoom * _zoom_delta));
 			window->draw(spr);
+
+			// draw the selection on current layer
+			if (getCurrentAnimation()->_currentLayer == i) {
+				selection->drawResizedImage();
+			}
 		}
 	}
 

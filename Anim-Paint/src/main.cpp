@@ -243,8 +243,8 @@ int main() {
 		// render
 		window->clear(sf::Color(56, 56, 56));
 		canvas->draw();
+		selection->draw();
 		cursor->draw();
-		selection->draw(toolbar->_second_color->_color);
 		toolbar->draw();
 		
 		if (palette)
