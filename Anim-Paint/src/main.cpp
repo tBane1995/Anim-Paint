@@ -202,9 +202,8 @@ int main() {
 			if (event->is<sf::Event::Closed>())
 				window->close();
 
-			for (auto& dialog : dialogs) {
-				dialog->handleEvent(*event);
-			}
+			if (!dialogs.empty())
+				dialogs.back()->handleEvent(*event);
 
 			if (const auto* resized = event->getIf<sf::Event::Resized>()) {
 				sf::Vector2f newSize(resized->size);
