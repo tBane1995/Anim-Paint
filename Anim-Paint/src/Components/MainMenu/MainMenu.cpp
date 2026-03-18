@@ -224,7 +224,7 @@ MainMenu::MainMenu() : Element() {
 	std::shared_ptr<OptionBox> select_align_center = std::make_shared<OptionBox>(L"Align center");
 	select_align_center->_onclick_func = [this, select]() {
 		sf::Vector2i oldPos = selection->_rect.position;
-		selection->_rect.position = (canvas->_size - selection->_rect.size) / 2;
+		selection->_rect.position = (canvas->_size - selection->_resizedRect.size) / 2;
 		selection->_resizedRect.position = selection->_rect.position;
 		selection->_outlineOffset = selection->_rect.position - oldPos + selection->_outlineOffset;
 		selection->generateEdgePoints();
