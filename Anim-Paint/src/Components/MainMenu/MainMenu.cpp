@@ -47,9 +47,11 @@ MainMenu::MainMenu() : Element() {
 		dialogs.push_back(std::make_shared<Dialog>(L"new file", sf::Vector2i(200, 200)));
 		closeMenu();
 		};
-	std::shared_ptr<OptionBox> file_save = std::make_shared<OptionBox>(L"Save", L"Ctrl+S");
 
-	std::shared_ptr<OptionBox> file_saveAs = std::make_shared<OptionBox>(L"Save as");
+	// TO-DO
+	//std::shared_ptr<OptionBox> file_save = std::make_shared<OptionBox>(L"Save", L"Ctrl+S");
+
+	std::shared_ptr<OptionBox> file_saveAs = std::make_shared<OptionBox>(L"Save as", L"Ctrl+S");
 	file_saveAs->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Save_Project>());
 		closeMenu();
@@ -73,7 +75,7 @@ MainMenu::MainMenu() : Element() {
 		};
 
 	file->addOption(file_new);
-	file->addOption(file_save);
+	//file->addOption(file_save); // TO-DO
 	file->addOption(file_saveAs);
 	file->addOption(file_load);
 	file->addOption(file_export);
