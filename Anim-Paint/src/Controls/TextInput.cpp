@@ -188,12 +188,14 @@ void TextInput::handleEvent(const sf::Event& event) {
 
 					setText(_textStr);
 					_editState = TextInputEditState::TextEntered;
+					return;
 				}
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::C) {
 				if(_editState == TextInputEditState::Selected || _editState == TextInputEditState::Selecting) {
 					sf::Clipboard::setString(_textStr.substr(std::min(_selectionStart, _selectionEnd), std::abs(_selectionEnd - _selectionStart)));
+					return;
 				}
 			}
 
@@ -214,6 +216,15 @@ void TextInput::handleEvent(const sf::Event& event) {
 				setText(_textStr);
 				return;
 			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::A) {
+				_selectionStart = 0;
+				_selectionEnd = (int)_textStr.length();
+				_cursorPosition = _selectionEnd;
+				_editState = TextInputEditState::Selected;
+				return;
+			}
+
 
 		}
 	}
