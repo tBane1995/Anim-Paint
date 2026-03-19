@@ -5,6 +5,9 @@
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
 #include "History.hpp"
+#include "Tools/Selection.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
+#include "Components/Canvas.hpp"
 
 sf::Color AverageColorAlphaWeighted(const sf::Image& image, uint8_t alphaThreshold = 1)
 {
@@ -78,7 +81,6 @@ Dialog_Hue_Saturation::~Dialog_Hue_Saturation() {
 		_hue_slider->setValue(0);
 		_brightness_slider->setValue(0);
 		_saturation_slider->setValue(100);
-
 		setTheFilter();
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
@@ -87,7 +89,16 @@ Dialog_Hue_Saturation::~Dialog_Hue_Saturation() {
 	}
 	else {
 		// is Edited
-		history->saveStep();
+		if (selection->_state == SelectionState::Selected) {
+			sf::Image orginalImage = getCurrentAnimation()->getCurrentLayer()->_image;
+			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+			history->saveStep();
+			canvas->_isEdited = true;
+			getCurrentAnimation()->getCurrentLayer()->_image = orginalImage;
+		}
+		else {
+			history->saveStep();
+		}
 	}
 
 }
@@ -123,6 +134,7 @@ void Dialog_Hue_Saturation::setPosition(sf::Vector2i position) {
 
 void Dialog_Hue_Saturation::setTheFilter() {
 
+	/*
 	_edited_layers.clear();
 
 	for (auto& org : _original_layers) {
@@ -134,6 +146,30 @@ void Dialog_Hue_Saturation::setTheFilter() {
 
 	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+
+	*/
+
+	if (selection->_state != SelectionState::None) {
+
+		selection->resizeImage();
+		set_hue(*selection->_resizedImage, _hue_slider->getValue());
+		set_brightness(*selection->_resizedImage, _brightness_slider->getValue());
+		set_saturation(*selection->_resizedImage, _saturation_slider->getValue());
+
+	}
+	else {
+		_edited_layers.clear();
+		for (auto& org : _original_layers) {
+			_edited_layers.push_back(std::make_shared<Layer>(org));
+		}
+
+		set_hue(_edited_layers[getCurrentAnimation()->getCurrentLayerID()]->_image, _hue_slider->getValue());
+		set_brightness(_edited_layers[getCurrentAnimation()->getCurrentLayerID()]->_image, _brightness_slider->getValue());
+		set_saturation(_edited_layers[getCurrentAnimation()->getCurrentLayerID()]->_image, _saturation_slider->getValue());
+
+		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
+		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+	}
 }
 
 void Dialog_Hue_Saturation::cursorHover() {
