@@ -5,6 +5,9 @@
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
 #include "History.hpp"
+#include "Tools/Selection.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
+#include "Components/Canvas.hpp"
 
 Dialog_Smoothing::Dialog_Smoothing(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"smoothing", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
 
@@ -43,6 +46,7 @@ Dialog_Smoothing::Dialog_Smoothing(std::vector<std::shared_ptr<Layer>> layers) :
 }
 
 Dialog_Smoothing::~Dialog_Smoothing() {
+
 	if (Dialog_Smoothing::_state == SmoothingState::Idle) {
 		_smoothness_slider->setValue(0);
 		_radius_slider->setValue(0);
@@ -54,7 +58,16 @@ Dialog_Smoothing::~Dialog_Smoothing() {
 	}
 	else {
 		// is Edited
-		history->saveStep();
+		if (selection->_state == SelectionState::Selected) {
+			sf::Image orginalImage = getCurrentAnimation()->getCurrentLayer()->_image;
+			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+			history->saveStep();
+			canvas->_isEdited = true;
+			getCurrentAnimation()->getCurrentLayer()->_image = orginalImage;
+		}
+		else {
+			history->saveStep();
+		}
 	}
 
 }
@@ -87,16 +100,25 @@ void Dialog_Smoothing::setPosition(sf::Vector2i position) {
 }
 
 void Dialog_Smoothing::setTheFilter() {
+	
+	if (selection->_state != SelectionState::None) {
 
-	_edited_layers.clear();
+		selection->resizeImage();
+		set_smoothing(*selection->_resizedImage, _smoothness_slider->getValue(), _radius_slider->getValue());
+		
+	}
+	else {
+		_edited_layers.clear();
+		for (auto& org : _original_layers) {
+			_edited_layers.push_back(std::make_shared<Layer>(org));
+		}
 
-	for (auto& org : _original_layers) {
-		_edited_layers.push_back(std::make_shared<Layer>(org));
-		set_smoothing(_edited_layers.back()->_image, _smoothness_slider->getValue(), _radius_slider->getValue());
+		set_smoothing(_edited_layers[getCurrentAnimation()->getCurrentLayerID()]->_image, _smoothness_slider->getValue(), _radius_slider->getValue());
+
+		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
+		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
 	}
 
-	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
-	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
 }
 
 void Dialog_Smoothing::cursorHover() {
