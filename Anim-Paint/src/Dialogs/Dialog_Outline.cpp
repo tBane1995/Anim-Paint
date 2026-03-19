@@ -6,6 +6,9 @@
 #include "Window.hpp"
 #include "Components/Toolbar/Toolbar.hpp"
 #include "History.hpp"
+#include "Tools/Selection.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
+#include "Components/Canvas.hpp"
 
 Dialog_Outline::Dialog_Outline(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"outline", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
 
@@ -40,6 +43,7 @@ Dialog_Outline::Dialog_Outline(std::vector<std::shared_ptr<Layer>> layers) : Dia
 }
 
 Dialog_Outline::~Dialog_Outline() {
+
 	if (Dialog_Outline::_state == OutlineState::Idle) {
 		_outline_slider->setValue(0);
 		setTheFilter();
@@ -50,9 +54,17 @@ Dialog_Outline::~Dialog_Outline() {
 	}
 	else {
 		// is Edited
-		history->saveStep();
+		if (selection->_state == SelectionState::Selected) {
+			sf::Image orginalImage = getCurrentAnimation()->getCurrentLayer()->_image;
+			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+			history->saveStep();
+			canvas->_isEdited = true;
+			getCurrentAnimation()->getCurrentLayer()->_image = orginalImage;
+		}
+		else {
+			history->saveStep();
+		}
 	}
-
 }
 
 void Dialog_Outline::saveOriginalLayers(std::vector<std::shared_ptr<Layer>> layers)
@@ -81,16 +93,23 @@ void Dialog_Outline::setPosition(sf::Vector2i position) {
 }
 
 void Dialog_Outline::setTheFilter() {
+	
+	if (selection->_state != SelectionState::None) {
 
-	_edited_layers.clear();
-
-	for (auto& org : _original_layers) {
-		_edited_layers.push_back(std::make_shared<Layer>(org));
-		set_outline(_edited_layers.back()->_image, _outline_slider->getValue(), toolbar->_second_color->_color, toolbar->_first_color->_color);
+		selection->resizeImage();
+		set_outline(*selection->_resizedImage, _outline_slider->getValue(), toolbar->_second_color->_color, toolbar->_first_color->_color);
 	}
+	else {
+		_edited_layers.clear();
+		for (auto& org : _original_layers) {
+			_edited_layers.push_back(std::make_shared<Layer>(org));
+		}
 
-	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
-	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+		set_outline(_edited_layers[getCurrentAnimation()->getCurrentLayerID()]->_image, _outline_slider->getValue(), toolbar->_second_color->_color, toolbar->_first_color->_color);
+
+		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
+		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+	}
 }
 
 void Dialog_Outline::cursorHover() {
