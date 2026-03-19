@@ -5,6 +5,9 @@
 #include "Tools/Filters.hpp"
 #include "Window.hpp"
 #include "History.hpp"
+#include "Tools/Selection.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
+#include "Components/Canvas.hpp"
 
 Dialog_Invert_Colors::Dialog_Invert_Colors(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"invert colors", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
 
@@ -63,6 +66,7 @@ Dialog_Invert_Colors::Dialog_Invert_Colors(std::vector<std::shared_ptr<Layer>> l
 }
 
 Dialog_Invert_Colors::~Dialog_Invert_Colors() {
+
 	if (Dialog_Invert_Colors::_state == InvertColorsState::Idle) {
 		_palette = PaletteTypeToInvert::None;
 		setTheFilter();
@@ -73,7 +77,16 @@ Dialog_Invert_Colors::~Dialog_Invert_Colors() {
 	}
 	else {
 		// is Edited
-		history->saveStep();
+		if (selection->_state == SelectionState::Selected) {
+			sf::Image orginalImage = getCurrentAnimation()->getCurrentLayer()->_image;
+			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+			history->saveStep();
+			canvas->_isEdited = true;
+			getCurrentAnimation()->getCurrentLayer()->_image = orginalImage;
+		}
+		else {
+			history->saveStep();
+		}
 	}
 
 }
@@ -115,25 +128,44 @@ void Dialog_Invert_Colors::setPosition(sf::Vector2i position) {
 
 void Dialog_Invert_Colors::setTheFilter() {
 
-	_edited_layers.clear();
+	if (selection->_state != SelectionState::None) {
+		selection->resizeImage();
 
-	for (auto& org : _original_layers) {
-		_edited_layers.push_back(std::make_shared<Layer>(org));
 		switch (_palette) {
 
-			case PaletteTypeToInvert::RGB:
-				set_invert_rgb(_edited_layers.back()->_image);
-				break;
-			case PaletteTypeToInvert::HSV:
-				set_invert_hsv(_edited_layers.back()->_image);
-				break;
-			default:
-				break;
+		case PaletteTypeToInvert::RGB:
+			set_invert_rgb(*selection->_resizedImage);
+			break;
+		case PaletteTypeToInvert::HSV:
+			set_invert_hsv(*selection->_resizedImage);
+			break;
+		default:
+			break;
 		}
+
+	}
+	else {
+		_edited_layers.clear();
+		for (auto& org : _original_layers) {
+			_edited_layers.push_back(std::make_shared<Layer>(org));
+		}
+
+		switch (_palette) {
+
+		case PaletteTypeToInvert::RGB:
+			set_invert_rgb(_edited_layers[getCurrentAnimation()->getCurrentLayerID()]->_image);
+			break;
+		case PaletteTypeToInvert::HSV:
+			set_invert_hsv(_edited_layers[getCurrentAnimation()->getCurrentLayerID()]->_image);
+			break;
+		default:
+			break;
+		}
+
+		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
+		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
 	}
 
-	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
-	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
 }
 
 void Dialog_Invert_Colors::cursorHover() {
