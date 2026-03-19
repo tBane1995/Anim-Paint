@@ -208,16 +208,18 @@ MainMenu::MainMenu() : Element() {
 
 	std::shared_ptr<OptionBox> select_none = std::make_shared<OptionBox>(L"Select none", L"Ctrl+D");
 	select_none->_onclick_func = [this]() {
-		selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent);
-		selection->_points.clear();
-		selection->_outlineOffset = sf::Vector2i(0, 0);
-		selection->generateRect();
-		selection->_resizedRect = selection->_rect;
-		selection->_image = nullptr;
-		selection->_maskImage = nullptr;
-		selection->_resizedImage = nullptr;
-		selection->_resizedMaskImage = nullptr;
-		selection->_state = SelectionState::None;
+		if (selection->_state != SelectionState::None) {
+			selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent);
+			selection->_points.clear();
+			selection->_outlineOffset = sf::Vector2i(0, 0);
+			selection->generateRect();
+			selection->_resizedRect = selection->_rect;
+			selection->_image = nullptr;
+			selection->_maskImage = nullptr;
+			selection->_resizedImage = nullptr;
+			selection->_resizedMaskImage = nullptr;
+			selection->_state = SelectionState::None;
+		}
 		closeMenu();
 		};
 
