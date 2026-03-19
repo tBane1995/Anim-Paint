@@ -6,6 +6,9 @@
 #include "Tools/Filters.hpp"
 #include "Components/Toolbar/Toolbar.hpp"
 #include "History.hpp"
+#include "Tools/Selection.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
+#include "Components/Canvas.hpp"
 
 Dialog_Rotation::Dialog_Rotation(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"rotation", sf::Vector2i(256, 192), sf::Vector2i(8, 120)) {
 
@@ -46,19 +49,29 @@ Dialog_Rotation::Dialog_Rotation(std::vector<std::shared_ptr<Layer>> layers) : D
 }
 
 Dialog_Rotation::~Dialog_Rotation() {
+
 	if (Dialog_Rotation::_state == RotationState::Idle) {
 		_rotation_slider->setValue(0);
 		_smoothness_slider->setValue(0);
 		_radius_slider->setValue(0);
-
 		setTheFilter();
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+		layers_panel->loadLayersFromCurrentFrame();
 	}
 	else {
 		// is Edited
-		history->saveStep();
+		if (selection->_state == SelectionState::Selected) {
+			sf::Image orginalImage = getCurrentAnimation()->getCurrentLayer()->_image;
+			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+			history->saveStep();
+			canvas->_isEdited = true;
+			getCurrentAnimation()->getCurrentLayer()->_image = orginalImage;
+		}
+		else {
+			history->saveStep();
+		}
 	}
 
 }
@@ -94,17 +107,24 @@ void Dialog_Rotation::setPosition(sf::Vector2i position) {
 
 void Dialog_Rotation::setTheFilter() {
 
-	_edited_layers.clear();
+	if (selection->_state != SelectionState::None) {
 
-	for (auto& org : _original_layers) {
-		_edited_layers.push_back(std::make_shared<Layer>(org));
-		set_smoothing(_edited_layers.back()->_image, _smoothness_slider->getValue(), _radius_slider->getValue());
-		set_rotation(_edited_layers.back()->_image, _rotation_slider->getValue(), true, toolbar->_second_color->_color);
+		selection->resizeImage();
+		set_smoothing(*selection->_resizedImage, _smoothness_slider->getValue(), _radius_slider->getValue());
+		set_rotation(*selection->_resizedImage, _rotation_slider->getValue(), true, toolbar->_second_color->_color);
 	}
+	else {
+		_edited_layers.clear();
+		for (auto& org : _original_layers) {
+			_edited_layers.push_back(std::make_shared<Layer>(org));
+		}
 
-	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
-	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-	layers_panel->loadLayersFromCurrentFrame();
+		set_smoothing(_edited_layers[getCurrentAnimation()->getCurrentLayerID()]->_image, _smoothness_slider->getValue(), _radius_slider->getValue());
+		set_rotation(_edited_layers[getCurrentAnimation()->getCurrentLayerID()]->_image, _rotation_slider->getValue(), true, toolbar->_second_color->_color);
+
+		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
+		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+	}
 }
 
 void Dialog_Rotation::cursorHover() {
