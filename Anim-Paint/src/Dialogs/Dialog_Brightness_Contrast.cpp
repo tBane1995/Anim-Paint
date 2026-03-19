@@ -102,12 +102,11 @@ void Dialog_Brightness_Contrast::setTheFilter() {
 
 	if (selection->_state != SelectionState::None) {
 
-		selection->resizeImage(); // to update the resized image with the current selection rect
+		selection->resizeImage();
 		set_brightness(*selection->_resizedImage, _brightness_slider->getValue());
 		set_contrast(*selection->_resizedImage, _contrast_slider->getValue());
 		
 	}else{
-		// edit all layers of the current frame
 		_edited_layers.clear();
 		for (auto& org : _original_layers) {
 			_edited_layers.push_back(std::make_shared<Layer>(org));
