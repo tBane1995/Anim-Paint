@@ -134,20 +134,6 @@ void Dialog_Hue_Saturation::setPosition(sf::Vector2i position) {
 
 void Dialog_Hue_Saturation::setTheFilter() {
 
-	/*
-	_edited_layers.clear();
-
-	for (auto& org : _original_layers) {
-		_edited_layers.push_back(std::make_shared<Layer>(org));
-		set_hue(_edited_layers.back()->_image, _hue_slider->getValue());
-		set_brightness(_edited_layers.back()->_image, _brightness_slider->getValue());
-		set_saturation(_edited_layers.back()->_image, _saturation_slider->getValue());
-	}
-
-	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
-	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
-
-	*/
 
 	if (selection->_state != SelectionState::None) {
 

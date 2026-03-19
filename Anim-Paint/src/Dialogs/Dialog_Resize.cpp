@@ -7,6 +7,10 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 #include "History.hpp"
+#include "Tools/Selection.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
+#include "Components/Canvas.hpp"
+
 
 Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"resize", sf::Vector2i(256, 160+64), sf::Vector2i(8, 120)) {
 
@@ -14,8 +18,16 @@ Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialo
 
 	saveOriginalLayers(layers);
 
-	_width_input = std::make_shared<NumberInput>(sf::Vector2i(64, basic_text_rect_height), 3, basic_text_size, canvas->_size.x, canvas->_minSize.x, canvas->_maxSize.x);
-	_height_input = std::make_shared<NumberInput>(sf::Vector2i(64, basic_text_rect_height), 3, basic_text_size, canvas->_size.y, canvas->_minSize.y, canvas->_maxSize.y);
+	int w = (selection->_state != SelectionState::None) ? selection->_resizedRect.size.x : canvas->_size.x;
+	int h = (selection->_state != SelectionState::None) ? selection->_resizedRect.size.y : canvas->_size.y;
+
+	int minw = (selection->_state != SelectionState::None) ? selection->_resizedRect.size.x/4 : canvas->_minSize.x/4;
+	int minh = (selection->_state != SelectionState::None) ? selection->_resizedRect.size.y/4 : canvas->_minSize.y/4;
+	int maxw = (selection->_state != SelectionState::None) ? selection->_resizedRect.size.x*4 : canvas->_maxSize.x*4;
+	int maxh = (selection->_state != SelectionState::None) ? selection->_resizedRect.size.y*4 : canvas->_maxSize.y*4;
+
+	_width_input = std::make_shared<NumberInput>(sf::Vector2i(64, basic_text_rect_height), 3, basic_text_size, w, minw, maxw);
+	_height_input = std::make_shared<NumberInput>(sf::Vector2i(64, basic_text_rect_height), 3, basic_text_size, h, minh, maxh);
 	_width_percent_input = std::make_shared<NumberInput>(sf::Vector2i(64, basic_text_rect_height), 3, basic_text_size, 100, 25, 400);
 	_height_percent_input = std::make_shared<NumberInput>(sf::Vector2i(64, basic_text_rect_height), 3, basic_text_size, 100, 25, 400);
 
@@ -53,8 +65,8 @@ Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialo
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
-		_width_input->setValue(canvas->_size.x);
-		_height_input->setValue(canvas->_size.y);
+		_width_input->setValue((selection->_state != SelectionState::None) ? selection->_resizedRect.size.x : canvas->_size.x);
+		_height_input->setValue((selection->_state != SelectionState::None) ? selection->_resizedRect.size.y : canvas->_size.y);
 		_width_percent_input->setValue(100);
 		_height_percent_input->setValue(100);
 		setTheFilter();
@@ -76,9 +88,11 @@ Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialo
 }
 
 Dialog_Resize::~Dialog_Resize() {
+
 	if (Dialog_Resize::_state == ResizeState::Idle) {
-		_width_input->setValue(canvas->_size.x);
-		_height_input->setValue(canvas->_size.y);
+
+		_width_input->setValue((selection->_state!=SelectionState::None)?selection->_resizedRect.size.x : canvas->_size.x);
+		_height_input->setValue((selection->_state!=SelectionState::None)?selection->_resizedRect.size.y : canvas->_size.y);
 		_width_percent_input->setValue(100);
 		_height_percent_input->setValue(100);
 		setTheFilter();
@@ -89,7 +103,16 @@ Dialog_Resize::~Dialog_Resize() {
 	}
 	else {
 		// is Edited
-		history->saveStep();
+		if (selection->_state == SelectionState::Selected) {
+			sf::Image orginalImage = getCurrentAnimation()->getCurrentLayer()->_image;
+			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+			history->saveStep();
+			canvas->_isEdited = true;
+			getCurrentAnimation()->getCurrentLayer()->_image = orginalImage;
+		}
+		else {
+			history->saveStep();
+		}
 	}
 
 }
@@ -153,21 +176,28 @@ void Dialog_Resize::setPosition(sf::Vector2i position) {
 
 void Dialog_Resize::setTheFilter() {
 
-	_edited_layers.clear();
+	if (selection->_state != SelectionState::None) {
 
-	for (auto& org : _original_layers) {
-		_edited_layers.push_back(std::make_shared<Layer>(org));
-		set_resize(_edited_layers.back()->_image, _width_input->getValue(), _height_input->getValue(), toolbar->_second_color->_color);
+		selection->resizeImage();
+		set_resize(*selection->_resizedImage, _width_input->getValue(), _height_input->getValue(), toolbar->_second_color->_color);
+
 	}
+	else {
+		_edited_layers.clear();
+		for (auto& org : _original_layers) {
+			_edited_layers.push_back(std::make_shared<Layer>(org));
+		}
 
-	getCurrentAnimation()->getCurrentFrame()->_layers.clear();
-	getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+		set_resize(_edited_layers[getCurrentAnimation()->getCurrentLayerID()]->_image, _width_input->getValue(), _height_input->getValue(), toolbar->_second_color->_color);
+
+		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
+		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+	}
 }
 
 void Dialog_Resize::cursorHover() {
 	Dialog::cursorHover();
 
-	//_outline_slider->cursorHover();
 	_width_input->cursorHover();
 	_height_input->cursorHover();
 	_width_percent_input->cursorHover();
