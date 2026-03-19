@@ -90,17 +90,17 @@ void MenuBox::handleEvent(const sf::Event& event) {
 			_state = ButtonState::Pressed;
 			_isSelected = true;
 			return;
-		}
-		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (Element_pressed.get() == this) {
-				return;
-			}
-		}
-		else if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && main_menu->_open_menu_box) {
+
+		}else if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && main_menu->_open_menu_box) {
 			Element_pressed = this->shared_from_this();
 			_state = ButtonState::Pressed;
 			_isSelected = true;
+			return;
 		}
+	}
+	else if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+		if(Element_pressed.get() == this)
+			Element_pressed = nullptr;
 	}
 
 	if (_isSelected) {
@@ -110,7 +110,20 @@ void MenuBox::handleEvent(const sf::Event& event) {
 }
 
 void MenuBox::update() {
-	Button::update();
+	if (_state == ButtonState::Pressed) {
+		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
+			if (_onclick_func) {
+				_onclick_func();
+			}
+
+			unclick();
+		}
+	}
+	else if (Element_hovered.get() == this) {
+		hover();
+	}
+	else
+		unclick();
 
 	for (auto& option : _options)
 		option->update();
