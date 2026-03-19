@@ -389,6 +389,10 @@ void Canvas::pickPixel() {
 }
 
 void Canvas::mouseLeftButtonPressedEvent() {
+
+	if(_isEdited)
+		_isEdited = false;
+
 	if (Element_pressed.get() == this || (Element_pressed.get() == nullptr && Element_hovered.get() == this)) {
 		if (toolbar->_toolType == ToolType::Brush) {
 			drawPixels(toolbar->_first_color->_color);
@@ -428,15 +432,14 @@ void Canvas::mouseRightButtonPressedEvent() {
 }
 
 void Canvas::mouseLeftButtonReleasedEvent() {
-
-}
-
-void Canvas::mouseRightButtonReleasedEvent() {
-
 	if (_isEdited) {
 		history->saveStep();
 		_isEdited = false;
 	}
+}
+
+void Canvas::mouseRightButtonReleasedEvent() {
+
 }
 
 

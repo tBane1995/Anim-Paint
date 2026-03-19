@@ -7,6 +7,7 @@
 #include "History.hpp"
 #include "Tools/Selection.hpp"
 #include "Components/Toolbar/Toolbar.hpp"
+#include "Components/Canvas.hpp"
 
 Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"brightness-contrast", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
 
@@ -55,10 +56,11 @@ Dialog_Brightness_Contrast::~Dialog_Brightness_Contrast() {
 		layers_panel->loadLayersFromCurrentFrame();
 	}else{
 		// is Edited
-		if(selection->_state != SelectionState::None) {
+		if(selection->_state == SelectionState::Selected) {
 			sf::Image orginalImage = getCurrentAnimation()->getCurrentLayer()->_image;
 			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 			history->saveStep();
+			canvas->_isEdited = true;
 			getCurrentAnimation()->getCurrentLayer()->_image = orginalImage;
 		}
 		else {
