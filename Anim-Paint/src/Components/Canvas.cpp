@@ -360,6 +360,13 @@ void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelC
 }
 
 void Canvas::fillPixels(sf::Color color) {
+
+	std::shared_ptr<Layer> layer = getCurrentAnimation()->getCurrentLayer();
+
+	if (layer == nullptr) {
+		return;
+	}
+
 	sf::Vector2i tile = worldToTile(cursor->_position, _position, _zoom, _zoom_delta);
 	sf::IntRect imageRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(getCurrentAnimation()->getCurrentLayer()->_image.getSize()));
 
