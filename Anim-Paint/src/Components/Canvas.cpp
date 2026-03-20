@@ -373,11 +373,17 @@ void Canvas::fillPixels(sf::Color color) {
 	if (!imageRect.contains(tile))
 		return;
 
-	sf::Color colorToEdit = getCurrentAnimation()->getCurrentLayer()->_image.getPixel(sf::Vector2u(tile.x, tile.y));
+	sf::Color colorToEdit = layer->_image.getPixel(sf::Vector2u(tile.x, tile.y));
 	fill(colorToEdit, color, tile);
 }
 
 void Canvas::pickPixel() {
+
+	std::shared_ptr<Layer> layer = getCurrentAnimation()->getCurrentLayer();
+	if (layer == nullptr) {
+		return;
+	}
+
 	sf::Image image = getCurrentAnimation()->getCurrentLayer()->_image;
 	sf::IntRect imageRect(sf::Vector2i(0, 0), sf::Vector2i(image.getSize()));
 	sf::Vector2i tile = worldToTile(cursor->_position, _rect.position, _zoom, _zoom_delta);
