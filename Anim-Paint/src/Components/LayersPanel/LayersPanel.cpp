@@ -31,7 +31,7 @@ LayersPanel::LayersPanel()
 
 		layers_panel->addLayer(new_layer);
 		};
-	_add_layer->setTooltip(L"Add Layer", L"Adds a new layer above the current layer.");
+	_add_layer->setTooltip(L"Add Layer", L"Add a new layer above the current layer.");
 
 	_remove_layer->_onclick_func = []() {
 		layers_panel->removeLayer(getCurrentAnimation()->getCurrentLayerID());
