@@ -20,6 +20,7 @@ public:
 
 	void loadLayersFromCurrentFrame();
 	void addLayer(std::shared_ptr<Layer> layerm);
+	void removeLayer(int index);
 	void setPosition(sf::Vector2i position);
 
 	void cursorHover();

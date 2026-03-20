@@ -21,55 +21,19 @@ LayersPanel::LayersPanel()
 	
 
 	_add_layer->_onclick_func = []() {
-		if (getCurrentAnimation()->getLayersCount() >= 4)
-			return;
+		if (getCurrentAnimation()->getLayersCount() >= 4) return;
 
-		std::shared_ptr<Frame> frame = getCurrentAnimation()->getCurrentFrame();
-		if (!frame) return;
-
-		std::shared_ptr<Layer> new_layer = std::make_shared<Layer>(L"Layer " + std::to_wstring(getCurrentAnimation()->getLayersCount() + 1), canvas->_size, (getCurrentAnimation()->getLayersCount() == 0) ? sf::Color::White : sf::Color::Transparent);
-
-		int oldID = getCurrentAnimation()->getCurrentLayerID();
-		if (oldID >= 0 && oldID < (int)layers_panel->layersBoxes.size())
-			layers_panel->layersBoxes[oldID]->_isActive = false;
+		std::shared_ptr<Layer> new_layer = std::make_shared<Layer>(
+			L"Layer " + std::to_wstring(getCurrentAnimation()->getLayersCount() + 1),
+			canvas->_size,
+			(getCurrentAnimation()->getLayersCount() == 0) ? sf::Color::White : sf::Color::Transparent
+		);
 
 		layers_panel->addLayer(new_layer);
-
-		int newID = getCurrentAnimation()->getCurrentLayerID();
-
-		std::shared_ptr<LayerBox> layerBox = std::make_shared<LayerBox>(new_layer);
-		layers_panel->layersBoxes.insert(layers_panel->layersBoxes.begin() + newID, layerBox);
-
-		layerBox->_isActive = true;
-
-		layerBox->_onclick_func = [layerBox]() {
-			auto& boxes = layers_panel->layersBoxes;
-			int current = getCurrentAnimation()->getCurrentLayerID();
-			if (current >= 0 && current < (int)boxes.size())
-				boxes[current]->_isActive = false;
-
-			int newID = -1;
-			for (int i = 0; i < (int)boxes.size(); i++) {
-				if (boxes[i] == layerBox) {
-					newID = i;
-					break;
-				}
-			}
-
-			if (newID >= 0) {
-				getCurrentAnimation()->setCurrentLayerID(newID);
-				boxes[newID]->_isActive = true;
-			}
-			};
 		};
 
 	_remove_layer->_onclick_func = []() {
-		int index = getCurrentAnimation()->getCurrentLayerID();
-		if (index >= 0 && index < getCurrentAnimation()->getLayersCount()) {
-			getCurrentAnimation()->getCurrentFrame()->_layers.erase(getCurrentAnimation()->getCurrentFrame()->_layers.begin() + index);
-			getCurrentAnimation()->setCurrentLayerID(std::max(0, index - 1));
-			layers_panel->loadLayersFromCurrentFrame();
-		}
+		layers_panel->removeLayer(getCurrentAnimation()->getCurrentLayerID());
 		};
 
 	_move_top->_onclick_func = []() {
@@ -134,15 +98,65 @@ void LayersPanel::addLayer(std::shared_ptr<Layer> layer) {
 	if (index >= (int)layers.size()) index = layers.size() - 1;
 
 	int insertPos = index + 1;
-
-	if (insertPos > (int)layers.size()) 
+	if (insertPos > (int)layers.size())
 		insertPos = layers.size();
 
 	layers.insert(layers.begin() + insertPos, layer);
 
 	getCurrentAnimation()->setCurrentLayerID(insertPos);
 
+	auto layerBox = std::make_shared<LayerBox>(layer);
+	layerBox->_isActive = true;
+
+	if (index >= 0 && index < (int)layersBoxes.size())
+		layersBoxes[index]->_isActive = false;
+
+	layersBoxes.insert(layersBoxes.begin() + insertPos, layerBox);
+
+	layerBox->_onclick_func = [layerBox]() {
+		auto& boxes = layers_panel->layersBoxes;
+		int current = getCurrentAnimation()->getCurrentLayerID();
+		if (current >= 0 && current < (int)boxes.size())
+			boxes[current]->_isActive = false;
+
+		int newID = -1;
+		for (int i = 0; i < (int)boxes.size(); i++) {
+			if (boxes[i] == layerBox) {
+				newID = i;
+				break;
+			}
+		}
+
+		if (newID >= 0) {
+			getCurrentAnimation()->setCurrentLayerID(newID);
+			boxes[newID]->_isActive = true;
+		}
+		};
+
+	setPosition(getPosition());
 }
+
+void LayersPanel::removeLayer(int index) {
+	std::shared_ptr<Frame> frame = getCurrentAnimation()->getCurrentFrame();
+	if (!frame) return;
+
+	auto& layers = frame->_layers;
+	if (index < 0 || index >= (int)layers.size()) return;
+
+	layers.erase(layers.begin() + index);
+
+	if (index >= 0 && index < (int)layersBoxes.size())
+		layersBoxes.erase(layersBoxes.begin() + index);
+
+	int newID = std::max(0, index - 1);
+	getCurrentAnimation()->setCurrentLayerID(newID);
+
+	if (!layersBoxes.empty() && newID >= 0 && newID < (int)layersBoxes.size())
+		layersBoxes[newID]->_isActive = true;
+
+	setPosition(getPosition());
+}
+
 void LayersPanel::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 
