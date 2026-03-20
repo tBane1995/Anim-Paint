@@ -19,6 +19,7 @@ public:
 	~LayersPanel();
 
 	void loadLayersFromCurrentFrame();
+	void addLayer(std::shared_ptr<Layer> layerm);
 	void setPosition(sf::Vector2i position);
 
 	void cursorHover();
