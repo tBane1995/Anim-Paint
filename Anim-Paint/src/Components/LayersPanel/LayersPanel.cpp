@@ -31,10 +31,12 @@ LayersPanel::LayersPanel()
 
 		layers_panel->addLayer(new_layer);
 		};
+	_add_layer->setTooltip(L"Add Layer", L"Adds a new layer above the current layer.");
 
 	_remove_layer->_onclick_func = []() {
 		layers_panel->removeLayer(getCurrentAnimation()->getCurrentLayerID());
 		};
+	_remove_layer->setTooltip(L"Remove Layer", L"Removes the current layer.");
 
 	_move_top->_onclick_func = []() {
 		int index = getCurrentAnimation()->getCurrentLayerID();
@@ -44,6 +46,7 @@ LayersPanel::LayersPanel()
 			layers_panel->loadLayersFromCurrentFrame();
 		}
 		};
+	_move_top->setTooltip(L"Move Layer Up", L"Moves the current layer up in the layer stack.");
 
 	_move_bottom->_onclick_func = []() {
 		int index = getCurrentAnimation()->getCurrentLayerID();
@@ -53,6 +56,7 @@ LayersPanel::LayersPanel()
 			layers_panel->loadLayersFromCurrentFrame();
 		}
 		};
+	_move_bottom->setTooltip(L"Move Layer Down", L"Moves the current layer down in the layer stack.");
 
 	loadLayersFromCurrentFrame();
 }
