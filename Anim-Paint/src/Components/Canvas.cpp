@@ -299,8 +299,9 @@ void Canvas::drawPixels(sf::Color color) {
 
 	std::shared_ptr<Layer> layer = getCurrentAnimation()->getCurrentLayer();
 
-	if (layer == nullptr)
+	if (layer == nullptr) {
 		return;
+	}
 
 	std::vector<sf::Vector2i> pixelsToDraw = getPointsFromLine(brush->_lastPosition, brush->_position);
 

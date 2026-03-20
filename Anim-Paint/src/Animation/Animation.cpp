@@ -64,7 +64,12 @@ std::shared_ptr<Layer> Animation::getCurrentLayer() {
 	if (_currentLayer == -1)
 		return nullptr;
 
-	return getCurrentFrame()->getLayers()[_currentLayer];
+	std::vector<std::shared_ptr<Layer>> layers = getCurrentFrame()->getLayers();
+
+	if (layers.size() < 1)
+		return nullptr;
+
+	return layers[_currentLayer];
 }
 
 std::vector<std::shared_ptr<Frame>> Animation::getFrames() {
