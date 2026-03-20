@@ -8,6 +8,8 @@
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Cursor.hpp"
 #include "Tools/Selection.hpp"
+#include "Dialogs/Dialog_Paste_From_File.hpp"
+
 
 enum class VariableType { Int, Float, Double };
 
@@ -68,11 +70,15 @@ Toolbar::Toolbar() : Element() {
 			_toolType = ToolType::Selector;
 			selection->_state = SelectionState::Selected;
 			selectToolButton(_btn_select);
+			_btn_paste_menu->_isOpen = false;
 		}
 		};
 
 	_option_from_file = std::make_shared<Option>(L"from file");
-
+	_option_from_file->_onclick_func = [this]() {
+		dialogs.push_back(std::make_shared<Dialog_Paste_From_File>());
+		_btn_paste_menu->_isOpen = false;
+		};
 	_option_transparency = std::make_shared<OptionWithCheckbox>(L"transparency", getTexture(L"tex\\tools\\btn_unchecked.png"), getTexture(L"tex\\tools\\btn_unchecked_hover.png"));
 	_option_transparency->addValue(getTexture(L"tex\\tools\\btn_checked.png"), getTexture(L"tex\\tools\\btn_checked_hover.png"));
 	_option_transparency->_onclick_func = [this]() {
