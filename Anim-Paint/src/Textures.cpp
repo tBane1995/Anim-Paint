@@ -180,7 +180,7 @@ void loadTextures() {
 	DebugLog(L"Loading textures:");
 	for (auto& path : texturePaths) {
 		if (getTexture(path)) {
-			DebugLog(path);
+			DebugStat(path);
 		}
 	}
 

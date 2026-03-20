@@ -10,7 +10,7 @@
 LayersPanel::LayersPanel() 
 	: Dialog(
 		L"Layers",
-		sf::Vector2i(192, dialog_title_rect_height + 4 * 32 + 32 + dialog_padding * 2),
+		sf::Vector2i(192, dialog_title_rect_height + 4 * 32 + 32 + dialog_padding * 3),
 		sf::Vector2i(int(mainView.getSize().x) - 160 - dialog_margin, frames_panel->getPosition().y + frames_panel->getSize().y + dialog_margin)
 		) {
 
@@ -21,10 +21,22 @@ LayersPanel::LayersPanel()
 	
 
 	_add_layer->_onclick_func = []() {
+
+		if(getCurrentAnimation()->getLayersCount() >= 4)
+			return;
+
+		auto frame = getCurrentAnimation()->getCurrentFrame();
+		auto& layers = frame->_layers;
+
 		int index = getCurrentAnimation()->getCurrentLayerID();
-		getCurrentAnimation()->getCurrentFrame()->_layers.insert(
-			getCurrentAnimation()->getCurrentFrame()->_layers.begin() + index + 1, 
-			std::make_shared<Layer>(L"new layer", canvas->_size, sf::Color::Transparent));
+		if (index < -1) index = -1;
+		if (index >= (int)layers.size()) index = layers.size() - 1;
+
+		auto it = layers.begin() + (index + 1);
+
+		layers.insert(it, std::make_shared<Layer>(
+			L"Layer " + std::to_wstring(layers.size() + 1), canvas->_size, (layers.size()==0)?sf::Color::White : sf::Color::Transparent));
+
 		layers_panel->loadLayersFromCurrentFrame();
 		};
 

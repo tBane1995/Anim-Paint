@@ -112,6 +112,9 @@ int Animation::getFramesCount() {
 
 int Animation::getLayersCount() {
 	// return current Layers size
+	if(getCurrentFrame() == nullptr)
+		return 0;	
+
 	return (int)getCurrentFrame()->_layers.size();
 }
 
