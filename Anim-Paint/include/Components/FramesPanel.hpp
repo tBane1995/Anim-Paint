@@ -11,7 +11,7 @@ public:
 	std::unique_ptr<sf::Text> _text;
 
 	std::shared_ptr<ButtonWithSprite> _add_frame;
-	std::shared_ptr<ButtonWithSprite> _sub_frame;
+	std::shared_ptr<ButtonWithSprite> _remove_frame;
 	std::shared_ptr<ButtonWithSprite> _move_back;
 	std::shared_ptr<ButtonWithSprite> _move_next;
 

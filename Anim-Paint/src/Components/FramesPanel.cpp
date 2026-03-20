@@ -52,8 +52,8 @@ FramesPanel::FramesPanel()
 	};
 	_last_btn->setTooltip(L"Last frame", L"Go to the last frame");
 
-	_add_frame = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\add_frame.png"), getTexture(L"tex\\btn32\\add_frame_hover.png"));
-	_sub_frame = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\sub_frame.png"), getTexture(L"tex\\btn32\\sub_frame_hover.png"));
+	_add_frame = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\add.png"), getTexture(L"tex\\btn32\\add_hover.png"));
+	_remove_frame = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\remove.png"), getTexture(L"tex\\btn32\\remove_hover.png"));
 	_move_back = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\move_back.png"), getTexture(L"tex\\btn32\\move_back_hover.png"));
 	_move_next = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\move_next.png"), getTexture(L"tex\\btn32\\move_next_hover.png"));
 
@@ -67,7 +67,7 @@ FramesPanel::FramesPanel()
 		};
 	_add_frame->setTooltip(L"Add frame", L"Add a new frame after the current one");
 
-	_sub_frame->_onclick_func = [this]() {
+	_remove_frame->_onclick_func = [this]() {
 		if (getCurrentAnimation()->getFramesCount() > 0) {
 			getCurrentAnimation()->subFrame();
 			getCurrentAnimation()->prevFrame();
@@ -75,7 +75,7 @@ FramesPanel::FramesPanel()
 			layers_panel->loadLayersFromCurrentFrame();
 		}
 		};
-	_sub_frame->setTooltip(L"Sub frame", L"Delete the current frame");
+	_remove_frame->setTooltip(L"Remove frame", L"Remove the current frame");
 
 	_move_back->_onclick_func = [this]() {
 		getCurrentAnimation()->moveBackFrame();
@@ -111,7 +111,7 @@ void FramesPanel::setPosition(sf::Vector2i position) {
 	updateText();
 
 	_add_frame->setPosition(_position + sf::Vector2i(dialog_padding, 64 + dialog_padding));
-	_sub_frame->setPosition(_position + sf::Vector2i(dialog_padding + 32, 64 + dialog_padding));
+	_remove_frame->setPosition(_position + sf::Vector2i(dialog_padding + 32, 64 + dialog_padding));
 	_move_back->setPosition(_position + sf::Vector2i(getSize().x - dialog_padding - 64, 64 + dialog_padding));
 	_move_next->setPosition(_position + sf::Vector2i(getSize().x - dialog_padding - 32, 64 + dialog_padding));
 }
@@ -157,7 +157,7 @@ void FramesPanel::cursorHover() {
 	_last_btn->cursorHover();
 
 	_add_frame->cursorHover();
-	_sub_frame->cursorHover();
+	_remove_frame->cursorHover();
 	_move_back->cursorHover();
 	_move_next->cursorHover();
 }
@@ -192,7 +192,7 @@ void FramesPanel::handleEvent(const sf::Event& event) {
 	}
 
 	_add_frame->handleEvent(event);
-	_sub_frame->handleEvent(event);
+	_remove_frame->handleEvent(event);
 	_move_back->handleEvent(event);
 	_move_next->handleEvent(event);
 }
@@ -207,7 +207,7 @@ void FramesPanel::update() {
 	_last_btn->update();
 
 	_add_frame->update();
-	_sub_frame->update();
+	_remove_frame->update();
 	_move_back->update();
 	_move_next->update();
 }
@@ -223,7 +223,7 @@ void FramesPanel::draw() {
 	window->draw(*_text);
 
 	_add_frame->draw();
-	_sub_frame->draw();
+	_remove_frame->draw();
 	_move_back->draw();
 	_move_next->draw();
 }

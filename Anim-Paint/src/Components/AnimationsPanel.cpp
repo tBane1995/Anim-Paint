@@ -51,8 +51,8 @@ AnimationsPanel::AnimationsPanel() :
 	};
 	_last_btn->setTooltip(L"Last animation", L"Go to the last animation");
 
-	_add_anim = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\add_frame.png"), getTexture(L"tex\\btn32\\add_frame_hover.png"));
-	_sub_anim = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\sub_frame.png"), getTexture(L"tex\\btn32\\sub_frame_hover.png"));
+	_add_anim = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\add.png"), getTexture(L"tex\\btn32\\add_hover.png"));
+	_remove_anim = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\remove.png"), getTexture(L"tex\\btn32\\remove_hover.png"));
 	_move_back = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\move_back.png"), getTexture(L"tex\\btn32\\move_back_hover.png"));
 	_move_next = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\move_next.png"), getTexture(L"tex\\btn32\\move_next_hover.png"));
 
@@ -66,7 +66,7 @@ AnimationsPanel::AnimationsPanel() :
 		};
 	_add_anim->setTooltip(L"Add animation", L"Add a new animation after the current one");
 
-	_sub_anim->_onclick_func = [this]() {
+	_remove_anim->_onclick_func = [this]() {
 		if (getAnimationsCount() > 0) {
 			deleteAnimation();
 			prevAnimation();
@@ -74,7 +74,7 @@ AnimationsPanel::AnimationsPanel() :
 			frames_panel->_first_btn->_onclick_func();
 		}
 		};
-	_sub_anim->setTooltip(L"Delete animation", L"Delete the current animation");
+	_remove_anim->setTooltip(L"Remove animation", L"Remove the current animation");
 
 	_move_back->_onclick_func = [this]() {
 		moveBackAnimation();
@@ -110,7 +110,7 @@ void AnimationsPanel::setPosition(sf::Vector2i position) {
 	updateText();
 
 	_add_anim->setPosition(_position + sf::Vector2i(dialog_padding, 64 + dialog_padding));
-	_sub_anim->setPosition(_position + sf::Vector2i(dialog_padding + 32, 64 + dialog_padding));
+	_remove_anim->setPosition(_position + sf::Vector2i(dialog_padding + 32, 64 + dialog_padding));
 	_move_back->setPosition(_position + sf::Vector2i(getSize().x - dialog_padding - 64, 64 + dialog_padding));
 	_move_next->setPosition(_position + sf::Vector2i(getSize().x - dialog_padding - 32, 64 + dialog_padding));
 }
@@ -156,7 +156,7 @@ void AnimationsPanel::cursorHover() {
 	_last_btn->cursorHover();
 
 	_add_anim->cursorHover();
-	_sub_anim->cursorHover();
+	_remove_anim->cursorHover();
 	_move_back->cursorHover();
 	_move_next->cursorHover();
 }
@@ -191,7 +191,7 @@ void AnimationsPanel::handleEvent(const sf::Event& event) {
 	}
 
 	_add_anim->handleEvent(event);
-	_sub_anim->handleEvent(event);
+	_remove_anim->handleEvent(event);
 	_move_back->handleEvent(event);
 	_move_next->handleEvent(event);
 }
@@ -206,7 +206,7 @@ void AnimationsPanel::update() {
 	_last_btn->update();
 
 	_add_anim->update();
-	_sub_anim->update();
+	_remove_anim->update();
 	_move_back->update();
 	_move_next->update();
 }
@@ -220,7 +220,7 @@ void AnimationsPanel::draw() {
 	_last_btn->draw();
 
 	_add_anim->draw();
-	_sub_anim->draw();
+	_remove_anim->draw();
 	_move_back->draw();
 	_move_next->draw();
 

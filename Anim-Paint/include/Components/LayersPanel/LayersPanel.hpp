@@ -10,6 +10,10 @@ class LayersPanel : public Dialog {
 public:
 
 	std::vector<std::shared_ptr<LayerBox>> layersBoxes;
+	std::shared_ptr<ButtonWithSprite> _add_layer;
+	std::shared_ptr<ButtonWithSprite> _remove_layer;
+	std::shared_ptr<ButtonWithSprite> _move_top;
+	std::shared_ptr<ButtonWithSprite> _move_bottom;
 
 	LayersPanel();
 	~LayersPanel();

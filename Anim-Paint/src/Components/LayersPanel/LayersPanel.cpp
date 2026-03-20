@@ -10,9 +10,50 @@
 LayersPanel::LayersPanel() 
 	: Dialog(
 		L"Layers",
-		sf::Vector2i(160, dialog_title_rect_height + 4 * 32 + 32 + dialog_padding * 2),
+		sf::Vector2i(192, dialog_title_rect_height + 4 * 32 + 32 + dialog_padding * 2),
 		sf::Vector2i(int(mainView.getSize().x) - 160 - dialog_margin, frames_panel->getPosition().y + frames_panel->getSize().y + dialog_margin)
 		) {
+
+	_add_layer = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\add.png"), getTexture(L"tex\\btn32\\add_hover.png"));
+	_remove_layer = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\remove.png"), getTexture(L"tex\\btn32\\remove_hover.png"));
+	_move_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\top.png"), getTexture(L"tex\\btn32\\top_hover.png"));
+	_move_bottom = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\bottom.png"), getTexture(L"tex\\btn32\\bottom_hover.png"));
+	
+
+	_add_layer->_onclick_func = []() {
+		int index = getCurrentAnimation()->getCurrentLayerID();
+		getCurrentAnimation()->getCurrentFrame()->_layers.insert(
+			getCurrentAnimation()->getCurrentFrame()->_layers.begin() + index + 1, 
+			std::make_shared<Layer>(L"new layer", canvas->_size, sf::Color::Transparent));
+		layers_panel->loadLayersFromCurrentFrame();
+		};
+
+	_remove_layer->_onclick_func = []() {
+		int index = getCurrentAnimation()->getCurrentLayerID();
+		if (index >= 0 && index < getCurrentAnimation()->getLayersCount()) {
+			getCurrentAnimation()->getCurrentFrame()->_layers.erase(getCurrentAnimation()->getCurrentFrame()->_layers.begin() + index);
+			getCurrentAnimation()->setCurrentLayerID(std::max(0, index - 1));
+			layers_panel->loadLayersFromCurrentFrame();
+		}
+		};
+
+	_move_top->_onclick_func = []() {
+		int index = getCurrentAnimation()->getCurrentLayerID();
+		if (index >= 0 && index < getCurrentAnimation()->getLayersCount() - 1) {
+			std::swap(getCurrentAnimation()->getCurrentFrame()->_layers[index], getCurrentAnimation()->getCurrentFrame()->_layers[index + 1]);
+			getCurrentAnimation()->setCurrentLayerID(index + 1);
+			layers_panel->loadLayersFromCurrentFrame();
+		}
+		};
+
+	_move_bottom->_onclick_func = []() {
+		int index = getCurrentAnimation()->getCurrentLayerID();
+		if (index > 0 && index < getCurrentAnimation()->getLayersCount()) {
+			std::swap(getCurrentAnimation()->getCurrentFrame()->_layers[index], getCurrentAnimation()->getCurrentFrame()->_layers[index - 1]);
+			getCurrentAnimation()->setCurrentLayerID(index - 1);
+			layers_panel->loadLayersFromCurrentFrame();
+		}
+		};
 
 	loadLayersFromCurrentFrame();
 }
@@ -57,6 +98,10 @@ void LayersPanel::setPosition(sf::Vector2i position) {
 		layersBoxes[i]->setPosition(pos);
 	}
 
+	_add_layer->setPosition(getContentPosition() + sf::Vector2i(dialog_padding, getContentSize().y - 32 - dialog_padding));
+	_remove_layer->setPosition(getContentPosition() + sf::Vector2i(dialog_padding + 32, getContentSize().y -32 - dialog_padding));
+	_move_top->setPosition(getContentPosition() + sf::Vector2i(getSize().x - dialog_padding - 64, getContentSize().y -32 - dialog_padding));
+	_move_bottom->setPosition(getContentPosition() + sf::Vector2i(getSize().x - dialog_padding - 32, getContentSize().y -32 - dialog_padding));
 }
 
 void LayersPanel::cursorHover() {
@@ -81,6 +126,11 @@ void LayersPanel::cursorHover() {
 	for (auto& layerbox : layersBoxes) {
 		layerbox->cursorHover();
 	}
+
+	_add_layer->cursorHover();
+	_remove_layer->cursorHover();
+	_move_top->cursorHover();
+	_move_bottom->cursorHover();
 }
 
 void LayersPanel::handleEvent(const sf::Event& event) {
@@ -100,6 +150,11 @@ void LayersPanel::handleEvent(const sf::Event& event) {
 		layerbox->handleEvent(event);
 	}
 
+	_add_layer->handleEvent(event);
+	_remove_layer->handleEvent(event);
+	_move_top->handleEvent(event);
+	_move_bottom->handleEvent(event);
+
 }
 
 void LayersPanel::update() {
@@ -108,6 +163,11 @@ void LayersPanel::update() {
 	for (auto& layerbox : layersBoxes) {
 		layerbox->update();
 	}
+
+	_add_layer->update();
+	_remove_layer->update();
+	_move_top->update();
+	_move_bottom->update();
 }
 
 void LayersPanel::draw() {
@@ -116,6 +176,11 @@ void LayersPanel::draw() {
 	for (auto& layerbox : layersBoxes) {
 		layerbox->draw();
 	}
+
+	_add_layer->draw();
+	_remove_layer->draw();
+	_move_top->draw();
+	_move_bottom->draw();
 }
 
 std::shared_ptr<LayersPanel> layers_panel;

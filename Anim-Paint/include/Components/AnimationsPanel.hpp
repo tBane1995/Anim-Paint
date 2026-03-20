@@ -12,7 +12,7 @@ public:
 	std::unique_ptr<sf::Text> _text;
 
 	std::shared_ptr<ButtonWithSprite> _add_anim;
-	std::shared_ptr<ButtonWithSprite> _sub_anim;
+	std::shared_ptr<ButtonWithSprite> _remove_anim;
 	std::shared_ptr<ButtonWithSprite> _move_back;
 	std::shared_ptr<ButtonWithSprite> _move_next;
 

@@ -12,7 +12,7 @@ LayerBox::LayerBox(std::shared_ptr<Layer> layer) : Element() {
 
 	_isActive = false;
 
-	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(160 - 2 * dialog_padding, 32));
+	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(192 - 2 * dialog_padding, 32));
 
 	_textName = std::make_unique<sf::Text>(basicFont, _layer->_name, 17);
 	_textName->setFillColor(normal_text_color);

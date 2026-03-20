@@ -79,14 +79,20 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\btn32\\next.png");
 	texturePaths.push_back(L"tex\\btn32\\next_hover.png");
 
+	texturePaths.push_back(L"tex\\btn32\\top.png");
+	texturePaths.push_back(L"tex\\btn32\\top_hover.png");
+
+	texturePaths.push_back(L"tex\\btn32\\bottom.png");
+	texturePaths.push_back(L"tex\\btn32\\bottom_hover.png");
+
 	texturePaths.push_back(L"tex\\btn32\\last.png");
 	texturePaths.push_back(L"tex\\btn32\\last_hover.png");
 
-	texturePaths.push_back(L"tex\\btn32\\add_frame.png");
-	texturePaths.push_back(L"tex\\btn32\\add_frame_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\add.png");
+	texturePaths.push_back(L"tex\\btn32\\add_hover.png");
 
-	texturePaths.push_back(L"tex\\btn32\\sub_frame.png");
-	texturePaths.push_back(L"tex\\btn32\\sub_frame_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\remove.png");
+	texturePaths.push_back(L"tex\\btn32\\remove_hover.png");
 
 	texturePaths.push_back(L"tex\\btn32\\move_next.png");
 	texturePaths.push_back(L"tex\\btn32\\move_next_hover.png");
