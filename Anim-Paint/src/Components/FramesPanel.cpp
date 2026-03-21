@@ -8,6 +8,7 @@
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
+#include "History.hpp"
 
 FramesPanel::FramesPanel() 
 	: Dialog(
@@ -63,6 +64,7 @@ FramesPanel::FramesPanel()
 			getCurrentAnimation()->nextFrame();
 			updateText();
 			layers_panel->loadLayersFromCurrentFrame();
+			history->saveStep();
 		}
 		};
 	_add_frame->setTooltip(L"Add frame", L"Add a new frame after the current one");
@@ -73,6 +75,7 @@ FramesPanel::FramesPanel()
 			getCurrentAnimation()->prevFrame();
 			updateText();
 			layers_panel->loadLayersFromCurrentFrame();
+			history->saveStep();
 		}
 		};
 	_remove_frame->setTooltip(L"Remove frame", L"Remove the current frame");
@@ -82,6 +85,7 @@ FramesPanel::FramesPanel()
 		getCurrentAnimation()->prevFrame();
 		updateText();
 		layers_panel->loadLayersFromCurrentFrame();		
+		history->saveStep();
 		};
 	_move_back->setTooltip(L"Move frame back", L"Move the current frame one position back");
 
@@ -90,6 +94,7 @@ FramesPanel::FramesPanel()
 		getCurrentAnimation()->nextFrame();
 		updateText();
 		layers_panel->loadLayersFromCurrentFrame();
+		history->saveStep();
 		};
 	_move_next->setTooltip(L"Move frame next", L"Move the current frame one position forward");
 
