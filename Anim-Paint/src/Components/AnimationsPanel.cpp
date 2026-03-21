@@ -67,7 +67,7 @@ AnimationsPanel::AnimationsPanel() :
 	_add_anim->setTooltip(L"Add animation", L"Add a new animation after the current one");
 
 	_remove_anim->_onclick_func = [this]() {
-		if (getAnimationsCount() > 0) {
+		if (getAnimationsCount() > 1) {
 			deleteAnimation();
 			prevAnimation();
 			updateText();

@@ -239,6 +239,17 @@ void deleteAnimation() {
 }
 
 void moveBackAnimation() {
+
+	if (getAnimationsCount() == 0) {
+		currentAnimationId = -1;
+		return;
+	}
+
+	if (getAnimationsCount() == 1) {
+		currentAnimationId = 0;
+		return;
+	}
+
 	std::shared_ptr<Animation> anim = getAnimation(currentAnimationId);
 	animations.erase(animations.begin() + currentAnimationId);
 
@@ -247,6 +258,17 @@ void moveBackAnimation() {
 }
 
 void moveNextAnimation() {
+
+	if (getAnimationsCount() == 0) {
+		currentAnimationId = -1;
+		return;
+	}
+
+	if (getAnimationsCount() == 1) {
+		currentAnimationId = 0;
+		return;
+	}
+
 	std::shared_ptr<Animation> anim = getAnimation(currentAnimationId);
 	animations.erase(animations.begin() + currentAnimationId);
 
