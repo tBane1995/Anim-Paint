@@ -38,8 +38,8 @@ public:
 
 	void addFrame();
 	void subFrame();
-	void moveBackFrame();
-	void moveNextFrame();
+	bool moveBackFrame();
+	bool moveNextFrame();
 
 };
 

@@ -81,20 +81,24 @@ FramesPanel::FramesPanel()
 	_remove_frame->setTooltip(L"Remove frame", L"Remove the current frame");
 
 	_move_back->_onclick_func = [this]() {
-		getCurrentAnimation()->moveBackFrame();
-		getCurrentAnimation()->prevFrame();
-		updateText();
-		layers_panel->loadLayersFromCurrentFrame();		
-		history->saveStep();
+		if (getCurrentAnimation()->moveBackFrame()) {
+			getCurrentAnimation()->prevFrame();
+			updateText();
+			layers_panel->loadLayersFromCurrentFrame();
+			history->saveStep();
+		}
+		
 		};
 	_move_back->setTooltip(L"Move frame back", L"Move the current frame one position back");
 
 	_move_next->_onclick_func = [this]() {
-		getCurrentAnimation()->moveNextFrame();
-		getCurrentAnimation()->nextFrame();
-		updateText();
-		layers_panel->loadLayersFromCurrentFrame();
-		history->saveStep();
+		if (getCurrentAnimation()->moveNextFrame()) {
+			getCurrentAnimation()->nextFrame();
+			updateText();
+			layers_panel->loadLayersFromCurrentFrame();
+			history->saveStep();
+		}
+		
 		};
 	_move_next->setTooltip(L"Move frame next", L"Move the current frame one position forward");
 

@@ -167,16 +167,24 @@ void Animation::subFrame() {
 		_frames.erase(_frames.begin() + getCurrentFrameID());
 }
 
-void Animation::moveBackFrame() {
+bool Animation::moveBackFrame() {
+
+	int prevFrameId = getCurrentFrameID();
 
 	if (getFramesCount() == 0) {
 		setCurrentFrameID(-1);
-		return;
+		if(prevFrameId != getCurrentFrameID())
+			return true;
+		else
+			return false;
 	}
 
 	if (getFramesCount() == 1) {
 		setCurrentFrameID(0);
-		return;
+		if (prevFrameId != getCurrentFrameID())
+			return true;
+		else
+			return false;
 	}
 
 	std::shared_ptr<Frame> frame = getCurrentFrame();
@@ -184,18 +192,28 @@ void Animation::moveBackFrame() {
 
 	int nextPos = (getCurrentFrameID() - 1 + getFramesCount()) % getFramesCount();
 	_frames.insert(_frames.begin() + nextPos, frame);
+
+	return true;
 }
 
-void Animation::moveNextFrame() {
+bool Animation::moveNextFrame() {
+
+	int prevFrameId = getCurrentFrameID();
 
 	if (getFramesCount() == 0) {
 		setCurrentFrameID(-1);
-		return;
+		if (prevFrameId != getCurrentFrameID())
+			return true;
+		else
+			return false;
 	}
 
 	if (getFramesCount() == 1) {
 		setCurrentFrameID(0);
-		return;
+		if (prevFrameId != getCurrentFrameID())
+			return true;
+		else
+			return false;
 	}
 
 	std::shared_ptr<Frame> frame = getCurrentFrame();
@@ -203,6 +221,8 @@ void Animation::moveNextFrame() {
 
 	int nextPos = (getCurrentFrameID() + 1) % getFramesCount();
 	_frames.insert(_frames.begin() + nextPos, frame);
+
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////
