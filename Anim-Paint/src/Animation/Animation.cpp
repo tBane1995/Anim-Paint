@@ -281,6 +281,8 @@ void moveBackAnimation() {
 
 void moveNextAnimation() {
 
+	int prevAnimId = currentAnimationId;
+
 	if (getAnimationsCount() == 0) {
 		currentAnimationId = -1;
 		return;

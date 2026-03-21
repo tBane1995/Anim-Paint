@@ -8,6 +8,7 @@
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
+#include "History.hpp"
 
 AnimationsPanel::AnimationsPanel() : 
 	Dialog(
@@ -62,6 +63,7 @@ AnimationsPanel::AnimationsPanel() :
 			nextAnimation();
 			updateText();
 			frames_panel->_first_btn->_onclick_func();
+			history->saveStep();
 		}
 		};
 	_add_anim->setTooltip(L"Add animation", L"Add a new animation after the current one");
@@ -72,6 +74,7 @@ AnimationsPanel::AnimationsPanel() :
 			prevAnimation();
 			updateText();
 			frames_panel->_first_btn->_onclick_func();
+			history->saveStep();
 		}
 		};
 	_remove_anim->setTooltip(L"Remove animation", L"Remove the current animation");
@@ -81,6 +84,7 @@ AnimationsPanel::AnimationsPanel() :
 		prevAnimation();
 		updateText();
 		frames_panel->_first_btn->_onclick_func();
+		history->saveStep();
 		};
 	_move_back->setTooltip(L"Move animation back", L"Move the current animation one position back");
 
@@ -89,6 +93,7 @@ AnimationsPanel::AnimationsPanel() :
 		nextAnimation();
 		updateText();
 		frames_panel->_first_btn->_onclick_func();
+		history->saveStep();
 		};
 	_move_next->setTooltip(L"Move animation next", L"Move the current animation one position forward");
 
