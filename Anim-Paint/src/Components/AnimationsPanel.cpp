@@ -80,20 +80,22 @@ AnimationsPanel::AnimationsPanel() :
 	_remove_anim->setTooltip(L"Remove animation", L"Remove the current animation");
 
 	_move_back->_onclick_func = [this]() {
-		moveBackAnimation();
-		prevAnimation();
-		updateText();
-		frames_panel->_first_btn->_onclick_func();
-		history->saveStep();
+		if (moveBackAnimation()) {
+			prevAnimation();
+			updateText();
+			frames_panel->_first_btn->_onclick_func();
+			history->saveStep();
+		}
 		};
 	_move_back->setTooltip(L"Move animation back", L"Move the current animation one position back");
 
 	_move_next->_onclick_func = [this]() {
-		moveNextAnimation();
-		nextAnimation();
-		updateText();
-		frames_panel->_first_btn->_onclick_func();
-		history->saveStep();
+		if (moveNextAnimation()) {
+			nextAnimation();
+			updateText();
+			frames_panel->_first_btn->_onclick_func();
+			history->saveStep();
+		}
 		};
 	_move_next->setTooltip(L"Move animation next", L"Move the current animation one position forward");
 

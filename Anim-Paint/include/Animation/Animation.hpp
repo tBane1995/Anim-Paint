@@ -58,5 +58,5 @@ void firstAnimation();
 void lastAnimation();
 void addAnimation();
 void deleteAnimation();
-void moveBackAnimation();
-void moveNextAnimation();
+bool moveBackAnimation();
+bool moveNextAnimation();

@@ -260,16 +260,24 @@ void deleteAnimation() {
 		animations.erase(animations.begin() + currentAnimationId);
 }
 
-void moveBackAnimation() {
+bool moveBackAnimation() {
+	// return true if animation was moved, false if not
+	int prevAnimId = currentAnimationId;
 
 	if (getAnimationsCount() == 0) {
 		currentAnimationId = -1;
-		return;
+		if (prevAnimId != currentAnimationId)
+			return true;
+		else
+			return false;
 	}
 
 	if (getAnimationsCount() == 1) {
 		currentAnimationId = 0;
-		return;
+		if (prevAnimId != currentAnimationId)
+			return true;
+		else
+			return false;
 	}
 
 	std::shared_ptr<Animation> anim = getAnimation(currentAnimationId);
@@ -277,20 +285,29 @@ void moveBackAnimation() {
 
 	int nextPos = (currentAnimationId - 1 + getAnimationsCount()) % getAnimationsCount();
 	animations.insert(animations.begin() + nextPos, anim);
+
+	return true;
 }
 
-void moveNextAnimation() {
+bool moveNextAnimation() {
 
+	// return true if animation was moved, false if not
 	int prevAnimId = currentAnimationId;
 
 	if (getAnimationsCount() == 0) {
 		currentAnimationId = -1;
-		return;
+		if (prevAnimId != currentAnimationId)
+			return true;
+		else
+			return false;
 	}
 
 	if (getAnimationsCount() == 1) {
 		currentAnimationId = 0;
-		return;
+		if (prevAnimId != currentAnimationId)
+			return true;
+		else
+			return false;
 	}
 
 	std::shared_ptr<Animation> anim = getAnimation(currentAnimationId);
@@ -298,5 +315,7 @@ void moveNextAnimation() {
 
 	int nextPos = (currentAnimationId + 1) % getAnimationsCount();
 	animations.insert(animations.begin() + nextPos, anim);
+
+	return true;
 }
 
