@@ -1232,7 +1232,8 @@ void Selection::handleEvent(const sf::Event& event) {
 				if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
 					if (canvas->_rect.contains(cursor->_position)) {
 						if (_rect.size.x > 1 && _rect.size.y > 1) {
-							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
+							if(getCurrentAnimation()->getCurrentLayer())
+								copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
 							_image = nullptr;
 							_resizedImage = nullptr;
 							if(canvas->_isEdited == false && _state == SelectionState::Selected)
@@ -1249,7 +1250,8 @@ void Selection::handleEvent(const sf::Event& event) {
 					}
 					else {
 						if (_rect.size.x > 1 && _rect.size.y > 1) {
-							copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+							if (getCurrentAnimation()->getCurrentLayer())
+								copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 							_image = nullptr;
 							_resizedImage = nullptr;
 							if (canvas->_isEdited == false && _state == SelectionState::Selected)
@@ -1290,8 +1292,10 @@ void Selection::handleEvent(const sf::Event& event) {
 				else {
 					if (_rect.size.x > 1 && _rect.size.y > 1) {
 						toolbar->_option_transparency->_checkbox->_value = 0;
-						copyImageWithMask(*_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, _rect.position.x, _rect.position.y, *_maskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
-						removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, _rect, *_maskImage, sf::Color::Transparent);
+						if (getCurrentAnimation()->getCurrentLayer()) {
+							copyImageWithMask(*_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, _rect.position.x, _rect.position.y, *_maskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+							removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, _rect, *_maskImage, sf::Color::Transparent);
+						}
 						_resizedImage = _image;
 					}
 					_state = SelectionState::Selected;
