@@ -4,6 +4,9 @@
 
 class Step {
 public:
+	int _currentAnimation;
+	int _currentFrame;
+	int _currentLayer;
 	std::vector<std::shared_ptr<Animation>> _animations;
 
 	Step();

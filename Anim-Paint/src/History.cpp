@@ -2,6 +2,9 @@
 #include "Animation/Frame.hpp"
 #include "Animation/Layer.hpp"
 #include "DebugLog.hpp"
+#include "Components/AnimationsPanel.hpp"
+#include "Components/FramesPanel.hpp"
+#include "Components/LayersPanel/LayersPanel.hpp"
 
 Step::Step() {
 	_animations.clear();
@@ -54,6 +57,10 @@ void History::saveStep() {
 		step->_animations.push_back(copied_animation);
 	}
 
+	step->_currentAnimation = getCurrentAnimationId();
+	step->_currentFrame = getCurrentAnimation()->getCurrentFrameID();
+	step->_currentLayer = getCurrentAnimation()->getCurrentLayerID();
+
 	_steps.push_back(step);
 	_currentStep++;
 }
@@ -88,6 +95,15 @@ void History::undo()
 		}
 		animations.push_back(dstAnim);
 	}
+
+	currentAnimationId = step->_currentAnimation;
+	getCurrentAnimation()->setCurrentFrameID(step->_currentFrame);
+	getCurrentAnimation()->setCurrentLayerID(step->_currentLayer);
+
+	animations_panel->updateText();
+	frames_panel->updateText();
+	layers_panel->loadLayersFromCurrentFrame();
+
 }
 
 void History::redo()

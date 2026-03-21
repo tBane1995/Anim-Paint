@@ -6,6 +6,7 @@
 #include "Tools/Selection.hpp"
 #include "Components/FramesPanel.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
+#include "History.hpp"
 
 LayersPanel::LayersPanel() 
 	: Dialog(
@@ -30,11 +31,13 @@ LayersPanel::LayersPanel()
 		);
 
 		layers_panel->addLayer(new_layer);
+		history->saveStep();
 		};
 	_add_layer->setTooltip(L"Add Layer", L"Add a new layer above the current layer.");
 
 	_remove_layer->_onclick_func = []() {
 		layers_panel->removeLayer(getCurrentAnimation()->getCurrentLayerID());
+		history->saveStep();
 		};
 	_remove_layer->setTooltip(L"Remove Layer", L"Removes the current layer.");
 
@@ -44,6 +47,7 @@ LayersPanel::LayersPanel()
 			std::swap(getCurrentAnimation()->getCurrentFrame()->_layers[index], getCurrentAnimation()->getCurrentFrame()->_layers[index + 1]);
 			getCurrentAnimation()->setCurrentLayerID(index + 1);
 			layers_panel->loadLayersFromCurrentFrame();
+			history->saveStep();
 		}
 		};
 	_move_top->setTooltip(L"Move Layer Up", L"Moves the current layer up in the layer stack.");
@@ -54,6 +58,7 @@ LayersPanel::LayersPanel()
 			std::swap(getCurrentAnimation()->getCurrentFrame()->_layers[index], getCurrentAnimation()->getCurrentFrame()->_layers[index - 1]);
 			getCurrentAnimation()->setCurrentLayerID(index - 1);
 			layers_panel->loadLayersFromCurrentFrame();
+			history->saveStep();
 		}
 		};
 	_move_bottom->setTooltip(L"Move Layer Down", L"Moves the current layer down in the layer stack.");
