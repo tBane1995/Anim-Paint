@@ -168,6 +168,17 @@ void Animation::subFrame() {
 }
 
 void Animation::moveBackFrame() {
+
+	if (getFramesCount() == 0) {
+		setCurrentFrameID(-1);
+		return;
+	}
+
+	if (getFramesCount() == 1) {
+		setCurrentFrameID(0);
+		return;
+	}
+
 	std::shared_ptr<Frame> frame = getCurrentFrame();
 	_frames.erase(_frames.begin() + getCurrentFrameID());
 
@@ -176,6 +187,17 @@ void Animation::moveBackFrame() {
 }
 
 void Animation::moveNextFrame() {
+
+	if (getFramesCount() == 0) {
+		setCurrentFrameID(-1);
+		return;
+	}
+
+	if (getFramesCount() == 1) {
+		setCurrentFrameID(0);
+		return;
+	}
+
 	std::shared_ptr<Frame> frame = getCurrentFrame();
 	_frames.erase(_frames.begin() + getCurrentFrameID());
 
