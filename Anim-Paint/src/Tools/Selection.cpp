@@ -436,7 +436,7 @@ void Selection::generateRect() {
 
 	_rect = sf::IntRect(
 		_outlineOffset + sf::Vector2i(minX, minY),
-		sf::Vector2i(maxX - minX, maxY - minY)
+		sf::Vector2i(maxX - minX + 1, maxY - minY + 1)
 	);
 }
 
@@ -621,9 +621,9 @@ void Selection::generateOutline(bool selectionComplete) {
 	//std::vector <sf::Vector2i> _points 
 
 	if (_points.size() < 1) return; 
-	if (std::abs(_rect.size.x) == 0 || std::abs(_rect.size.y) == 0) return; 
+	if (std::abs(_rect.size.x) <= 1 || std::abs(_rect.size.y) <= 1) return;
 
-	if (!_outlineRenderTexture.resize(sf::Vector2u(std::abs(_rect.size.x+1), std::abs(_rect.size.y+1)))) { 
+	if (!_outlineRenderTexture.resize(sf::Vector2u(std::abs(_rect.size.x), std::abs(_rect.size.y)))) { 
 		DebugError(L"Lasso::generateOutline: Failed to resize outline render texture."); 
 		exit(0); 
 	} 
