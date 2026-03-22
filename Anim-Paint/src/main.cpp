@@ -105,9 +105,6 @@ int main() {
 	animations.push_back(animation);
 	animation->setLastLayerAsCurrent();
 
-	history = std::make_shared<History>();
-	history->saveStep();
-
 	toolbar = std::make_shared<Toolbar>();
 	animations_panel = std::make_shared<AnimationsPanel>();
 	frames_panel = std::make_shared<FramesPanel>();
@@ -118,6 +115,9 @@ int main() {
 
 	brush = std::make_shared<Brush>(2);
 	selection = std::make_shared<Selection>();
+
+	history = std::make_shared<History>();
+	history->saveStep();
 
 	// FPS counter
 	sf::Clock fpsClock;

@@ -5,7 +5,7 @@
 #include "Components/AnimationsPanel.hpp"
 #include "Components/FramesPanel.hpp"
 #include "Components/LayersPanel/LayersPanel.hpp"
-
+#include "Components/Canvas.hpp"
 Step::Step() {
 	_animations.clear();
 }
@@ -61,6 +61,8 @@ void History::saveStep() {
 	step->_currentFrame = getCurrentAnimation()->getCurrentFrameID();
 	step->_currentLayer = getCurrentAnimation()->getCurrentLayerID();
 
+	step->_canvasSize = canvas->_size;
+
 	_steps.push_back(step);
 	_currentStep++;
 }
@@ -104,6 +106,8 @@ void History::undo()
 	frames_panel->updateText();
 	layers_panel->loadLayersFromCurrentFrame();
 
+	canvas->resize(step->_canvasSize);
+
 }
 
 void History::redo()
@@ -128,6 +132,8 @@ void History::redo()
 		}
 		animations.push_back(dstAnim);
 	}
+
+	canvas->resize(step->_canvasSize);
 }
 
 void History::handleEvent(const sf::Event& event) {

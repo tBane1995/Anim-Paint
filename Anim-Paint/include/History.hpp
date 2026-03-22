@@ -7,6 +7,7 @@ public:
 	int _currentAnimation;
 	int _currentFrame;
 	int _currentLayer;
+	sf::Vector2i _canvasSize;
 	std::vector<std::shared_ptr<Animation>> _animations;
 
 	Step();

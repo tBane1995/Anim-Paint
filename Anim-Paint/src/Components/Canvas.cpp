@@ -585,6 +585,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 				Element_pressed = nullptr;
 			}
 			_clickedEdgePoint = nullptr;
+			history->saveStep();
 			_state = CanvasState::Idle;
 			_backupFrames.clear();
 		}
