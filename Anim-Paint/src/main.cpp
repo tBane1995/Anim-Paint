@@ -52,8 +52,6 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
-#include "Dialogs/ConfirmDialog.hpp"
-
 void resize() {
 
 	main_menu->resize();

@@ -82,6 +82,7 @@ public:
 	void generateEdgePoints();
 	void resizeRect();
 	void resizeImage();
+	void normalize(sf::IntRect newRectSize);
 	void drawImage(bool useMask = false);
 	void drawResizedImage(bool useMask = false);
 	void drawOutline();

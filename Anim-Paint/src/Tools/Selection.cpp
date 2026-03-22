@@ -436,7 +436,7 @@ void Selection::generateRect() {
 
 	_rect = sf::IntRect(
 		_outlineOffset + sf::Vector2i(minX, minY),
-		sf::Vector2i(maxX - minX + 1, maxY - minY + 1)
+		sf::Vector2i(maxX - minX, maxY - minY)
 	);
 }
 
@@ -623,7 +623,7 @@ void Selection::generateOutline(bool selectionComplete) {
 	if (_points.size() < 1) return; 
 	if (std::abs(_rect.size.x) == 0 || std::abs(_rect.size.y) == 0) return; 
 
-	if (!_outlineRenderTexture.resize(sf::Vector2u(std::abs(_rect.size.x), std::abs(_rect.size.y)))) { 
+	if (!_outlineRenderTexture.resize(sf::Vector2u(std::abs(_rect.size.x+1), std::abs(_rect.size.y+1)))) { 
 		DebugError(L"Lasso::generateOutline: Failed to resize outline render texture."); 
 		exit(0); 
 	} 
@@ -892,6 +892,29 @@ void Selection::resizeImage() {
 		}
 	}
 }
+
+void Selection::normalize(sf::IntRect newRect) {
+	// This function adjusts the selection points and images to fit the new rectangle after resizing.
+	_resizedRect = newRect;
+
+	float scaleX = float(_resizedRect.size.x) / float(_rect.size.x);
+	float scaleY = float(_resizedRect.size.y) / float(_rect.size.y);
+
+	for (auto& p : selection->_points) {
+		p.x = int(p.x * scaleX);
+		p.y = int(p.y * scaleY);
+	}
+
+	selection->_outlineOffset.x = int(selection->_outlineOffset.x * scaleX);
+	selection->_outlineOffset.y = int(selection->_outlineOffset.y * scaleY);
+
+	selection->_rect = selection->_resizedRect;
+	selection->generateRect();
+
+	*_maskImage = *selection->_resizedMaskImage;
+	*_image = *selection->_resizedImage;
+}
+
 void Selection::drawImage(bool useMask) {
 	if (!_image) return;
 	if (_image->getSize().x < 1 || _image->getSize().y < 1) return;
@@ -1296,7 +1319,7 @@ void Selection::handleEvent(const sf::Event& event) {
 							copyImageWithMask(*_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, _rect.position.x, _rect.position.y, *_maskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 							removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, _rect, *_maskImage, sf::Color::Transparent);
 						}
-						_resizedImage = _image;
+						*_resizedImage = *_image;
 					}
 					_state = SelectionState::Selected;
 					Element_pressed = this->shared_from_this();

@@ -59,11 +59,12 @@ Dialog_Smoothing::~Dialog_Smoothing() {
 	else {
 		// is Edited
 		if (selection->_state == SelectionState::Selected) {
-			sf::Image orginalImage = getCurrentAnimation()->getCurrentLayer()->_image;
+			sf::Image original_image = getCurrentAnimation()->getCurrentLayer()->_image;
 			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 			history->saveStep();
 			canvas->_isEdited = true;
-			getCurrentAnimation()->getCurrentLayer()->_image = orginalImage;
+			selection->normalize(selection->_resizedRect);
+			getCurrentAnimation()->getCurrentLayer()->_image = original_image;
 		}
 		else {
 			history->saveStep();
