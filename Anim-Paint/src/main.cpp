@@ -106,9 +106,15 @@ int main() {
 	animation->setLastLayerAsCurrent();
 
 	toolbar = std::make_shared<Toolbar>();
+	
 	animations_panel = std::make_shared<AnimationsPanel>();
 	frames_panel = std::make_shared<FramesPanel>();
 	layers_panel = std::make_shared<LayersPanel>();
+
+	static_dialogs.push_back(animations_panel);
+	static_dialogs.push_back(frames_panel);
+	static_dialogs.push_back(layers_panel);
+
 	canvas = std::make_shared<Canvas>();
 	bottom_bar = std::make_shared<BottomBar>();
 	tooltip = std::make_shared<Tooltip>();
@@ -145,8 +151,11 @@ int main() {
 			}
 		}
 
-		if (palette && palette->_state == DialogState::ToClose)
+		if (palette && palette->_state == DialogState::ToClose) {
+			static_dialogs.erase(std::remove(static_dialogs.begin(), static_dialogs.end(), palette), static_dialogs.end());
 			palette = nullptr;
+		}
+			
 
 		// calculate the FPS
 		frameCount++;
@@ -160,19 +169,15 @@ int main() {
 		// cursor hovering
 		Element_hovered = nullptr;
 
-		
-
 		selection->cursorHover();
 		canvas->cursorHover();
-		frames_panel->cursorHover();
-		layers_panel->cursorHover();
-		animations_panel->cursorHover();
+
 		toolbar->cursorHover();
 		main_menu->cursorHover();
 		bottom_bar->cursorHover();
 
-		if (palette)
-			palette->cursorHover();
+		for (auto& dialog : static_dialogs)
+			dialog->cursorHover();
 
 		for (auto& dialog : dialogs)
 			dialog->cursorHover();
@@ -185,11 +190,10 @@ int main() {
 		
 		
 		canvas->update();
-		frames_panel->update();
-		layers_panel->update();
-		animations_panel->update();
-		if (palette)
-			palette->update();
+
+		for(auto& dialog : static_dialogs)
+			dialog->update();
+
 		main_menu->update();
 		bottom_bar->update();
 		tooltip->update();
@@ -215,19 +219,26 @@ int main() {
 
 			history->handleEvent(*event);
 			main_menu->handleEvent(*event);
-			
-			if (palette)
-				palette->handleEvent(*event);
+
 			toolbar->handleEvent(*event);
 			selection->handleEvent(*event);
 			canvas->handleEvent(*event);
 			
+			for (auto it = static_dialogs.end(); it != static_dialogs.begin(); ) {
+				--it;
+				auto& dialog = *it;
 
-			frames_panel->handleEvent(*event);
-			layers_panel->handleEvent(*event);
-			animations_panel->handleEvent(*event);
+				dialog->handleEvent(*event);
 
-			
+				if (const auto* mp = event->getIf<sf::Event::MouseButtonPressed>(); mp && mp->button == sf::Mouse::Button::Left && dialog->_clickArea == DialogClickArea::Inside) {
+
+					auto selected = dialog;
+					it = static_dialogs.erase(it);
+					static_dialogs.push_back(selected);
+					break;
+				}
+			}
+				
 
 			cursor->handleEvent(*event);
 			bottom_bar->handleEvent(*event);
@@ -243,13 +254,9 @@ int main() {
 		selection->draw();
 		cursor->draw();
 		toolbar->draw();
-		
-		if (palette)
-			palette->draw();
 
-		frames_panel->draw();
-		layers_panel->draw();
-		animations_panel->draw();
+		for (auto& dialog : static_dialogs)
+			dialog->draw();
 
 		bottom_bar->draw();
 		main_menu->draw();

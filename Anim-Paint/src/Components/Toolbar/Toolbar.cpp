@@ -341,6 +341,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_palette_colors->_onclick_func = [this]() {
 		if(palette == nullptr)
 			palette = std::make_shared<Palette>();
+			static_dialogs.push_back(palette);
 		};
 	_btn_palette_colors->setTooltip(L"Color Palette", L"Open the color palette dialog to create and manage custom colors");
 

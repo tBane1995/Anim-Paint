@@ -84,7 +84,7 @@ void Canvas::generateBackground(sf::Vector2i size) {
 			else
 				(xx % 2 == 1) ? c = c1 : c = c2;
 
-			_bg_image.setPixel(sf::Vector2u(x,y), c); // tu jest błąd - wychodzi poza zakres
+			_bg_image.setPixel(sf::Vector2u(x,y), c);
 
 		}
 	}
@@ -710,7 +710,6 @@ void Canvas::draw() {
 			spr.setScale(sf::Vector2f(_zoom * _zoom_delta, _zoom * _zoom_delta));
 			window->draw(spr);
 
-			// draw the selection on current layer
 			if (getCurrentAnimation()->_currentLayer == i) {
 				selection->drawResizedImage();
 			}

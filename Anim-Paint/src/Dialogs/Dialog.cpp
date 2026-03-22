@@ -294,3 +294,5 @@ void Dialog::draw() {
 }
 
 std::vector<std::shared_ptr<Dialog>> dialogs;
+std::vector<std::shared_ptr<Dialog>> static_dialogs;
+

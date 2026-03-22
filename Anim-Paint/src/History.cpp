@@ -62,6 +62,7 @@ void History::saveStep() {
 	step->_currentLayer = getCurrentAnimation()->getCurrentLayerID();
 
 	step->_canvasSize = canvas->_size;
+	step->_canvasPosition = canvas->_rect.position;
 
 	_steps.push_back(step);
 	_currentStep++;
@@ -106,7 +107,11 @@ void History::undo()
 	frames_panel->updateText();
 	layers_panel->loadLayersFromCurrentFrame();
 
-	canvas->resize(step->_canvasSize);
+	canvas->_size = step->_canvasSize;
+	canvas->_position = step->_canvasPosition;
+	canvas->generateBackground(canvas->_size);
+	canvas->generateEdgePoints();
+	canvas->setPosition(canvas->_position);
 
 }
 
@@ -133,7 +138,12 @@ void History::redo()
 		animations.push_back(dstAnim);
 	}
 
-	canvas->resize(step->_canvasSize);
+	canvas->_size = step->_canvasSize;
+	canvas->_position = step->_canvasPosition;
+	canvas->generateBackground(canvas->_size);
+	canvas->generateEdgePoints();
+	canvas->setPosition(canvas->_position);
+
 }
 
 void History::handleEvent(const sf::Event& event) {
