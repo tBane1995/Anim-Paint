@@ -21,6 +21,7 @@
 #include "Dialogs/Dialog_Invert_Colors.hpp"
 #include "Dialogs/Dialog_Smoothing.hpp"
 
+#include "Components/AnimationsPanel.hpp"
 #include "Components/FramesPanel.hpp"
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Animation/Animation.hpp"
@@ -30,7 +31,8 @@
 #include "Components/Canvas.hpp"
 #include "History.hpp"
 #include <fstream>
-#include <DebugLog.hpp>
+#include "DebugLog.hpp"
+#include "Dialogs/ConfirmDialog.hpp"
 
 MainMenu::MainMenu() : Element() {
 
@@ -44,7 +46,25 @@ MainMenu::MainMenu() : Element() {
 
 	std::shared_ptr<OptionBox> file_new = std::make_shared<OptionBox>(L"New file", L"Ctrl+N");
 	file_new->_onclick_func = [this]() {
-		dialogs.push_back(std::make_shared<Dialog>(L"new file", sf::Vector2i(200, 200)));
+		std::shared_ptr<ConfirmDialog> confirmDialog = std::make_shared<ConfirmDialog>(L"New file", L"Are you sure you want to create\na new file?\nUnsaved progress will be lost.", sf::Vector2i(200, 200));
+		confirmDialog->_confirmBtn->_onclick_func = [this, confirmDialog]() {
+
+			std::shared_ptr<Animation> animation = std::make_shared<Animation>();
+			animation->addEmptyFrame(sf::Vector2i(32, 32));
+			
+			animations.clear();
+			animations.push_back(animation);
+			
+			currentAnimationId = 0;
+			getCurrentAnimation()->firstFrame();
+			getCurrentAnimation()->firstLayer();
+
+			animations_panel->updateText();
+			frames_panel->updateText();
+			layers_panel->loadLayersFromCurrentFrame();
+			confirmDialog->_state = DialogState::ToClose;
+			};
+		dialogs.push_back(confirmDialog);
 		closeMenu();
 		};
 
