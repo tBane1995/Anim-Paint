@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
 #include "Animation/Animation.hpp"
-
+#include "Controls/EdgePoint.hpp"
 class Step {
 public:
 	int _currentAnimation;
@@ -9,6 +9,7 @@ public:
 	int _currentLayer;
 	sf::Vector2i _canvasSize;
 	sf::Vector2i _canvasPosition;
+	std::shared_ptr<EdgePoint> _edgePoint;
 	std::vector<std::shared_ptr<Animation>> _animations;
 
 	Step();

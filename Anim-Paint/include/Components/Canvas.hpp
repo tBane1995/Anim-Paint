@@ -48,15 +48,16 @@ public:
 	Canvas();
 	~Canvas();
 
-	void resize(sf::Vector2i size);
+	void reset();
 	bool pointInCanvas(sf::Vector2i point);
 	sf::Vector2i getZoomedSize(sf::Vector2i size);
+	void setCenter();
+	void resize(sf::Vector2i newSize);
 	void generateBackground(sf::Vector2i size);
 	void generateEdgePoints();
 	void setPosition(sf::Vector2i position);
-	void setCenter();
 	void setZoom(float mouseWheelScrolllDelta);
-	void resize();
+	void resize(std::shared_ptr<EdgePoint> edgePoint);
 	void drawPixels(sf::Color color);
 	void fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords);
 	void fillPixels(sf::Color color);

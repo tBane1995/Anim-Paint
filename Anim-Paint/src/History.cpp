@@ -108,8 +108,8 @@ void History::undo()
 	layers_panel->loadLayersFromCurrentFrame();
 
 	canvas->_size = step->_canvasSize;
-	canvas->_position = step->_canvasPosition;
 	canvas->generateBackground(canvas->_size);
+	canvas->setPosition(step->_canvasPosition);
 	canvas->generateEdgePoints();
 	canvas->setPosition(canvas->_position);
 
@@ -139,8 +139,8 @@ void History::redo()
 	}
 
 	canvas->_size = step->_canvasSize;
-	canvas->_position = step->_canvasPosition;
 	canvas->generateBackground(canvas->_size);
+	canvas->setPosition(step->_canvasPosition);
 	canvas->generateEdgePoints();
 	canvas->setPosition(canvas->_position);
 

@@ -62,9 +62,8 @@ MainMenu::MainMenu() : Element() {
 			animations_panel->updateText();
 			frames_panel->updateText();
 			layers_panel->loadLayersFromCurrentFrame();
-			canvas->_size = sf::Vector2i(32, 32);
-			canvas->generateBackground(canvas->_size);
-			canvas->generateEdgePoints();
+			canvas->reset();
+			canvas->setCenter();
 			confirmDialog->_state = DialogState::ToClose;
 			};
 		dialogs.push_back(confirmDialog);
