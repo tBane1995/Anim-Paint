@@ -897,8 +897,8 @@ void Selection::normalize(sf::IntRect newRect) {
 	// This function adjusts the selection points and images to fit the new rectangle after resizing.
 	_resizedRect = newRect;
 
-	float scaleX = float(_resizedRect.size.x) / float(_rect.size.x);
-	float scaleY = float(_resizedRect.size.y) / float(_rect.size.y);
+	float scaleX = float(_resizedRect.size.x-1) / float(_rect.size.x-1);
+	float scaleY = float(_resizedRect.size.y-1) / float(_rect.size.y-1);
 
 	for (auto& p : selection->_points) {
 		p.x = int(p.x * scaleX);
