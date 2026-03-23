@@ -466,7 +466,7 @@ void TextInput::draw() {
 
 	
 	// draw cursor
-	if ((_editState == TextInputEditState::TextEntered || _editState == TextInputEditState::Selected) && int(currentTime.asSeconds() * 3) % 2 == 0) {
+	if (_editState != TextInputEditState::None && int(currentTime.asSeconds() * 3) % 2 == 0) {
 		sf::RectangleShape cursor(sf::Vector2f(2, basicFont.getLineSpacing(_characterSize)));
 		cursor.setFillColor(sf::Color::Red);
 		cursor.setPosition(_text->findCharacterPos(_cursorPosition));
