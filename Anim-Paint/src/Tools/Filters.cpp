@@ -649,6 +649,29 @@ void set_resize(sf::Image& image, int width, int height, sf::Color backgroundCol
     image = rtex.getTexture().copyToImage();
 }
 
+void set_resize(sf::Image& image, int width, int height) {
+
+	std::shared_ptr<sf::Image> resizedImage;
+    resizedImage = std::make_shared<sf::Image>();
+    resizedImage->resize(sf::Vector2u(width, height), sf::Color::Transparent);
+
+    sf::Vector2u imgSize = image.getSize();
+
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+
+            int sx = (x * imgSize.x) / width;
+            int sy = (y * imgSize.y) / height;
+
+            if (sx < 0 || sy < 0 || sx >= (int)imgSize.x || sy >= (int)imgSize.y)
+                continue;
+
+            resizedImage->setPixel(sf::Vector2u(x, y), image.getPixel(sf::Vector2u(sx, sy)));
+        }
+    }
+
+	image = *resizedImage;
+}
 
 void set_chessboard(sf::Image& image, int tileCount, int transparency, sf::Color firstColor, sf::Color secondColor) {
 

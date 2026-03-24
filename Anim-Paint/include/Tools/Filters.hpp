@@ -12,6 +12,7 @@ void set_saturation(sf::Image& image, int value);
 void set_sepia(sf::Image& image, int value);
 void set_outline(sf::Image& image, int width, sf::Color backgroundColor, sf::Color outlineColor);
 void set_resize(sf::Image& image, int width, int height, sf::Color backgroundColor);
+void set_resize(sf::Image& image, int width, int height);
 void set_chessboard(sf::Image& image, int tileCount, int transparency, sf::Color firstColor, sf::Color secondColor);
 void set_invert_rgb(sf::Image& image);
 void set_invert_hsv(sf::Image& image);

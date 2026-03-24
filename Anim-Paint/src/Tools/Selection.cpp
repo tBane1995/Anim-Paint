@@ -15,6 +15,7 @@
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Dialogs/Palette.hpp"
 #include "Components/LayersPanel/LayersPanel.hpp"
+#include "Tools/Filters.hpp"
 
 std::string mask_shader_source = R"(
     uniform sampler2D texture;
@@ -874,23 +875,9 @@ void Selection::resizeImage() {
 	if (_rect.size.x <= 1 || _rect.size.y <= 1) return;
 	if (_resizedRect.size.x <= 1 || _resizedRect.size.y <= 1) return;
 
-	_resizedImage = std::make_shared<sf::Image>();
-	_resizedImage->resize(sf::Vector2u(_resizedRect.size), sf::Color::Transparent);
+	_resizedImage = std::make_shared<sf::Image>(*_image);
+	set_resize(*_resizedImage, _resizedRect.size.x, _resizedRect.size.y);
 
-	sf::Vector2u imgSize = _image->getSize();
-
-	for (int y = 0; y < _resizedRect.size.y; ++y) {
-		for (int x = 0; x < _resizedRect.size.x; ++x) {
-
-			int sx = (x * _rect.size.x) / _resizedRect.size.x;
-			int sy = (y * _rect.size.y) / _resizedRect.size.y;
-
-			if (sx < 0 || sy < 0 || sx >= (int)imgSize.x || sy >= (int)imgSize.y)
-				continue;
-
-			_resizedImage->setPixel(sf::Vector2u(x, y), _image->getPixel(sf::Vector2u(sx, sy)));
-		}
-	}
 }
 
 void Selection::normalize(sf::IntRect newRect) {
