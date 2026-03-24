@@ -231,7 +231,7 @@ MainMenu::MainMenu() : Element() {
 	std::shared_ptr<OptionBox> select_none = std::make_shared<OptionBox>(L"Select none", L"Ctrl+D");
 	select_none->_onclick_func = [this]() {
 		if (selection->_state != SelectionState::None) {
-			selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent);
+			selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *selection->_resizedImage);
 			selection->_points.clear();
 			selection->_outlineOffset = sf::Vector2i(0, 0);
 			selection->generateRect();

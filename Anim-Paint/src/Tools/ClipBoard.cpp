@@ -102,21 +102,20 @@ bool copyImageToClipboard(sf::Image& image, sf::IntRect rect)
     return true;
 }
 
-void loadImageFromClipboard(sf::Image& outImage) {
+std::shared_ptr<sf::Image> loadImageFromClipboard() {
 
     if (!OpenClipboard(nullptr))
-        return;
+        return nullptr;
 
     HANDLE hData = GetClipboardData(CF_DIBV5);
     if (!hData) hData = GetClipboardData(CF_DIB);
-    if (!hData) { CloseClipboard(); return; }
-
+    if (!hData) { CloseClipboard(); return nullptr; }   
     void* pData = GlobalLock(hData);
-    if (!pData) { CloseClipboard(); return; }
+    if (!pData) { CloseClipboard(); return nullptr; }
 
     auto* bih = reinterpret_cast<BITMAPINFOHEADER*>(pData);
     if (bih->biBitCount != 32 && bih->biBitCount != 24) {
-        GlobalUnlock(hData); CloseClipboard(); return;
+        GlobalUnlock(hData); CloseClipboard(); return nullptr;
     }
 
     // sizes and directions
@@ -125,7 +124,7 @@ void loadImageFromClipboard(sf::Image& outImage) {
     const int  height = std::abs(bih->biHeight);
     const bool topDown = (bih->biHeight < 0);
     if (width <= 0 || height <= 0) {
-        GlobalUnlock(hData); CloseClipboard(); return;
+        GlobalUnlock(hData); CloseClipboard(); return nullptr;
     }
 
     const DWORD compression = bih->biCompression; // BI_RGB | BI_BITFIELDS
@@ -229,7 +228,5 @@ void loadImageFromClipboard(sf::Image& outImage) {
     GlobalUnlock(hData);
     CloseClipboard();
 
-    sf::Image src(sf::Vector2u(width, height), rgba.data());
-    outImage = std::move(src);
-    return;
+    return std::make_shared<sf::Image>(sf::Vector2u(width, height), rgba.data());
 }

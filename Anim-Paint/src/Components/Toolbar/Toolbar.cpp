@@ -9,7 +9,9 @@
 #include "Cursor.hpp"
 #include "Tools/Selection.hpp"
 #include "Dialogs/Dialog_Paste_From_File.hpp"
-
+#include "Tools/ClipBoard.hpp"
+#include "Dialogs/ConfirmDialog.hpp"
+#include "Tools/Filters.hpp"
 
 enum class VariableType { Int, Float, Double };
 
@@ -54,7 +56,36 @@ Toolbar::Toolbar() : Element() {
 	_btn_paste->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
 	_btn_paste->_onclick_func = [this]() {
-		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent)) {
+
+		std::shared_ptr<sf::Image> img = loadImageFromClipboard();
+		if (img == nullptr)
+			return;
+
+		if (img->getSize().x > canvas->_maxSize.x || img->getSize().y > canvas->_maxSize.y) {
+
+			std::shared_ptr<ConfirmDialog> confirm = std::make_shared<ConfirmDialog>(L"Image is too large", L"The image from the clipboard\nis too large to paste onto the canvas.\nNormalize?");
+
+			confirm->_confirmBtn->_onclick_func = [this, confirm, img]() mutable {
+				float scaleX = (float)canvas->_size.x / img->getSize().x;
+				float scaleY = (float)canvas->_size.y / img->getSize().y;
+				float s = std::min(scaleX, scaleY);
+				sf::Vector2i size(
+					(int)std::round(img->getSize().x * s),
+					(int)std::round(img->getSize().y * s)
+				);
+				set_resize(*img, size.x, size.y);
+				selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img);
+				_option_transparency->_checkbox->_value = 0;
+				_toolType = ToolType::Selector;
+				selection->_state = SelectionState::Selected;
+				selectToolButton(_btn_select);
+				confirm->_state = DialogState::ToClose;
+				};
+			dialogs.push_back(confirm);
+			return;
+		}
+
+		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img)) {
 			_option_transparency->_checkbox->_value = 0;
 			_toolType = ToolType::Selector;
 			selection->_state = SelectionState::Selected;
@@ -65,12 +96,40 @@ Toolbar::Toolbar() : Element() {
 
 	_option_paste = std::make_shared<Option>(L"paste");
 	_option_paste->_onclick_func = [this]() {
-		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent)) {
+
+		std::shared_ptr<sf::Image> img = loadImageFromClipboard();
+		if (img == nullptr)
+			return;
+
+		if (img->getSize().x > canvas->_maxSize.x || img->getSize().y > canvas->_maxSize.y) {
+
+			std::shared_ptr<ConfirmDialog> confirm = std::make_shared<ConfirmDialog>(L"Image is too large", L"The image from the clipboard\nis too large to paste onto the canvas.\nNormalize?");
+
+			confirm->_confirmBtn->_onclick_func = [this, confirm, img]() mutable {
+				float scaleX = (float)canvas->_size.x / img->getSize().x;
+				float scaleY = (float)canvas->_size.y / img->getSize().y;
+				float s = std::min(scaleX, scaleY);
+				sf::Vector2i size(
+					(int)std::round(img->getSize().x * s),
+					(int)std::round(img->getSize().y * s)
+				);
+				set_resize(*img, size.x, size.y);
+				selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img);
+				_option_transparency->_checkbox->_value = 0;
+				_toolType = ToolType::Selector;
+				selection->_state = SelectionState::Selected;
+				selectToolButton(_btn_select);
+				confirm->_state = DialogState::ToClose;
+				};
+			dialogs.push_back(confirm);
+			return;
+		}
+
+		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img)) {
 			_option_transparency->_checkbox->_value = 0;
 			_toolType = ToolType::Selector;
 			selection->_state = SelectionState::Selected;
 			selectToolButton(_btn_select);
-			_btn_paste_menu->_isOpen = false;
 		}
 		};
 

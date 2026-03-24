@@ -554,7 +554,7 @@ void Selection::paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Im
 	}
 }
 
-bool Selection::paste(sf::Image& canvas, sf::Color emptyColor)
+bool Selection::paste(sf::Image& canvas, sf::Color emptyColor, sf::Image image)
 {
 
 	if (_image != nullptr && _resizedImage != nullptr) {
@@ -564,7 +564,7 @@ bool Selection::paste(sf::Image& canvas, sf::Color emptyColor)
 		_image = std::make_shared<sf::Image>();
 	}
 
-	loadImageFromClipboard(*_image);
+	_image = std::make_shared<sf::Image>(image);
 
 	if (_image->getSize().x <= 0 || _image->getSize().y <= 0) {
 		DebugError(L"Lasso::paste: Clipboard image has invalid size.");
