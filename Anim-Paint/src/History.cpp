@@ -8,6 +8,7 @@
 #include "Components/Canvas.hpp"
 Step::Step() {
 	_animations.clear();
+	_canvasResized = false;
 }
 
 Step::~Step() {
@@ -61,8 +62,11 @@ void History::saveStep() {
 	step->_currentFrame = getCurrentAnimation()->getCurrentFrameID();
 	step->_currentLayer = getCurrentAnimation()->getCurrentLayerID();
 
-	step->_canvasSize = canvas->_size;
-	step->_canvasPosition = canvas->_rect.position;
+	if (_currentStep == -1 || canvas->_clickedEdgePoint) {
+		step->_canvasResized = true;
+		step->_canvasSize = canvas->_size;
+	}
+	
 
 	_steps.push_back(step);
 	_currentStep++;
@@ -107,12 +111,11 @@ void History::undo()
 	frames_panel->updateText();
 	layers_panel->loadLayersFromCurrentFrame();
 
-	canvas->_size = step->_canvasSize;
-	canvas->generateBackground(canvas->_size);
-	canvas->setPosition(step->_canvasPosition);
-	canvas->generateEdgePoints();
-	canvas->setPosition(canvas->_position);
-
+	if (step->_canvasResized) {
+		canvas->resize(step->_canvasSize);
+		canvas->setCenter();
+	}
+	
 }
 
 void History::redo()
@@ -138,11 +141,19 @@ void History::redo()
 		animations.push_back(dstAnim);
 	}
 
-	canvas->_size = step->_canvasSize;
-	canvas->generateBackground(canvas->_size);
-	canvas->setPosition(step->_canvasPosition);
-	canvas->generateEdgePoints();
-	canvas->setPosition(canvas->_position);
+	currentAnimationId = step->_currentAnimation;
+	getCurrentAnimation()->setCurrentFrameID(step->_currentFrame);
+	getCurrentAnimation()->setCurrentLayerID(step->_currentLayer);
+
+	animations_panel->updateText();
+	frames_panel->updateText();
+	layers_panel->loadLayersFromCurrentFrame();
+
+	if (step->_canvasResized) {
+		canvas->resize(step->_canvasSize);
+		canvas->setCenter();
+	}
+
 
 }
 

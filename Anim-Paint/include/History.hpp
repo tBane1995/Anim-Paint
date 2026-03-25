@@ -7,9 +7,10 @@ public:
 	int _currentAnimation;
 	int _currentFrame;
 	int _currentLayer;
+
+	bool _canvasResized;
 	sf::Vector2i _canvasSize;
-	sf::Vector2i _canvasPosition;
-	std::shared_ptr<EdgePoint> _edgePoint;
+
 	std::vector<std::shared_ptr<Animation>> _animations;
 
 	Step();

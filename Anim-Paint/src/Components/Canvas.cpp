@@ -159,13 +159,13 @@ void Canvas::setZoom(float mouseWheelScrolllDelta) {
 	setPosition(_position);
 }
 
-void Canvas::resize(std::shared_ptr<EdgePoint> edgePoint) {
+void Canvas::resize(std::shared_ptr<EdgePoint> edgePoint, sf::Vector2i cursorPosition) {
 
 	if(edgePoint == nullptr)
 		return;
 
 	sf::Vector2f p;
-	p = (sf::Vector2f(cursor->_position) + sf::Vector2f(_edgePoints[0]->getSize()) / 2.0f - sf::Vector2f(edgePoint->getPosition())) / (_zoom * _zoom_delta);
+	p = (sf::Vector2f(cursorPosition) - sf::Vector2f(edgePoint->getPosition())) / (_zoom * _zoom_delta);
 	sf::Vector2i pp = sf::Vector2i(p);
 	
 	//std::wcout << pp.x << ", " << pp.y << "\n";
@@ -180,7 +180,6 @@ void Canvas::resize(std::shared_ptr<EdgePoint> edgePoint) {
 	if (edgePoint == _point_left_top) {
 		minX = (float)(_point_left->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
 		minY = (float)(_point_top->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
-		std::wcout << L"Left top: " << minX << ", " << minY << "\n";
 	}
 	else if (edgePoint == _point_right_top) {
 		minY = (float)(_point_top->getPosition().y) + float(pp.y) * _zoom * _zoom_delta;
@@ -240,8 +239,8 @@ void Canvas::resize(std::shared_ptr<EdgePoint> edgePoint) {
 	}
 
 	sf::Vector2i dst;
-	dst.x = (int)(((float)(_orginalEdgePointPosition.x) - minX) / (_zoom * _zoom_delta));
-	dst.y = (int)(((float)(_orginalEdgePointPosition.y) - minY) / (_zoom * _zoom_delta));
+	dst.x = (int)(((float)(_topLeftPointPosition.x) - minX) / (_zoom * _zoom_delta));
+	dst.y = (int)(((float)(_topLeftPointPosition.y) - minY) / (_zoom * _zoom_delta));
 
 	int iminX = (int)minX;
 	int iminY = (int)minY;
@@ -562,8 +561,8 @@ void Canvas::handleEvent(const sf::Event& event) {
 			if (_hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
 				_clickedEdgePoint = _hoveredEdgePoint;
 				Element_pressed = _clickedEdgePoint;
-				_orginalEdgePointPosition = _point_left_top->getPosition();
-
+				_orginalEdgePointPosition = _clickedEdgePoint->getPosition();
+				_topLeftPointPosition = _point_left_top->getPosition();
 				_state = CanvasState::Resizing;
 
 				_backupFrames.clear();
@@ -677,7 +676,7 @@ void Canvas::update() {
 	}
 
 	if (_state == CanvasState::Resizing) {
-		resize(_clickedEdgePoint);
+		resize(_clickedEdgePoint, cursor->_position);
 	}
 	else if (_state == CanvasState::Moving) {
 		sf::Vector2f target = sf::Vector2f(cursor->_position + _offset);

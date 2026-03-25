@@ -39,7 +39,7 @@ public:
 	std::shared_ptr<EdgePoint> _hoveredEdgePoint;
 	std::shared_ptr<EdgePoint> _clickedEdgePoint;
 	sf::Vector2i _orginalEdgePointPosition;
-
+	sf::Vector2i _topLeftPointPosition;
 	std::vector<std::shared_ptr<Frame>> _backupFrames;
 
 	CanvasState _state;
@@ -57,7 +57,7 @@ public:
 	void generateEdgePoints();
 	void setPosition(sf::Vector2i position);
 	void setZoom(float mouseWheelScrolllDelta);
-	void resize(std::shared_ptr<EdgePoint> edgePoint);
+	void resize(std::shared_ptr<EdgePoint> edgePoint, sf::Vector2i cursorPosition);
 	void drawPixels(sf::Color color);
 	void fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords);
 	void fillPixels(sf::Color color);
