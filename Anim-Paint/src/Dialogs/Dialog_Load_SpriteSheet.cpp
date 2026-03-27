@@ -147,6 +147,7 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 			bottom_bar->updateText();
 			canvas->reset();
 			canvas->_size = size;
+			canvas->generateBackground(size);
 			canvas->setCenter();
 			_state = DialogState::ToClose;
 		}
