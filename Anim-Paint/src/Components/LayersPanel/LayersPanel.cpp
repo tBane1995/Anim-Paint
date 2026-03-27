@@ -12,7 +12,7 @@ LayersPanel::LayersPanel()
 	: Dialog(
 		L"Layers",
 		sf::Vector2i(192, dialog_title_rect_height + 4 * 32 + 32 + dialog_padding * 3),
-		sf::Vector2i(int(mainView.getSize().x) - 160 - dialog_margin, frames_panel->getPosition().y + frames_panel->getSize().y + dialog_margin)
+		sf::Vector2i(int(mainView.getSize().x) - 160 - dialog_margin, frames_panel->getPosition().y + frames_panel->getSize().y)
 		) {
 
 	_add_layer = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\add.png"), getTexture(L"tex\\btn32\\add_hover.png"));
