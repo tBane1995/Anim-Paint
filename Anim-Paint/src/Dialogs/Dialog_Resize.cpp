@@ -56,6 +56,11 @@ Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialo
 		};
 
 
+	_width_input->_onEnteredFunction = [this]() {activateOnTabElement(1); setTheFilter(); };
+	_height_input->_onEnteredFunction = [this]() {activateOnTabElement(2); setTheFilter(); };
+	_width_percent_input->_onEnteredFunction = [this]() {activateOnTabElement(3); setTheFilter(); };
+	_height_percent_input->_onEnteredFunction = [this]() {activateOnTabElement(4); setTheFilter(); };
+
 	_width_text = std::make_unique<sf::Text>(basicFont, "Width (px)", basic_text_size);
 	_height_text = std::make_unique<sf::Text>(basicFont, "Height (px)", basic_text_size);
 	_width_percent_text = std::make_unique<sf::Text>(basicFont, "Width (%)", basic_text_size);
@@ -83,6 +88,12 @@ Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialo
 		};
 
 	
+	_onTabElements.push_back(_width_input);
+	_onTabElements.push_back(_height_input);
+	_onTabElements.push_back(_width_percent_input);
+	_onTabElements.push_back(_height_percent_input);
+	_onTabElements.push_back(_confirm);
+	_onTabElements.push_back(_reset);
 
 	setPosition(_position);
 }
@@ -210,6 +221,26 @@ void Dialog_Resize::cursorHover() {
 
 void Dialog_Resize::handleEvent(const sf::Event& event) {
 	Dialog::handleEvent(event);
+
+	// Handle Enter key for NumberInput elements
+	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Enter) {
+		if (_currentOnTabElement >= 0 && _currentOnTabElement < (int)_onTabElements.size()) {
+			if (auto ni = std::dynamic_pointer_cast<NumberInput>(_onTabElements[_currentOnTabElement])) {
+				ni->handleEvent(event);
+				return;
+			}
+		}
+	}
+
+	// Handle TextEntered event for Enter key (in case of IME input)
+	if (const auto* te = event.getIf<sf::Event::TextEntered>(); te && (te->unicode == 13 || te->unicode == 10)) {
+		if (_currentOnTabElement >= 0 && _currentOnTabElement < (int)_onTabElements.size()) {
+			if (auto ni = std::dynamic_pointer_cast<NumberInput>(_onTabElements[_currentOnTabElement])) {
+				ni->handleEvent(event);
+				return;
+			}
+		}
+	}
 
 	//_outline_slider->handleEvent(event);
 	_width_input->handleEvent(event);
