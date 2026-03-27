@@ -1304,7 +1304,7 @@ void Selection::handleEvent(const sf::Event& event) {
 						toolbar->_option_transparency->_checkbox->_value = 0;
 						if (getCurrentAnimation()->getCurrentLayer()) {
 							copyImageWithMask(*_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, _rect.position.x, _rect.position.y, *_maskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
-							removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, _rect, *_maskImage, sf::Color::Transparent);
+							removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, _resizedRect, *_resizedMaskImage, sf::Color::Transparent);
 						}
 						*_resizedImage = *_image;
 					}
@@ -1424,6 +1424,7 @@ void Selection::update() {
 		for (auto& point : _edgePoints) {
 			point->update();
 		}
+
 		resizeRect();
 		generateResizedMask();
 		resizeImage();
@@ -1437,29 +1438,29 @@ void Selection::update() {
 			_moveTime = currentTime;
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
-				_rect.position.x = std::clamp(canvas->_rect.position.x - 1, -_resizedRect.size.x, canvas->_size.x);
-				_rect.position.y = std::clamp(canvas->_rect.position.y, -_resizedRect.size.y, canvas->_size.y);
+				_rect.position.x = std::clamp(_rect.position.x - 1, -_resizedRect.size.x, canvas->_size.x);
+				_rect.position.y = std::clamp(_rect.position.y, -_resizedRect.size.y, canvas->_size.y);
 				_resizedRect.position = _rect.position;
 				generateEdgePoints();
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
-				_rect.position.x = std::clamp(canvas->_rect.position.x + 1, -_resizedRect.size.x, canvas->_size.x);
-				_rect.position.y = std::clamp(canvas->_rect.position.y, -_resizedRect.size.y, canvas->_size.y);
+				_rect.position.x = std::clamp(_rect.position.x + 1, -_resizedRect.size.x, canvas->_size.x);
+				_rect.position.y = std::clamp(_rect.position.y, -_resizedRect.size.y, canvas->_size.y);
 				_resizedRect.position = selection->_rect.position;
 				generateEdgePoints();
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
-				_rect.position.x = std::clamp(canvas->_rect.position.x, -_resizedRect.size.x, canvas->_size.x);
-				_rect.position.y = std::clamp(canvas->_rect.position.y - 1, -_resizedRect.size.y, canvas->_size.y);
+				_rect.position.x = std::clamp(_rect.position.x, -_resizedRect.size.x, canvas->_size.x);
+				_rect.position.y = std::clamp(_rect.position.y - 1, -_resizedRect.size.y, canvas->_size.y);
 				_resizedRect.position = selection->_rect.position;
 				generateEdgePoints();
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
-				_rect.position.x = std::clamp(canvas->_rect.position.x, -_resizedRect.size.x, canvas->_size.x);
-				_rect.position.y = std::clamp(canvas->_rect.position.y + 1, -_resizedRect.size.y, canvas->_size.y);
+				_rect.position.x = std::clamp(_rect.position.x, -_resizedRect.size.x, canvas->_size.x);
+				_rect.position.y = std::clamp(_rect.position.y + 1, -_resizedRect.size.y, canvas->_size.y);
 				_resizedRect.position = _rect.position;
 				generateEdgePoints();
 			}
