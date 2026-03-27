@@ -140,6 +140,7 @@ void Dialog::deactivateOnTabElement() {
 		ni->_cursorPosition = (int)ni->_textStr.length();
 		ni->setText(ni->_textStr);
 		ni->_state = TextInputState::Idle;
+		ni->_editState = TextInputEditState::None;
 		return;
 	}
 
@@ -148,6 +149,7 @@ void Dialog::deactivateOnTabElement() {
 	std::shared_ptr<TextInput> ti = std::dynamic_pointer_cast<TextInput>(_onTabElements[_currentOnTabElement]);
 	if (ti != nullptr) {
 		ti->_state = TextInputState::Idle;
+		ti->_editState = TextInputEditState::None;
 		return;
 	}
 
@@ -177,12 +179,14 @@ void Dialog::activateOnTabElement(int id) {
 	if (_currentOnTabElement >= 0) {
 		std::shared_ptr<NumberInput> ni = std::dynamic_pointer_cast<NumberInput>(_onTabElements[_currentOnTabElement]);
 		if (ni != nullptr) {
+			ni->_state = TextInputState::Idle;
 			ni->_editState = TextInputEditState::TextEntered;
 			return;
 		}
 
 		std::shared_ptr<TextInput> ti = std::dynamic_pointer_cast<TextInput>(_onTabElements[_currentOnTabElement]);
 		if (ti != nullptr) {
+			ti->_state = TextInputState::Idle;
 			ti->_editState = TextInputEditState::TextEntered;
 			return;
 		}
@@ -229,9 +233,13 @@ void Dialog::handleEvent(const sf::Event& event) {
 		_state = DialogState::ToClose;
 	}else if (_onTabElements.size() > 0) {
 		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Tab) {
-
+			deactivateOnTabElement();
 			activateOnTabElement(_currentOnTabElement + 1);
 		}
+	}
+
+	if (!_is_moved) {
+		clampPosition();
 	}
 
 	_closeBtn->handleEvent(event);

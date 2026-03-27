@@ -4,6 +4,7 @@
 extern std::string palette_button_shader_source;
 extern std::string palette_colors_shader_source;
 extern std::string palette_values_shader_source;
+extern std::string palette_alpha_values_shader_source;
 
 void set_rotation(sf::Image& image, int angle, bool set_smooth, sf::Color backgroundColor);
 void set_brightness(sf::Image& image, int value);

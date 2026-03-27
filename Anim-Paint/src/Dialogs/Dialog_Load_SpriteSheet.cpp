@@ -485,7 +485,8 @@ void Dialog_Load_SpriteSheet::cursorHover() {
 }
 
 void Dialog_Load_SpriteSheet::handleEvent(const sf::Event& event) {
-	Dialog::handleEvent(event);
+
+	Dialog::handleEvent(event); // manage of Tab (currentOnTabElement++)
 
 	// Handle Enter key for NumberInput elements
 	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Enter) {
@@ -495,7 +496,6 @@ void Dialog_Load_SpriteSheet::handleEvent(const sf::Event& event) {
 				return;
 			}
 		}
-		
 	}
 
 	// Handle TextEntered event for Enter key (in case of IME input)
@@ -506,7 +506,6 @@ void Dialog_Load_SpriteSheet::handleEvent(const sf::Event& event) {
 				return;
 			}
 		}
-		
 	}
 
 	_widthOfFrame->handleEvent(event);

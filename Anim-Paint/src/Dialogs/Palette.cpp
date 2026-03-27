@@ -27,11 +27,12 @@ HSV rgbToHsv(sf::Color c) {
 	}
 	float s = (mx == 0.f) ? 0.f : (d / mx);
 	float v = mx;
-	return { h, s, v };
+	float a = c.a;
+	return { h, s, v, a };
 }
 
-sf::Vector2i cursorOnHues(sf::Vector2i rectSize, sf::Color rgb) {
-	HSV hsv = rgbToHsv(rgb);
+sf::Vector2i cursorOnHues(sf::Vector2i rectSize, sf::Color rgba) {
+	HSV hsv = rgbToHsv(rgba);
 
 	float x = std::clamp(hsv.h, 0.f, 1.f);     // H -> x
 	float y = std::clamp(1.0f - hsv.s, 0.f, 1.f); // S -> 1 - y
@@ -42,8 +43,8 @@ sf::Vector2i cursorOnHues(sf::Vector2i rectSize, sf::Color rgb) {
 	return sf::Vector2i(ix, iy);
 }
 
-sf::Vector2i cursorOnValues(sf::Vector2i rectSize, sf::Color rgb) {
-	HSV hsv = rgbToHsv(rgb);
+sf::Vector2i cursorOnValues(sf::Vector2i rectSize, sf::Color rgba) {
+	HSV hsv = rgbToHsv(rgba);
 
 	float y = std::clamp(1.f - hsv.v, 0.f, 1.f);
 
@@ -105,7 +106,7 @@ void PaletteValues::loadTexture(sf::Color color) {
 	}
 
 	sf::Sprite spr(tex);
-	_renderTexture.clear(sf::Color::White);
+	_renderTexture.clear(sf::Color::Transparent);
 	_renderTexture.draw(spr, &_shader);
 	_renderTexture.display();
 }
@@ -163,7 +164,7 @@ void PaletteValues::draw() {
 	window->draw(sprite);
 }
 
-Palette::Palette() : Dialog(L"Palette", sf::Vector2i(192 + 24 + 8, dialog_title_rect_height + 192 + basic_text_rect_height + 8)){
+Palette::Palette() : Dialog(L"Palette", sf::Vector2i(192 + 2 * (24+8), dialog_title_rect_height + 192 + basic_text_rect_height + 8)){
 
 	sf::Vector2i size = sf::Vector2i(sf::Vector2u(sf::Vector2i(192-16, 192-16)));
 	sf::Vector2i position = getContentPosition() + sf::Vector2i(8, 8);
@@ -173,6 +174,9 @@ Palette::Palette() : Dialog(L"Palette", sf::Vector2i(192 + 24 + 8, dialog_title_
 	size.x = 24;
 	_values = std::make_shared<PaletteValues>(position, size, palette_values_shader_source, sf::Color::White);
 
+	position.x += size.x + 8;
+	_alphaValues = std::make_shared<PaletteValues>(position, size, palette_alpha_values_shader_source, sf::Color::White);
+
 	_hues->_function = [this]() {
 		sf::Image pixels = _hues->_renderTexture.getTexture().copyToImage();
 
@@ -181,12 +185,14 @@ Palette::Palette() : Dialog(L"Palette", sf::Vector2i(192 + 24 + 8, dialog_title_
 
 		sf::Color color = pixels.getPixel(sf::Vector2u(_huesCursor));
 		_values->loadTexture(color);
+		_alphaValues->loadTexture(color);
 
 		sf::Color finalColor = _values->_renderTexture.getTexture().copyToImage().getPixel(sf::Vector2u(_valuesCursor));
 		toolbar->_selectedColorButton->setColor(finalColor);
 		_red->setText(std::to_wstring(finalColor.r));
 		_green->setText(std::to_wstring(finalColor.g));
 		_blue->setText(std::to_wstring(finalColor.b));
+		_alpha->setText(std::to_wstring(finalColor.a));
 		};
 
 	_values->_function = [this]() {
@@ -201,39 +207,64 @@ Palette::Palette() : Dialog(L"Palette", sf::Vector2i(192 + 24 + 8, dialog_title_
 		_red->setText(std::to_wstring(color.r));
 		_green->setText(std::to_wstring(color.g));
 		_blue->setText(std::to_wstring(color.b));
+		_alpha->setText(std::to_wstring(color.a));
+		};
+
+	_alphaValues->_function = [this]() {
+		sf::Image pixels = _alphaValues->_renderTexture.getTexture().copyToImage();
+
+		_alphaCursor.x = 0;
+		_alphaCursor.y = std::clamp(cursor->_position.y - _alphaValues->_rect.position.y, 0, _alphaValues->_rect.size.y - 1);
+
+		sf::Color color = pixels.getPixel(sf::Vector2u(_alphaCursor));
+
+		toolbar->_selectedColorButton->setColor(color);
+
+		_red->setText(std::to_wstring(color.r));
+		_green->setText(std::to_wstring(color.g));
+		_blue->setText(std::to_wstring(color.b));
+		_alpha->setText(std::to_wstring(color.a));
 		};
 
 	_r = std::make_unique<sf::Text>(basicFont, L"R", basic_text_size);
 	_g = std::make_unique<sf::Text>(basicFont, L"G", basic_text_size);
 	_b = std::make_unique<sf::Text>(basicFont, L"B", basic_text_size);
+	_a = std::make_unique<sf::Text>(basicFont, L"A", basic_text_size);
 
 	_r->setFillColor(basic_text_color);
 	_g->setFillColor(basic_text_color);
 	_b->setFillColor(basic_text_color);
+	_a->setFillColor(basic_text_color);
 
 	_red = std::make_shared<NumberInput>(sf::Vector2i(32, basic_text_rect_height), 3, basic_text_size, 0, 0, 255);
 	_green = std::make_shared<NumberInput>(sf::Vector2i(32, basic_text_rect_height), 3, basic_text_size, 0, 0, 255);
 	_blue = std::make_shared<NumberInput>(sf::Vector2i(32, basic_text_rect_height), 3, basic_text_size, 0, 0, 255);
+	_alpha = std::make_shared<NumberInput>(sf::Vector2i(32, basic_text_rect_height), 3, basic_text_size, 0, 0, 255);
 	
 	_red->setText(std::to_wstring(toolbar->_first_color->_color.r));
 	_green->setText(std::to_wstring(toolbar->_first_color->_color.g));
 	_blue->setText(std::to_wstring(toolbar->_first_color->_color.b));
+	_alpha->setText(std::to_wstring(toolbar->_first_color->_color.a));
 	
 	_onTabElements.push_back(_red);
 	_onTabElements.push_back(_green);
 	_onTabElements.push_back(_blue);
+	_onTabElements.push_back(_alpha);
 
 	_red->_onClickedFunction = [this]() {activateOnTabElement(0); loadColorFromRGBInputs(); };
 	_green->_onClickedFunction = [this]() {activateOnTabElement(1); loadColorFromRGBInputs(); };
 	_blue->_onClickedFunction = [this]() {activateOnTabElement(2); loadColorFromRGBInputs(); };
+	_alpha->_onClickedFunction = [this]() {activateOnTabElement(3); loadColorFromRGBInputs(); };
 
-	_red->_onEditedFunction = [this]() {loadColorFromRGBInputs();};
-	_green->_onEditedFunction = [this]() {loadColorFromRGBInputs(); };
-	_blue->_onEditedFunction = [this]() {loadColorFromRGBInputs(); };
+	_red->_onEditedFunction = [this]() { loadColorFromRGBInputs(); };
+	_green->_onEditedFunction = [this]() { loadColorFromRGBInputs(); };
+	_blue->_onEditedFunction = [this]() { loadColorFromRGBInputs(); };
+	_alpha->_onEditedFunction = [this]() { loadColorFromRGBInputs(); };
 
-	_red->_onEnteredFunction = [this]() {activateOnTabElement(1); loadColorFromRGBInputs(); };
-	_green->_onEnteredFunction = [this]() {activateOnTabElement(2); loadColorFromRGBInputs(); };
-	_blue->_onEnteredFunction = [this]() {activateOnTabElement(0); loadColorFromRGBInputs(); };
+	_red->_onEnteredFunction = [this]() {activateOnTabElement(1); loadColorFromRGBInputs(); setTheColor(); };
+	_green->_onEnteredFunction = [this]() {activateOnTabElement(2); loadColorFromRGBInputs(); setTheColor(); };
+	_blue->_onEnteredFunction = [this]() {activateOnTabElement(3); loadColorFromRGBInputs(); setTheColor(); };
+	_alpha->_onEnteredFunction = [this]() {activateOnTabElement(0); loadColorFromRGBInputs(); setTheColor(); };
 
 	setPosition(_position);
 
@@ -250,6 +281,7 @@ void Palette::setColorInRGBInputs(sf::Color color) {
 	_red->setText(std::to_wstring(color.r));
 	_green->setText(std::to_wstring(color.g));
 	_blue->setText(std::to_wstring(color.b));
+	_alpha->setText(std::to_wstring(color.a));
 }
 
 void Palette::loadColorFromRGBInputs() {
@@ -258,31 +290,43 @@ void Palette::loadColorFromRGBInputs() {
 		std::stoi(_red->getText()),
 		std::stoi(_green->getText()),
 		std::stoi(_blue->getText()),
-		255
+		std::stoi(_alpha->getText())
 	);
 
 	_huesCursor = cursorOnHues(_hues->_rect.size, color);
+	
 	_values->loadTexture(_hues->_renderTexture.getTexture().copyToImage().getPixel(sf::Vector2u(_huesCursor)));
 	_valuesCursor = cursorOnValues(_values->_rect.size, color);
+	
+	_alphaValues->loadTexture(_hues->_renderTexture.getTexture().copyToImage().getPixel(sf::Vector2u(_huesCursor)));
+	_alphaCursor = cursorOnValues(_alphaValues->_rect.size, color);
 
+
+}
+
+void Palette::setTheColor() {
+	toolbar->_selectedColorButton->_color = sf::Color(std::stoi(_red->getText()), std::stoi(_green->getText()), std::stoi(_blue->getText()), std::stoi(_alpha->getText()));
 }
 
 void Palette::setPosition(sf::Vector2i position) {
 	Dialog::setPosition(position);
 	_hues->setPosition(getContentPosition() + sf::Vector2i(8, 8));
 	_values->setPosition(sf::Vector2i(_hues->_rect.position + sf::Vector2i(_hues->_rect.size.x + 8, 0)));
+	_alphaValues->setPosition(sf::Vector2i(_values->_rect.position + sf::Vector2i(_values->_rect.size.x + 8, 0)));
 
 	sf::Vector2i textInputsPosistion;
 	textInputsPosistion.x = position.x + 32;
 	textInputsPosistion.y = _values->_rect.position.y + _values->_rect.size.y + 8;
 
 	_red->setPosition(textInputsPosistion);
-	_green->setPosition(textInputsPosistion + sf::Vector2i(32 * 2, 0));
-	_blue->setPosition(textInputsPosistion + sf::Vector2i(32 * 4, 0));
+	_green->setPosition(textInputsPosistion + sf::Vector2i(30 * 2, 0));
+	_blue->setPosition(textInputsPosistion + sf::Vector2i(30 * 4, 0));
+	_alpha->setPosition(textInputsPosistion + sf::Vector2i(30 * 6, 0));
 
 	_r->setPosition(sf::Vector2f(_red->_text->getPosition()) - sf::Vector2f(16, 0));
 	_g->setPosition(sf::Vector2f(_green->_text->getPosition()) - sf::Vector2f(16, 0));
 	_b->setPosition(sf::Vector2f(_blue->_text->getPosition()) - sf::Vector2f(16, 0));
+	_a->setPosition(sf::Vector2f(_alpha->_text->getPosition()) - sf::Vector2f(16, 0));
 }
 
 void Palette::cursorHover() {
@@ -293,12 +337,15 @@ void Palette::cursorHover() {
 		return;
 
 	Dialog::cursorHover();
+
 	_hues->cursorHover();
 	_values->cursorHover();
+	_alphaValues->cursorHover();
 	
 	_red->cursorHover();
 	_green->cursorHover();
 	_blue->cursorHover();
+	_alpha->cursorHover();
 }
 
 void Palette::handleEvent(const sf::Event& event) {
@@ -306,19 +353,6 @@ void Palette::handleEvent(const sf::Event& event) {
 		return;
 
 	Dialog::handleEvent(event);
-
-	if (!Dialog::_is_moved) {
-		clampPosition();
-	}
-
-	_hues->handleEvent(event);
-	_values->handleEvent(event);
-
-	// Special handling for Enter events.
-	// Only the currently focused NumberInput should receive the Enter key.
-	// Without this, the event would propagate to all NumberInputs,
-	// causing multiple fields to respond to a single Enter press.
-	// We route Enter exclusively to the active element to avoid that.
 
 	// Handle Enter key for NumberInput elements
 	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Enter) {
@@ -342,9 +376,14 @@ void Palette::handleEvent(const sf::Event& event) {
 		
 	}
 
+	_hues->handleEvent(event);
+	_values->handleEvent(event);
+	_alphaValues->handleEvent(event);
+
 	_red->handleEvent(event);
 	_green->handleEvent(event);
 	_blue->handleEvent(event);
+	_alpha->handleEvent(event);
 }
 
 void Palette::update() {
@@ -352,24 +391,29 @@ void Palette::update() {
 
 	_hues->update();
 	_values->update();
+	_alphaValues->update();
 
 	_red->update();
 	_green->update();
 	_blue->update();
+	_alpha->update();
 }
 
 void Palette::draw() {
 	Dialog::draw();
 	_hues->draw();
 	_values->draw();
+	_alphaValues->draw();
 
 	_red->draw();
 	_green->draw();
 	_blue->draw();
+	_alpha->draw();
 
 	window->draw(*_r);
 	window->draw(*_g);
 	window->draw(*_b);
+	window->draw(*_a);
 
 	sf::CircleShape hCursor(4);
 	hCursor.setFillColor(sf::Color::Transparent);
@@ -381,11 +425,17 @@ void Palette::draw() {
 	vCursor.setFillColor(sf::Color::Red);
 	vCursor.setOrigin(sf::Vector2f(2, 2));
 
+	sf::RectangleShape aCursor(sf::Vector2f(28, 4));
+	aCursor.setFillColor(sf::Color::Red);
+	aCursor.setOrigin(sf::Vector2f(2, 2));
+
 	hCursor.setPosition(sf::Vector2f(_hues->_rect.position + _huesCursor));
 	vCursor.setPosition(sf::Vector2f(_values->_rect.position + _valuesCursor));
+	aCursor.setPosition(sf::Vector2f(_alphaValues->_rect.position + _alphaCursor));
 
 	window->draw(hCursor);
 	window->draw(vCursor);
+	window->draw(aCursor);
 	
 }
 

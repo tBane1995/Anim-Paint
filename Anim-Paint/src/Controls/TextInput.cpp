@@ -135,9 +135,9 @@ void TextInput::handleEvent(const sf::Event& event) {
 					_editState = TextInputEditState::Selected;
 				}
 				else {
-					_cursorPosition = _textStr.length();
-					_selectionStart = -1;
-					_selectionEnd = -1;
+					positioningCursorByMouse();
+					_selectionStart = _cursorPosition;
+					_selectionEnd = _cursorPosition;
 					
 					_editState = TextInputEditState::TextEntered;
 					if (_onClickedFunction)
@@ -337,12 +337,7 @@ void TextInput::handleEvent(const sf::Event& event) {
 					// BACKSPACE
 					if (!_textStr.empty()) {
 
-						if (_cursorPosition > 0 && _editState == TextInputEditState::TextEntered) {
-							_textStr.erase(_cursorPosition - 1, 1);
-							setText(_textStr);
-							_cursorPosition -= 1;
-						}
-						else if(_selectionStart != _selectionEnd) {
+						if (_selectionStart != -1 && _selectionEnd != -1 && _selectionStart != _selectionEnd) {
 							int min = std::min(_selectionStart, _selectionEnd);
 							int max = std::max(_selectionStart, _selectionEnd);
 							_textStr.erase(min, max - min);
@@ -351,6 +346,12 @@ void TextInput::handleEvent(const sf::Event& event) {
 							_cursorPosition = min;
 							_selectionStart = -1;
 							_selectionEnd = -1;
+						}
+						else if (_cursorPosition > 0 && _editState == TextInputEditState::TextEntered) {
+							_textStr.erase(_cursorPosition - 1, 1);
+							setText(_textStr);
+							_cursorPosition -= 1;
+
 						}
 						
 						if (_onEditedFunction)
