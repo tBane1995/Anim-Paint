@@ -222,8 +222,8 @@ MainMenu::MainMenu() : Element() {
 
 	std::shared_ptr<OptionBox> select_all = std::make_shared<OptionBox>(L"Select all", L"Ctrl+A");
 	select_all->_onclick_func = [this]() {
-		toolbar->selectToolButton(toolbar->_btn_lasso);
-		toolbar->_toolType = ToolType::Lasso;
+		toolbar->selectToolButton(toolbar->_btn_select);
+		toolbar->_toolType = ToolType::Selector;
 		selection->selectAll();
 		closeMenu();
 		};
