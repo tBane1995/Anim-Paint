@@ -126,7 +126,7 @@ void PaletteValues::handleEvent(const sf::Event& event) {
 	if (!dialogs.empty())
 		return;
 
-	if (main_menu->_open_menu_box != nullptr)
+	if (main_menu->_open_menu_button != nullptr)
 		return;
 
 	if(const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {

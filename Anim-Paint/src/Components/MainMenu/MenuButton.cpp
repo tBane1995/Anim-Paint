@@ -1,11 +1,11 @@
-﻿#include "Components/MainMenu/MenuBox.hpp"
+﻿#include "Components/MainMenu/MenuButton.hpp"
 #include "Theme.hpp"
 #include "Time.hpp"
 #include "Cursor.hpp"
 #include "Window.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
 
-MenuBox::MenuBox(std::wstring text) : Button() {
+MenuButton::MenuButton(std::wstring text) : Button() {
 
 	_text = std::make_unique<sf::Text>(basicFont, text, menu_font_size);
 	_text->setFillColor(menu_text_color);
@@ -24,11 +24,11 @@ MenuBox::MenuBox(std::wstring text) : Button() {
 	_options.clear();
 }
 
-MenuBox::~MenuBox() {
+MenuButton::~MenuButton() {
 
 }
 
-void MenuBox::addOption(std::shared_ptr<OptionBox> option) {
+void MenuButton::addOption(std::shared_ptr<OptionBox> option) {
 	_options.push_back(option);
 
 	int max_wdt = 0;
@@ -56,7 +56,7 @@ void MenuBox::addOption(std::shared_ptr<OptionBox> option) {
 
 }
 
-void MenuBox::setPosition(sf::Vector2i position) {
+void MenuButton::setPosition(sf::Vector2i position) {
 	_rect.position = position;
 
 	sf::Vector2f textPos;
@@ -73,7 +73,7 @@ void MenuBox::setPosition(sf::Vector2i position) {
 }
 
 
-void MenuBox::cursorHover() {
+void MenuButton::cursorHover() {
 	Button::cursorHover();
 
 	if (_isSelected) {
@@ -82,7 +82,7 @@ void MenuBox::cursorHover() {
 	}
 }
 
-void MenuBox::handleEvent(const sf::Event& event) {
+void MenuButton::handleEvent(const sf::Event& event) {
 	if (Element_hovered.get() == this) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
@@ -91,7 +91,7 @@ void MenuBox::handleEvent(const sf::Event& event) {
 			_isSelected = true;
 			return;
 
-		}else if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && main_menu->_open_menu_box) {
+		}else if (const auto* mm = event.getIf<sf::Event::MouseMoved>(); mm && main_menu->_open_menu_button) {
 			Element_pressed = this->shared_from_this();
 			_state = ButtonState::Pressed;
 			_isSelected = true;
@@ -109,7 +109,7 @@ void MenuBox::handleEvent(const sf::Event& event) {
 	}
 }
 
-void MenuBox::update() {
+void MenuButton::update() {
 	if (_state == ButtonState::Pressed) {
 		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
 			if (_onclick_func) {
@@ -129,7 +129,7 @@ void MenuBox::update() {
 		option->update();
 }
 
-void MenuBox::draw() {
+void MenuButton::draw() {
 	sf::Vector2f rectSize;
 	rectSize.x = float(_rect.size.x - 2 * _rectBorderWidth);
 	rectSize.y = float(_rect.size.y - 2 * _rectBorderWidth);

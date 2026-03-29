@@ -2,13 +2,13 @@
 #include "Controls/Button.hpp"
 #include "Components/MainMenu/OptionBox.hpp"
 
-class MenuBox : public Button {
+class MenuButton : public Button {
 public:
 	std::unique_ptr<sf::Text> _text;
 	std::vector<std::shared_ptr<OptionBox>> _options;
 
-	MenuBox(std::wstring text);
-	~MenuBox();
+	MenuButton(std::wstring text);
+	~MenuButton();
 
 	void addOption(std::shared_ptr<OptionBox> option);
 	void setPosition(sf::Vector2i position);

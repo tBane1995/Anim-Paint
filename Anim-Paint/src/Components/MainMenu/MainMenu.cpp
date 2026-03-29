@@ -37,10 +37,10 @@
 MainMenu::MainMenu() : Element() {
 
 	// FILE
-	std::shared_ptr<MenuBox> file = std::make_shared<MenuBox>(L"File");
+	std::shared_ptr<MenuButton> file = std::make_shared<MenuButton>(L"File");
 	file->_onclick_func = [this, file]() {
 		hideMenu();
-		openMenuBox(file);
+		openMenuButton(file);
 		};
 	_menu_boxes.push_back(file);
 
@@ -104,10 +104,10 @@ MainMenu::MainMenu() : Element() {
 	file->addOption(file_import);
 
 	// EDIT
-	std::shared_ptr<MenuBox> edit = std::make_shared<MenuBox>(L"Edit");
+	std::shared_ptr<MenuButton> edit = std::make_shared<MenuButton>(L"Edit");
 	edit->_onclick_func = [this, edit]() {
 		hideMenu();
-		openMenuBox(edit);
+		openMenuButton(edit);
 		};
 	_menu_boxes.push_back(edit);
 
@@ -135,10 +135,10 @@ MainMenu::MainMenu() : Element() {
 	//edit->addOption(edit_paste_as);
 
 	// TOOLS
-	std::shared_ptr<MenuBox> tools = std::make_shared<MenuBox>(L"Tools");
+	std::shared_ptr<MenuButton> tools = std::make_shared<MenuButton>(L"Tools");
 	tools->_onclick_func = [this, tools]() {
 		hideMenu();
-		openMenuBox(tools);
+		openMenuButton(tools);
 		};
 	_menu_boxes.push_back(tools);
 
@@ -213,10 +213,10 @@ MainMenu::MainMenu() : Element() {
 	tools->addOption(tools_smoothing);
 
 	// SELECT
-	std::shared_ptr<MenuBox> select = std::make_shared<MenuBox>(L"Select");
+	std::shared_ptr<MenuButton> select = std::make_shared<MenuButton>(L"Select");
 	select->_onclick_func = [this, select]() {
 		hideMenu();
-		openMenuBox(select);
+		openMenuButton(select);
 		};
 	_menu_boxes.push_back(select);
 
@@ -264,10 +264,10 @@ MainMenu::MainMenu() : Element() {
 	select->addOption(select_align_center);
 
 	// SETTINGS - TO-DO
-	//std::shared_ptr<MenuBox> settings = std::make_shared<MenuBox>(L"Settings");
+	//std::shared_ptr<MenuButton> settings = std::make_shared<MenuButton>(L"Settings");
 	//settings->_onclick_func = [this, settings]() {
 	//	hideMenu();
-	//	openMenuBox(settings);
+	//	openMenuButton(settings);
 	//	};
 	//_menu_boxes.push_back(settings);
 	//
@@ -279,7 +279,7 @@ MainMenu::MainMenu() : Element() {
 
 	// POSITIONING
 	_state = MainMenuStates::Closed;
-	_open_menu_box = nullptr;
+	_open_menu_button = nullptr;
 
 	resize();
 	setPosition(sf::Vector2i(0, 0));
@@ -313,26 +313,26 @@ void MainMenu::setPosition(sf::Vector2i position) {
 }
 
 void MainMenu::hideMenu() {
-	if (_open_menu_box != nullptr)
-		_open_menu_box->_isSelected = false;
+	if (_open_menu_button != nullptr)
+		_open_menu_button->_isSelected = false;
 
-	_open_menu_box = nullptr;
+	_open_menu_button = nullptr;
 	_state = MainMenuStates::Closing;
 }
 
 void MainMenu::closeMenu() {
-	if (_open_menu_box != nullptr)
-		_open_menu_box->_isSelected = false;
+	if (_open_menu_button != nullptr)
+		_open_menu_button->_isSelected = false;
 
 	_state = MainMenuStates::Closed;
-	_open_menu_box = nullptr;
+	_open_menu_button = nullptr;
 }
 
 
-void MainMenu::openMenuBox(std::shared_ptr<MenuBox> menuBox) {
+void MainMenu::openMenuButton(std::shared_ptr<MenuButton> menuButton) {
 	_state = MainMenuStates::Opened;
-	_open_menu_box = menuBox;
-	_open_menu_box->_isSelected = true;
+	_open_menu_button = menuButton;
+	_open_menu_button->_isSelected = true;
 }
 
 void MainMenu::saveProject(const std::filesystem::path& path) {
@@ -613,7 +613,7 @@ void MainMenu::importAnimation(std::vector<std::shared_ptr<Animation>> newAnimat
 	layers_panel->loadLayersFromCurrentFrame();
 }
 
-bool MainMenu::cursorOnAnyMenuBox() {
+bool MainMenu::cursorOnAnyMenuButton() {
 	for(auto& mb : _menu_boxes)
 		if (mb->_rect.contains(cursor->_position))
 			return true;
@@ -702,10 +702,10 @@ void MainMenu::handleEvent(const sf::Event& event) {
 
 	if (_state == MainMenuStates::Opened) {
 		
-		std::shared_ptr<MenuBox> hoverBox = std::dynamic_pointer_cast<MenuBox>(Element_hovered);
-		if (hoverBox != nullptr && _open_menu_box != hoverBox) {
+		std::shared_ptr<MenuButton> hoverBox = std::dynamic_pointer_cast<MenuButton>(Element_hovered);
+		if (hoverBox != nullptr && _open_menu_button != hoverBox) {
 			hideMenu();
-			openMenuBox(hoverBox);
+			openMenuButton(hoverBox);
 		}
 	}
 
@@ -751,15 +751,15 @@ void MainMenu::draw() {
 	logo.setPosition(sf::Vector2f(0, ((float)(menu_height)-logo.getGlobalBounds().size.y) / 2.0f));
 	window->draw(logo);
 
-	if (_open_menu_box != nullptr) {
-		if (_open_menu_box->_options.size() > 0) {
+	if (_open_menu_button != nullptr) {
+		if (_open_menu_button->_options.size() > 0) {
 
 			sf::Vector2f rectSize;
-			rectSize.x = (float)(_open_menu_box->_options.front()->getSize().x);
-			rectSize.y = (float)(_open_menu_box->_options.size()) * (float)(menu_height);
+			rectSize.x = (float)(_open_menu_button->_options.front()->getSize().x);
+			rectSize.y = (float)(_open_menu_button->_options.size()) * (float)(menu_height);
 
 			sf::RectangleShape rect(rectSize);
-			rect.setPosition((sf::Vector2f)(_open_menu_box->_options.front()->getPosition()));
+			rect.setPosition((sf::Vector2f)(_open_menu_button->_options.front()->getPosition()));
 			rect.setOutlineThickness((float)(optionbox_border_width));
 			rect.setOutlineColor(optionbox_border_color);
 			window->draw(rect);

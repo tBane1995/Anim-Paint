@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Element.hpp"
-#include "Components/MainMenu/MenuBox.hpp"
+#include "Components/MainMenu/MenuButton.hpp"
 #include "Components/MainMenu/OptionBox.hpp"
 #include <filesystem>
 #include "Animation/Animation.hpp"
@@ -11,10 +11,10 @@ class MainMenu : public Element {
 public:
 
 	sf::IntRect _rect;
-	std::vector<std::shared_ptr<MenuBox>> _menu_boxes;
+	std::vector<std::shared_ptr<MenuButton>> _menu_boxes;
 
 	MainMenuStates _state;
-	std::shared_ptr<MenuBox> _open_menu_box;
+	std::shared_ptr<MenuButton> _open_menu_button;
 
 	MainMenu();
 	~MainMenu();
@@ -24,12 +24,12 @@ public:
 	void setPosition(sf::Vector2i position);
 	void hideMenu();	// hide menu - start closing animation - used when opening another menu
 	void closeMenu();	// immediately close menu - used when opening dialogs
-	void openMenuBox(std::shared_ptr<MenuBox> menuBox);
+	void openMenuButton(std::shared_ptr<MenuButton> menuBox);
 	void saveProject(const std::filesystem::path& path);
 	void loadProject(const std::filesystem::path& path);
 	void exportAsFile(const std::filesystem::path& path);
 	void importAnimation(std::vector<std::shared_ptr<Animation>> newAnimations);
-	bool cursorOnAnyMenuBox();
+	bool cursorOnAnyMenuButton();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

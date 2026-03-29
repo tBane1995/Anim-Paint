@@ -1142,7 +1142,7 @@ void Selection::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (main_menu->cursorOnAnyMenuBox()) {
+	if (main_menu->cursorOnAnyMenuButton()) {
 		return;
 	}
 
@@ -1408,7 +1408,7 @@ void Selection::update() {
 		return;
 	}
 
-	if (main_menu->cursorOnAnyMenuBox()) {
+	if (main_menu->cursorOnAnyMenuButton()) {
 		return;
 	}
 
