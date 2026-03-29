@@ -5,7 +5,7 @@
 #include "Window.hpp"
 
 
-OptionWithCheckbox::OptionWithCheckbox(std::wstring text, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position) : Option(text, L"", position) {
+OptionWithCheckbox::OptionWithCheckbox(std::wstring text, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::wstring shortcut, sf::Vector2i position) : Option(text, shortcut, position) {
 	_checkbox = std::make_shared<Checkbox>(texture, hoverTexture);
 	_checkbox->setValue(0);
 	_checkbox->_onclick_func = [this]() {

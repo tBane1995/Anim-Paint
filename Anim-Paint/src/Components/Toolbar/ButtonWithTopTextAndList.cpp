@@ -100,8 +100,8 @@ void ButtonWithTopTextAndList::setPosition(sf::Vector2i position) {
 
 	_list_rect.setPosition(rectPos);
 	for (auto& o : _options) {
-		o->setSize(sf::Vector2i(32 + maxTextWidth + maxShortcutTextWidth + 8, 32));
-		o->setPosition(ipos, maxTextWidth);
+		o->setSize(sf::Vector2i(32 + maxTextWidth + 8 + maxShortcutTextWidth + 8, 32));
+		o->setPosition(ipos, maxTextWidth + 8);
 		ipos.y += 32;
 	}
 }

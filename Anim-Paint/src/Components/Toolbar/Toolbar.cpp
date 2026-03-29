@@ -104,7 +104,7 @@ Toolbar::Toolbar() : Element() {
 		dialogs.push_back(std::make_shared<Dialog_Paste_From_File>());
 		_btn_paste_menu->_isOpen = false;
 		};
-	_option_transparency = std::make_shared<OptionWithCheckbox>(L"transparency", getTexture(L"tex\\tools\\btn_unchecked.png"), getTexture(L"tex\\tools\\btn_unchecked_hover.png"));
+	_option_transparency = std::make_shared<OptionWithCheckbox>(L"transparency", getTexture(L"tex\\tools\\btn_unchecked.png"), getTexture(L"tex\\tools\\btn_unchecked_hover.png"), L"Ctrl+T");
 	_option_transparency->addValue(getTexture(L"tex\\tools\\btn_checked.png"), getTexture(L"tex\\tools\\btn_checked_hover.png"));
 	_option_transparency->_onclick_func = [this]() {
 
