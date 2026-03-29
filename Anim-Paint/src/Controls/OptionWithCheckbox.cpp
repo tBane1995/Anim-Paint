@@ -1,4 +1,4 @@
-﻿#include "Components/Toolbar/OptionWithCheckbox.hpp"
+﻿#include "Controls/OptionWithCheckbox.hpp"
 #include "Theme.hpp"
 #include "Time.hpp"
 #include "Cursor.hpp"

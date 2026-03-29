@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Controls/Button.hpp"
-#include "Components/Toolbar/Option.hpp"
+#include "Controls/Option.hpp"
 
 class ButtonWithTopTextAndList : public Button {
 

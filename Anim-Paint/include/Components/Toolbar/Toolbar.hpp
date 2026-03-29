@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "SFML/Graphics.hpp"
-#include "Components/Toolbar/Option.hpp"
-#include "Components/Toolbar/OptionWithCheckbox.hpp"
+#include "Controls/Option.hpp"
+#include "Controls/OptionWithCheckbox.hpp"
 #include "Components/Toolbar/ButtonWithTopTextAndList.hpp"
 #include "Components/Toolbar/ButtonWithRightText.hpp"
 #include "Components/Toolbar/Separator.hpp"

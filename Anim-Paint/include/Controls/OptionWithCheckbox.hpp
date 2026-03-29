@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Components/Toolbar/Option.hpp"
+#include "Controls/Option.hpp"
 #include "Controls/Checkbox.hpp"
 
 class OptionWithCheckbox : public Option {
