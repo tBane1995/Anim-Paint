@@ -11,13 +11,19 @@ Option::Option(std::wstring text, std::wstring shortcut, sf::Vector2i position) 
 	_rectPressColor = optionbox_press_color;
 	_rectSelectColor = optionbox_select_color;
 
-	_text = std::make_unique<sf::Text>(basicFont, text, 13);
+	_text = std::make_unique<sf::Text>(basicFont, text, optionbox_font_size);
 	_text->setFillColor(menu_text_color);
 
-	_shortcut_text = std::make_unique<sf::Text>(basicFont, shortcut, 13);
+	_shortcut_text = std::make_unique<sf::Text>(basicFont, shortcut, optionbox_font_size);
 	_shortcut_text->setFillColor(menu_text_color);
 
-	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32 + (int)_text->getGlobalBounds().size.x + 8, 32));
+	sf::Vector2i size;
+	size.y = optionbox_height;
+	size.x = 32 + optionbox_left_margin + getTextWidth() + optionbox_right_margin;
+	if(getShortcutTextWidth() > 0)
+		size.x += optionbox_spacing + getShortcutTextWidth();
+
+	_rect = sf::IntRect(sf::Vector2i(0, 0), size);
 
 	setPosition(position, getTextWidth());
 
@@ -34,8 +40,8 @@ Option::~Option() {
 
 void Option::setPosition(sf::Vector2i position, int shortcut_offset) {
 	_rect.position = position;
-	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32, (32 - basicFont.getLineSpacing(13)) / 2 - 1));
-	_shortcut_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32 + shortcut_offset, (32 - basicFont.getLineSpacing(13)) / 2 - 1));
+	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32, (_rect.size.y - basicFont.getLineSpacing(optionbox_font_size)) / 2 - 1));
+	_shortcut_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32 + shortcut_offset, (_rect.size.y - basicFont.getLineSpacing(optionbox_font_size)) / 2 - 1));
 
 }
 

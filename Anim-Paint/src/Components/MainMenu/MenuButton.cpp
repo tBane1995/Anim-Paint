@@ -28,27 +28,26 @@ MenuButton::~MenuButton() {
 
 }
 
-void MenuButton::addOption(std::shared_ptr<OptionBox> option) {
+void MenuButton::addOption(std::shared_ptr<Option> option) {
 	_options.push_back(option);
 
 	int max_wdt = 0;
 	int max_shortcut_wdt = 0;
 	for (auto& o : _options) {
 
-		if ((int)(o->_text->getGlobalBounds().size.x) > max_wdt)
-			max_wdt = (int)(o->_text->getGlobalBounds().size.x);
+		if (o->getTextWidth() > max_wdt)
+			max_wdt = o->getTextWidth();
 
-
-		if((int)(o->_shortcut_text->getGlobalBounds().size.x) > max_shortcut_wdt)
-			max_shortcut_wdt = (int)(o->_shortcut_text->getGlobalBounds().size.x);
+		if (o->getShortcutTextWidth() > max_shortcut_wdt)
+			max_shortcut_wdt = o->getShortcutTextWidth();
 	}
 
 
 	sf::Vector2i size;
-	size.x = max_wdt + optionbox_left_margin + optionbox_right_margin + (2 * menu_horizontal_margin);
+	size.x = 32 + optionbox_left_margin + max_wdt + optionbox_right_margin + menu_horizontal_margin;
 	if (max_shortcut_wdt > 0)
-		size.x += optionbox_spacing + max_shortcut_wdt + menu_horizontal_margin;
-	size.y = menu_height;
+		size.x += optionbox_spacing + max_shortcut_wdt;
+	size.y = optionbox_height;
 
 	for (auto& o : _options) {
 		o->setSize(size);
@@ -64,12 +63,18 @@ void MenuButton::setPosition(sf::Vector2i position) {
 	textPos.y = (float)(position.y) + ((float)(menu_height) - basicFont.getLineSpacing(menu_font_size)) / 2.0f;
 	_text->setPosition(textPos);
 
+	int max_wdt = 0;
+	for (auto& o : _options) {
+		if (o->getTextWidth() > max_wdt)
+			max_wdt = o->getTextWidth();
+	}
+
 	for (int i = 0; i < _options.size(); i++) {
 		sf::Vector2i optionPos;
 		optionPos.x = (int)(_rect.position.x);
-		optionPos.y = (int)(_rect.position.y + _rect.size.y) + i * menu_height;
-		_options[i]->setPosition(optionPos, _options.front()->_rect.size);
-	}
+		optionPos.y = (int)(_rect.position.y + _rect.size.y) + i * optionbox_height;
+		_options[i]->setPosition(optionPos, max_wdt + optionbox_spacing);
+	} 
 }
 
 

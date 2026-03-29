@@ -44,7 +44,7 @@ MainMenu::MainMenu() : Element() {
 		};
 	_menu_boxes.push_back(file);
 
-	std::shared_ptr<OptionBox> file_new = std::make_shared<OptionBox>(L"New file", L"Ctrl+N");
+	std::shared_ptr<Option> file_new = std::make_shared<Option>(L"New file", L"Ctrl+N");
 	file_new->_onclick_func = [this]() {
 		std::shared_ptr<ConfirmDialog> confirmDialog = std::make_shared<ConfirmDialog>(L"New file", L"Are you sure you want to create\na new file?\nUnsaved progress will be lost.", sf::Vector2i(200, 200));
 		confirmDialog->_confirmBtn->_onclick_func = [this, confirmDialog]() {
@@ -71,26 +71,26 @@ MainMenu::MainMenu() : Element() {
 		};
 
 	// TO-DO
-	//std::shared_ptr<OptionBox> file_save = std::make_shared<OptionBox>(L"Save", L"Ctrl+S");
+	//std::shared_ptr<Option> file_save = std::make_shared<Option>(L"Save", L"Ctrl+S");
 
-	std::shared_ptr<OptionBox> file_saveAs = std::make_shared<OptionBox>(L"Save as", L"Ctrl+S");
+	std::shared_ptr<Option> file_saveAs = std::make_shared<Option>(L"Save as", L"Ctrl+S");
 	file_saveAs->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Save_Project>());
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> file_load = std::make_shared<OptionBox>(L"Open", L"Ctrl+O");
+	std::shared_ptr<Option> file_load = std::make_shared<Option>(L"Open", L"Ctrl+O");
 	file_load->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Open_Project>());
 		closeMenu();
 		};
-	std::shared_ptr<OptionBox> file_export = std::make_shared<OptionBox>(L"Export", L"Ctrl+E");
+	std::shared_ptr<Option> file_export = std::make_shared<Option>(L"Export", L"Ctrl+E");
 	file_export->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Export>());
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> file_import = std::make_shared<OptionBox>(L"Import", L"Ctrl+I");
+	std::shared_ptr<Option> file_import = std::make_shared<Option>(L"Import", L"Ctrl+I");
 	file_import->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Import>());
 		closeMenu();
@@ -111,21 +111,21 @@ MainMenu::MainMenu() : Element() {
 		};
 	_menu_boxes.push_back(edit);
 
-	std::shared_ptr<OptionBox> edit_undo = std::make_shared<OptionBox>(L"Undo", L"Ctrl+Z");
+	std::shared_ptr<Option> edit_undo = std::make_shared<Option>(L"Undo", L"Ctrl+Z");
 	edit_undo->_onclick_func = [this]() {
 		history->undo();
 		};
 
-	std::shared_ptr<OptionBox> edit_redo = std::make_shared<OptionBox>(L"Redo", L"Ctrl+Y");
+	std::shared_ptr<Option> edit_redo = std::make_shared<Option>(L"Redo", L"Ctrl+Y");
 	edit_redo->_onclick_func = [this]() {
 		history->redo();
 		};
 
 	// TO-DO
-	//std::shared_ptr<OptionBox> edit_cut = std::make_shared<OptionBox>(L"Cut", L"Ctrl+X");
-	//std::shared_ptr<OptionBox> edit_copy = std::make_shared<OptionBox>(L"Copy", L"Ctrl+C");
-	//std::shared_ptr<OptionBox> edit_paste = std::make_shared<OptionBox>(L"Paste", L"Ctrl+V");
-	//std::shared_ptr<OptionBox> edit_paste_as = std::make_shared<OptionBox>(L"Paste as");
+	//std::shared_ptr<Option> edit_cut = std::make_shared<Option>(L"Cut", L"Ctrl+X");
+	//std::shared_ptr<Option> edit_copy = std::make_shared<Option>(L"Copy", L"Ctrl+C");
+	//std::shared_ptr<Option> edit_paste = std::make_shared<Option>(L"Paste", L"Ctrl+V");
+	//std::shared_ptr<Option> edit_paste_as = std::make_shared<Option>(L"Paste as");
 
 	edit->addOption(edit_undo);
 	edit->addOption(edit_redo);
@@ -142,40 +142,40 @@ MainMenu::MainMenu() : Element() {
 		};
 	_menu_boxes.push_back(tools);
 
-	std::shared_ptr<OptionBox> tools_resize = std::make_shared<OptionBox>(L"Resize");
+	std::shared_ptr<Option> tools_resize = std::make_shared<Option>(L"Resize");
 	tools_resize->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Resize>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> tools_rotation = std::make_shared<OptionBox>(L"Rotation");
+	std::shared_ptr<Option> tools_rotation = std::make_shared<Option>(L"Rotation");
 	tools_rotation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Rotation>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> tools_brightness_contrast = std::make_shared<OptionBox>(L"Brightness-Contrast");
+	std::shared_ptr<Option> tools_brightness_contrast = std::make_shared<Option>(L"Brightness-Contrast");
 	tools_brightness_contrast->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Brightness_Contrast>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> tools_hue_saturation = std::make_shared<OptionBox>(L"Hue-Saturation");
+	std::shared_ptr<Option> tools_hue_saturation = std::make_shared<Option>(L"Hue-Saturation");
 	tools_hue_saturation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Hue_Saturation>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
 	// TO-DO
-	// std::shared_ptr<OptionBox> tools_gray = std::make_shared<OptionBox>(L"Grayscale mode");
+	// std::shared_ptr<Option> tools_gray = std::make_shared<Option>(L"Grayscale mode");
 
-	std::shared_ptr<OptionBox> tools_sepia = std::make_shared<OptionBox>(L"Sepia");
+	std::shared_ptr<Option> tools_sepia = std::make_shared<Option>(L"Sepia");
 	tools_sepia->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Sepia>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> tools_outline = std::make_shared<OptionBox>(L"Outline");
+	std::shared_ptr<Option> tools_outline = std::make_shared<Option>(L"Outline");
 	tools_outline->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Outline>(getCurrentAnimation()->getLayers()));
 		closeMenu();
@@ -183,19 +183,19 @@ MainMenu::MainMenu() : Element() {
 
 	
 
-	std::shared_ptr<OptionBox> tools_invert = std::make_shared<OptionBox>(L"Invert colors");
+	std::shared_ptr<Option> tools_invert = std::make_shared<Option>(L"Invert colors");
 	tools_invert->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Invert_Colors>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> tools_chessboard = std::make_shared<OptionBox>(L"Chessboard");
+	std::shared_ptr<Option> tools_chessboard = std::make_shared<Option>(L"Chessboard");
 	tools_chessboard->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Chessboard>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> tools_smoothing = std::make_shared<OptionBox>(L"Smoothing");
+	std::shared_ptr<Option> tools_smoothing = std::make_shared<Option>(L"Smoothing");
 	tools_smoothing->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Smoothing>(getCurrentAnimation()->getLayers()));
 		closeMenu();
@@ -220,7 +220,7 @@ MainMenu::MainMenu() : Element() {
 		};
 	_menu_boxes.push_back(select);
 
-	std::shared_ptr<OptionBox> select_all = std::make_shared<OptionBox>(L"Select all", L"Ctrl+A");
+	std::shared_ptr<Option> select_all = std::make_shared<Option>(L"Select all", L"Ctrl+A");
 	select_all->_onclick_func = [this]() {
 		toolbar->selectToolButton(toolbar->_btn_select);
 		toolbar->_toolType = ToolType::Selector;
@@ -228,7 +228,7 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionBox> select_none = std::make_shared<OptionBox>(L"Select none", L"Ctrl+D");
+	std::shared_ptr<Option> select_none = std::make_shared<Option>(L"Select none", L"Ctrl+D");
 	select_none->_onclick_func = [this]() {
 		if (selection->_state != SelectionState::None) {
 			selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *selection->_resizedImage);
@@ -246,9 +246,9 @@ MainMenu::MainMenu() : Element() {
 		};
 
 	// TO-DO
-	//std::shared_ptr<OptionBox> select_invert = std::make_shared<OptionBox>(L"Invert selection");
+	//std::shared_ptr<Option> select_invert = std::make_shared<Option>(L"Invert selection");
 
-	std::shared_ptr<OptionBox> select_align_center = std::make_shared<OptionBox>(L"Align center");
+	std::shared_ptr<Option> select_align_center = std::make_shared<Option>(L"Align center");
 	select_align_center->_onclick_func = [this, select]() {
 		sf::Vector2i oldPos = selection->_rect.position;
 		selection->_rect.position = (canvas->_size - selection->_resizedRect.size) / 2;
@@ -271,8 +271,8 @@ MainMenu::MainMenu() : Element() {
 	//	};
 	//_menu_boxes.push_back(settings);
 	//
-	//std::shared_ptr<OptionBox> preferences = std::make_shared<OptionBox>(L"Preferences");
-	//std::shared_ptr<OptionBox> help = std::make_shared<OptionBox>(L"Help");
+	//std::shared_ptr<Option> preferences = std::make_shared<Option>(L"Preferences");
+	//std::shared_ptr<Option> help = std::make_shared<Option>(L"Help");
 	//
 	//settings->addOption(preferences);
 	//settings->addOption(help);
@@ -756,7 +756,7 @@ void MainMenu::draw() {
 
 			sf::Vector2f rectSize;
 			rectSize.x = (float)(_open_menu_button->_options.front()->getSize().x);
-			rectSize.y = (float)(_open_menu_button->_options.size()) * (float)(menu_height);
+			rectSize.y = (float)(_open_menu_button->_options.size()) * (float)(optionbox_height);
 
 			sf::RectangleShape rect(rectSize);
 			rect.setPosition((sf::Vector2f)(_open_menu_button->_options.front()->getPosition()));

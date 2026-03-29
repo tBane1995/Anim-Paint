@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Element.hpp"
 #include "Components/MainMenu/MenuButton.hpp"
-#include "Components/MainMenu/OptionBox.hpp"
 #include <filesystem>
 #include "Animation/Animation.hpp"
 
