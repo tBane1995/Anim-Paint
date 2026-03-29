@@ -10,7 +10,7 @@ public:
 	~OptionWithCheckbox();
 
 	void addValue(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture);
-	void setPosition(sf::Vector2i position);
+	void setPosition(sf::Vector2i position, int shortcut_offset);
 	void click();
 
 	void cursorHover();

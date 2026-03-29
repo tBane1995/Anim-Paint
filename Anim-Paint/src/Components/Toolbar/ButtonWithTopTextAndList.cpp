@@ -68,8 +68,10 @@ void ButtonWithTopTextAndList::addOption(std::shared_ptr<Option> option) {
 
 	_options.push_back(option);
 	for (auto& o : _options) {
-		o->_rect.size = sf::Vector2i(wdt, 32);
+		o->setSize(sf::Vector2i(wdt, 32));
 	}
+
+	
 }
 
 void ButtonWithTopTextAndList::setPosition(sf::Vector2i position) {
@@ -80,13 +82,26 @@ void ButtonWithTopTextAndList::setPosition(sf::Vector2i position) {
 
 	sf::Vector2i ipos = _rect.position + sf::Vector2i(0, _rect.size.y);
 
+	int maxTextWidth = 0;
+	for (auto& o : _options) {
+		if(o->getTextWidth() > maxTextWidth)
+			maxTextWidth = o->getTextWidth();
+	}
+
+	int maxShortcutTextWidth = 0;
+	for (auto& o : _options) {
+		if (o->getShortcutTextWidth() > maxShortcutTextWidth)
+			maxShortcutTextWidth = o->getShortcutTextWidth();
+	}
+
 	sf::Vector2f rectPos;
 	rectPos.x = float(ipos.x - optionbox_border_width);
 	rectPos.y = float(ipos.y);
 
 	_list_rect.setPosition(rectPos);
 	for (auto& o : _options) {
-		o->setPosition(ipos);
+		o->setSize(sf::Vector2i(32 + maxTextWidth + maxShortcutTextWidth + 8, 32));
+		o->setPosition(ipos, maxTextWidth);
 		ipos.y += 32;
 	}
 }

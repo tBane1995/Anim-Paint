@@ -60,7 +60,7 @@ Toolbar::Toolbar() : Element() {
 		};
 	_btn_paste->setTooltip(L"Paste", L"Paste the selection from the clipboard onto the canvas");
 
-	_option_paste = std::make_shared<Option>(L"paste");
+	_option_paste = std::make_shared<Option>(L"paste", L"Ctrl+V");
 	_option_paste->_onclick_func = [this]() {
 
 		std::shared_ptr<sf::Image> img = loadImageFromClipboard();
@@ -99,7 +99,7 @@ Toolbar::Toolbar() : Element() {
 		}
 		};
 
-	_option_from_file = std::make_shared<Option>(L"from file");
+	_option_from_file = std::make_shared<Option>(L"from file", L"Ctrl+B");
 	_option_from_file->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Paste_From_File>());
 		_btn_paste_menu->_isOpen = false;

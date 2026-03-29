@@ -4,7 +4,7 @@
 #include "Cursor.hpp"
 #include "Window.hpp"
 
-Option::Option(std::wstring text, sf::Vector2i position) : Button() {
+Option::Option(std::wstring text, std::wstring shortcut, sf::Vector2i position) : Button() {
 
 	_rectIdleColor = optionbox_idle_color;
 	_rectHoverColor = optionbox_hover_color;
@@ -14,9 +14,12 @@ Option::Option(std::wstring text, sf::Vector2i position) : Button() {
 	_text = std::make_unique<sf::Text>(basicFont, text, 13);
 	_text->setFillColor(menu_text_color);
 
+	_shortcut_text = std::make_unique<sf::Text>(basicFont, shortcut, 13);
+	_shortcut_text->setFillColor(menu_text_color);
+
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(32 + (int)_text->getGlobalBounds().size.x + 8, 32));
 
-	setPosition(position);
+	setPosition(position, getTextWidth());
 
 	_state = ButtonState::Idle;
 
@@ -29,10 +32,21 @@ Option::Option(std::wstring text, sf::Vector2i position) : Button() {
 Option::~Option() {
 }
 
-void Option::setPosition(sf::Vector2i position) {
+void Option::setPosition(sf::Vector2i position, int shortcut_offset) {
 	_rect.position = position;
 	_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32, (32 - basicFont.getLineSpacing(13)) / 2 - 1));
+	_shortcut_text->setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(32 + shortcut_offset, (32 - basicFont.getLineSpacing(13)) / 2 - 1));
 
+}
+
+int Option::getTextWidth() {
+	if (_text == nullptr) return 0;
+	return (int)(_text->getGlobalBounds().size.x);
+}
+
+int Option::getShortcutTextWidth() {
+	if (_shortcut_text == nullptr) return 0;
+	return (int)(_shortcut_text->getGlobalBounds().size.x);
 }
 
 void Option::draw() {
@@ -66,4 +80,5 @@ void Option::draw() {
 
 	// draw text
 	window->draw(*_text);
+	window->draw(*_shortcut_text);
 }
