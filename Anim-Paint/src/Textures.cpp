@@ -57,6 +57,15 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\cursor\\picker.png");
 	texturePaths.push_back(L"tex\\cursor\\cross.png");
 	
+	// main menu icons
+	texturePaths.push_back(L"tex\\main_menu\\new_project.png");
+	texturePaths.push_back(L"tex\\main_menu\\open_project.png");
+	texturePaths.push_back(L"tex\\main_menu\\save_project.png");
+	texturePaths.push_back(L"tex\\main_menu\\export.png");
+	texturePaths.push_back(L"tex\\main_menu\\import.png");
+	texturePaths.push_back(L"tex\\main_menu\\undo.png");
+	texturePaths.push_back(L"tex\\main_menu\\redo.png");
+
 	// file dialogs
 	texturePaths.push_back(L"tex\\file_dialog\\harddrive.png");
 	texturePaths.push_back(L"tex\\file_dialog\\dictionary.png");

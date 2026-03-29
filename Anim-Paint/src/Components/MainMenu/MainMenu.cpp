@@ -33,6 +33,7 @@
 #include <fstream>
 #include "DebugLog.hpp"
 #include "Dialogs/ConfirmDialog.hpp"
+#include "Controls/OptionWithIcon.hpp"
 
 MainMenu::MainMenu() : Element() {
 
@@ -44,7 +45,12 @@ MainMenu::MainMenu() : Element() {
 		};
 	_menu_boxes.push_back(file);
 
-	std::shared_ptr<Option> file_new = std::make_shared<Option>(L"New file", L"Ctrl+N");
+	std::shared_ptr<OptionWithIcon> file_new = std::make_shared<OptionWithIcon>(
+		L"New file", 
+		getTexture(L"tex\\main_menu\\new_project.png"), 
+		getTexture(L"tex\\main_menu\\new_project.png"), 
+		L"Ctrl+N");
+
 	file_new->_onclick_func = [this]() {
 		std::shared_ptr<ConfirmDialog> confirmDialog = std::make_shared<ConfirmDialog>(L"New file", L"Are you sure you want to create\na new file?\nUnsaved progress will be lost.", sf::Vector2i(200, 200));
 		confirmDialog->_confirmBtn->_onclick_func = [this, confirmDialog]() {
@@ -73,24 +79,45 @@ MainMenu::MainMenu() : Element() {
 	// TO-DO
 	//std::shared_ptr<Option> file_save = std::make_shared<Option>(L"Save", L"Ctrl+S");
 
-	std::shared_ptr<Option> file_saveAs = std::make_shared<Option>(L"Save as", L"Ctrl+S");
+	std::shared_ptr<OptionWithIcon> file_saveAs = std::make_shared<OptionWithIcon>(
+		L"Save as", 
+		getTexture(L"tex\\main_menu\\save_project.png"),
+		getTexture(L"tex\\main_menu\\save_project.png"),
+		L"Ctrl+S");
+
 	file_saveAs->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Save_Project>());
 		closeMenu();
 		};
 
-	std::shared_ptr<Option> file_load = std::make_shared<Option>(L"Open", L"Ctrl+O");
+	std::shared_ptr<OptionWithIcon> file_load = std::make_shared<OptionWithIcon>(
+		L"Open", 
+		getTexture(L"tex\\main_menu\\open_project.png"),
+		getTexture(L"tex\\main_menu\\open_project.png"),
+		L"Ctrl+O");
+
 	file_load->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Open_Project>());
 		closeMenu();
 		};
-	std::shared_ptr<Option> file_export = std::make_shared<Option>(L"Export", L"Ctrl+E");
+
+	std::shared_ptr<OptionWithIcon> file_export = std::make_shared<OptionWithIcon>(
+		L"Export", 
+		getTexture(L"tex\\main_menu\\export.png"),
+		getTexture(L"tex\\main_menu\\export.png"),
+		L"Ctrl+E");
+
 	file_export->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Export>());
 		closeMenu();
 		};
 
-	std::shared_ptr<Option> file_import = std::make_shared<Option>(L"Import", L"Ctrl+I");
+	std::shared_ptr<OptionWithIcon> file_import = std::make_shared<OptionWithIcon>(
+		L"Import", 
+		getTexture(L"tex\\main_menu\\import.png"),
+		getTexture(L"tex\\main_menu\\import.png"),
+		L"Ctrl+I");
+
 	file_import->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Import>());
 		closeMenu();
@@ -111,12 +138,22 @@ MainMenu::MainMenu() : Element() {
 		};
 	_menu_boxes.push_back(edit);
 
-	std::shared_ptr<Option> edit_undo = std::make_shared<Option>(L"Undo", L"Ctrl+Z");
+	std::shared_ptr<OptionWithIcon> edit_undo = std::make_shared<OptionWithIcon>(
+		L"Undo", 
+		getTexture(L"tex\\main_menu\\undo.png"),
+		getTexture(L"tex\\main_menu\\undo.png"),
+		L"Ctrl+Z");
+
 	edit_undo->_onclick_func = [this]() {
 		history->undo();
 		};
 
-	std::shared_ptr<Option> edit_redo = std::make_shared<Option>(L"Redo", L"Ctrl+Y");
+	std::shared_ptr<OptionWithIcon> edit_redo = std::make_shared<OptionWithIcon>(
+		L"Redo",
+		getTexture(L"tex\\main_menu\\redo.png"),
+		getTexture(L"tex\\main_menu\\redo.png"),
+		L"Ctrl+Y");
+
 	edit_redo->_onclick_func = [this]() {
 		history->redo();
 		};
