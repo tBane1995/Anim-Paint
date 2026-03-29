@@ -37,27 +37,8 @@ void OptionWithCheckbox::cursorHover() {
 }
 
 void OptionWithCheckbox::handleEvent(const sf::Event& event) {
-	if (Element_hovered.get() == this) {
-
-		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			Element_pressed = this->shared_from_this();
-			return;
-		}
-		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (Element_pressed.get() == this) {
-				click();
-				return;
-			}
-		}
-	}
-
-	if (_isSelected && _activatedByEnter) {
-		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Enter) {
-			click();
-			return;
-		}
-	}
-
+	Option::handleEvent(event);
+	_checkbox->handleEvent(event);
 }
 
 void OptionWithCheckbox::update() {

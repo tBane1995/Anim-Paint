@@ -139,16 +139,27 @@ void ButtonWithTopTextAndList::cursorHover() {
 
 void ButtonWithTopTextAndList::handleEvent(const sf::Event& event) {
 
-	if (Element_hovered.get() == this) {
+	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+		if (Element_pressed.get() == this) {
+			if(Element_hovered.get() == this)
+				click();
+			Element_pressed = nullptr;
+		}
+	}
+	else if (Element_hovered.get() == this) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 			Element_pressed = this->shared_from_this();
+			if (_press_func)
+				_press_func();
 		}
-		
 	}
 
-	if (Element_pressed.get() == this) {
-		click();
+	if (_isSelected && _activatedByEnter) {
+		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Enter) {
+			click();
+			Element_pressed = nullptr;
+		}
 	}
 
 	bool clicked_in_menu = false;

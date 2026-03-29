@@ -115,23 +115,32 @@ void Button::cursorHover() {
 }
 
 void Button::handleEvent(const sf::Event& event) {
-	if (Element_hovered.get() == this) {
 
-		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-			Element_pressed = this->shared_from_this();
+	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+		if (Element_pressed.get() == this) {
+
+			if(Element_hovered.get() == this)
+				click();
+
+			Element_pressed = nullptr;
 			return;
 		}
-		else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-			if (Element_pressed.get() == this) {
-				click();
-				return;
-			}
+	}
+	
+	if (Element_hovered.get() == this) {
+		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+			Element_pressed = this->shared_from_this();
+			if(_press_func)
+				_press_func();
+
+			return;
 		}
 	}
 
 	if (_isSelected && _activatedByEnter) {
 		if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Enter) {
 			click();
+			Element_pressed = nullptr;
 			return;
 		}
 	}

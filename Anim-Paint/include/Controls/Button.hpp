@@ -26,6 +26,7 @@ public:
 
 	ButtonState _state;
 	std::function<void()> _hover_func;
+	std::function<void()> _press_func;
 	std::function<void()> _onclick_func;
 	sf::Time _clickTime;
 
