@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialog.hpp"
-#include "Controls/Slider.hpp"
+#include "Controls/SliderWithButtons.hpp"
 #include "Controls/ColoredButtonWithText.hpp"
 #include "Animation/Layer.hpp"
 
@@ -10,9 +10,9 @@ class Dialog_Hue_Saturation : public Dialog {
 public:
 	HueSaturationState _state;
 
-	std::shared_ptr<Slider> _hue_slider;
-	std::shared_ptr<Slider> _brightness_slider;
-	std::shared_ptr<Slider> _saturation_slider;
+	std::shared_ptr<SliderWithButtons> _hue_slider;
+	std::shared_ptr<SliderWithButtons> _brightness_slider;
+	std::shared_ptr<SliderWithButtons> _saturation_slider;
 
 	std::shared_ptr<ColoredButtonWithText> _reset;
 	std::shared_ptr<ColoredButtonWithText> _confirm;

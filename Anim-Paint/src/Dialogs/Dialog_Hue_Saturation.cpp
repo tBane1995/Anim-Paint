@@ -46,21 +46,23 @@ Dialog_Hue_Saturation::Dialog_Hue_Saturation(std::vector<std::shared_ptr<Layer>>
 
 	saveOriginalLayers(layers);
 
-	_hue_slider = std::make_shared<Slider>(L"hue", -180, 180, L" deg");
+	_hue_slider = std::make_shared<SliderWithButtons>(L"hue", -180, 180, L" deg");
 	_hue_slider->setValue(0);
+	_hue_slider->_slider->_onEditFunction = [this]() {setTheFilter(); };
 
-	_brightness_slider = std::make_shared<Slider>(L"brightness", -50, 50);
+	_brightness_slider = std::make_shared<SliderWithButtons>(L"brightness", -50, 50);
 	_brightness_slider->setValue(0);
+	_brightness_slider->_slider->_onEditFunction = [this]() {setTheFilter(); };
 	
-	_saturation_slider = std::make_shared<Slider>(L"saturation", 0, 200, L"%");
+	_saturation_slider = std::make_shared<SliderWithButtons>(L"saturation", 0, 200, L"%");
 	_saturation_slider->setValue(100);
+	_saturation_slider->_slider->_onEditFunction = [this]() {setTheFilter(); };
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
 		_hue_slider->setValue(0);
 		_brightness_slider->setValue(0);
 		_saturation_slider->setValue(100);
-		setTheFilter();
 		};
 
 	_confirm = std::make_shared<ColoredButtonWithText>(L"confirm", sf::Vector2i(64, 32));
@@ -81,7 +83,6 @@ Dialog_Hue_Saturation::~Dialog_Hue_Saturation() {
 		_hue_slider->setValue(0);
 		_brightness_slider->setValue(0);
 		_saturation_slider->setValue(100);
-		setTheFilter();
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
@@ -187,14 +188,6 @@ void Dialog_Hue_Saturation::update() {
 	_hue_slider->update();
 	_brightness_slider->update();
 	_saturation_slider->update();
-
-	if (
-		_hue_slider->_editState == SliderEditState::Changed ||
-		_brightness_slider->_editState == SliderEditState::Changed ||
-		_saturation_slider->_editState == SliderEditState::Changed) {
-
-		setTheFilter();
-	}
 
 	_reset->update();
 	_confirm->update();
