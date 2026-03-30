@@ -6,6 +6,8 @@
 #include "Components/FramesPanel.hpp"
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Components/Canvas.hpp"
+#include "Tools/Selection.hpp"
+
 Step::Step() {
 	_animations.clear();
 	_canvasResized = false;
@@ -82,6 +84,12 @@ bool History::canRedo() {
 
 void History::undo()
 {
+
+	if (selection->_state != SelectionState::None) {
+		selection->unselect();
+		return;
+	}
+
 	if (!canUndo()) return;
 
 	_currentStep-=1;
