@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Element.hpp"
 #include "Textures.hpp"
+#include <functional>
+
 
 enum class SliderState { Idle, Hovered, Pressed };
 enum class SliderEditState { None, Changed };
@@ -21,6 +23,7 @@ public:
 
 	std::unique_ptr<sf::Text> _nameText;
 	std::unique_ptr<sf::Text> _valueText;
+	std::function<void()> _onEditFunction;
 
 	Slider(std::wstring name, int min_value, int max_value, std::wstring units=L"");
 	~Slider();

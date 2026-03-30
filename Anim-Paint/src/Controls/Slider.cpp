@@ -25,6 +25,8 @@ Slider::Slider(std::wstring name, int min_value, int max_value, std::wstring uni
 
 	_barRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(192, 24));
 	_thumbRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(24, 24));
+
+	_onEditFunction = []() {};
 	
 }
 
@@ -42,6 +44,9 @@ void Slider::setValue(int value) {
 
 	_valueText->setString(std::to_wstring(_current_value) + _units);
 	_thumbRect.size.x = getThumbWidth();
+
+	if(_onEditFunction)
+		_onEditFunction();
 }
 
 int Slider::getValue() {

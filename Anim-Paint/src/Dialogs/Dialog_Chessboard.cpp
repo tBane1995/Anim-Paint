@@ -150,7 +150,6 @@ void Dialog_Chessboard::update() {
 	_transparency_slider->update();
 
 	if (_tileCount_slider->_editState == SliderEditState::Changed || _transparency_slider->_editState == SliderEditState::Changed) {
-
 		setTheFilter();
 	}
 

@@ -15,17 +15,18 @@ Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector<std::shared_p
 
 	saveOriginalLayers(layers);
 
-	_brightness_slider = std::make_shared<Slider>(L"brightness", -50, 50);
+	_brightness_slider = std::make_shared<SliderWithButtons>(L"brightness", -50, 50);
 	_brightness_slider->setValue(0);
+	_brightness_slider->_slider->_onEditFunction = [this]() {setTheFilter(); };
 
-	_contrast_slider = std::make_shared<Slider>(L"contrast", -50, 50, L"%");
+	_contrast_slider = std::make_shared<SliderWithButtons>(L"contrast", -50, 50, L"%");
 	_contrast_slider->setValue(0);
+	_contrast_slider->_slider->_onEditFunction = [this]() {setTheFilter(); };
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
 		_brightness_slider->setValue(0);
 		_contrast_slider->setValue(0);
-		setTheFilter();
 		};
 
 	_confirm = std::make_shared<ColoredButtonWithText>(L"confirm", sf::Vector2i(64, 32));
@@ -49,7 +50,6 @@ Dialog_Brightness_Contrast::~Dialog_Brightness_Contrast() {
 	if (Dialog_Brightness_Contrast::_state == BrightnessContrastState::Idle) {
 		_brightness_slider->setValue(0);
 		_contrast_slider->setValue(0);
-		setTheFilter();
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
@@ -147,10 +147,6 @@ void Dialog_Brightness_Contrast::update() {
 
 	_brightness_slider->update();
 	_contrast_slider->update();
-
-	if (_brightness_slider->_editState == SliderEditState::Changed || _contrast_slider->_editState == SliderEditState::Changed) {
-		setTheFilter();
-	}
 
 	_reset->update();
 	_confirm->update();

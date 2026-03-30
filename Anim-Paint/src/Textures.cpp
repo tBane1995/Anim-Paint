@@ -66,6 +66,12 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\main_menu\\undo.png");
 	texturePaths.push_back(L"tex\\main_menu\\redo.png");
 
+	// dialogs
+	texturePaths.push_back(L"tex\\dialog\\increase.png");
+	texturePaths.push_back(L"tex\\dialog\\increase_hover.png");
+	texturePaths.push_back(L"tex\\dialog\\decrease.png");
+	texturePaths.push_back(L"tex\\dialog\\decrease_hover.png");
+
 	// file dialogs
 	texturePaths.push_back(L"tex\\file_dialog\\harddrive.png");
 	texturePaths.push_back(L"tex\\file_dialog\\dictionary.png");
