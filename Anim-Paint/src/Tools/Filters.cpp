@@ -125,6 +125,34 @@ std::string palette_alpha_values_shader_source = R"(
     }
 )";
 
+std::string color_on_chessboard_shader_source = R"(
+    uniform vec4 color;
+    uniform vec2 rectPos;
+    uniform vec2 rectSize;
+
+    void main()
+{
+    // UV od 0 do 1 względem prostokąta
+    vec2 uv = (gl_FragCoord.xy) / rectSize;
+
+    // szachownica
+    float checkerSize = 8.0;
+    vec2 pixel = uv * rectSize;
+
+    float cx = mod(floor(pixel.x / checkerSize), 2.0);
+    float cy = mod(floor(pixel.y / checkerSize), 2.0);
+    float checker = mod(cx + cy, 2.0);
+
+    vec3 checkerColor = mix(vec3(0.5), vec3(0.25), checker);
+
+    vec3 col = color.rgb;
+    float alpha = color.a;
+
+    vec3 finalColor = mix(checkerColor, col, alpha);
+
+    gl_FragColor = vec4(finalColor, 1.0);
+}
+)";
 
 std::string rotation_shader_source = R"(
     uniform sampler2D texture;

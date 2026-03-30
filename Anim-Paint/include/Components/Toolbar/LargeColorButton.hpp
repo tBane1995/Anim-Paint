@@ -5,7 +5,7 @@ class LargeColorButton : public ButtonWithSprite {
 public:
 
 	sf::Color _color;
-
+	sf::Shader _shader;
 	LargeColorButton(sf::Color color);
 	~LargeColorButton();
 	
