@@ -16,13 +16,13 @@ Dialog_Sepia::Dialog_Sepia(std::vector<std::shared_ptr<Layer>> layers) : Dialog(
 	saveOriginalLayers(layers);
 
 
-	_sepia_slider = std::make_shared<Slider>(L"sepia", 0, 100, L"%");
+	_sepia_slider = std::make_shared<SliderWithButtons>(L"sepia", 0, 100, L"%");
 	_sepia_slider->setValue(0);
+	_sepia_slider->_slider->_onEditFunction = [this]() { setTheFilter();  };
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
 		_sepia_slider->setValue(0);
-		setTheFilter();
 		};
 
 	_confirm = std::make_shared<ColoredButtonWithText>(L"confirm", sf::Vector2i(64, 32));
@@ -42,7 +42,6 @@ Dialog_Sepia::~Dialog_Sepia() {
 
 	if (Dialog_Sepia::_state == SepiaState::Idle) {
 		_sepia_slider->setValue(0);
-		setTheFilter();
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
@@ -131,11 +130,6 @@ void Dialog_Sepia::update() {
 	Dialog::update();
 
 	_sepia_slider->update();
-
-	if (_sepia_slider->_editState == SliderEditState::Changed) {
-
-		setTheFilter();
-	}
 
 	_reset->update();
 	_confirm->update();

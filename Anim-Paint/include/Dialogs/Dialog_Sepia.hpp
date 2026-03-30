@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialog.hpp"
-#include "Controls/Slider.hpp"
+#include "Controls/SliderWithButtons.hpp"
 #include "Controls/ColoredButtonWithText.hpp"
 #include "Animation/Layer.hpp"
 
@@ -11,7 +11,7 @@ class Dialog_Sepia : public Dialog {
 public:
 	SepiaState _state;
 
-	std::shared_ptr<Slider> _sepia_slider;
+	std::shared_ptr<SliderWithButtons> _sepia_slider;
 	std::shared_ptr<ColoredButtonWithText> _reset;
 	std::shared_ptr<ColoredButtonWithText> _confirm;
 
