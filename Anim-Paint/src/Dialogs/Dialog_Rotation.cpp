@@ -16,14 +16,17 @@ Dialog_Rotation::Dialog_Rotation(std::vector<std::shared_ptr<Layer>> layers) : D
 	
 	saveOriginalLayers(layers);
 
-	_rotation_slider = std::make_shared<Slider>(L"rotation", 0, 359, L" deg");
+	_rotation_slider = std::make_shared<SliderWithButtons>(L"rotation", 0, 359, L" deg");
 	_rotation_slider->setValue(0);
+	_rotation_slider->_slider->_onEditFunction = [this]() { setTheFilter();  };
 
-	_smoothness_slider = std::make_shared<Slider>(L"smoothness", 0, 100);
+	_smoothness_slider = std::make_shared<SliderWithButtons>(L"smoothness", 0, 100);
 	_smoothness_slider->setValue(50);
+	_smoothness_slider->_slider->_onEditFunction = [this]() { setTheFilter();  };
 
-	_radius_slider = std::make_shared<Slider>(L"radius", 0, 8, L"px");
+	_radius_slider = std::make_shared<SliderWithButtons>(L"radius", 0, 8, L"px");
 	_radius_slider->setValue(1);
+	_radius_slider->_slider->_onEditFunction = [this]() { setTheFilter();  };
 
 	setTheFilter();
 
@@ -32,7 +35,6 @@ Dialog_Rotation::Dialog_Rotation(std::vector<std::shared_ptr<Layer>> layers) : D
 		_rotation_slider->setValue(0);
 		_smoothness_slider->setValue(50);
 		_radius_slider->setValue(1);
-		setTheFilter();
 		};
 
 	_confirm = std::make_shared<ColoredButtonWithText>(L"confirm", sf::Vector2i(64, 32));
@@ -54,7 +56,6 @@ Dialog_Rotation::~Dialog_Rotation() {
 		_rotation_slider->setValue(0);
 		_smoothness_slider->setValue(0);
 		_radius_slider->setValue(0);
-		setTheFilter();
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
@@ -156,11 +157,6 @@ void Dialog_Rotation::update() {
 	_rotation_slider->update();
 	_smoothness_slider->update();
 	_radius_slider->update();
-
-	if (_rotation_slider->_editState == SliderEditState::Changed || _smoothness_slider->_editState == SliderEditState::Changed || _radius_slider->_editState == SliderEditState::Changed) {
-
-		setTheFilter();
-	}
 
 	_reset->update();
 	_confirm->update();
