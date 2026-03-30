@@ -15,19 +15,18 @@ Dialog_Smoothing::Dialog_Smoothing(std::vector<std::shared_ptr<Layer>> layers) :
 	saveOriginalLayers(layers);
 
 	
-	_smoothness_slider = std::make_shared<Slider>(L"smoothness", 0, 100);
+	_smoothness_slider = std::make_shared<SliderWithButtons>(L"smoothness", 0, 100);
 	_smoothness_slider->setValue(50);
+	_smoothness_slider->_slider->_onEditFunction = [this]() { setTheFilter(); };
 
-	_radius_slider = std::make_shared<Slider>(L"radius", 0, 8, L"px");
+	_radius_slider = std::make_shared<SliderWithButtons>(L"radius", 0, 8, L"px");
 	_radius_slider->setValue(1);
-
-	setTheFilter();
+	_radius_slider->_slider->_onEditFunction = [this]() { setTheFilter(); };
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
 		_smoothness_slider->setValue(50);
 		_radius_slider->setValue(1);
-		setTheFilter();
 		};
 
 	_confirm = std::make_shared<ColoredButtonWithText>(L"confirm", sf::Vector2i(64, 32));
@@ -50,7 +49,6 @@ Dialog_Smoothing::~Dialog_Smoothing() {
 	if (Dialog_Smoothing::_state == SmoothingState::Idle) {
 		_smoothness_slider->setValue(0);
 		_radius_slider->setValue(0);
-		setTheFilter();
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
@@ -145,11 +143,6 @@ void Dialog_Smoothing::update() {
 
 	_smoothness_slider->update();
 	_radius_slider->update();
-
-	if (_smoothness_slider->_editState == SliderEditState::Changed || _radius_slider->_editState == SliderEditState::Changed) {
-
-		setTheFilter();
-	}
 
 	_reset->update();
 	_confirm->update();

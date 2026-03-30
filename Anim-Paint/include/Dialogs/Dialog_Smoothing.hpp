@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialog.hpp"
-#include "Controls/Slider.hpp"
+#include "Controls/SliderWithButtons.hpp"
 #include "Controls/ColoredButtonWithText.hpp"
 #include "Animation/Layer.hpp"
 
@@ -10,8 +10,8 @@ class Dialog_Smoothing : public Dialog {
 public:
 	SmoothingState _state;
 
-	std::shared_ptr<Slider> _smoothness_slider;
-	std::shared_ptr<Slider> _radius_slider;
+	std::shared_ptr<SliderWithButtons> _smoothness_slider;
+	std::shared_ptr<SliderWithButtons> _radius_slider;
 
 	std::shared_ptr<ColoredButtonWithText> _reset;
 	std::shared_ptr<ColoredButtonWithText> _confirm;
