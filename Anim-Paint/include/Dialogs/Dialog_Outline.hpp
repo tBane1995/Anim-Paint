@@ -1,6 +1,6 @@
 #pragma once
 #include "Dialog.hpp"
-#include "Controls/Slider.hpp"
+#include "Controls/SliderWithButtons.hpp"
 #include "Controls/ColoredButtonWithText.hpp"
 #include "Animation/Layer.hpp"
 
@@ -10,7 +10,7 @@ class Dialog_Outline : public Dialog {
 public:
 	OutlineState _state;
 
-	std::shared_ptr<Slider> _outline_slider;
+	std::shared_ptr<SliderWithButtons> _outline_slider;
 	std::shared_ptr<ColoredButtonWithText> _reset;
 	std::shared_ptr<ColoredButtonWithText> _confirm;
 

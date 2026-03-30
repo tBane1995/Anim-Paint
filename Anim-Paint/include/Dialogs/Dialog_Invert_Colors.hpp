@@ -1,6 +1,5 @@
 #pragma once
 #include "Dialog.hpp"
-#include "Controls/Slider.hpp"
 #include "Controls/ColoredButtonWithText.hpp"
 #include "Animation/Layer.hpp"
 #include "Controls/Checkbox.hpp"

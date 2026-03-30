@@ -17,14 +17,13 @@ Dialog_Outline::Dialog_Outline(std::vector<std::shared_ptr<Layer>> layers) : Dia
 	saveOriginalLayers(layers);
 
 	
-	_outline_slider = std::make_shared<Slider>(L"width", 0, 8, L"px");
+	_outline_slider = std::make_shared<SliderWithButtons>(L"width", 0, 8, L"px");
 	_outline_slider->setValue(1);
-	setTheFilter();
+	_outline_slider->_slider->_onEditFunction = [this]() { setTheFilter();  };
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
 		_outline_slider->setValue(1);
-		setTheFilter();
 		};
 
 	_confirm = std::make_shared<ColoredButtonWithText>(L"confirm", sf::Vector2i(64, 32));
@@ -46,7 +45,6 @@ Dialog_Outline::~Dialog_Outline() {
 
 	if (Dialog_Outline::_state == OutlineState::Idle) {
 		_outline_slider->setValue(0);
-		setTheFilter();
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
@@ -133,11 +131,6 @@ void Dialog_Outline::update() {
 	Dialog::update();
 
 	_outline_slider->update();
-
-	if (_outline_slider->_editState == SliderEditState::Changed) {
-
-		setTheFilter();
-	}
 
 	_reset->update();
 	_confirm->update();
