@@ -158,18 +158,8 @@ MainMenu::MainMenu() : Element() {
 		history->redo();
 		};
 
-	// TO-DO
-	//std::shared_ptr<Option> edit_cut = std::make_shared<Option>(L"Cut", L"Ctrl+X");
-	//std::shared_ptr<Option> edit_copy = std::make_shared<Option>(L"Copy", L"Ctrl+C");
-	//std::shared_ptr<Option> edit_paste = std::make_shared<Option>(L"Paste", L"Ctrl+V");
-	//std::shared_ptr<Option> edit_paste_as = std::make_shared<Option>(L"Paste as");
-
 	edit->addOption(edit_undo);
 	edit->addOption(edit_redo);
-	//edit->addOption(edit_cut);
-	//edit->addOption(edit_copy);
-	//edit->addOption(edit_paste);
-	//edit->addOption(edit_paste_as);
 
 	// TOOLS
 	std::shared_ptr<MenuButton> tools = std::make_shared<MenuButton>(L"Tools");
@@ -203,9 +193,6 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	// TO-DO
-	// std::shared_ptr<Option> tools_gray = std::make_shared<Option>(L"Grayscale mode");
-
 	std::shared_ptr<Option> tools_sepia = std::make_shared<Option>(L"Sepia");
 	tools_sepia->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Sepia>(getCurrentAnimation()->getLayers()));
@@ -217,8 +204,6 @@ MainMenu::MainMenu() : Element() {
 		dialogs.push_back(std::make_shared<Dialog_Outline>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
-
-	
 
 	std::shared_ptr<Option> tools_invert = std::make_shared<Option>(L"Invert colors");
 	tools_invert->_onclick_func = [this]() {
@@ -242,7 +227,6 @@ MainMenu::MainMenu() : Element() {
 	tools->addOption(tools_rotation);
 	tools->addOption(tools_brightness_contrast);
 	tools->addOption(tools_hue_saturation);
-	//tools->addOption(tools_gray); TO-DO
 	tools->addOption(tools_sepia);
 	tools->addOption(tools_outline);
 	tools->addOption(tools_invert);
@@ -268,22 +252,10 @@ MainMenu::MainMenu() : Element() {
 	std::shared_ptr<Option> select_none = std::make_shared<Option>(L"Select none", L"Ctrl+D");
 	select_none->_onclick_func = [this]() {
 		if (selection->_state != SelectionState::None) {
-			selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *selection->_resizedImage);
-			selection->_points.clear();
-			selection->_outlineOffset = sf::Vector2i(0, 0);
-			selection->generateRect();
-			selection->_resizedRect = selection->_rect;
-			selection->_image = nullptr;
-			selection->_maskImage = nullptr;
-			selection->_resizedImage = nullptr;
-			selection->_resizedMaskImage = nullptr;
-			selection->_state = SelectionState::None;
+			selection->unselect();
 		}
 		closeMenu();
 		};
-
-	// TO-DO
-	//std::shared_ptr<Option> select_invert = std::make_shared<Option>(L"Invert selection");
 
 	std::shared_ptr<Option> select_align_center = std::make_shared<Option>(L"Align center");
 	select_align_center->_onclick_func = [this, select]() {
@@ -297,22 +269,7 @@ MainMenu::MainMenu() : Element() {
 
 	select->addOption(select_all);
 	select->addOption(select_none);
-	//select->addOption(select_invert); // TO-DO
 	select->addOption(select_align_center);
-
-	// SETTINGS - TO-DO
-	//std::shared_ptr<MenuButton> settings = std::make_shared<MenuButton>(L"Settings");
-	//settings->_onclick_func = [this, settings]() {
-	//	hideMenu();
-	//	openMenuButton(settings);
-	//	};
-	//_menu_boxes.push_back(settings);
-	//
-	//std::shared_ptr<Option> preferences = std::make_shared<Option>(L"Preferences");
-	//std::shared_ptr<Option> help = std::make_shared<Option>(L"Help");
-	//
-	//settings->addOption(preferences);
-	//settings->addOption(help);
 
 	// POSITIONING
 	_state = MainMenuStates::Closed;
@@ -433,7 +390,7 @@ void MainMenu::saveProject(const std::filesystem::path& path) {
 
 	file.close();
 	
-	std::wcout << L"save " << path.wstring() << "\n";
+	//std::wcout << L"save " << path.wstring() << "\n";
 }
 
 void MainMenu::loadProject(const std::filesystem::path& path) {

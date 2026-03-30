@@ -370,12 +370,15 @@ void Selection::addPoint(sf::Vector2i point) {
 
 void Selection::unselect() {
 
+	paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *selection->_resizedImage);
 	_points.clear();
 	_outlineOffset = sf::Vector2i(0, 0);
 	generateRect();
-	_resizedRect = _rect;
-	generateMask();
-	_resizedMaskImage = _maskImage;
+	_resizedRect = selection->_rect;
+	_image = nullptr;
+	_maskImage = nullptr;
+	_resizedImage = nullptr;
+	_resizedMaskImage = nullptr;
 	_state = SelectionState::None;
 }
 
