@@ -55,6 +55,13 @@ sf::Vector2i cursorOnValues(sf::Vector2i rectSize, sf::Color rgba) {
 	return sf::Vector2i(ix, iy);
 }
 
+sf::Vector2i cursorOnAlpha(sf::Vector2i rectSize, sf::Color rgba) {
+	float a = rgba.a / 255.f;
+	int ix = 0;
+	int iy = std::clamp(int(a * (rectSize.y - 1)), 0, rectSize.y - 1);
+	return sf::Vector2i(ix, iy);
+}
+
 PaletteValues::PaletteValues(sf::Vector2i position, sf::Vector2i size, std::string shader, sf::Color color) {
 	
 	_shader = sf::Shader();
@@ -98,6 +105,7 @@ void PaletteValues::loadTexture(sf::Color color) {
 	);
 
 	_shader.setUniform("texRectUV", texRectUV);
+	_shader.setUniform("rectSize", sf::Vector2f(_rect.size));
 
 	// create palette render texture
 	if (!_renderTexture.resize(tex.getSize())) {
@@ -184,11 +192,15 @@ Palette::Palette() : Dialog(L"Palette", sf::Vector2i(192 + 2 * (24+8), dialog_ti
 		_huesCursor.y = std::clamp(cursor->_position.y - _hues->_rect.position.y, 0, _hues->_rect.size.y - 1);
 
 		sf::Color color = pixels.getPixel(sf::Vector2u(_huesCursor));
+
 		_values->loadTexture(color);
 		_alphaValues->loadTexture(color);
 
 		sf::Color finalColor = _values->_renderTexture.getTexture().copyToImage().getPixel(sf::Vector2u(_valuesCursor));
+		finalColor.a = _alpha->getValue();
+
 		toolbar->_selectedColorButton->setColor(finalColor);
+
 		_red->setText(std::to_wstring(finalColor.r));
 		_green->setText(std::to_wstring(finalColor.g));
 		_blue->setText(std::to_wstring(finalColor.b));
@@ -197,33 +209,36 @@ Palette::Palette() : Dialog(L"Palette", sf::Vector2i(192 + 2 * (24+8), dialog_ti
 
 	_values->_function = [this]() {
 		sf::Image pixels = _values->_renderTexture.getTexture().copyToImage();
+		sf::Image pixelsAlpha = _alphaValues->_renderTexture.getTexture().copyToImage();
 
 		_valuesCursor.x = 0;
 		_valuesCursor.y = std::clamp(cursor->_position.y - _values->_rect.position.y, 0, _values->_rect.size.y - 1);
 
 		sf::Color color = pixels.getPixel(sf::Vector2u(_valuesCursor));
-		toolbar->_selectedColorButton->setColor(color);
+		sf::Color colorAlpha = pixelsAlpha.getPixel(sf::Vector2u(_alphaCursor));
+		toolbar->_selectedColorButton->setColor(sf::Color(color.r, color.g, color.b, colorAlpha.a));
 
 		_red->setText(std::to_wstring(color.r));
 		_green->setText(std::to_wstring(color.g));
 		_blue->setText(std::to_wstring(color.b));
-		_alpha->setText(std::to_wstring(color.a));
 		};
 
 	_alphaValues->_function = [this]() {
-		sf::Image pixels = _alphaValues->_renderTexture.getTexture().copyToImage();
+		sf::Image pixels = _values->_renderTexture.getTexture().copyToImage();
 
 		_alphaCursor.x = 0;
 		_alphaCursor.y = std::clamp(cursor->_position.y - _alphaValues->_rect.position.y, 0, _alphaValues->_rect.size.y - 1);
 
-		sf::Color color = pixels.getPixel(sf::Vector2u(_alphaCursor));
-
-		toolbar->_selectedColorButton->setColor(color);
+		sf::Color color = pixels.getPixel(sf::Vector2u(_valuesCursor));
+		float a = float(_alphaCursor.y) / float(_alphaValues->_rect.size.y - 1);
+		a = std::clamp(a, 0.f, 1.f);
+		int ia = (int)(a * 255.f);
+		toolbar->_selectedColorButton->setColor(sf::Color(color.r, color.g, color.b, ia));
 
 		_red->setText(std::to_wstring(color.r));
 		_green->setText(std::to_wstring(color.g));
 		_blue->setText(std::to_wstring(color.b));
-		_alpha->setText(std::to_wstring(color.a));
+		_alpha->setText(std::to_wstring(ia));
 		};
 
 	_r = std::make_unique<sf::Text>(basicFont, L"R", basic_text_size);
@@ -299,7 +314,7 @@ void Palette::loadColorFromRGBInputs() {
 	_valuesCursor = cursorOnValues(_values->_rect.size, color);
 	
 	_alphaValues->loadTexture(_hues->_renderTexture.getTexture().copyToImage().getPixel(sf::Vector2u(_huesCursor)));
-	_alphaCursor = cursorOnValues(_alphaValues->_rect.size, color);
+	_alphaCursor = cursorOnAlpha(_alphaValues->_rect.size, color);
 
 
 }

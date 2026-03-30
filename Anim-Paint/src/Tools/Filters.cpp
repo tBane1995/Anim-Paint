@@ -99,6 +99,7 @@ std::string palette_values_shader_source = R"(
 std::string palette_alpha_values_shader_source = R"(
     uniform sampler2D texture;
     uniform vec4 texRectUV;
+    uniform vec2 rectSize;
 
     void main()
     {
@@ -107,21 +108,20 @@ std::string palette_alpha_values_shader_source = R"(
 
         vec4 base = texture2D(texture, uvAtlas);
 
-        // gradient alpha: 0 u góry, 1 u dołu
         float alphaGrad = uv.y;
+        float checkerSize = 8.0;
+        vec2 pixel = uv * rectSize;
 
-        // szachownica tła
-        float checkerSize = 4.0;
-        float cx = mod(gl_FragCoord.x / checkerSize, 2.0);
-        float cy = mod(gl_FragCoord.y / checkerSize, 2.0);
+        float cx = mod(floor(pixel.x / checkerSize), 2.0);
+        float cy = mod(floor(pixel.y / checkerSize), 2.0);
         float checker = mod(cx + cy, 2.0);
 
-        vec3 checkerColor = mix(vec3(1.0), vec3(0.8), checker);
+        vec3 checkerColor = mix(vec3(0.5), vec3(0.25), checker);
 
-        // nakładamy gradient alpha na kolor bazowy z szachownicą w tle
-        vec3 finalColor = mix(checkerColor, base.rgb, alphaGrad);
+        float finalAlpha = base.a * alphaGrad;
+        vec3 finalColor = mix(checkerColor, base.rgb, finalAlpha);
 
-        gl_FragColor = vec4(finalColor, alphaGrad);
+        gl_FragColor = vec4(finalColor, 1.0);
     }
 )";
 

@@ -6,6 +6,7 @@ struct HSV { float h, s, v, a; }; // zakresy 0..1
 HSV rgbToHsv(sf::Color c);
 sf::Vector2i cursorOnHues(sf::Vector2i rectSize, sf::Color rgba);
 sf::Vector2i cursorOnValues(sf::Vector2i rectSize, sf::Color rgba);
+sf::Vector2i cursorOnAlpha(sf::Vector2i rectSize, sf::Color rgba);
 
 enum class PaletteState { None, Selecting };
 
