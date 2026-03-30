@@ -21,11 +21,14 @@ Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers)
 	else
 		maxTileCount = std::max(getCurrentAnimation()->getCurrentLayer()->_image.getSize().x, getCurrentAnimation()->getCurrentLayer()->_image.getSize().y);
 	
-	_tileCount_slider = std::make_shared<Slider>(L"tile count",1, maxTileCount);
+	_tileCount_slider = std::make_shared<SliderWithButtons>(L"tile count",1, maxTileCount);
 	_tileCount_slider->setValue(2);
+	_tileCount_slider->_slider->_onEditFunction = [this]() {setTheFilter(); };
 
-	_transparency_slider = std::make_shared<Slider>(L"alpha", 0, 100, L"%");
+
+	_transparency_slider = std::make_shared<SliderWithButtons>(L"alpha", 0, 100, L"%");
 	_transparency_slider->setValue(20);
+	_transparency_slider->_slider->_onEditFunction = [this]() {setTheFilter(); };
 
 	setTheFilter();
 
@@ -33,7 +36,6 @@ Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers)
 	_reset->_onclick_func = [this]() {
 		_tileCount_slider->setValue(2);
 		_transparency_slider->setValue(20);
-		setTheFilter();
 		};
 
 	_confirm = std::make_shared<ColoredButtonWithText>(L"confirm", sf::Vector2i(64, 32));
@@ -54,7 +56,6 @@ Dialog_Chessboard::~Dialog_Chessboard() {
 	if (Dialog_Chessboard::_state == ChessboardState::Idle) {
 		_tileCount_slider->setValue(1);
 		_transparency_slider->setValue(0);
-		setTheFilter();
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
 		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
@@ -148,10 +149,6 @@ void Dialog_Chessboard::update() {
 
 	_tileCount_slider->update();
 	_transparency_slider->update();
-
-	if (_tileCount_slider->_editState == SliderEditState::Changed || _transparency_slider->_editState == SliderEditState::Changed) {
-		setTheFilter();
-	}
 
 	_reset->update();
 	_confirm->update();
