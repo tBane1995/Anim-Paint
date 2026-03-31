@@ -16,12 +16,6 @@
 #include "Time.hpp"
 
 #include "Element.hpp"
-#include "Controls/Button.hpp"
-#include "Controls/Checkbox.hpp"
-#include "Controls/Slider.hpp"
-
-
-
 #include "WorldToTileConverter.hpp"
 #include "History.hpp"
 #include "Tools/ClipBoard.hpp"
@@ -32,25 +26,22 @@
 #include "Animation/Animation.hpp"
 
 #include "Dialogs/Dialog.hpp"
+#include "Dialogs/Palette.hpp"
+
 #include "Components/FramesPanel.hpp"
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Components/AnimationsPanel.hpp"
-#include "Dialogs/Palette.hpp"
-#include "Dialogs/FileDialog/FileDialog.hpp"
-#include "Dialogs/Dialog_Rotation.hpp"
-#include "Dialogs/Dialog_Brightness_Contrast.hpp"
-#include "Dialogs/Dialog_Hue_Saturation.hpp"
-#include "Dialogs/Dialog_Sepia.hpp"
-
+#include "Components/PreviewAnimationPanel.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 #include "Components/BottomBar.hpp"
-
 #include "Components/Tooltip.hpp"
+#include "Components/Canvas.hpp"
 
 #include "Tools/Selection.hpp"
 #include "Tools/Brush.hpp"
-#include "Components/Toolbar/Toolbar.hpp"
-#include "Components/Canvas.hpp"
+
+
 
 void resize() {
 
@@ -110,10 +101,12 @@ int main() {
 	animations_panel = std::make_shared<AnimationsPanel>();
 	frames_panel = std::make_shared<FramesPanel>();
 	layers_panel = std::make_shared<LayersPanel>();
+	preview_animation_panel = std::make_shared<PreviewAnimationPanel>();
 
 	static_dialogs.push_back(animations_panel);
 	static_dialogs.push_back(frames_panel);
 	static_dialogs.push_back(layers_panel);
+	static_dialogs.push_back(preview_animation_panel);
 
 	canvas = std::make_shared<Canvas>();
 	bottom_bar = std::make_shared<BottomBar>();
@@ -264,11 +257,7 @@ int main() {
 		for (auto& dialog : dialogs)
 			dialog->draw();
 
-		
 		tooltip->draw();
-
-		
-
 		window->display();
 	}
 
