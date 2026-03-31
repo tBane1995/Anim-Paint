@@ -84,20 +84,15 @@ void PreviewAnimationPanel::update() {
 void PreviewAnimationPanel::draw() {
 	Dialog::draw();
 
-	sf::RectangleShape color_rect(sf::Vector2f(40, 40));
-	color_rect.setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(4, 4));
-
-	
 
 	sf::Vector2f size = sf::Vector2f(getContentSize() - sf::Vector2i(2 * dialog_margin, 2 * dialog_margin));
-
-	sf::RectangleShape rect(size);
-	rect.setPosition(sf::Vector2f(getContentPosition() + sf::Vector2i(dialog_margin, dialog_margin)));
+	sf::RectangleShape rectBackground(size);
+	rectBackground.setPosition(sf::Vector2f(getContentPosition() + sf::Vector2i(dialog_margin, dialog_margin)));
 	
 	_shader.setUniform("color", sf::Glsl::Vec4(0,0,0,0));
-	_shader.setUniform("rectPos", sf::Glsl::Vec2(rect.getPosition()));
-	_shader.setUniform("rectSize", sf::Glsl::Vec2(rect.getSize()));
-	window->draw(rect, &_shader);
+	_shader.setUniform("rectPos", sf::Glsl::Vec2(rectBackground.getPosition()));
+	_shader.setUniform("rectSize", sf::Glsl::Vec2(rectBackground.getSize()));
+	window->draw(rectBackground, &_shader);
 
 	std::shared_ptr<Animation> animation = getCurrentAnimation();
 	std::shared_ptr<Frame> frame = animation->getFrame(_currentFrame);
@@ -111,7 +106,7 @@ void PreviewAnimationPanel::draw() {
 		}
 
 		sf::Sprite spr(tex);
-		spr.setPosition(rect.getPosition());
+		spr.setPosition(rectBackground.getPosition());
 		sf::Vector2f scale;
 		scale.x = size.x / float(frame->getLayer(i)->_image.getSize().x);
 		scale.y = size.y / float(frame->getLayer(i)->_image.getSize().y);

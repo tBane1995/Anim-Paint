@@ -116,7 +116,7 @@ std::string palette_alpha_values_shader_source = R"(
         float cy = mod(floor(pixel.y / checkerSize), 2.0);
         float checker = mod(cx + cy, 2.0);
 
-        vec3 checkerColor = mix(vec3(0.5), vec3(0.25), checker);
+        vec3 checkerColor = mix(vec3(0.35), vec3(0.25), checker);
 
         float finalAlpha = base.a * alphaGrad;
         vec3 finalColor = mix(checkerColor, base.rgb, finalAlpha);
@@ -131,27 +131,25 @@ std::string color_on_chessboard_shader_source = R"(
     uniform vec2 rectSize;
 
     void main()
-{
-    // UV od 0 do 1 względem prostokąta
-    vec2 uv = (gl_FragCoord.xy) / rectSize;
+    {
+        // piksel względem prostokąta
+        vec2 local = gl_FragCoord.xy - vec2(rectPos.x, 1.0-rectPos.y);
 
-    // szachownica
-    float checkerSize = 8.0;
-    vec2 pixel = uv * rectSize;
+        // szachownica
+        float checkerSize = 8.0;
+        float cx = mod(floor(local.x / checkerSize), 2.0);
+        float cy = mod(floor(local.y / checkerSize), 2.0);
+        float checker = mod(cx + cy, 2.0);
 
-    float cx = mod(floor(pixel.x / checkerSize), 2.0);
-    float cy = mod(floor(pixel.y / checkerSize), 2.0);
-    float checker = mod(cx + cy, 2.0);
+        vec3 checkerColor = mix(vec3(0.35), vec3(0.25), checker);
 
-    vec3 checkerColor = mix(vec3(0.5), vec3(0.25), checker);
+        vec3 col = color.rgb;
+        float alpha = color.a;
 
-    vec3 col = color.rgb;
-    float alpha = color.a;
+        vec3 finalColor = mix(checkerColor, col, alpha);
 
-    vec3 finalColor = mix(checkerColor, col, alpha);
-
-    gl_FragColor = vec4(finalColor, 1.0);
-}
+        gl_FragColor = vec4(finalColor, 1.0);
+    }
 )";
 
 std::string rotation_shader_source = R"(
