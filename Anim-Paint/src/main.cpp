@@ -56,24 +56,30 @@ void resize() {
 	{
 		sf::Vector2i position;
 		position.x = int(mainView.getSize().x) - 192 - dialog_margin;
-		position.y = int(main_menu->getSize().y) + toolbar->_rect.size.y + dialog_margin;
+		position.y = int(main_menu->getSize().y) + toolbar->_rect.size.y;
 		animations_panel->setPosition(position);
 	}
 
 	{
 		sf::Vector2i position;
 		position.x = int(mainView.getSize().x) - 192 - dialog_margin;
-		position.y = animations_panel->getPosition().y + animations_panel->getSize().y + dialog_margin;
+		position.y = animations_panel->getPosition().y + animations_panel->getSize().y;
 		frames_panel->setPosition(position);
 	}
 
 	{
 		sf::Vector2i position;
 		position.x = int(mainView.getSize().x) - 160 - dialog_margin;
-		position.y = frames_panel->getPosition().y + frames_panel->getSize().y + dialog_margin;
+		position.y = frames_panel->getPosition().y + frames_panel->getSize().y;
 		layers_panel->setPosition(position);
 	}
 	
+	{
+		sf::Vector2i position;
+		position.x = dialog_margin;
+		position.y = int(main_menu->getSize().y) + toolbar->_rect.size.y;
+		preview_animation_panel->setPosition(position);
+	}
 }
 
 int main() {

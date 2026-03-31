@@ -70,6 +70,12 @@ void PreviewAnimationPanel::draw() {
 	std::shared_ptr<Animation> animation = getCurrentAnimation();
 	std::shared_ptr<Frame> frame = animation->getFrame(_currentFrame);
 
+	sf::Vector2f size = sf::Vector2f(getContentSize());
+	sf::RectangleShape rect(size);
+	rect.setPosition(sf::Vector2f(getContentPosition()));
+	rect.setFillColor(sf::Color(63, 63, 63));
+	window->draw(rect);
+
 	for (int i = 0; i < frame->getLayersCount(); i++) {
 
 		sf::Texture tex;
@@ -77,12 +83,6 @@ void PreviewAnimationPanel::draw() {
 			DebugError(L"PreviewAnimationPanel::draw: Failed to load texture from image.");
 			exit(0);
 		}
-
-		sf::Vector2f size = sf::Vector2f(getContentSize());
-		sf::RectangleShape rect(size);
-		rect.setPosition(sf::Vector2f(getContentPosition()));
-		rect.setFillColor(sf::Color(63, 63, 63));
-		window->draw(rect);
 
 		sf::Sprite spr(tex);
 		spr.setPosition(sf::Vector2f(getContentPosition()));
