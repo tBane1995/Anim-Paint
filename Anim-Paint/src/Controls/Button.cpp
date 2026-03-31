@@ -82,13 +82,14 @@ void Button::setPosition(sf::Vector2i position) {
 	_rect.position = position;
 }
 
-void Button::select() {
-	_isSelected = true;
+void Button::setActive(bool active) {
+	_isActive = active;
 }
 
-void Button::unselect() {
-	_isSelected = false;
+void Button::setSelect(bool select) {
+	_isSelected = select;
 }
+
 
 void Button::unclick() {
 	_state = ButtonState::Idle;

@@ -53,6 +53,7 @@ int menu_padding;
 int menu_font_size;
 sf::Color menu_bar_color;
 sf::Color menu_text_color;
+sf::Color menu_text_inactive_color;
 sf::Color menubox_open_color;
 sf::Color menubox_idle_color;
 sf::Color menubox_hover_color;
@@ -189,6 +190,7 @@ void loadTheme() {
 	menu_font_size = 17;
 	menu_bar_color = sf::Color(15, 15, 15);
 	menu_text_color = sf::Color(191, 191, 191);
+	menu_text_inactive_color = sf::Color(127, 127, 127);
 
 	menubox_open_color = sf::Color(31, 31, 31);
 	menubox_idle_color = sf::Color(15, 15, 15);

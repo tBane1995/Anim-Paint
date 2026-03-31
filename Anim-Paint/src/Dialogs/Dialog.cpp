@@ -155,7 +155,7 @@ void Dialog::deactivateOnTabElement() {
 
 	std::shared_ptr<Button> btn = std::dynamic_pointer_cast<Button>(_onTabElements[_currentOnTabElement]);
 	if (btn != nullptr) {
-		btn->unselect();
+		btn->setSelect(false);
 		return;
 	}
 
@@ -193,7 +193,7 @@ void Dialog::activateOnTabElement(int id) {
 
 		std::shared_ptr<Button> btn = std::dynamic_pointer_cast<Button>(_onTabElements[_currentOnTabElement]);
 		if (btn != nullptr) {
-			btn->select();
+			btn->setSelect(true);
 			return;
 		}
 	}

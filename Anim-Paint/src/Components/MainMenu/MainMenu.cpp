@@ -147,6 +147,7 @@ MainMenu::MainMenu() : Element() {
 	edit_undo->_onclick_func = [this]() {
 		history->undo();
 		};
+	edit_undo->setActive(false);
 
 	std::shared_ptr<OptionWithIcon> edit_redo = std::make_shared<OptionWithIcon>(
 		L"Redo",
@@ -157,6 +158,8 @@ MainMenu::MainMenu() : Element() {
 	edit_redo->_onclick_func = [this]() {
 		history->redo();
 		};
+
+	edit_redo->setActive(false);
 
 	edit->addOption(edit_undo);
 	edit->addOption(edit_redo);

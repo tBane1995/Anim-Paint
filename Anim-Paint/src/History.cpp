@@ -7,6 +7,7 @@
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Components/Canvas.hpp"
 #include "Tools/Selection.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 
 Step::Step() {
 	_animations.clear();

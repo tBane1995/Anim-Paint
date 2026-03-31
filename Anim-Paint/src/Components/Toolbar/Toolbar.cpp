@@ -263,7 +263,7 @@ Toolbar::Toolbar() : Element() {
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 
 	_selectedColorButton = _first_color;
-	_selectedColorButton->select();
+	_selectedColorButton->setSelect(true);
 
 	_first_color->_onclick_func = [this]() {
 		selectColorButton(_first_color);
@@ -489,25 +489,25 @@ void Toolbar::setPosition(sf::Vector2i position) {
 
 void Toolbar::selectToolButton(std::shared_ptr<Button> toolButton) {
 	if (_selectedToolButton != nullptr) {
-		_selectedToolButton->unselect();
+		_selectedToolButton->setSelect(false);
 	}
 
 	_selectedToolButton = toolButton;
 
 	if (_selectedToolButton != nullptr) {
-		_selectedToolButton->select();
+		_selectedToolButton->setSelect(true);
 	}
 }
 
 void Toolbar::selectColorButton(std::shared_ptr<LargeColorButton> colorButton) {
 	if (_selectedColorButton != nullptr) {
-		_selectedColorButton->unselect();
+		_selectedColorButton->setSelect(false);
 	}
 
 	_selectedColorButton = colorButton;
 
 	if (_selectedColorButton != nullptr) {
-		_selectedColorButton->select();
+		_selectedColorButton->setSelect(true);
 	}
 }
 

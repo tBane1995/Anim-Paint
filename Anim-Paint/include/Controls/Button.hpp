@@ -47,8 +47,8 @@ public:
 	virtual sf::Vector2i getPosition();
 	virtual void setPosition(sf::Vector2i position);
 
-	virtual void select();
-	virtual void unselect();
+	virtual void setActive(bool active);
+	virtual void setSelect(bool select);
 	virtual void unclick();
 	virtual void hover();
 	virtual void click();

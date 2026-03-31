@@ -12,10 +12,8 @@ Option::Option(std::wstring text, std::wstring shortcut, sf::Vector2i position) 
 	_rectSelectColor = optionbox_select_color;
 
 	_text = std::make_unique<sf::Text>(basicFont, text, optionbox_font_size);
-	_text->setFillColor(menu_text_color);
 
 	_shortcut_text = std::make_unique<sf::Text>(basicFont, shortcut, optionbox_font_size);
-	_shortcut_text->setFillColor(menu_text_color);
 
 	sf::Vector2i size;
 	size.y = optionbox_height;
@@ -85,6 +83,11 @@ void Option::draw() {
 	window->draw(rect);
 
 	// draw text
+	sf::Color textColor = (_isActive) ? menu_text_color : menu_text_inactive_color;
+
+	_text->setFillColor(textColor);
+	_shortcut_text->setFillColor(textColor);
+
 	window->draw(*_text);
 	window->draw(*_shortcut_text);
 }
