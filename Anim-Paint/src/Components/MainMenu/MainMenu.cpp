@@ -33,19 +33,18 @@
 #include <fstream>
 #include "DebugLog.hpp"
 #include "Dialogs/ConfirmDialog.hpp"
-#include "Controls/OptionWithIcon.hpp"
 
 MainMenu::MainMenu() : Element() {
 
 	// FILE
-	std::shared_ptr<MenuButton> file = std::make_shared<MenuButton>(L"File");
-	file->_onclick_func = [this, file]() {
+	file = std::make_shared<MenuButton>(L"File");
+	file->_onclick_func = [this]() {
 		hideMenu();
 		openMenuButton(file);
 		};
 	_menu_boxes.push_back(file);
 
-	std::shared_ptr<OptionWithIcon> file_new = std::make_shared<OptionWithIcon>(
+	file_new = std::make_shared<OptionWithIcon>(
 		L"New file", 
 		getTexture(L"tex\\main_menu\\new_project.png"), 
 		getTexture(L"tex\\main_menu\\new_project.png"), 
@@ -79,7 +78,7 @@ MainMenu::MainMenu() : Element() {
 	// TO-DO
 	//std::shared_ptr<Option> file_save = std::make_shared<Option>(L"Save", L"Ctrl+S");
 
-	std::shared_ptr<OptionWithIcon> file_saveAs = std::make_shared<OptionWithIcon>(
+	file_saveAs = std::make_shared<OptionWithIcon>(
 		L"Save as", 
 		getTexture(L"tex\\main_menu\\save_project.png"),
 		getTexture(L"tex\\main_menu\\save_project.png"),
@@ -90,7 +89,7 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionWithIcon> file_load = std::make_shared<OptionWithIcon>(
+	file_load = std::make_shared<OptionWithIcon>(
 		L"Open", 
 		getTexture(L"tex\\main_menu\\open_project.png"),
 		getTexture(L"tex\\main_menu\\open_project.png"),
@@ -101,7 +100,7 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionWithIcon> file_export = std::make_shared<OptionWithIcon>(
+	file_export = std::make_shared<OptionWithIcon>(
 		L"Export", 
 		getTexture(L"tex\\main_menu\\export.png"),
 		getTexture(L"tex\\main_menu\\export.png"),
@@ -112,7 +111,7 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	std::shared_ptr<OptionWithIcon> file_import = std::make_shared<OptionWithIcon>(
+	file_import = std::make_shared<OptionWithIcon>(
 		L"Import", 
 		getTexture(L"tex\\main_menu\\import.png"),
 		getTexture(L"tex\\main_menu\\import.png"),
@@ -124,21 +123,20 @@ MainMenu::MainMenu() : Element() {
 		};
 
 	file->addOption(file_new);
-	//file->addOption(file_save); // TO-DO
 	file->addOption(file_saveAs);
 	file->addOption(file_load);
 	file->addOption(file_export);
 	file->addOption(file_import);
 
 	// EDIT
-	std::shared_ptr<MenuButton> edit = std::make_shared<MenuButton>(L"Edit");
-	edit->_onclick_func = [this, edit]() {
+	edit = std::make_shared<MenuButton>(L"Edit");
+	edit->_onclick_func = [this]() {
 		hideMenu();
 		openMenuButton(edit);
 		};
 	_menu_boxes.push_back(edit);
 
-	std::shared_ptr<OptionWithIcon> edit_undo = std::make_shared<OptionWithIcon>(
+	edit_undo = std::make_shared<OptionWithIcon>(
 		L"Undo", 
 		getTexture(L"tex\\main_menu\\undo.png"),
 		getTexture(L"tex\\main_menu\\undo.png"),
@@ -149,7 +147,7 @@ MainMenu::MainMenu() : Element() {
 		};
 	edit_undo->setActive(false);
 
-	std::shared_ptr<OptionWithIcon> edit_redo = std::make_shared<OptionWithIcon>(
+	edit_redo = std::make_shared<OptionWithIcon>(
 		L"Redo",
 		getTexture(L"tex\\main_menu\\redo.png"),
 		getTexture(L"tex\\main_menu\\redo.png"),
@@ -165,62 +163,62 @@ MainMenu::MainMenu() : Element() {
 	edit->addOption(edit_redo);
 
 	// TOOLS
-	std::shared_ptr<MenuButton> tools = std::make_shared<MenuButton>(L"Tools");
-	tools->_onclick_func = [this, tools]() {
+	tools = std::make_shared<MenuButton>(L"Tools");
+	tools->_onclick_func = [this]() {
 		hideMenu();
 		openMenuButton(tools);
 		};
 	_menu_boxes.push_back(tools);
 
-	std::shared_ptr<Option> tools_resize = std::make_shared<Option>(L"Resize");
+	tools_resize = std::make_shared<Option>(L"Resize");
 	tools_resize->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Resize>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<Option> tools_rotation = std::make_shared<Option>(L"Rotation");
+	tools_rotation = std::make_shared<Option>(L"Rotation");
 	tools_rotation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Rotation>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<Option> tools_brightness_contrast = std::make_shared<Option>(L"Brightness-Contrast");
+	tools_brightness_contrast = std::make_shared<Option>(L"Brightness-Contrast");
 	tools_brightness_contrast->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Brightness_Contrast>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<Option> tools_hue_saturation = std::make_shared<Option>(L"Hue-Saturation");
+	tools_hue_saturation = std::make_shared<Option>(L"Hue-Saturation");
 	tools_hue_saturation->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Hue_Saturation>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<Option> tools_sepia = std::make_shared<Option>(L"Sepia");
+	tools_sepia = std::make_shared<Option>(L"Sepia");
 	tools_sepia->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Sepia>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<Option> tools_outline = std::make_shared<Option>(L"Outline");
+	tools_outline = std::make_shared<Option>(L"Outline");
 	tools_outline->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Outline>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<Option> tools_invert = std::make_shared<Option>(L"Invert colors");
+	tools_invert = std::make_shared<Option>(L"Invert colors");
 	tools_invert->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Invert_Colors>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<Option> tools_chessboard = std::make_shared<Option>(L"Chessboard");
+	tools_chessboard = std::make_shared<Option>(L"Chessboard");
 	tools_chessboard->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Chessboard>(getCurrentAnimation()->getLayers()));
 		closeMenu();
 		};
 
-	std::shared_ptr<Option> tools_smoothing = std::make_shared<Option>(L"Smoothing");
+	tools_smoothing = std::make_shared<Option>(L"Smoothing");
 	tools_smoothing->_onclick_func = [this]() {
 		dialogs.push_back(std::make_shared<Dialog_Smoothing>(getCurrentAnimation()->getLayers()));
 		closeMenu();
@@ -237,14 +235,14 @@ MainMenu::MainMenu() : Element() {
 	tools->addOption(tools_smoothing);
 
 	// SELECT
-	std::shared_ptr<MenuButton> select = std::make_shared<MenuButton>(L"Select");
-	select->_onclick_func = [this, select]() {
+	select = std::make_shared<MenuButton>(L"Select");
+	select->_onclick_func = [this]() {
 		hideMenu();
 		openMenuButton(select);
 		};
 	_menu_boxes.push_back(select);
 
-	std::shared_ptr<Option> select_all = std::make_shared<Option>(L"Select all", L"Ctrl+A");
+	select_all = std::make_shared<Option>(L"Select all", L"Ctrl+A");
 	select_all->_onclick_func = [this]() {
 		toolbar->selectToolButton(toolbar->_btn_select);
 		toolbar->_toolType = ToolType::Selector;
@@ -252,7 +250,7 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	std::shared_ptr<Option> select_none = std::make_shared<Option>(L"Select none", L"Ctrl+D");
+	select_none = std::make_shared<Option>(L"Select none", L"Ctrl+D");
 	select_none->_onclick_func = [this]() {
 		if (selection->_state != SelectionState::None) {
 			selection->unselect();
@@ -260,8 +258,8 @@ MainMenu::MainMenu() : Element() {
 		closeMenu();
 		};
 
-	std::shared_ptr<Option> select_align_center = std::make_shared<Option>(L"Align center");
-	select_align_center->_onclick_func = [this, select]() {
+	select_align_center = std::make_shared<Option>(L"Align center");
+	select_align_center->_onclick_func = [this]() {
 		sf::Vector2i oldPos = selection->_rect.position;
 		selection->_rect.position = (canvas->_size - selection->_resizedRect.size) / 2;
 		selection->_resizedRect.position = selection->_rect.position;
