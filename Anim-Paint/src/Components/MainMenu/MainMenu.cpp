@@ -737,6 +737,24 @@ void MainMenu::update() {
 }
 
 void MainMenu::draw() {
+
+	if (_open_menu_button && _open_menu_button->_isSelected) {
+		
+		sf::Vector2f rectSize;
+		rectSize.x = (float)(_open_menu_button->_options.front()->getSize().x);
+		rectSize.y = (float)(_open_menu_button->_options.size()) * (float)(optionbox_height);
+
+		sf::RectangleShape rect(rectSize);
+		rect.setPosition((sf::Vector2f)(_open_menu_button->_options.front()->getPosition()));
+		rect.setOutlineThickness((float)(optionbox_border_width));
+		rect.setOutlineColor(optionbox_border_color);
+		window->draw(rect);
+
+		for (auto& option : _open_menu_button->_options)
+			option->draw();
+	}
+
+
 	sf::RectangleShape rect(sf::Vector2f(_rect.size));
 	rect.setFillColor(menu_bar_color);
 	rect.setPosition(sf::Vector2f(_rect.position));
@@ -746,20 +764,7 @@ void MainMenu::draw() {
 	logo.setPosition(sf::Vector2f(0, ((float)(menu_height)-logo.getGlobalBounds().size.y) / 2.0f));
 	window->draw(logo);
 
-	if (_open_menu_button != nullptr) {
-		if (_open_menu_button->_options.size() > 0) {
-
-			sf::Vector2f rectSize;
-			rectSize.x = (float)(_open_menu_button->_options.front()->getSize().x);
-			rectSize.y = (float)(_open_menu_button->_options.size()) * (float)(optionbox_height);
-
-			sf::RectangleShape rect(rectSize);
-			rect.setPosition((sf::Vector2f)(_open_menu_button->_options.front()->getPosition()));
-			rect.setOutlineThickness((float)(optionbox_border_width));
-			rect.setOutlineColor(optionbox_border_color);
-			window->draw(rect);
-		}
-	}
+	
 
 	for (auto& mb : _menu_boxes)
 		mb->draw();

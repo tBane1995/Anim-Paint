@@ -135,6 +135,7 @@ void MenuButton::update() {
 }
 
 void MenuButton::draw() {
+
 	sf::Vector2f rectSize;
 	rectSize.x = float(_rect.size.x - 2 * _rectBorderWidth);
 	rectSize.y = float(_rect.size.y - 2 * _rectBorderWidth);
@@ -173,8 +174,5 @@ void MenuButton::draw() {
 
 	window->draw(*_text);
 
-	if (_isSelected) {
-		for (auto& option : _options)
-			option->draw();
-	}
+	
 }
