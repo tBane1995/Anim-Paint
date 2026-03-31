@@ -302,6 +302,11 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 
+	int d = 4;
+	if (_position.x <= d || _position.y <= d || _position.x >= int(window->getSize().x - d) || _position.y >= int(window->getSize().y - d)) {
+		return;
+	}
+
 	window->setMouseCursorVisible(true);
 	_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Arrow);
 	window->setMouseCursor(*_cursor);
@@ -310,7 +315,8 @@ void Cursor::handleEvent(const sf::Event& event) {
 
 void Cursor::draw() {
 
-	if (_position.x < 0 || _position.y < 0 || _position.x >= int(window->getSize().x) || _position.y >= int(window->getSize().y)) {
+	int d = 4;
+	if (_position.x <= d || _position.y <= d || _position.x >= int(window->getSize().x - d) || _position.y >= int(window->getSize().y - d)) {
 		return;
 	}
 
