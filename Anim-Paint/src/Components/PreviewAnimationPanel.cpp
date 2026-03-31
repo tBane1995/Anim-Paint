@@ -50,6 +50,15 @@ void PreviewAnimationPanel::cursorHover() {
 }
 
 void PreviewAnimationPanel::handleEvent(const sf::Event& event) {
+	if (!dialogs.empty())
+		return;
+
+	if (main_menu->_state != MainMenuStates::Closed)
+		return;
+
+	if (toolbar->_btn_paste_menu->_isOpen)
+		return;
+
 	Dialog::handleEvent(event);
 }
 
