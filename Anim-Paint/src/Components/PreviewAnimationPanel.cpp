@@ -7,6 +7,7 @@
 #include "Window.hpp"
 #include "Components/Canvas.hpp"
 #include "Tools/Selection.hpp"
+#include "Tools/Filters.hpp"
 
 PreviewAnimationPanel::PreviewAnimationPanel() :
 	Dialog(
@@ -17,6 +18,13 @@ PreviewAnimationPanel::PreviewAnimationPanel() :
 
 	_currentFrame = 0;
 	_timer = currentTime;
+
+	_shader = sf::Shader();
+
+	if (!_shader.loadFromMemory(color_on_chessboard_shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"LargeColorButton::LargeColorButton: Failed to load color on chessboard shader from memory.");
+		exit(0);
+	}
 
 }
 
@@ -76,14 +84,23 @@ void PreviewAnimationPanel::update() {
 void PreviewAnimationPanel::draw() {
 	Dialog::draw();
 
+	sf::RectangleShape color_rect(sf::Vector2f(40, 40));
+	color_rect.setPosition(sf::Vector2f(_rect.position) + sf::Vector2f(4, 4));
+
+	
+
+	sf::Vector2f size = sf::Vector2f(getContentSize() - sf::Vector2i(2 * dialog_margin, 2 * dialog_margin));
+
+	sf::RectangleShape rect(size);
+	rect.setPosition(sf::Vector2f(getContentPosition() + sf::Vector2i(dialog_margin, dialog_margin)));
+	
+	_shader.setUniform("color", sf::Glsl::Vec4(0,0,0,0));
+	_shader.setUniform("rectPos", sf::Glsl::Vec2(rect.getPosition()));
+	_shader.setUniform("rectSize", sf::Glsl::Vec2(rect.getSize()));
+	window->draw(rect, &_shader);
+
 	std::shared_ptr<Animation> animation = getCurrentAnimation();
 	std::shared_ptr<Frame> frame = animation->getFrame(_currentFrame);
-
-	sf::Vector2f size = sf::Vector2f(getContentSize());
-	sf::RectangleShape rect(size);
-	rect.setPosition(sf::Vector2f(getContentPosition()));
-	rect.setFillColor(sf::Color(63, 63, 63));
-	window->draw(rect);
 
 	for (int i = 0; i < frame->getLayersCount(); i++) {
 
@@ -94,7 +111,7 @@ void PreviewAnimationPanel::draw() {
 		}
 
 		sf::Sprite spr(tex);
-		spr.setPosition(sf::Vector2f(getContentPosition()));
+		spr.setPosition(rect.getPosition());
 		sf::Vector2f scale;
 		scale.x = size.x / float(frame->getLayer(i)->_image.getSize().x);
 		scale.y = size.y / float(frame->getLayer(i)->_image.getSize().y);

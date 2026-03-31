@@ -3,7 +3,7 @@
 
 class PreviewAnimationPanel : public Dialog {
 public:
-
+	sf::Shader _shader;
 	int _currentFrame;
 	sf::Time _timer;
 
