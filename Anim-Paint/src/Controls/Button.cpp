@@ -22,10 +22,12 @@ Button::Button() : Element() {
 	_rectPressBorderColor = sf::Color::Transparent;
 	_rectSelectBorderColor = sf::Color::Transparent;
 
+	_isActive = true;
 	_activatedByEnter = false;
 
 	_state = ButtonState::Idle;
 	_hover_func = {};
+	_press_func = {};
 	_onclick_func = {};
 	_clickTime = sf::Time::Zero;
 
@@ -39,19 +41,21 @@ Button::~Button() {
 
 }
 
-void Button::setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor) {
+void Button::setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor, sf::Color inactiveColor) {
 	_rectIdleColor = idleColor;
 	_rectHoverColor = hoverColor;
 	_rectPressColor = pressColor;
 	_rectSelectColor = selectColor;
+	_rectInactiveColor = inactiveColor;
 }
 
-void Button::setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor,
-	int borderWidth, sf::Color idleBorderColor, sf::Color hoverBorderColor, sf::Color pressBorderColor, sf::Color selectBorderColor) {
+void Button::setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color pressColor, sf::Color selectColor, sf::Color inactiveColor,
+	int borderWidth, sf::Color idleBorderColor, sf::Color hoverBorderColor, sf::Color pressBorderColor, sf::Color selectBorderColor, sf::Color inactiveBorderColor) {
 	_rectIdleColor = idleColor;
 	_rectHoverColor = hoverColor;
 	_rectPressColor = pressColor;
 	_rectSelectColor = selectColor;
+	_rectInactiveColor = inactiveColor;
 
 	_rectBorderWidth = borderWidth;
 
@@ -59,6 +63,7 @@ void Button::setRectColors(sf::Color idleColor, sf::Color hoverColor, sf::Color 
 	_rectHoverBorderColor = hoverBorderColor;
 	_rectPressBorderColor = pressBorderColor;
 	_rectSelectBorderColor = selectBorderColor;
+	_rectInactiveBorderColor = inactiveBorderColor;
 }
 
 void Button::setSize(sf::Vector2i size) {
@@ -108,6 +113,9 @@ void Button::setTooltip(std::wstring title, std::wstring description) {
 }
 
 void Button::cursorHover() {
+	if (!_isActive)
+		return;
+
 	if (_rect.contains(cursor->_position)) {
 		Element_hovered = this->shared_from_this();
 		tooltip->setButton(std::dynamic_pointer_cast<Button>(this->shared_from_this()));
@@ -115,6 +123,9 @@ void Button::cursorHover() {
 }
 
 void Button::handleEvent(const sf::Event& event) {
+
+	if (!_isActive)
+		return;
 
 	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		if (Element_pressed.get() == this) {
@@ -171,30 +182,37 @@ void Button::draw() {
 	rectSize.y = float(_rect.size.y - 2 * _rectBorderWidth);
 
 	sf::RectangleShape rect(rectSize);
-	switch (_state) {
-	case ButtonState::Pressed:
-		rect.setFillColor(_rectPressColor);
-		rect.setOutlineThickness((float)_rectBorderWidth);
-		rect.setOutlineColor(_rectPressBorderColor);
-		break;
-	case ButtonState::Hover:
-		rect.setFillColor(_rectHoverColor);
-		rect.setOutlineThickness((float)_rectBorderWidth);
-		rect.setOutlineColor(_rectHoverBorderColor);
-		break;
-	case ButtonState::Idle:
-		if (_isSelected) {
-			rect.setFillColor(_rectSelectColor);
+	if (_isActive) {
+		switch (_state) {
+		case ButtonState::Pressed:
+			rect.setFillColor(_rectPressColor);
 			rect.setOutlineThickness((float)_rectBorderWidth);
-			rect.setOutlineColor(_rectSelectBorderColor);
-		}
-		else {
-			rect.setFillColor(_rectIdleColor);
+			rect.setOutlineColor(_rectPressBorderColor);
+			break;
+		case ButtonState::Hover:
+			rect.setFillColor(_rectHoverColor);
 			rect.setOutlineThickness((float)_rectBorderWidth);
-			rect.setOutlineColor(_rectIdleBorderColor);
+			rect.setOutlineColor(_rectHoverBorderColor);
+			break;
+		case ButtonState::Idle:
+			if (_isSelected) {
+				rect.setFillColor(_rectSelectColor);
+				rect.setOutlineThickness((float)_rectBorderWidth);
+				rect.setOutlineColor(_rectSelectBorderColor);
+			}
+			else {
+				rect.setFillColor(_rectIdleColor);
+				rect.setOutlineThickness((float)_rectBorderWidth);
+				rect.setOutlineColor(_rectIdleBorderColor);
+			};
+			break;
 		};
-		break;
-	};
+	}
+	else {
+		rect.setFillColor(_rectInactiveColor);
+		rect.setOutlineThickness((float)_rectBorderWidth);
+		rect.setOutlineColor(_rectInactiveBorderColor);
+	}
 
 	sf::Vector2f rectPosition;
 	rectPosition.x = float(_rect.position.x + _rectBorderWidth);

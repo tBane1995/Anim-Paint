@@ -41,13 +41,13 @@ FileDialog::FileDialog(std::wstring dialogName, std::wstring selectButtonText, s
 	
 	sf::Vector2i btnSize(64, basic_text_rect_height + dialog_padding);
 	_selectBtn = std::make_shared<ColoredButtonWithText>(selectButtonText, btnSize);
-	_selectBtn->setRectColors(dark_button_select_color, dark_button_idle_color, dark_button_hover_color, dark_button_press_color);
+	_selectBtn->setRectColors(dark_button_select_color, dark_button_idle_color, dark_button_hover_color, dark_button_press_color, dark_button_inactive_color);
 	_selectBtn->_onclick_func = [this](){
 		_state = DialogState::ToClose;
 		};
 
 	_cancelBtn = std::make_shared<ColoredButtonWithText>(L"Cancel", btnSize);
-	_cancelBtn->setRectColors(dark_button_select_color, dark_button_idle_color, dark_button_hover_color, dark_button_press_color);
+	_cancelBtn->setRectColors(dark_button_select_color, dark_button_idle_color, dark_button_hover_color, dark_button_press_color, dark_button_inactive_color);
 	_cancelBtn->_onclick_func = [this]() {
 		_state = DialogState::ToClose;
 		};

@@ -32,12 +32,14 @@ sf::Color file_dialog_separator_hover_color;
 sf::Color file_dialog_separator_press_color;
 
 // buttons
+sf::Color dark_and_red_button_inactive_color;
 sf::Color dark_and_red_button_select_color;
 sf::Color dark_and_red_button_idle_color;
 sf::Color dark_and_red_button_hover_color;
 sf::Color dark_and_red_button_press_color;
 sf::Color dark_and_red_button_text_color;
 
+sf::Color dark_button_inactive_color;
 sf::Color dark_button_select_color;
 sf::Color dark_button_idle_color;
 sf::Color dark_button_hover_color;
@@ -77,10 +79,12 @@ sf::Color tools_text_color;
 sf::Color tools_text_hover_color;
 
 int tools_border_width;
+sf::Color tools_button_inactive_color;
 sf::Color tools_button_select_color;
 sf::Color tools_button_idle_color;
 sf::Color tools_button_hover_color;
 sf::Color tools_button_press_color;
+sf::Color tools_button_inactive_border_color;
 sf::Color tools_button_select_border_color;
 sf::Color tools_button_idle_border_color;
 sf::Color tools_button_hover_border_color;
@@ -165,12 +169,14 @@ void loadTheme() {
 	file_dialog_separator_press_color = sf::Color(95, 47, 47);
 
 	// buttons
+	dark_and_red_button_inactive_color = sf::Color(15, 15, 15);
 	dark_and_red_button_select_color = sf::Color(79, 31, 31);
 	dark_and_red_button_idle_color = sf::Color(47, 47, 47);
 	dark_and_red_button_hover_color = sf::Color(31, 31, 31);
 	dark_and_red_button_press_color = sf::Color(23, 23, 23);
 	dark_and_red_button_text_color = sf::Color(191, 191, 191);
 
+	dark_button_inactive_color = sf::Color(15, 15, 15);
 	dark_button_select_color = sf::Color(23, 23, 23);
 	dark_button_idle_color = sf::Color(31, 31, 31);
 	dark_button_hover_color = sf::Color(7, 7, 7);
@@ -210,10 +216,12 @@ void loadTheme() {
 	tools_text_hover_color = sf::Color(163, 163, 163);
 
 	tools_border_width = 1;
+	tools_button_inactive_color = sf::Color(15, 15, 15);
 	tools_button_select_color = sf::Color(79, 47, 47);
 	tools_button_idle_color = sf::Color::Transparent;
 	tools_button_hover_color = sf::Color(95,47,47);
 	tools_button_press_color = sf::Color(111, 47, 47);
+	tools_button_inactive_border_color = sf::Color(15, 15, 15);
 	tools_button_select_border_color = sf::Color(95, 47, 47);
 	tools_button_idle_border_color = sf::Color::Transparent;
 	tools_button_hover_border_color = sf::Color(95, 47, 47);

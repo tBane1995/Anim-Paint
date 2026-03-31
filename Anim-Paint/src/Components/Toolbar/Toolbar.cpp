@@ -19,8 +19,8 @@ Toolbar::Toolbar() : Element() {
 
 	// clipboard
 	_btn_paste = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_paste.png"), getTexture(L"tex\\tools\\btn_paste_hover.png"));
-	_btn_paste->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_btn_paste->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_paste->_onclick_func = [this]() {
 
 		std::shared_ptr<sf::Image> img = loadImageFromClipboard();
@@ -110,8 +110,8 @@ Toolbar::Toolbar() : Element() {
 
 		};
 	_btn_paste_menu = std::make_shared<ButtonWithTopTextAndList>(L"paste", tools_text_color, tools_text_hover_color);
-	_btn_paste_menu->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color,
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_btn_paste_menu->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_paste_menu->_onclick_func = [this]() {
 			
 		};
@@ -121,8 +121,8 @@ Toolbar::Toolbar() : Element() {
 	
 
 	_btn_cut = std::make_shared<ButtonWithRightText>(L"cut", tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_cut.png"), getTexture(L"tex\\tools\\btn_cut_hover.png"));
-	_btn_cut->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_btn_cut->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_cut->_onclick_func = [this]() {
 		//selection->cut(&animation->getCurrentLayer()->image, selection->img, second_color->color);
 		if (selection->_state == SelectionState::Selected) {
@@ -132,8 +132,8 @@ Toolbar::Toolbar() : Element() {
 	_btn_cut->setTooltip(L"Cut", L"Cut the selection from the canvas and place it on the clipboard");
 
 	_btn_copy = std::make_shared<ButtonWithRightText>(L"copy", tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_copy.png"), getTexture(L"tex\\tools\\btn_copy_hover.png"));
-	_btn_copy->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_btn_copy->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_copy->_onclick_func = [this]() {
 		if (selection->_state == SelectionState::Selected) {
 			selection->copy(getCurrentAnimation()->getCurrentLayer()->_image, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent : _second_color->_color);
@@ -143,8 +143,8 @@ Toolbar::Toolbar() : Element() {
 	_btn_copy->setTooltip(L"Copy", L"Copy the selection from the canvas to the clipboard");
 
 	_btn_select = std::make_shared<ButtonWithBottomText>(L"select", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_select.png"), getTexture(L"tex\\tools\\btn_select_hover.png"));
-	_btn_select->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_btn_select->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_select->_onclick_func = [this]() {
 		_toolType = ToolType::Selector;
 		selectToolButton(_btn_select);
@@ -152,8 +152,8 @@ Toolbar::Toolbar() : Element() {
 	_btn_select->setTooltip(L"Selection Tool", L"Select an area of the canvas move, copy, or cut");
 
 	_btn_lasso = std::make_shared<ButtonWithBottomText>(L"lasso", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_lasso.png"), getTexture(L"tex\\tools\\btn_lasso_hover.png"));
-	_btn_lasso->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_btn_lasso->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_lasso->_onclick_func = [this]() {
 		_toolType = ToolType::Lasso;
 		selectToolButton(_btn_lasso);
@@ -175,8 +175,8 @@ Toolbar::Toolbar() : Element() {
 
 	// tools
 	_btn_brush = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
-	_btn_brush->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_btn_brush->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_brush->_onclick_func = [this]() {
 		_toolType = ToolType::Brush;
 		brush->setBrushType(BrushType::Circle);
@@ -185,8 +185,8 @@ Toolbar::Toolbar() : Element() {
 	_btn_brush->setTooltip(L"Brush Tool", L"Draw on the canvas using the primary color with LMB or the secondary color with RMB");
 
 	_btn_picker = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_picker.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"));
-	_btn_picker->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_btn_picker->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color, 
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_picker->_onclick_func = [this]() {
 		_toolType = ToolType::Picker;
 		brush->setBrushType(BrushType::Circle);
@@ -195,8 +195,8 @@ Toolbar::Toolbar() : Element() {
 	_btn_picker->setTooltip(L"Color Picker Tool", L"Pick a color from the canvas and set it as the active color");
 
 	_btn_fill = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"));
-	_btn_fill->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_btn_fill->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color, 
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_fill->_onclick_func = [this]() {
 		_toolType = ToolType::Fill;
 		selectToolButton(_btn_fill);
@@ -204,8 +204,8 @@ Toolbar::Toolbar() : Element() {
 	_btn_fill->setTooltip(L"Fill Tool", L"Fill an area of the canvas using the primary color with LMB or the secondary color with RMB");
 
 	_btn_eraser = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"));
-	_btn_eraser->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_btn_eraser->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_eraser->_onclick_func = [this]() {
 		_toolType = ToolType::Eraser;
 		brush->setBrushType(BrushType::Square);
@@ -228,8 +228,8 @@ Toolbar::Toolbar() : Element() {
 
 	// increase / decrease brush size
 	_size_decrease = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_size_decrease.png"), getTexture(L"tex\\tools\\btn_size_decrease_hover.png"));
-	_size_decrease->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_size_decrease->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color, 
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_size_decrease->_onclick_func = [this]() {
 		if (_toolType == ToolType::Brush || _toolType == ToolType::Eraser)
 			brush->decrease();
@@ -237,8 +237,8 @@ Toolbar::Toolbar() : Element() {
 	_size_decrease->setTooltip(L"Decrease Brush Size", L"Decrease the size of the brush or eraser");
 
 	_size_increase = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_size_increase.png"), getTexture(L"tex\\tools\\btn_size_increase_hover.png"));
-	_size_increase->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_size_increase->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color, 
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_size_increase->_onclick_func = [this]() {
 		if (_toolType == ToolType::Brush || _toolType == ToolType::Eraser)
 			brush->increase();
@@ -256,11 +256,11 @@ Toolbar::Toolbar() : Element() {
 
 	// main colors
 	_first_color = std::make_shared<LargeColorButton>(sf::Color::Black);
-	_first_color->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_first_color->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color, 
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_second_color = std::make_shared<LargeColorButton>(sf::Color::White);
-	_second_color->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_second_color->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color, 
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 
 	_selectedColorButton = _first_color;
 	_selectedColorButton->select();
@@ -345,8 +345,8 @@ Toolbar::Toolbar() : Element() {
 	_colors.back()->setTooltip(L"Light Magenta", L"");
 
 	for (auto& c : _colors) {
-		c->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-			tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+		c->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
+			tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 		c->_onclick_func = [this, c]() {
 			_selectedColorButton->setColor(c->_color);
 			if (palette != nullptr) {
@@ -361,8 +361,8 @@ Toolbar::Toolbar() : Element() {
 	_colors_text->setFillColor(tools_text_color);
 
 	_btn_palette_colors = std::make_shared<PaletteButton>(L"palette", sf::Color::Transparent, tools_text_color, tools_text_hover_color, getTexture(L"tex\\tools\\btn_palette_colors.png"), getTexture(L"tex\\tools\\btn_palette_colors_hover.png"));
-	_btn_palette_colors->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color);
+	_btn_palette_colors->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
+		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_palette_colors->_onclick_func = [this]() {
 		if(palette == nullptr)
 			palette = std::make_shared<Palette>();

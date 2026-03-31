@@ -31,12 +31,14 @@ extern sf::Color file_dialog_separator_hover_color;
 extern sf::Color file_dialog_separator_press_color;
 
 // buttons
+extern sf::Color dark_and_red_button_inactive_color;
 extern sf::Color dark_and_red_button_select_color;
 extern sf::Color dark_and_red_button_idle_color;
 extern sf::Color dark_and_red_button_hover_color;
 extern sf::Color dark_and_red_button_press_color;
 extern sf::Color dark_and_red_button_text_color;
 
+extern sf::Color dark_button_inactive_color;
 extern sf::Color dark_button_select_color;
 extern sf::Color dark_button_idle_color;
 extern sf::Color dark_button_hover_color;
@@ -76,10 +78,12 @@ extern sf::Color tools_text_color;
 extern sf::Color tools_text_hover_color;
 
 extern int tools_border_width;
+extern sf::Color tools_button_inactive_color;
 extern sf::Color tools_button_select_color;
 extern sf::Color tools_button_idle_color;
 extern sf::Color tools_button_hover_color;
 extern sf::Color tools_button_press_color;
+extern sf::Color tools_button_inactive_border_color;
 extern sf::Color tools_button_select_border_color;
 extern sf::Color tools_button_idle_border_color;
 extern sf::Color tools_button_hover_border_color;
