@@ -688,7 +688,7 @@ void MainMenu::handleEvent(const sf::Event& event) {
 		if (mb->_isSelected) {
 			for (auto& op : mb->_options) {
 				op->handleEvent(event);
-				if (Element_pressed == op) {
+				if (op->_rect.contains(cursor->_position)) {
 					clicked_in_menu = true;
 				}
 			}

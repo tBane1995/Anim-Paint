@@ -73,6 +73,9 @@ void History::saveStep() {
 
 	_steps.push_back(step);
 	_currentStep++;
+
+	main_menu->edit_undo->setActive(canUndo());
+	main_menu->edit_redo->setActive(canRedo());
 }
 
 bool History::canUndo() {
@@ -125,6 +128,8 @@ void History::undo()
 		canvas->setCenter();
 	}
 	
+	main_menu->edit_undo->setActive(canUndo());
+	main_menu->edit_redo->setActive(canRedo());
 }
 
 void History::redo()
@@ -163,6 +168,8 @@ void History::redo()
 		canvas->setCenter();
 	}
 
+	main_menu->edit_redo->setActive(canRedo());
+	main_menu->edit_undo->setActive(canUndo());
 
 }
 
