@@ -84,48 +84,64 @@ void loadTextures() {
 	// buttons 32x32
 	texturePaths.push_back(L"tex\\btn32\\close.png");
 	texturePaths.push_back(L"tex\\btn32\\close_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\close_press.png");
 
 	texturePaths.push_back(L"tex\\btn32\\first.png");
 	texturePaths.push_back(L"tex\\btn32\\first_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\first_press.png");
+
 
 	texturePaths.push_back(L"tex\\btn32\\prev.png");
 	texturePaths.push_back(L"tex\\btn32\\prev_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\prev_press.png");
 
 	texturePaths.push_back(L"tex\\btn32\\next.png");
 	texturePaths.push_back(L"tex\\btn32\\next_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\next_press.png");
 
 	texturePaths.push_back(L"tex\\btn32\\top.png");
 	texturePaths.push_back(L"tex\\btn32\\top_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\top_press.png");
 
 	texturePaths.push_back(L"tex\\btn32\\bottom.png");
 	texturePaths.push_back(L"tex\\btn32\\bottom_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\bottom_press.png");
 
 	texturePaths.push_back(L"tex\\btn32\\last.png");
 	texturePaths.push_back(L"tex\\btn32\\last_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\last_press.png");
 
 	texturePaths.push_back(L"tex\\btn32\\add.png");
 	texturePaths.push_back(L"tex\\btn32\\add_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\add_press.png");
 
 	texturePaths.push_back(L"tex\\btn32\\remove.png");
 	texturePaths.push_back(L"tex\\btn32\\remove_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\remove_press.png");
 
 	texturePaths.push_back(L"tex\\btn32\\move_next.png");
 	texturePaths.push_back(L"tex\\btn32\\move_next_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\move_next_press.png");
 
 	texturePaths.push_back(L"tex\\btn32\\move_back.png");
 	texturePaths.push_back(L"tex\\btn32\\move_back_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\move_back_press.png");
 
 	texturePaths.push_back(L"tex\\btn32\\visible.png");
 	texturePaths.push_back(L"tex\\btn32\\visible_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\visible_press.png");
 
 	texturePaths.push_back(L"tex\\btn32\\unvisible.png");
 	texturePaths.push_back(L"tex\\btn32\\unvisible_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\unvisible_press.png");
 
 	texturePaths.push_back(L"tex\\btn32\\unchecked.png");
 	texturePaths.push_back(L"tex\\btn32\\unchecked_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\unchecked_press.png");
 								  
 	texturePaths.push_back(L"tex\\btn32\\checked.png");
 	texturePaths.push_back(L"tex\\btn32\\checked_hover.png");
+	texturePaths.push_back(L"tex\\btn32\\checked_press.png");
 
 	// tools
 	texturePaths.push_back(L"tex\\tools\\bottom_arrow.png");

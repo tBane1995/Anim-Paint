@@ -15,10 +15,10 @@ LayersPanel::LayersPanel()
 		sf::Vector2i(int(mainView.getSize().x) - 160 - dialog_margin, frames_panel->getPosition().y + frames_panel->getSize().y)
 		) {
 
-	_add_layer = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\add.png"), getTexture(L"tex\\btn32\\add_hover.png"));
-	_remove_layer = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\remove.png"), getTexture(L"tex\\btn32\\remove_hover.png"));
-	_move_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\top.png"), getTexture(L"tex\\btn32\\top_hover.png"));
-	_move_bottom = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\bottom.png"), getTexture(L"tex\\btn32\\bottom_hover.png"));
+	_add_layer = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\add.png"), getTexture(L"tex\\btn32\\add_hover.png"), getTexture(L"tex\\btn32\\add_press.png"));
+	_remove_layer = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\remove.png"), getTexture(L"tex\\btn32\\remove_hover.png"), getTexture(L"tex\\btn32\\remove_press.png"));
+	_move_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\top.png"), getTexture(L"tex\\btn32\\top_hover.png"), getTexture(L"tex\\btn32\\top_press.png"));
+	_move_bottom = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\btn32\\bottom.png"), getTexture(L"tex\\btn32\\bottom_hover.png"), getTexture(L"tex\\btn32\\bottom_press.png"));
 	
 
 	_add_layer->_onclick_func = []() {

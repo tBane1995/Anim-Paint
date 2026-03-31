@@ -4,11 +4,12 @@
 #include "Cursor.hpp"
 #include "Window.hpp"
 
-ButtonWithSprite::ButtonWithSprite(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position)
+ButtonWithSprite::ButtonWithSprite(std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position)
 : Button() {
 
 	_texture = texture;
 	_hoverTexture = hoverTexture;
+	_pressTexture = pressTexture;
 
 	sf::Vector2i rectSize = sf::Vector2i(_texture->_texture->getSize());
 	_rect = sf::IntRect(sf::Vector2i(0, 0), rectSize);
@@ -65,7 +66,24 @@ void ButtonWithSprite::draw() {
 	rect.setPosition(rectPosition);
 	window->draw(rect);
 
-	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
+	std::shared_ptr<Texture> texture;
+	switch (_state)
+	{
+	case ButtonState::Idle:
+		texture = _texture;
+		break;
+	case ButtonState::Hover:	
+		texture = _hoverTexture;
+		break;
+	case ButtonState::Pressed:
+		texture = _pressTexture;
+		break;
+	default:
+		texture = _texture;
+		break;
+	}
+
+	sf::Sprite sprite(*texture->_texture);
 	sprite.setPosition(sf::Vector2f(_rect.position));
 	window->draw(sprite);
 

@@ -9,8 +9,8 @@
 SliderWithButtons::SliderWithButtons(std::wstring name, int min_value, int max_value, std::wstring units) : Element() {
 	
 	_slider = std::make_shared<Slider>(name, min_value, max_value, units);
-	_decreaseButton = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\dialog\\decrease.png"), getTexture(L"tex\\dialog\\decrease_hover.png"));
-	_increaseButton = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\dialog\\increase.png"), getTexture(L"tex\\dialog\\increase_hover.png"));
+	_decreaseButton = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\dialog\\decrease.png"), getTexture(L"tex\\dialog\\decrease_hover.png"), getTexture(L"tex\\dialog\\decrease_hover.png"));
+	_increaseButton = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\dialog\\increase.png"), getTexture(L"tex\\dialog\\increase_hover.png"), getTexture(L"tex\\dialog\\increase_hover.png"));
 	
 	_decreaseButton->_onclick_func = [this]() {
 		_slider->setValue(_slider->getValue() - 1);
