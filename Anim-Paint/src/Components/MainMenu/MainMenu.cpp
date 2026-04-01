@@ -58,6 +58,8 @@ MainMenu::MainMenu() : Element() {
 			animation->addEmptyFrame(sf::Vector2i(32, 32));
 			
 			animations.clear();
+			history->clear();
+
 			animations.push_back(animation);
 			
 			currentAnimationId = 0;
