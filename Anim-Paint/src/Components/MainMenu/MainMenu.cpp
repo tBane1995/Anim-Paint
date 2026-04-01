@@ -764,7 +764,6 @@ void MainMenu::draw() {
 	logo.setPosition(sf::Vector2f(0, ((float)(menu_height)-logo.getGlobalBounds().size.y) / 2.0f));
 	window->draw(logo);
 
-	
 
 	for (auto& mb : _menu_boxes)
 		mb->draw();

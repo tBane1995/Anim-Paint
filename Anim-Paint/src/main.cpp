@@ -233,7 +233,7 @@ int main() {
 
 					auto selected = dialog;
 					it = static_dialogs.erase(it);
-					static_dialogs.push_back(selected);
+					static_dialogs.emplace(static_dialogs.begin(), selected);
 					break;
 				}
 			}
@@ -252,10 +252,20 @@ int main() {
 		canvas->draw();
 		selection->draw();
 		cursor->draw();
+
+		for (auto it = static_dialogs.end(); it != static_dialogs.begin(); ) {
+			it--;
+			auto& dialog = *it;
+			dialog->draw();
+		}
+			
+
 		toolbar->draw();
 
-		for (auto& dialog : static_dialogs)
-			dialog->draw();
+		if(!static_dialogs.empty() && static_dialogs.back()->_is_moved)
+			static_dialogs.back()->draw();
+
+		
 
 		bottom_bar->draw();
 		main_menu->draw();
