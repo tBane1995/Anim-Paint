@@ -97,6 +97,9 @@ void BottomBar::cursorHover() {
 	if (main_menu->_state != MainMenuStates::Closed)
 		return;
 
+	if (!static_dialogs.empty() && static_dialogs.front()->_is_moved)
+		return;
+
 	if (canvas->_state != CanvasState::Idle)
 		return;
 

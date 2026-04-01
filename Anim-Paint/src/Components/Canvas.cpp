@@ -506,6 +506,9 @@ void Canvas::cursorHover() {
 	if (toolbar->_btn_paste_menu->_isOpen)
 		return;
 
+	if (!static_dialogs.empty() && static_dialogs.back()->_is_moved)
+		return;
+
 	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
 		return;
 

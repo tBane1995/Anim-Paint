@@ -529,6 +529,9 @@ void Toolbar::cursorHover() {
 
 	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
 		return;
+
+	if (!static_dialogs.empty() && static_dialogs.front()->_is_moved)
+		return;
 	
 	if (_rect.contains(cursor->_position)) {
 		Element_hovered = this->shared_from_this();

@@ -175,8 +175,11 @@ int main() {
 		main_menu->cursorHover();
 		bottom_bar->cursorHover();
 
-		for (auto& dialog : static_dialogs)
+		for (auto it = static_dialogs.end(); it != static_dialogs.begin();) {
+			it--;
+			auto& dialog = *it;
 			dialog->cursorHover();
+		}
 
 		for (auto& dialog : dialogs)
 			dialog->cursorHover();
@@ -223,19 +226,20 @@ int main() {
 			selection->handleEvent(*event);
 			canvas->handleEvent(*event);
 			
-			for (auto it = static_dialogs.end(); it != static_dialogs.begin(); ) {
-				--it;
+			for (auto it = static_dialogs.begin(); it != static_dialogs.end(); it+=1) {
 				auto& dialog = *it;
 
 				dialog->handleEvent(*event);
-
-				if (const auto* mp = event->getIf<sf::Event::MouseButtonPressed>(); mp && mp->button == sf::Mouse::Button::Left && dialog->_clickArea == DialogClickArea::Inside) {
-
-					auto selected = dialog;
-					it = static_dialogs.erase(it);
-					static_dialogs.emplace(static_dialogs.begin(), selected);
+				if (dialog->_clickArea == DialogClickArea::Inside) {
+					if (const auto* mp = event->getIf<sf::Event::MouseButtonPressed>(); mp && mp->button == sf::Mouse::Button::Left) {
+						auto selected = dialog;
+						it = static_dialogs.erase(it);
+						static_dialogs.emplace(static_dialogs.begin(), selected);
+						
+					}
 					break;
 				}
+				
 			}
 				
 
@@ -262,8 +266,8 @@ int main() {
 
 		toolbar->draw();
 
-		if(!static_dialogs.empty() && static_dialogs.back()->_is_moved)
-			static_dialogs.back()->draw();
+		if(!static_dialogs.empty() && static_dialogs.front()->_is_moved)
+			static_dialogs.front()->draw();
 
 		
 

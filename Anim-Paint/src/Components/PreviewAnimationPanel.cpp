@@ -47,6 +47,9 @@ void PreviewAnimationPanel::cursorHover() {
 	if (toolbar->_btn_paste_menu->_isOpen)
 		return;
 
+	if (!static_dialogs.empty() && static_dialogs.front()->_is_moved)
+		return;
+
 	if (canvas->_state != CanvasState::Idle)
 		return;
 
