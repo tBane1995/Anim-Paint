@@ -150,6 +150,16 @@ int main() {
 			}
 		}
 
+		// delete old static dialogs
+		for (int i = 0; i < static_dialogs.size(); ) {
+			if (static_dialogs[i]->_state == DialogState::ToClose) {
+				static_dialogs.erase(static_dialogs.begin() + i);
+			}
+			else {
+				i++;
+			}
+		}
+
 		if (palette && palette->_state == DialogState::ToClose) {
 			static_dialogs.erase(std::remove(static_dialogs.begin(), static_dialogs.end(), palette), static_dialogs.end());
 			palette = nullptr;
