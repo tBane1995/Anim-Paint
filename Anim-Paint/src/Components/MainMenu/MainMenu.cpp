@@ -24,6 +24,7 @@
 #include "Components/AnimationsPanel.hpp"
 #include "Components/FramesPanel.hpp"
 #include "Components/LayersPanel/LayersPanel.hpp"
+#include "Components/PreviewAnimationPanel.hpp"
 #include "Animation/Animation.hpp"
 #include <iostream>
 #include <filesystem>
@@ -33,6 +34,8 @@
 #include <fstream>
 #include "DebugLog.hpp"
 #include "Dialogs/ConfirmDialog.hpp"
+#include <algorithm>
+
 
 MainMenu::MainMenu() : Element() {
 
@@ -284,9 +287,44 @@ MainMenu::MainMenu() : Element() {
 	_menu_boxes.push_back(windows);
 
 	window_animations = std::make_shared<Option>(L"Animations");
+	window_animations->_onclick_func = [this]() {
+		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(animations_panel);
+		if (ptr && std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end()) {
+			ptr->_state = DialogState::Idle;
+			static_dialogs.push_back(ptr);
+		}
+		closeMenu();
+		};
+
 	window_frames = std::make_shared<Option>(L"Frames");
+	window_frames->_onclick_func = [this]() {
+		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(frames_panel);
+		if (ptr && std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end()) {
+			ptr->_state = DialogState::Idle;
+			static_dialogs.push_back(ptr);
+		}
+		closeMenu();
+		};
+
 	window_layers = std::make_shared<Option>(L"Layers");
-	window_preview_animation= std::make_shared<Option>(L"Preview Animation");
+	window_layers->_onclick_func = [this]() {
+		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(layers_panel);
+		if (ptr && std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end()) {
+			ptr->_state = DialogState::Idle;
+			static_dialogs.push_back(ptr);
+		}
+		closeMenu();
+		};
+
+	window_preview_animation = std::make_shared<Option>(L"Preview Animation");
+	window_preview_animation->_onclick_func = [this]() {
+		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(preview_animation_panel);
+		if (ptr && std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end()) {
+			ptr->_state = DialogState::Idle;
+			static_dialogs.push_back(ptr);
+		}
+		closeMenu();
+		};
 	
 	windows->addOption(window_animations);
 	windows->addOption(window_frames);
