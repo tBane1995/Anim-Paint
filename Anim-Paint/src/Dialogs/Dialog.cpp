@@ -304,3 +304,6 @@ void Dialog::draw() {
 std::vector<std::shared_ptr<Dialog>> dialogs;
 std::vector<std::shared_ptr<Dialog>> static_dialogs;
 
+bool isOpenStaticDialog(std::shared_ptr<Dialog> dialog) {
+	return std::find(static_dialogs.begin(), static_dialogs.end(), dialog) != static_dialogs.end();
+}

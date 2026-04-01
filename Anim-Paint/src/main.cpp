@@ -112,7 +112,6 @@ int main() {
 	static_dialogs.push_back(animations_panel);
 	static_dialogs.push_back(frames_panel);
 	static_dialogs.push_back(layers_panel);
-	static_dialogs.push_back(preview_animation_panel);
 	main_menu->setActiveForWindows();
 
 	canvas = std::make_shared<Canvas>();

@@ -53,3 +53,5 @@ public:
 
 extern std::vector<std::shared_ptr<Dialog>> dialogs;
 extern std::vector<std::shared_ptr<Dialog>> static_dialogs;
+
+bool isOpenStaticDialog(std::shared_ptr<Dialog> dialog);

@@ -288,10 +288,9 @@ MainMenu::MainMenu() : Element() {
 
 	window_animations = std::make_shared<Option>(L"Animations");
 	window_animations->_onclick_func = [this]() {
-		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(animations_panel);
-		if (ptr && std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end()) {
-			ptr->_state = DialogState::Idle;
-			static_dialogs.push_back(ptr);
+		if (!isOpenStaticDialog(animations_panel)) {		
+			animations_panel->_state = DialogState::Idle;
+			static_dialogs.push_back(animations_panel);
 			window_animations->setActive(false);
 		}
 		closeMenu();
@@ -299,10 +298,9 @@ MainMenu::MainMenu() : Element() {
 
 	window_frames = std::make_shared<Option>(L"Frames");
 	window_frames->_onclick_func = [this]() {
-		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(frames_panel);
-		if (ptr && std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end()) {
-			ptr->_state = DialogState::Idle;
-			static_dialogs.push_back(ptr);
+		if (!isOpenStaticDialog(frames_panel)) {
+			frames_panel->_state = DialogState::Idle;
+			static_dialogs.push_back(frames_panel);
 			window_frames->setActive(false);
 		}
 		closeMenu();
@@ -311,9 +309,9 @@ MainMenu::MainMenu() : Element() {
 	window_layers = std::make_shared<Option>(L"Layers");
 	window_layers->_onclick_func = [this]() {
 		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(layers_panel);
-		if (ptr && std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end()) {
-			ptr->_state = DialogState::Idle;
-			static_dialogs.push_back(ptr);
+		if (!isOpenStaticDialog(animations_panel)) {
+			layers_panel->_state = DialogState::Idle;
+			static_dialogs.push_back(layers_panel);
 			window_layers->setActive(false);
 		}
 		closeMenu();
@@ -321,10 +319,9 @@ MainMenu::MainMenu() : Element() {
 
 	window_preview_animation = std::make_shared<Option>(L"Preview Animation");
 	window_preview_animation->_onclick_func = [this]() {
-		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(preview_animation_panel);
-		if (ptr && std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end()) {
-			ptr->_state = DialogState::Idle;
-			static_dialogs.push_back(ptr);
+		if (!isOpenStaticDialog(preview_animation_panel)) {
+			preview_animation_panel->_state = DialogState::Idle;
+			static_dialogs.push_back(preview_animation_panel);
 			window_preview_animation->setActive(false);
 		}
 		closeMenu();
@@ -373,33 +370,12 @@ void MainMenu::setPosition(sf::Vector2i position) {
 }
 
 void MainMenu::setActiveForWindows() {
-	{
-		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(animations_panel);
-		if (ptr) {
-			window_animations->setActive(std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end());
-		}
-	}
 
-	{
-		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(frames_panel);
-		if (ptr) {
-			window_frames->setActive(std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end());
-		}
-	}
+	window_animations->setActive(!isOpenStaticDialog(animations_panel));
+	window_frames->setActive(!isOpenStaticDialog(frames_panel));
+	window_layers->setActive(!isOpenStaticDialog(layers_panel));
+	window_preview_animation->setActive(!isOpenStaticDialog(preview_animation_panel));
 
-	{
-		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(layers_panel);
-		if (ptr) {
-			window_layers->setActive(std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end());
-		}
-	}
-
-	{
-		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(preview_animation_panel);
-		if (ptr) {
-			window_preview_animation->setActive(std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end());
-		}
-	}
 }
 
 void MainMenu::hideMenu() {
