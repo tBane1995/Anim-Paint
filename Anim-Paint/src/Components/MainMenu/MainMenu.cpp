@@ -292,6 +292,7 @@ MainMenu::MainMenu() : Element() {
 		if (ptr && std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end()) {
 			ptr->_state = DialogState::Idle;
 			static_dialogs.push_back(ptr);
+			window_animations->setActive(false);
 		}
 		closeMenu();
 		};
@@ -302,6 +303,7 @@ MainMenu::MainMenu() : Element() {
 		if (ptr && std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end()) {
 			ptr->_state = DialogState::Idle;
 			static_dialogs.push_back(ptr);
+			window_frames->setActive(false);
 		}
 		closeMenu();
 		};
@@ -312,6 +314,7 @@ MainMenu::MainMenu() : Element() {
 		if (ptr && std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end()) {
 			ptr->_state = DialogState::Idle;
 			static_dialogs.push_back(ptr);
+			window_layers->setActive(false);
 		}
 		closeMenu();
 		};
@@ -322,10 +325,13 @@ MainMenu::MainMenu() : Element() {
 		if (ptr && std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end()) {
 			ptr->_state = DialogState::Idle;
 			static_dialogs.push_back(ptr);
+			window_preview_animation->setActive(false);
 		}
 		closeMenu();
 		};
 	
+	setActiveForWindows();
+
 	windows->addOption(window_animations);
 	windows->addOption(window_frames);
 	windows->addOption(window_layers);
@@ -363,6 +369,36 @@ void MainMenu::setPosition(sf::Vector2i position) {
 	for (int i = 0; i < _menu_boxes.size(); i++) {
 		_menu_boxes[i]->setPosition(sf::Vector2i(position.x + x, y));
 		x = x + (int)(_menu_boxes[i]->getSize().x);
+	}
+}
+
+void MainMenu::setActiveForWindows() {
+	{
+		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(animations_panel);
+		if (ptr) {
+			window_animations->setActive(std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end());
+		}
+	}
+
+	{
+		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(frames_panel);
+		if (ptr) {
+			window_frames->setActive(std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end());
+		}
+	}
+
+	{
+		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(layers_panel);
+		if (ptr) {
+			window_layers->setActive(std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end());
+		}
+	}
+
+	{
+		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(preview_animation_panel);
+		if (ptr) {
+			window_preview_animation->setActive(std::find(static_dialogs.begin(), static_dialogs.end(), ptr) == static_dialogs.end());
+		}
 	}
 }
 

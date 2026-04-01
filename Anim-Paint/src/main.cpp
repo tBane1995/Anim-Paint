@@ -113,6 +113,7 @@ int main() {
 	static_dialogs.push_back(frames_panel);
 	static_dialogs.push_back(layers_panel);
 	static_dialogs.push_back(preview_animation_panel);
+	main_menu->setActiveForWindows();
 
 	canvas = std::make_shared<Canvas>();
 	bottom_bar = std::make_shared<BottomBar>();
@@ -151,13 +152,19 @@ int main() {
 		}
 
 		// delete old static dialogs
+		bool removeDialog = false;
 		for (int i = 0; i < static_dialogs.size(); ) {
 			if (static_dialogs[i]->_state == DialogState::ToClose) {
 				static_dialogs.erase(static_dialogs.begin() + i);
+				removeDialog = true;
 			}
 			else {
 				i++;
 			}
+		}
+
+		if (removeDialog == true) {
+			main_menu->setActiveForWindows();
 		}
 
 		if (palette && palette->_state == DialogState::ToClose) {
