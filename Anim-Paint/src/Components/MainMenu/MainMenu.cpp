@@ -275,6 +275,24 @@ MainMenu::MainMenu() : Element() {
 	select->addOption(select_none);
 	select->addOption(select_align_center);
 
+	// WINDOWS
+	windows = std::make_shared<MenuButton>(L"Windows");
+	windows->_onclick_func = [this]() {
+		hideMenu();
+		openMenuButton(windows);
+		};
+	_menu_boxes.push_back(windows);
+
+	window_animations = std::make_shared<Option>(L"Animations");
+	window_frames = std::make_shared<Option>(L"Frames");
+	window_layers = std::make_shared<Option>(L"Layers");
+	window_preview_animation= std::make_shared<Option>(L"Preview Animation");
+	
+	windows->addOption(window_animations);
+	windows->addOption(window_frames);
+	windows->addOption(window_layers);
+	windows->addOption(window_preview_animation);
+
 	// POSITIONING
 	_state = MainMenuStates::Closed;
 	_open_menu_button = nullptr;

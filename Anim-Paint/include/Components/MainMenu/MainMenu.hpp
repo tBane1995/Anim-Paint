@@ -21,6 +21,7 @@ public:
 	std::shared_ptr<MenuButton> edit;
 	std::shared_ptr<MenuButton> tools;
 	std::shared_ptr<MenuButton> select;
+	std::shared_ptr<MenuButton> windows;
 
 	// FILE
 	std::shared_ptr<OptionWithIcon> file_new;
@@ -48,6 +49,13 @@ public:
 	std::shared_ptr<Option> select_all;
 	std::shared_ptr<Option> select_none;
 	std::shared_ptr<Option> select_align_center;
+
+	// WINDOWS
+	std::shared_ptr<Option> window_animations;
+	std::shared_ptr<Option> window_frames;
+	std::shared_ptr<Option> window_layers;
+	std::shared_ptr<Option> window_preview_animation;
+
 
 	MainMenu();
 	~MainMenu();
