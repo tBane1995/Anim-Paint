@@ -4,6 +4,7 @@
 #include <filesystem>
 #include "Animation/Animation.hpp"
 #include "Controls/OptionWithIcon.hpp"
+#include "Controls/OptionWithCheckbox.hpp"
 
 enum class MainMenuStates { Opened, Closing, Closed };
 
@@ -51,6 +52,7 @@ public:
 	std::shared_ptr<Option> select_align_center;
 
 	// WINDOWS
+	std::shared_ptr<OptionWithCheckbox> canvas_repeating;
 	std::shared_ptr<Option> window_animations;
 	std::shared_ptr<Option> window_frames;
 	std::shared_ptr<Option> window_layers;

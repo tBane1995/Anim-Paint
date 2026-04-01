@@ -286,6 +286,9 @@ MainMenu::MainMenu() : Element() {
 		};
 	_menu_boxes.push_back(windows);
 
+	canvas_repeating = std::make_shared<OptionWithCheckbox>(L"Canvas repeating", getTexture(L"tex\\unchecked.png"), getTexture(L"tex\\unchecked_hover.png"));
+	canvas_repeating->addValue(getTexture(L"tex\\checked.png"), getTexture(L"tex\\checked_hover.png"));
+
 	window_animations = std::make_shared<Option>(L"Animations");
 	window_animations->_onclick_func = [this]() {
 		if (!isOpenStaticDialog(animations_panel)) {		
@@ -329,6 +332,7 @@ MainMenu::MainMenu() : Element() {
 	
 	setActiveForWindows();
 
+	windows->addOption(canvas_repeating);
 	windows->addOption(window_animations);
 	windows->addOption(window_frames);
 	windows->addOption(window_layers);
@@ -724,27 +728,27 @@ void MainMenu::handleEvent(const sf::Event& event) {
 	if (const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp) {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl)) {
 			if(kp->code == sf::Keyboard::Key::N) {
-				dialogs.push_back(std::make_shared<Dialog>(L"new file", sf::Vector2i(200, 200)));
+				file_new->_onclick_func();
 				closeMenu();
 				return;
 			}
 			else if(kp->code == sf::Keyboard::Key::S) {
-				dialogs.push_back(std::make_shared<Dialog_Save_Project>());
+				file_saveAs->_onclick_func();
 				closeMenu();
 				return;
 			}
 			else if(kp->code == sf::Keyboard::Key::O) {
-				dialogs.push_back(std::make_shared<Dialog_Open_Project>());
+				file_load->_onclick_func();
 				closeMenu();
 				return;
 			}
 			else if(kp->code == sf::Keyboard::Key::E) {
-				dialogs.push_back(std::make_shared<Dialog_Export>());
+				file_export->_onclick_func();
 				closeMenu();
 				return;
 			}
 			else if(kp->code == sf::Keyboard::Key::I) {
-				dialogs.push_back(std::make_shared<Dialog_Import>());
+				file_import->_onclick_func();
 				closeMenu();
 				return;
 			}

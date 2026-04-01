@@ -57,6 +57,13 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\cursor\\picker.png");
 	texturePaths.push_back(L"tex\\cursor\\cross.png");
 	
+	// main icons
+	texturePaths.push_back(L"tex\\unchecked.png");
+	texturePaths.push_back(L"tex\\unchecked_hover.png");
+
+	texturePaths.push_back(L"tex\\checked.png");
+	texturePaths.push_back(L"tex\\checked_hover.png");
+
 	// main menu icons
 	texturePaths.push_back(L"tex\\main_menu\\new_project.png");
 	texturePaths.push_back(L"tex\\main_menu\\open_project.png");
@@ -152,12 +159,6 @@ void loadTextures() {
 
 	texturePaths.push_back(L"tex\\tools\\frame_large.png");
 	texturePaths.push_back(L"tex\\tools\\frame_large_hover.png");
-
-	texturePaths.push_back(L"tex\\tools\\btn_unchecked.png");
-	texturePaths.push_back(L"tex\\tools\\btn_unchecked_hover.png");
-
-	texturePaths.push_back(L"tex\\tools\\btn_checked.png");
-	texturePaths.push_back(L"tex\\tools\\btn_checked_hover.png");
 
 	texturePaths.push_back(L"tex\\tools\\btn_paste.png");
 	texturePaths.push_back(L"tex\\tools\\btn_paste_hover.png");
