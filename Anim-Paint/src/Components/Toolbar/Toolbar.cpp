@@ -225,11 +225,40 @@ Toolbar::Toolbar() : Element() {
 
 	// shapes 
 	_btn_circle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\circle.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_hover.png"));
+	_btn_circle->_onclick_func = [this]() { 
+		_toolType = ToolType::Circle;
+		selectToolButton(_btn_circle);
+		};
+
 	_btn_rectangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\rectangle.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_hover.png"));
+	_btn_rectangle->_onclick_func = [this]() {
+		_toolType = ToolType::Rectangle;
+		selectToolButton(_btn_rectangle);
+		};
+
 	_btn_diamond = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\diamond.png"), getTexture(L"tex\\tools\\resizable_tools\\diamond_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\diamond_hover.png"));
+	_btn_diamond->_onclick_func = [this]() {
+		_toolType = ToolType::Diamond;
+		selectToolButton(_btn_diamond);
+		};
+	
 	_btn_pentagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\pentagon.png"), getTexture(L"tex\\tools\\resizable_tools\\pentagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\pentagon_hover.png"));
+	_btn_pentagon->_onclick_func = [this]() {
+		_toolType = ToolType::Pentagon;
+		selectToolButton(_btn_pentagon);
+		};
+
 	_btn_hexagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_hover.png"));
+	_btn_hexagon->_onclick_func = [this]() {
+		_toolType = ToolType::Hexagon;
+		selectToolButton(_btn_hexagon);
+		};
+	
 	_btn_octagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\octagon.png"), getTexture(L"tex\\tools\\resizable_tools\\octagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\octagon_hover.png"));
+	_btn_octagon->_onclick_func = [this]() {
+		_toolType = ToolType::Octagon;
+		selectToolButton(_btn_octagon);
+		};
 	
 	_shapes.clear();
 	_shapes.push_back(_btn_circle);
@@ -249,7 +278,6 @@ Toolbar::Toolbar() : Element() {
 	for (auto& btn : _shapes) {
 		btn->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
 			tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
-		btn->_onclick_func = [this, btn]() { selectToolButton(btn); };
 	}
 
 	_shapes_text = std::make_unique<sf::Text>(basicFont, L"shapes", 13);
