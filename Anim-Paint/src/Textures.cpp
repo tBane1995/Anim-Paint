@@ -199,6 +199,9 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\tools\\resizable_tools\\circle.png");
 	texturePaths.push_back(L"tex\\tools\\resizable_tools\\circle_hover.png");
 
+	texturePaths.push_back(L"tex\\tools\\resizable_tools\\triangle.png");
+	texturePaths.push_back(L"tex\\tools\\resizable_tools\\triangle_hover.png");
+
 	texturePaths.push_back(L"tex\\tools\\resizable_tools\\rectangle.png");
 	texturePaths.push_back(L"tex\\tools\\resizable_tools\\rectangle_hover.png");
 
@@ -208,8 +211,11 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\tools\\resizable_tools\\pentagon.png");
 	texturePaths.push_back(L"tex\\tools\\resizable_tools\\pentagon_hover.png");
 
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\hexagon.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\hexagon_hover.png");
+	texturePaths.push_back(L"tex\\tools\\resizable_tools\\hexagon_flat_top.png");
+	texturePaths.push_back(L"tex\\tools\\resizable_tools\\hexagon_flat_top_hover.png");
+
+	texturePaths.push_back(L"tex\\tools\\resizable_tools\\hexagon_point_top.png");
+	texturePaths.push_back(L"tex\\tools\\resizable_tools\\hexagon_point_top_hover.png");
 
 	texturePaths.push_back(L"tex\\tools\\resizable_tools\\octagon.png");
 	texturePaths.push_back(L"tex\\tools\\resizable_tools\\octagon_hover.png");

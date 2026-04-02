@@ -230,6 +230,12 @@ Toolbar::Toolbar() : Element() {
 		selectToolButton(_btn_circle);
 		};
 
+	_btn_triangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\triangle.png"), getTexture(L"tex\\tools\\resizable_tools\\triangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\triangle_hover.png"));
+	_btn_triangle->_onclick_func = [this]() {
+		_toolType = ToolType::Triangle;
+		selectToolButton(_btn_triangle);
+		};
+
 	_btn_rectangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\rectangle.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_hover.png"));
 	_btn_rectangle->_onclick_func = [this]() {
 		_toolType = ToolType::Rectangle;
@@ -248,10 +254,16 @@ Toolbar::Toolbar() : Element() {
 		selectToolButton(_btn_pentagon);
 		};
 
-	_btn_hexagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_hover.png"));
-	_btn_hexagon->_onclick_func = [this]() {
-		_toolType = ToolType::Hexagon;
-		selectToolButton(_btn_hexagon);
+	_btn_hexagon_flat_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top_hover.png"));
+	_btn_hexagon_flat_top->_onclick_func = [this]() {
+		_toolType = ToolType::HexagonFlatTop;
+		selectToolButton(_btn_hexagon_flat_top);
+		};
+	
+	_btn_hexagon_point_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top_hover.png"));
+	_btn_hexagon_point_top->_onclick_func = [this]() {
+		_toolType = ToolType::HexagonPointTop;
+		selectToolButton(_btn_hexagon_point_top);
 		};
 	
 	_btn_octagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\octagon.png"), getTexture(L"tex\\tools\\resizable_tools\\octagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\octagon_hover.png"));
@@ -262,17 +274,21 @@ Toolbar::Toolbar() : Element() {
 	
 	_shapes.clear();
 	_shapes.push_back(_btn_circle);
+	_shapes.push_back(_btn_triangle);
 	_shapes.push_back(_btn_rectangle);
 	_shapes.push_back(_btn_diamond);
 	_shapes.push_back(_btn_pentagon);
-	_shapes.push_back(_btn_hexagon);
+	_shapes.push_back(_btn_hexagon_flat_top);
+	_shapes.push_back(_btn_hexagon_point_top);
 	_shapes.push_back(_btn_octagon);
 
 	_btn_circle->setTooltip(L"Circle Shape Tool", L"Draw a circle on the canvas using the primary color and fill it with the secondary color");
+	_btn_triangle->setTooltip(L"Triangle Shape Tool", L"Draw a triangle on the canvas using the primary color and fill it with the secondary color");
 	_btn_rectangle->setTooltip(L"Rectangle Shape Tool", L"Draw a rectangle on the canvas using the primary color and fill it with the secondary color");
 	_btn_diamond->setTooltip(L"Diamond Shape Tool", L"Draw a diamond on the canvas using the primary color and fill it with the secondary color");
 	_btn_pentagon->setTooltip(L"Pentagon Shape Tool", L"Draw a pentagon on the canvas using the primary color and fill it with the secondary color");
-	_btn_hexagon->setTooltip(L"Hexagon Shape Tool", L"Draw a hexagon on the canvas using the primary color and fill it with the secondary color");
+	_btn_hexagon_flat_top->setTooltip(L"Hexagon Shape Tool", L"Draw a hexagon with flat top on the canvas using the primary color and fill it with the secondary color");
+	_btn_hexagon_point_top->setTooltip(L"Hexagon Shape Tool", L"Draw a hexagon with point top on the canvas using the primary color and fill it with the secondary color");
 	_btn_octagon->setTooltip(L"Octagon Shape Tool", L"Draw an octagon on the canvas using the primary color and fill it with the secondary color");
 
 	for (auto& btn : _shapes) {
