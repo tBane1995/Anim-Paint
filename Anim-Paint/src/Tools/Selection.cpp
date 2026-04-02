@@ -339,35 +339,6 @@ Selection::~Selection() {
 
 }
 
-void Selection::shiftOriginIfNeeded(sf::Vector2i& point)
-{
-	sf::Vector2i shift(0, 0);
-	if (point.x < 0) { shift.x = point.x; point.x = 0; }
-	if (point.y < 0) { shift.y = point.y; point.y = 0; }
-
-	if (shift.x != 0 || shift.y != 0) {
-
-		_outlineOffset += shift;
-
-		for (auto& p : _points)
-			p -= shift;
-	}
-}
-
-void Selection::addPoint(sf::Vector2i point) {
-	point -= _outlineOffset;
-	shiftOriginIfNeeded(point);
-
-	if (_points.empty()) {
-		_points.push_back(point);
-		return;
-	}
-
-	if (_points.back() == point) return;
-
-	_points.push_back(point);
-}
-
 void Selection::unselect() {
 
 	paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *selection->_resizedImage);
@@ -666,51 +637,6 @@ void Selection::generateOutline(bool selectionComplete) {
 
 }
 
-bool Selection::pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b)
-{
-	int cross = 1LL * (b.x - a.x) * (p.y - a.y) - 1LL * (b.y - a.y) * (p.x - a.x);
-
-	if (cross != 0)
-		return false;
-
-	int minx = std::min(a.x, b.x);
-	int maxx = std::max(a.x, b.x);
-	int miny = std::min(a.y, b.y);
-	int maxy = std::max(a.y, b.y);
-
-	return(p.x >= minx && p.x <= maxx && p.y >= miny && p.y <= maxy);
-}
-
-bool Selection::isPointInPolygon(sf::Vector2i p, std::vector < sf::Vector2i >& poly)
-{
-	size_t n = poly.size();
-	if (n < 3)
-		return false;
-
-	bool inside = false;
-	for (size_t i = 0, j = n - 1; i < n; j = i++) {
-		sf::Vector2i& a = poly[j];
-		sf::Vector2i& b = poly[i];
-
-		if (pointOnSegment(p, a, b))
-			return true;
-
-		bool crossesY = ((a.y > p.y) != (b.y > p.y));
-		if (!crossesY)
-			continue;
-
-		int dy = b.y - a.y;
-		int lhs = (p.x - a.x) * dy;
-		int rhs = (b.x - a.x) * (p.y - a.y);
-
-		bool hit = (dy > 0) ? (lhs < rhs)
-			: (lhs > rhs);
-		if (hit) inside = !inside;
-
-	}
-	return inside;
-}
-
 void Selection::generateMask()
 {
 	if (_rect.size.x <= 1 || _rect.size.y <= 1) return;
@@ -751,44 +677,6 @@ void Selection::generateResizedMask() {
 	}
 }
 
-void Selection::generateEdgePoints() {
-
-	float scale = canvas->_zoom * canvas->_zoom_delta;
-
-	sf::Vector2f rectSize;
-	rectSize.x = float(_resizedRect.size.x) * scale;
-	rectSize.y = float(_resizedRect.size.y) * scale;
-
-	sf::Vector2f rectPos;
-	rectPos.x = float(canvas->_position.x) + float(_resizedRect.position.x) * scale;
-	rectPos.y = float(canvas->_position.y) + float(_resizedRect.position.y) * scale;
-
-	float m = (float)(selection_border_width);
-
-	_edgePoints.clear();
-	_point_left_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(-m)));
-	_point_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x/2), (int)(-m)));
-	_point_right_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x+m), (int)(-m)));
-
-	_point_left = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y / 2)));
-	_point_right = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x+m), (int)(rectSize.y / 2)));
-
-	_point_left_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y+m)));
-	_point_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(rectSize.y+m)));
-	_point_right_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x+m), (int)(rectSize.y+m)));
-	
-	_edgePoints.push_back(_point_left_top);
-	_edgePoints.push_back(_point_top);
-	_edgePoints.push_back(_point_right_top);
-	_edgePoints.push_back(_point_left);
-	_edgePoints.push_back(_point_right);
-	_edgePoints.push_back(_point_left_bottom);
-	_edgePoints.push_back(_point_bottom);
-	_edgePoints.push_back(_point_right_bottom);
-
-
-
-}
 
 void Selection::resizeRect() {
 
@@ -883,27 +771,6 @@ void Selection::resizeImage() {
 
 }
 
-void Selection::normalize(sf::IntRect newRect) {
-	// This function adjusts the selection points and images to fit the new rectangle after resizing.
-	_resizedRect = newRect;
-
-	float scaleX = float(_resizedRect.size.x-1) / float(_rect.size.x-1);
-	float scaleY = float(_resizedRect.size.y-1) / float(_rect.size.y-1);
-
-	for (auto& p : selection->_points) {
-		p.x = int(p.x * scaleX);
-		p.y = int(p.y * scaleY);
-	}
-
-	selection->_outlineOffset.x = int(selection->_outlineOffset.x * scaleX);
-	selection->_outlineOffset.y = int(selection->_outlineOffset.y * scaleY);
-
-	selection->_rect = selection->_resizedRect;
-	selection->generateRect();
-
-	*_maskImage = *selection->_resizedMaskImage;
-	*_image = *selection->_resizedImage;
-}
 
 void Selection::drawImage(bool useMask) {
 	if (!_image) return;
@@ -1118,6 +985,140 @@ void Selection::drawEdgePoints() {
 	for (auto& point : _edgePoints) {
 		point->draw();
 	}
+}
+
+void Selection::shiftOriginIfNeeded(sf::Vector2i& point)
+{
+	sf::Vector2i shift(0, 0);
+	if (point.x < 0) { shift.x = point.x; point.x = 0; }
+	if (point.y < 0) { shift.y = point.y; point.y = 0; }
+
+	if (shift.x != 0 || shift.y != 0) {
+
+		_outlineOffset += shift;
+
+		for (auto& p : _points)
+			p -= shift;
+	}
+}
+
+
+void Selection::addPoint(sf::Vector2i point) {
+	point -= _outlineOffset;
+	shiftOriginIfNeeded(point);
+
+	if (_points.empty()) {
+		_points.push_back(point);
+		return;
+	}
+
+	if (_points.back() == point) return;
+
+	_points.push_back(point);
+}
+
+bool Selection::pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b)
+{
+	int cross = 1LL * (b.x - a.x) * (p.y - a.y) - 1LL * (b.y - a.y) * (p.x - a.x);
+
+	if (cross != 0)
+		return false;
+
+	int minx = std::min(a.x, b.x);
+	int maxx = std::max(a.x, b.x);
+	int miny = std::min(a.y, b.y);
+	int maxy = std::max(a.y, b.y);
+
+	return(p.x >= minx && p.x <= maxx && p.y >= miny && p.y <= maxy);
+}
+
+bool Selection::isPointInPolygon(sf::Vector2i p, std::vector < sf::Vector2i >& poly)
+{
+	size_t n = poly.size();
+	if (n < 3)
+		return false;
+
+	bool inside = false;
+	for (size_t i = 0, j = n - 1; i < n; j = i++) {
+		sf::Vector2i& a = poly[j];
+		sf::Vector2i& b = poly[i];
+
+		if (pointOnSegment(p, a, b))
+			return true;
+
+		bool crossesY = ((a.y > p.y) != (b.y > p.y));
+		if (!crossesY)
+			continue;
+
+		int dy = b.y - a.y;
+		int lhs = (p.x - a.x) * dy;
+		int rhs = (b.x - a.x) * (p.y - a.y);
+
+		bool hit = (dy > 0) ? (lhs < rhs)
+			: (lhs > rhs);
+		if (hit) inside = !inside;
+
+	}
+	return inside;
+}
+
+void Selection::generateEdgePoints() {
+
+	float scale = canvas->_zoom * canvas->_zoom_delta;
+
+	sf::Vector2f rectSize;
+	rectSize.x = float(_resizedRect.size.x) * scale;
+	rectSize.y = float(_resizedRect.size.y) * scale;
+
+	sf::Vector2f rectPos;
+	rectPos.x = float(canvas->_position.x) + float(_resizedRect.position.x) * scale;
+	rectPos.y = float(canvas->_position.y) + float(_resizedRect.position.y) * scale;
+
+	float m = (float)(selection_border_width);
+
+	_edgePoints.clear();
+	_point_left_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(-m)));
+	_point_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(-m)));
+	_point_right_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(-m)));
+
+	_point_left = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y / 2)));
+	_point_right = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y / 2)));
+
+	_point_left_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y + m)));
+	_point_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(rectSize.y + m)));
+	_point_right_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y + m)));
+
+	_edgePoints.push_back(_point_left_top);
+	_edgePoints.push_back(_point_top);
+	_edgePoints.push_back(_point_right_top);
+	_edgePoints.push_back(_point_left);
+	_edgePoints.push_back(_point_right);
+	_edgePoints.push_back(_point_left_bottom);
+	_edgePoints.push_back(_point_bottom);
+	_edgePoints.push_back(_point_right_bottom);
+
+}
+
+void Selection::normalize(sf::IntRect newRect) {
+	// This function adjusts the selection points and images to fit the new rectangle after resizing.
+	_resizedRect = newRect;
+
+	float scaleX = float(_resizedRect.size.x - 1) / float(_rect.size.x - 1);
+	float scaleY = float(_resizedRect.size.y - 1) / float(_rect.size.y - 1);
+
+	for (auto& p : selection->_points) {
+		p.x = int(p.x * scaleX);
+		p.y = int(p.y * scaleY);
+	}
+
+	selection->_outlineOffset.x = int(selection->_outlineOffset.x * scaleX);
+	selection->_outlineOffset.y = int(selection->_outlineOffset.y * scaleY);
+
+	selection->_rect = selection->_resizedRect;
+	selection->generateRect();
+
+	*_maskImage = *selection->_resizedMaskImage;
+	*_image = *selection->_resizedImage;
 }
 
 void Selection::cursorHover() {

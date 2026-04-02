@@ -46,7 +46,7 @@ public:
 	std::shared_ptr<sf::Image> _resizedImage;
 
 	// edge points
-	std::vector<std::shared_ptr<EdgePoint>> _edgePoints;	// points use to resize of canvas
+	std::vector<std::shared_ptr<EdgePoint>> _edgePoints;
 	std::shared_ptr<EdgePoint> _point_left_top;
 	std::shared_ptr<EdgePoint> _point_top;
 	std::shared_ptr<EdgePoint> _point_right_top;
@@ -64,8 +64,7 @@ public:
 	Selection();
 	~Selection();
 
-	void shiftOriginIfNeeded(sf::Vector2i& point);
-	void addPoint(sf::Vector2i point);
+	
 	void unselect();
 	void selectAll();
 	void generateRect();
@@ -75,19 +74,22 @@ public:
 	bool paste(sf::Image& canvas, sf::Color emptyColor, sf::Image image);
 	void cut(sf::Image& canvas, sf::Color emptyColor);
 	void generateOutline(bool selectionComplete = false);
-	bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
-	bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
 	void generateMask();
 	void generateResizedMask();
-	void generateEdgePoints();
 	void resizeRect();
 	void resizeImage();
-	void normalize(sf::IntRect newRectSize);
 	void drawImage(bool useMask = false);
 	void drawResizedImage(bool useMask = false);
 	void drawOutline();
 	void drawRect();
 	void drawEdgePoints();
+
+	void shiftOriginIfNeeded(sf::Vector2i& point);
+	void addPoint(sf::Vector2i point);
+	void normalize(sf::IntRect newRectSize);
+	bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
+	bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
+	void generateEdgePoints();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

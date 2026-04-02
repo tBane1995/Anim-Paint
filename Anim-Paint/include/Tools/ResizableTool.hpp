@@ -1,0 +1,47 @@
+﻿#pragma once
+#include "SFML/Graphics.hpp"
+#include "Element.hpp"
+#include "Controls/EdgePoint.hpp"
+
+
+enum class ResizableToolState { None, Selecting, Selected, Moving, Resizing };
+
+class ResizableTool : public Element {
+public:
+	ResizableToolState _state;
+
+	sf::IntRect _rect;
+	std::vector<sf::Vector2i> _points;
+
+	sf::Vector2i _offset;	// to move
+	sf::Time _moveTime;		// to limit selection move
+
+	// edge points
+	std::vector<std::shared_ptr<EdgePoint>> _edgePoints;
+	std::shared_ptr<EdgePoint> _point_left_top;
+	std::shared_ptr<EdgePoint> _point_top;
+	std::shared_ptr<EdgePoint> _point_right_top;
+	std::shared_ptr<EdgePoint> _point_left;
+	std::shared_ptr<EdgePoint> _point_right;
+	std::shared_ptr<EdgePoint> _point_left_bottom;
+	std::shared_ptr<EdgePoint> _point_bottom;
+	std::shared_ptr<EdgePoint> _point_right_bottom;
+	std::shared_ptr<EdgePoint> _hoveredEdgePoint;
+	std::shared_ptr<EdgePoint> _clickedEdgePoint;
+	sf::Vector2i _orginalEdgePointPosition;
+
+	ResizableTool();
+	~ResizableTool();
+
+	void addPoint(sf::Vector2i point);
+	bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
+	bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
+	void generateEdgePoints();
+
+	void cursorHover();
+	void handleEvent(const sf::Event& event);
+	void update();
+	void draw();
+};
+
+extern std::shared_ptr<ResizableTool> resizableTool;

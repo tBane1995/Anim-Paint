@@ -38,6 +38,7 @@
 #include "Components/Tooltip.hpp"
 #include "Components/Canvas.hpp"
 
+#include "Tools/ResizableTool.hpp"
 #include "Tools/Selection.hpp"
 #include "Tools/Brush.hpp"
 
@@ -120,6 +121,7 @@ int main() {
 
 	brush = std::make_shared<Brush>(2);
 	selection = std::make_shared<Selection>();
+	resizableTool = std::make_shared<ResizableTool>();
 
 	history = std::make_shared<History>();
 	history->saveStep();
@@ -240,6 +242,7 @@ int main() {
 
 			toolbar->handleEvent(*event);
 			selection->handleEvent(*event);
+			resizableTool->handleEvent(*event);
 			canvas->handleEvent(*event);
 			
 			for (auto it = static_dialogs.begin(); it != static_dialogs.end(); it+=1) {
@@ -271,6 +274,7 @@ int main() {
 		window->clear(sf::Color(56, 56, 56));
 		canvas->draw();
 		selection->draw();
+		resizableTool->draw();
 		cursor->draw();
 
 		for (auto it = static_dialogs.end(); it != static_dialogs.begin(); ) {
