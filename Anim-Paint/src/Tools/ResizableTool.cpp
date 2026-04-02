@@ -3,6 +3,7 @@
 #include "Theme.hpp"
 #include "Components/Canvas.hpp"
 #include "Cursor.hpp"
+#include "WorldToTileConverter.hpp"
 
 ResizableTool::ResizableTool() : Element() {
 	_state = ResizableToolState::None;
@@ -120,12 +121,13 @@ void ResizableTool::cursorHover() {
 
 void ResizableTool::handleEvent(const sf::Event& event) {
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		_rect.position = cursor->_position;
+		_rect.position = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 		_rect.size = sf::Vector2i(0, 0);
 	}
 
 	if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv) {
-		_rect.size = cursor->_position - _rect.position;
+		sf::Vector2i currentTile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+		_rect.size = currentTile - _rect.position;
 	}
 
 }
@@ -152,9 +154,20 @@ void ResizableTool::draw() {
 		return;
 
 	
-	
-	sf::RectangleShape rect(sf::Vector2f(_rect.size));
-	rect.setPosition(sf::Vector2f(_rect.position));
+	float scale = canvas->_zoom * canvas->_zoom_delta;
+
+	sf::Vector2f rectSize;
+	rectSize.x = float(_rect.size.x) * scale;
+	rectSize.y = float(_rect.size.y) * scale;
+
+	sf::RectangleShape rect(rectSize);
+
+	sf::Vector2f rectPos;
+	rectPos.x = float(canvas->_position.x) + float(_rect.position.x) * scale;
+	rectPos.y = float(canvas->_position.y) + float(_rect.position.y) * scale;
+	rect.setPosition(rectPos);
+
+	rect.setPosition(sf::Vector2f(rectPos));
 	rect.setFillColor(sf::Color::Red);
 
 	window->draw(rect);
