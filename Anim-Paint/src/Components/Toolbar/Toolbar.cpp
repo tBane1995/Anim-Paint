@@ -282,14 +282,14 @@ Toolbar::Toolbar() : Element() {
 	_shapes.push_back(_btn_hexagon_point_top);
 	_shapes.push_back(_btn_octagon);
 
-	_btn_circle->setTooltip(L"Circle Shape Tool", L"Draw a circle on the canvas using the primary color and fill it with the secondary color");
-	_btn_triangle->setTooltip(L"Triangle Shape Tool", L"Draw a triangle on the canvas using the primary color and fill it with the secondary color");
-	_btn_rectangle->setTooltip(L"Rectangle Shape Tool", L"Draw a rectangle on the canvas using the primary color and fill it with the secondary color");
-	_btn_diamond->setTooltip(L"Diamond Shape Tool", L"Draw a diamond on the canvas using the primary color and fill it with the secondary color");
-	_btn_pentagon->setTooltip(L"Pentagon Shape Tool", L"Draw a pentagon on the canvas using the primary color and fill it with the secondary color");
-	_btn_hexagon_flat_top->setTooltip(L"Hexagon Shape Tool", L"Draw a hexagon with flat top on the canvas using the primary color and fill it with the secondary color");
-	_btn_hexagon_point_top->setTooltip(L"Hexagon Shape Tool", L"Draw a hexagon with point top on the canvas using the primary color and fill it with the secondary color");
-	_btn_octagon->setTooltip(L"Octagon Shape Tool", L"Draw an octagon on the canvas using the primary color and fill it with the secondary color");
+	_btn_circle->setTooltip(L"Circle Tool", L"Draw a circle filled with the secondary color using the primary color");
+	_btn_triangle->setTooltip(L"Triangle Tool", L"Draw a triangle filled with the secondary color using the primary color");
+	_btn_rectangle->setTooltip(L"Rectangle Tool", L"Draw a rectangle filled with the secondary color using the primary color");
+	_btn_diamond->setTooltip(L"Diamond Tool", L"Draw a diamond filled with the secondary color using the primary color");
+	_btn_pentagon->setTooltip(L"Pentagon Tool", L"Draw a pentagon filled with the secondary color using the primary color");
+	_btn_hexagon_flat_top->setTooltip(L"Hexagon (Flat Top) Tool", L"Draw a flat-top hexagon filled with the secondary color using the primary color");
+	_btn_hexagon_point_top->setTooltip(L"Hexagon (Point Top) Tool", L"Draw a point-top hexagon filled with the secondary color using the primary color");
+	_btn_octagon->setTooltip(L"Octagon Tool", L"Draw an octagon filled with the secondary color using the primary color");
 
 	for (auto& btn : _shapes) {
 		btn->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
