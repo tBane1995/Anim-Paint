@@ -60,7 +60,7 @@ FramesPanel::FramesPanel()
 
 	_add_frame->_onclick_func = [this]() {
 		if (getCurrentAnimation()->getFramesCount() < maxFramesCount) {
-			getCurrentAnimation()->addFrame();
+			getCurrentAnimation()->addEmptyFrame(canvas->_size);
 			getCurrentAnimation()->nextFrame();
 			updateText();
 			layers_panel->loadLayersFromCurrentFrame();
