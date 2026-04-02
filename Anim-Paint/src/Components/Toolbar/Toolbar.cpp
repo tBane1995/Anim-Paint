@@ -175,8 +175,6 @@ Toolbar::Toolbar() : Element() {
 
 	// tools
 	_btn_brush = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
-	_btn_brush->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_brush->_onclick_func = [this]() {
 		_toolType = ToolType::Brush;
 		brush->setBrushType(BrushType::Circle);
@@ -185,8 +183,6 @@ Toolbar::Toolbar() : Element() {
 	_btn_brush->setTooltip(L"Brush Tool", L"Draw on the canvas using the primary color with LMB or the secondary color with RMB");
 
 	_btn_picker = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_picker.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"));
-	_btn_picker->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_picker->_onclick_func = [this]() {
 		_toolType = ToolType::Picker;
 		brush->setBrushType(BrushType::Circle);
@@ -195,8 +191,6 @@ Toolbar::Toolbar() : Element() {
 	_btn_picker->setTooltip(L"Color Picker Tool", L"Pick a color from the canvas and set it as the active color");
 
 	_btn_fill = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"));
-	_btn_fill->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color, 
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_fill->_onclick_func = [this]() {
 		_toolType = ToolType::Fill;
 		selectToolButton(_btn_fill);
@@ -204,8 +198,6 @@ Toolbar::Toolbar() : Element() {
 	_btn_fill->setTooltip(L"Fill Tool", L"Fill an area of the canvas using the primary color with LMB or the secondary color with RMB");
 
 	_btn_eraser = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"));
-	_btn_eraser->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
-		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_eraser->_onclick_func = [this]() {
 		_toolType = ToolType::Eraser;
 		brush->setBrushType(BrushType::Square);
@@ -219,10 +211,49 @@ Toolbar::Toolbar() : Element() {
 	_tools.push_back(_btn_fill);
 	_tools.push_back(_btn_eraser);
 
+	for(auto& btn : _tools) {
+		btn->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
+			tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
+	}
+
 	_tools_text = std::make_unique<sf::Text>(basicFont, L"tools", 13);
 	_tools_text->setFillColor(tools_text_color);
 
 	_toolType = ToolType::Brush;
+
+	_separators.push_back(std::make_shared<Separator>());
+
+	// shapes 
+	_btn_circle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\circle.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_hover.png"));
+	_btn_rectangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\rectangle.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_hover.png"));
+	_btn_diamond = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\diamond.png"), getTexture(L"tex\\tools\\resizable_tools\\diamond_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\diamond_hover.png"));
+	_btn_pentagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\pentagon.png"), getTexture(L"tex\\tools\\resizable_tools\\pentagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\pentagon_hover.png"));
+	_btn_hexagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_hover.png"));
+	_btn_octagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\octagon.png"), getTexture(L"tex\\tools\\resizable_tools\\octagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\octagon_hover.png"));
+	
+	_shapes.clear();
+	_shapes.push_back(_btn_circle);
+	_shapes.push_back(_btn_rectangle);
+	_shapes.push_back(_btn_diamond);
+	_shapes.push_back(_btn_pentagon);
+	_shapes.push_back(_btn_hexagon);
+	_shapes.push_back(_btn_octagon);
+
+	_btn_circle->setTooltip(L"Circle Shape Tool", L"Draw a circle on the canvas using the primary color and fill it with the secondary color");
+	_btn_rectangle->setTooltip(L"Rectangle Shape Tool", L"Draw a rectangle on the canvas using the primary color and fill it with the secondary color");
+	_btn_diamond->setTooltip(L"Diamond Shape Tool", L"Draw a diamond on the canvas using the primary color and fill it with the secondary color");
+	_btn_pentagon->setTooltip(L"Pentagon Shape Tool", L"Draw a pentagon on the canvas using the primary color and fill it with the secondary color");
+	_btn_hexagon->setTooltip(L"Hexagon Shape Tool", L"Draw a hexagon on the canvas using the primary color and fill it with the secondary color");
+	_btn_octagon->setTooltip(L"Octagon Shape Tool", L"Draw an octagon on the canvas using the primary color and fill it with the secondary color");
+
+	for (auto& btn : _shapes) {
+		btn->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
+			tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
+		btn->_onclick_func = [this, btn]() { selectToolButton(btn); };
+	}
+
+	_shapes_text = std::make_unique<sf::Text>(basicFont, L"shapes", 13);
+	_shapes_text->setFillColor(tools_text_color);
 
 	_separators.push_back(std::make_shared<Separator>());
 
@@ -412,7 +443,6 @@ void Toolbar::setPosition(sf::Vector2i position) {
 
 	_clipboard_text->setPosition(sf::Vector2f(x / 2 - _clipboard_text->getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4));
 
-	// first separator
 	_separators[0]->setPosition(sf::Vector2i(x, menu_height));
 	x += _separators[0]->getSize().x;
 
@@ -430,9 +460,26 @@ void Toolbar::setPosition(sf::Vector2i position) {
 
 	_tools_text->setPosition(sf::Vector2f((x + old_x) / 2 - _tools_text->getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4));
 
-	// second separator
 	_separators[1]->setPosition(sf::Vector2i(x, menu_height));
 	x += _separators[1]->getSize().x;
+
+	// shapes
+	old_x = x;
+	y = menu_height + 4;
+
+	x += 2;
+	for (int i = 0; i < _shapes.size()/2; i += 1) {
+		_shapes[i]->setPosition(sf::Vector2i(x, y));
+		_shapes[_shapes.size()/2 + i]->setPosition(sf::Vector2i(x, y + 32));
+		x += 32;
+	}
+
+	x += 2;
+
+	_shapes_text->setPosition(sf::Vector2f((x + old_x) / 2 - _shapes_text->getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4));
+
+	_separators[2]->setPosition(sf::Vector2i(x, menu_height));
+	x += _separators[2]->getSize().x;
 
 	// sizes
 	old_x = x;
@@ -444,8 +491,8 @@ void Toolbar::setPosition(sf::Vector2i position) {
 
 	_sizes_text->setPosition(sf::Vector2f((x + old_x) / 2 - _sizes_text->getGlobalBounds().size.x / 2.0f, menu_height + tools_height - basicFont.getLineSpacing(14) - 4));
 
-	_separators[2]->setPosition(sf::Vector2i(x, menu_height));
-	x += _separators[2]->getSize().x;
+	_separators[3]->setPosition(sf::Vector2i(x, menu_height));
+	x += _separators[3]->getSize().x;
 
 	// first main color
 	y = menu_height + 4;
@@ -467,9 +514,8 @@ void Toolbar::setPosition(sf::Vector2i position) {
 
 	x += 48 + 4;
 
-	// third separator
-	_separators[3]->setPosition(sf::Vector2i(x, menu_height));
-	x += _separators[3]->getSize().x;
+	_separators[4]->setPosition(sf::Vector2i(x, menu_height));
+	x += _separators[4]->getSize().x;
 
 	// colors
 	y = menu_height + 4;
@@ -543,6 +589,9 @@ void Toolbar::cursorHover() {
 	for (auto& tool : _tools)
 		tool->cursorHover();
 
+	for (auto& shape : _shapes)
+		shape->cursorHover();
+
 	for (auto& tool : _sizes)
 		tool->cursorHover();
 
@@ -604,6 +653,9 @@ void Toolbar::handleEvent(const sf::Event& event) {
 	for (auto& tool : _tools)
 		tool->handleEvent(event);
 
+	for (auto& shape : _shapes)
+		shape->handleEvent(event);
+
 	for (auto& tool : _sizes)
 		tool->handleEvent(event);
 
@@ -622,6 +674,9 @@ void Toolbar::update() {
 
 	for (auto& tool : _tools)
 		tool->update();
+
+	for (auto& shape : _shapes)
+		shape->update();
 
 	for (auto& tool : _sizes)
 		tool->update();
@@ -653,6 +708,7 @@ void Toolbar::draw() {
 	window->draw(rect);
 	window->draw(*_clipboard_text);
 	window->draw(*_tools_text);
+	window->draw(*_shapes_text);
 	window->draw(*_sizes_text);
 	window->draw(*_first_color_text_col);
 	window->draw(*_first_color_text_val);
@@ -661,6 +717,7 @@ void Toolbar::draw() {
 	window->draw(*_colors_text);
 	
 	for (auto& tool : _tools) tool->draw();
+	for (auto& shape : _shapes) shape->draw();
 	for (auto size : _sizes) size->draw();
 	_first_color->draw();
 	_second_color->draw();

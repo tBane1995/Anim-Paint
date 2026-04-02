@@ -37,6 +37,15 @@ public:
 	std::shared_ptr<ButtonWithSprite> _btn_fill;
 	std::shared_ptr<ButtonWithSprite> _btn_eraser;
 
+	std::vector<std::shared_ptr<ButtonWithSprite>> _shapes;
+	std::unique_ptr<sf::Text> _shapes_text;
+	std::shared_ptr<ButtonWithSprite> _btn_circle;
+	std::shared_ptr<ButtonWithSprite> _btn_rectangle;
+	std::shared_ptr<ButtonWithSprite> _btn_diamond;
+	std::shared_ptr<ButtonWithSprite> _btn_pentagon;
+	std::shared_ptr<ButtonWithSprite> _btn_hexagon;
+	std::shared_ptr<ButtonWithSprite> _btn_octagon;
+
 	std::vector<std::shared_ptr<ButtonWithSprite>> _sizes;
 	std::unique_ptr<sf::Text> _sizes_text;
 	std::shared_ptr<ButtonWithSprite> _size_decrease;
