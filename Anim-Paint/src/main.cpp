@@ -269,6 +269,7 @@ int main() {
 		
 		// update
 		selection->update();
+		resizableTool->update();
 		
 		// render
 		window->clear(sf::Color(56, 56, 56));

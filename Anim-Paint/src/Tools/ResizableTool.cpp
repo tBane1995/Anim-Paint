@@ -185,6 +185,33 @@ void ResizableTool::generateEdgePoints() {
 
 }
 
+void ResizableTool::setPosition(sf::Vector2i position) {
+	_rect.position = position;
+
+	float scale = canvas->_zoom * canvas->_zoom_delta;
+
+	sf::Vector2f rectSize;
+	rectSize.x = float(_rect.size.x) * scale;
+	rectSize.y = float(_rect.size.y) * scale;
+
+	sf::Vector2f rectPos;
+	rectPos.x = float(canvas->_position.x) + float(_rect.position.x) * scale;
+	rectPos.y = float(canvas->_position.y) + float(_rect.position.y) * scale;
+
+	float m = (float)(selection_border_width);
+
+	_edgePoints.clear();
+	_point_left_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(-m)));
+	_point_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(-m)));
+	_point_right_top = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(-m)));
+
+	_point_left = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y / 2)));
+	_point_right = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y / 2)));
+
+	_point_left_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y + m)));
+	_point_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(rectSize.y + m)));
+	_point_right_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y + m)));
+}
 
 void ResizableTool::drawRect() {
 	if (!
@@ -294,7 +321,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 }
 
 void ResizableTool::update() {
-
+	
 }
 
 void ResizableTool::draw() {

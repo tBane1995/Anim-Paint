@@ -88,6 +88,7 @@ public:
 	void generateRect();
 	void generateOutline(bool selectionComplete = false);
 	void generateEdgePoints();
+	void setPosition(sf::Vector2i position);
 
 	void drawRect();
 	void drawOutline();

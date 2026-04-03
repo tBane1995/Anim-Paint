@@ -1039,6 +1039,46 @@ void Selection::generateEdgePoints() {
 
 }
 
+void Selection::setPosition(sf::Vector2i position) {
+
+	if (_state == SelectionState::None)
+		return;
+
+	sf::Vector2i delta = position - _rect.position;
+
+	_rect.position += delta;
+	_resizedRect.position += delta;
+
+	_outlineOffset += delta;
+
+	for (auto& p : _edgePoints) {
+		p->setPosition(p->getPosition() + delta);
+	}
+
+	float scale = canvas->_zoom * canvas->_zoom_delta;
+
+	sf::Vector2f rectSize;
+	rectSize.x = float(_resizedRect.size.x) * scale;
+	rectSize.y = float(_resizedRect.size.y) * scale;
+
+	sf::Vector2f rectPos;
+	rectPos.x = float(canvas->_position.x) + float(_resizedRect.position.x) * scale;
+	rectPos.y = float(canvas->_position.y) + float(_resizedRect.position.y) * scale;
+
+	float m = (float)(selection_border_width);
+
+	_point_left_top->setPosition(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(-m)));
+	_point_top->setPosition(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(-m)));
+	_point_right_top->setPosition(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(-m)));
+
+	_point_left->setPosition(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y / 2)));
+	_point_right->setPosition(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y / 2)));
+
+	_point_left_bottom->setPosition(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y + m)));
+	_point_bottom->setPosition(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(rectSize.y + m)));
+	_point_right_bottom->setPosition(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y + m)));
+}
+
 void Selection::normalize(sf::IntRect newRect) {
 	// This function adjusts the selection points and images to fit the new rectangle after resizing.
 	_resizedRect = newRect;

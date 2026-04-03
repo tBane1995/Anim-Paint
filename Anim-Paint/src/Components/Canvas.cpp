@@ -7,6 +7,7 @@
 #include "WorldToTileConverter.hpp"
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Tools/Selection.hpp"
+#include "Tools/ResizableTool.hpp"
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Dialogs/Dialog.hpp"
 #include "DebugLog.hpp"
@@ -138,6 +139,10 @@ void Canvas::setPosition(sf::Vector2i position) {
 
 	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == SelectionState::Selected) {
 		selection->generateEdgePoints();
+	}
+
+	if(resizableTool && resizableTool->_state == ResizableToolState::Selected) {
+		resizableTool->generateEdgePoints();
 	}
 }
 
