@@ -341,11 +341,11 @@ Selection::~Selection() {
 
 void Selection::unselect() {
 
-	paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *selection->_resizedImage);
+	paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *_resizedImage);
 	_points.clear();
 	_outlineOffset = sf::Vector2i(0, 0);
 	generateRect();
-	_resizedRect = selection->_rect;
+	_resizedRect = _rect;
 	_image = nullptr;
 	_maskImage = nullptr;
 	_resizedImage = nullptr;
@@ -366,10 +366,10 @@ void Selection::selectAll() {
 	int width = anim->getCurrentLayer()->_image.getSize().x - 1;
 	int height = anim->getCurrentLayer()->_image.getSize().y - 1;
 
-	selection->addPoint(sf::Vector2i(0, 0));
-	selection->addPoint(sf::Vector2i(width, 0));
-	selection->addPoint(sf::Vector2i(width, height));
-	selection->addPoint(sf::Vector2i(0, height));
+	addPoint(sf::Vector2i(0, 0));
+	addPoint(sf::Vector2i(width, 0));
+	addPoint(sf::Vector2i(width, height));
+	addPoint(sf::Vector2i(0, height));
 
 	generateRect();
 
@@ -532,9 +532,9 @@ bool Selection::paste(sf::Image& canvas, sf::Color emptyColor, sf::Image image)
 	addPoint(sf::Vector2i(_image->getSize().x - 1, _image->getSize().y - 1));
 	addPoint(sf::Vector2i(_image->getSize().x - 1, 0));
 
-	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(selection->_image->getSize()));
+	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(_image->getSize()));
 	_outlineOffset = sf::Vector2i(0, 0);
-	_resizedRect = selection->_rect;
+	_resizedRect = _rect;
 	generateRect();
 	generateEdgePoints();
 	generateMask();
@@ -1046,27 +1046,23 @@ void Selection::normalize(sf::IntRect newRect) {
 	float scaleX = float(_resizedRect.size.x - 1) / float(_rect.size.x - 1);
 	float scaleY = float(_resizedRect.size.y - 1) / float(_rect.size.y - 1);
 
-	for (auto& p : selection->_points) {
+	for (auto& p : _points) {
 		p.x = int(p.x * scaleX);
 		p.y = int(p.y * scaleY);
 	}
 
-	selection->_outlineOffset.x = int(selection->_outlineOffset.x * scaleX);
-	selection->_outlineOffset.y = int(selection->_outlineOffset.y * scaleY);
+	_outlineOffset.x = int(_outlineOffset.x * scaleX);
+	_outlineOffset.y = int(_outlineOffset.y * scaleY);
 
-	selection->_rect = selection->_resizedRect;
-	selection->generateRect();
+	_rect = _resizedRect;
+	generateRect();
 
-	*_maskImage = *selection->_resizedMaskImage;
-	*_image = *selection->_resizedImage;
+	*_maskImage = *_resizedMaskImage;
+	*_image = *_resizedImage;
 }
 
 void Selection::drawRect() {
-	if (!
-		(selection->_points.size() >= 3 &&
-			(selection->_state == SelectionState::Selected ||
-				selection->_state == SelectionState::Moving ||
-				selection->_state == SelectionState::Resizing)))
+	if (!(_points.size() >= 3 && (_state == SelectionState::Selected || _state == SelectionState::Moving || _state == SelectionState::Resizing)))
 		return;
 
 	float scale = canvas->_zoom * canvas->_zoom_delta;
@@ -1113,12 +1109,8 @@ void Selection::drawOutline() {
 
 void Selection::drawEdgePoints() {
 
-	if (!(
-		selection->_points.size() >= 3 &&
-		(selection->_state == SelectionState::Selected ||
-			selection->_state == SelectionState::Resizing)))
+	if (!(_points.size() >= 3 && (_state == SelectionState::Selected || _state == SelectionState::Resizing)))
 		return;
-
 
 	for (auto& point : _edgePoints) {
 		point->draw();
@@ -1292,8 +1284,8 @@ void Selection::handleEvent(const sf::Event& event) {
 	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		if (toolbar->_toolType == ToolType::Lasso || toolbar->_toolType == ToolType::Selector) {
 
-			selection->generateRect();
-			selection->generateMask();
+			generateRect();
+			generateMask();
 
 			if (_state == SelectionState::Selecting) {
 				_resizedRect = _rect;
@@ -1339,24 +1331,24 @@ void Selection::handleEvent(const sf::Event& event) {
 			desiredRectPos.y = std::clamp(desiredRectPos.y, -_resizedRect.size.y, canvas->_size.y);
 
 			int minX = INT_MAX, minY = INT_MAX;
-			for (auto& p : selection->_points) {
+			for (auto& p : _points) {
 				minX = std::min(minX, p.x);
 				minY = std::min(minY, p.y);
 			}
 
-			selection->_outlineOffset = desiredRectPos - sf::Vector2i(minX, minY);
-			selection->generateRect();
-			selection->_resizedRect.position = _rect.position;
+			_outlineOffset = desiredRectPos - sf::Vector2i(minX, minY);
+			generateRect();
+			_resizedRect.position = _rect.position;
 		}
 
 		else if (toolbar->_toolType == ToolType::Selector) {
-			if (selection->_state == SelectionState::Selecting) {
+			if (_state == SelectionState::Selecting) {
 
 				sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_size, canvas->_zoom, canvas->_zoom_delta);
 
-				if (selection->_image != nullptr) {
-					selection->_image = nullptr;
-					selection->_resizedImage = nullptr;
+				if (_image != nullptr) {
+					_image = nullptr;
+					_resizedImage = nullptr;
 				}
 
 
@@ -1368,17 +1360,17 @@ void Selection::handleEvent(const sf::Event& event) {
 				int maxX = std::max(0, local.x);
 				int maxY = std::max(0, local.y);
 
-				selection->_points.clear();
-				selection->_points.push_back(sf::Vector2i(minX, minY)); // LT
-				selection->_points.push_back(sf::Vector2i(maxX, minY)); // RT
-				selection->_points.push_back(sf::Vector2i(maxX, maxY)); // RB
-				selection->_points.push_back(sf::Vector2i(minX, maxY)); // LB
-				selection->_points.push_back(sf::Vector2i(minX, minY)); // close
+				_points.clear();
+				_points.push_back(sf::Vector2i(minX, minY)); // LT
+				_points.push_back(sf::Vector2i(maxX, minY)); // RT
+				_points.push_back(sf::Vector2i(maxX, maxY)); // RB
+				_points.push_back(sf::Vector2i(minX, maxY)); // LB
+				_points.push_back(sf::Vector2i(minX, minY)); // close
 
-				selection->generateRect();
-				selection->_resizedRect = _rect;
-				selection->_image = std::make_shared<sf::Image>();
-				selection->_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
+				generateRect();
+				_resizedRect = _rect;
+				_image = std::make_shared<sf::Image>();
+				_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
 				if (_rect.size.x > 1 && _rect.size.y > 1) {
 					_image->resize(sf::Vector2u(_rect.size), sf::Color::Transparent);
 				}
@@ -1397,7 +1389,7 @@ void Selection::handleEvent(const sf::Event& event) {
 
 				addPoint(tile);
 				generateRect();
-				_resizedRect = selection->_rect;
+				_resizedRect = _rect;
 
 				_image = std::make_shared<sf::Image>();
 				_image->resize(sf::Vector2u(1, 1), sf::Color::Transparent);
@@ -1455,14 +1447,14 @@ void Selection::update() {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
 				_rect.position.x = std::clamp(_rect.position.x + 1, -_resizedRect.size.x, canvas->_size.x);
 				_rect.position.y = std::clamp(_rect.position.y, -_resizedRect.size.y, canvas->_size.y);
-				_resizedRect.position = selection->_rect.position;
+				_resizedRect.position = _rect.position;
 				generateEdgePoints();
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
 				_rect.position.x = std::clamp(_rect.position.x, -_resizedRect.size.x, canvas->_size.x);
 				_rect.position.y = std::clamp(_rect.position.y - 1, -_resizedRect.size.y, canvas->_size.y);
-				_resizedRect.position = selection->_rect.position;
+				_resizedRect.position = _rect.position;
 				generateEdgePoints();
 			}
 
