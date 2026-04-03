@@ -67,29 +67,31 @@ public:
 	
 	void unselect();
 	void selectAll();
-	void generateRect();
 	bool clickOnSelection(sf::Vector2i point);
 	void copy(sf::Image& canvas, sf::Color alphaColor);
 	void paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor);
 	bool paste(sf::Image& canvas, sf::Color emptyColor, sf::Image image);
 	void cut(sf::Image& canvas, sf::Color emptyColor);
-	void generateOutline(bool selectionComplete = false);
+	
 	void generateMask();
 	void generateResizedMask();
 	void resizeRect();
 	void resizeImage();
 	void drawImage(bool useMask = false);
 	void drawResizedImage(bool useMask = false);
-	void drawOutline();
-	void drawRect();
-	void drawEdgePoints();
 
 	void shiftOriginIfNeeded(sf::Vector2i& point);
 	void addPoint(sf::Vector2i point);
 	void normalize(sf::IntRect newRectSize);
 	bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
 	bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
+	void generateRect();
+	void generateOutline(bool selectionComplete = false);
 	void generateEdgePoints();
+
+	void drawRect();
+	void drawOutline();
+	void drawEdgePoints();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);

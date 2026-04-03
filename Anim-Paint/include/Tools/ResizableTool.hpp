@@ -10,9 +10,20 @@ class ResizableTool : public Element {
 public:
 	ResizableToolState _state;
 
+	// rect and points
 	sf::IntRect _rect;
 	std::vector<sf::Vector2i> _points;
 
+	// outline
+	sf::RenderTexture _outlineRenderTexture;
+	std::shared_ptr<sf::Sprite> _outlineSprite;
+
+	// image
+	std::shared_ptr<sf::Image> _image;
+	sf::Texture _texture;
+	std::shared_ptr<sf::Sprite> _sprite;
+
+	// others
 	sf::Vector2i _offset;	// to move
 	sf::Time _moveTime;		// to limit selection move
 
@@ -36,7 +47,13 @@ public:
 	void addPoint(sf::Vector2i point);
 	bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
 	bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
+	void generateRect();
+	void generateOutline(bool selectionComplete = false);
 	void generateEdgePoints();
+
+	void drawRect();
+	void drawOutline();
+	void drawEdgePoints();
 
 	void cursorHover();
 	void handleEvent(const sf::Event& event);
