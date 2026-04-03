@@ -5,7 +5,7 @@
 #include "Cursor.hpp"
 #include "WorldToTileConverter.hpp"
 #include "DebugLog.hpp"
-
+#include "Dialogs/Dialog.hpp"
 
 ResizableTool::ResizableTool() : Element() {
 	_state = ResizableToolState::None;
@@ -104,50 +104,6 @@ void ResizableTool::generateRect() {
 	);
 }
 
-void ResizableTool::generateOutline(bool selectionComplete) {
-
-	if (_points.size() < 1) return;
-	if (std::abs(_rect.size.x) <= 1 || std::abs(_rect.size.y) <= 1) return;
-
-	if (!_outlineRenderTexture.resize(sf::Vector2u(std::abs(_rect.size.x), std::abs(_rect.size.y)))) {
-		DebugError(L"Lasso::generateOutline: Failed to resize outline render texture.");
-		exit(0);
-	}
-
-	// calc the shift to move points to (0,0) based coordinates for rendering
-	int minX = std::numeric_limits<int>::max();
-	int minY = std::numeric_limits<int>::max();
-	for (const auto& pt : _points) {
-		minX = std::min(minX, pt.x);
-		minY = std::min(minY, pt.y);
-	}
-
-	sf::Vector2f shift = sf::Vector2f((float)(-minX), (float)(-minY));
-
-	// generate outline texture
-	_outlineRenderTexture.clear(sf::Color(0, 0, 0, 0));
-	sf::Color selectionColor = selection_border_color;
-	sf::VertexArray lines(sf::PrimitiveType::LineStrip);
-
-	for (auto& point : _points)
-		lines.append(sf::Vertex{ sf::Vector2f(point) + shift, selectionColor });
-
-	// first and last point 
-	sf::VertexArray p(sf::PrimitiveType::Points);
-	p.append(sf::Vertex{ sf::Vector2f(_points.front()) + shift, selectionColor });
-	p.append(sf::Vertex{ sf::Vector2f(_points.back()) + shift, selectionColor });
-
-	if (selectionComplete) lines.append(sf::Vertex{ sf::Vector2f(_points.front()) + shift, selectionColor });
-
-	sf::RenderStates rs;
-	rs.blendMode = sf::BlendAlpha;
-	rs.transform.translate(sf::Vector2f(0.5f, 0.5f));
-	_outlineRenderTexture.draw(lines, rs);
-	_outlineRenderTexture.draw(p, rs);
-	_outlineRenderTexture.display();
-
-}
-
 void ResizableTool::generateEdgePoints() {
 
 	float scale = canvas->_zoom * canvas->_zoom_delta;
@@ -217,6 +173,7 @@ void ResizableTool::drawRect() {
 	if (!
 		(_points.size() >= 3 &&
 			(
+			_state == ResizableToolState::Selecting ||
 			_state == ResizableToolState::Selected ||
 			_state == ResizableToolState::Moving ||
 			_state == ResizableToolState::Resizing)))
@@ -242,28 +199,6 @@ void ResizableTool::drawRect() {
 	window->draw(rect);
 }
 
-void ResizableTool::drawOutline() {
-
-	if (_state != ResizableToolState::Selecting)
-		return;
-
-	if (_rect.size.x <= 1 || _rect.size.y <= 1)
-		return;
-
-	float scale = canvas->_zoom * canvas->_zoom_delta;
-
-	_outlineSprite = std::make_shared<sf::Sprite>(_outlineRenderTexture.getTexture());
-	_outlineSprite->setScale(sf::Vector2f(scale, scale));
-
-	sf::Vector2f outlineSpritePos;
-	outlineSpritePos.x = (float)(canvas->_position.x) + (float)(_rect.position.x) * scale;
-	outlineSpritePos.y = (float)(canvas->_position.y) + (float)(_rect.position.y) * scale;
-	_outlineSprite->setPosition(outlineSpritePos);
-
-	window->draw(*_outlineSprite);
-
-}
-
 void ResizableTool::drawEdgePoints() {
 
 	if (!(_points.size() >= 3 && (_state == ResizableToolState::Selected || _state == ResizableToolState::Resizing)))
@@ -277,7 +212,21 @@ void ResizableTool::drawEdgePoints() {
 
 void ResizableTool::cursorHover() {
 
-	
+	if (!dialogs.empty()) {
+		return;
+	}
+
+	for (auto& edgePoint : _edgePoints) {
+		edgePoint->cursorHover();
+	}
+
+	if (_hoveredEdgePoint != nullptr) {
+		return;
+	}
+
+	if (_rect.contains(cursor->_position)) {
+		Element_hovered = this->shared_from_this();
+	}
 }
 
 void ResizableTool::handleEvent(const sf::Event& event) {
@@ -292,7 +241,6 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			_points.clear();
 			_points.push_back(tile);
 			generateRect();
-			generateOutline();
 			generateEdgePoints();
 		}
 			
@@ -309,8 +257,33 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			_points.push_back(oldPoint + sf::Vector2i(tile.x - oldPoint.x, tile.y - oldPoint.y));
 			_points.push_back(oldPoint + sf::Vector2i(0, tile.y - oldPoint.y));
 			generateRect();
-			generateOutline(true);
 			generateEdgePoints();
+
+			sf::RenderTexture rtex = sf::RenderTexture();
+			rtex.resize(sf::Vector2u(_rect.size));
+			rtex.clear(sf::Color::Transparent);
+			/*
+			// circle
+			float radius = std::min(_rect.size.x, _rect.size.y) / 2.f;
+			sf::CircleShape circle(radius);
+			circle.setFillColor(toolbar->_first_color->_color);
+			circle.setOrigin(sf::Vector2f(radius, radius));
+			circle.setPosition(sf::Vector2f(radius, radius)); // środek koła w rtex
+			rtex.draw(circle);
+			*/
+
+			// triangle
+			sf::ConvexShape convex;
+			convex.setPointCount(3);
+			convex.setPoint(0, sf::Vector2f(_rect.size.x / 2 + _rect.size.x%2, 0));
+			convex.setPoint(1, sf::Vector2f(_rect.size.x, _rect.size.y));
+			convex.setPoint(2, sf::Vector2f(0, _rect.size.y));
+
+			convex.setFillColor(toolbar->_first_color->_color);
+			rtex.draw(convex);
+			rtex.display();
+
+			_image = std::make_shared<sf::Image>(rtex.getTexture().copyToImage());
 		}
 	}
 
@@ -341,9 +314,28 @@ void ResizableTool::draw() {
 	if (_state == ResizableToolState::None)
 		return;
 
+	if(_rect.size.x <= 1 || _rect.size.y <= 1)
+		return;
+
+	
+	sf::Texture texture(*_image);
+	_sprite = std::make_shared<sf::Sprite>(texture);
+	float radius = std::min(_rect.size.x, _rect.size.y) / 2.f;
+	float scale = canvas->_zoom * canvas->_zoom_delta;
+	// circle
+	//float sx = (_rect.size.x / (2.f * radius)) * scale;
+	//float sy = (_rect.size.y / (2.f * radius)) * scale;
+	
+	// triangle, rectangle, diamond, pentagon, hexagon, octagon
+	float sx = float(_rect.size.x) / float(_image->getSize().x) * scale;
+	float sy = float(_rect.size.y) / float(_image->getSize().y) * scale;
+
+	_sprite->setScale(sf::Vector2f(sx, sy));
+	_sprite->setPosition(sf::Vector2f(_rect.position) * scale + sf::Vector2f(canvas->_position));
+
+	window->draw(*_sprite);
 	
 	drawRect();
-	drawOutline();
 	drawEdgePoints();
 }
 

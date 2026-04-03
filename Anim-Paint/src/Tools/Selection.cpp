@@ -711,18 +711,17 @@ void Selection::drawImage(bool useMask) {
 	if (_image->getSize().x < 1 || _image->getSize().y < 1) return;
 	if (_rect.size.x < 1 || _rect.size.y < 1) return;
 
-	// TO-DO
+	
 	sf::IntRect canvasRect(sf::Vector2i(0, 0), canvas->_size);
-	//
 
 	if (!_rect.findIntersection(canvasRect).has_value())
 		return;
 
 	sf::IntRect visibleRect = _rect.findIntersection(canvasRect).value();
 
-
 	int tx = visibleRect.position.x - _rect.position.x;
 	int ty = visibleRect.position.y - _rect.position.y;
+
 	sf::IntRect texRect(sf::Vector2i(tx, ty), visibleRect.size);
 
 	if (_image->getSize().x <= 0 || _image->getSize().y <= 0) {
