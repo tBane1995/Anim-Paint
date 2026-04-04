@@ -46,6 +46,7 @@ public:
 	virtual void generateRect();
 	virtual void generateImage();
 	virtual void generateEdgePoints();
+	bool clickOnSelection(sf::Vector2i point);
 	virtual void setPosition(sf::Vector2i position);
 
 	virtual void drawRect();

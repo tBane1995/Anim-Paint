@@ -145,6 +145,14 @@ void ResizableTool::generateEdgePoints() {
 
 }
 
+bool ResizableTool::clickOnSelection(sf::Vector2i point) {
+
+	if (_rect.size.x <= 1 || _rect.size.y <= 1)
+		return false;
+
+	return _rect.contains(point);
+}
+
 void ResizableTool::setPosition(sf::Vector2i position) {
 	_rect.position = position;
 
@@ -237,7 +245,6 @@ void ResizableTool::drawEdgePoints() {
 	if (!(_points.size() >= 3 && (_state == ResizableToolState::Selected || _state == ResizableToolState::Resizing)))
 		return;
 
-
 	for (auto& point : _edgePoints) {
 		point->draw();
 	}
@@ -264,23 +271,37 @@ void ResizableTool::cursorHover() {
 
 void ResizableTool::handleEvent(const sf::Event& event) {
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		
+		sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 
-		if (canvas->_rect.contains(cursor->_position)) {
+		if (clickOnSelection(tile)) {
+			_state = ResizableToolState::Moving;
+			_offset = tile - _rect.position;
+		}
+		else if (canvas->_rect.contains(cursor->_position)) {
 			_state = ResizableToolState::Selecting;
-			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-			_rect.position = tile;
 			_rect.size = sf::Vector2i(0, 0);
 			_points.clear();
 			_points.push_back(tile);
 			generateRect();
-			generateEdgePoints();
+			setPosition(tile);
+		}
+		else {
+			_state = ResizableToolState::None;
+			_points.clear();
+			generateRect();
+			setPosition(tile);
 		}
 			
 	}
-
-	if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv) {
-		if(_state == ResizableToolState::Selecting) {
+	else if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv) {
+		if (_state == ResizableToolState::Moving) {
+			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+			sf::Vector2i clampedRectPos = tile - _offset;
+			clampedRectPos.x = std::clamp(clampedRectPos.x, - _rect.size.x, canvas->_size.x);
+			clampedRectPos.y = std::clamp(clampedRectPos.y, - _rect.size.y, canvas->_size.y);
+			setPosition(clampedRectPos);
+		}
+		else if(_state == ResizableToolState::Selecting) {
 			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 			_rect.size = tile - _rect.position;
 			sf::Vector2i oldPoint = _points.front();
@@ -291,21 +312,24 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			_points.push_back(oldPoint + sf::Vector2i(0, tile.y - oldPoint.y));
 			generateRect();
 			generateImage();
-			generateEdgePoints();
-
-			
-
 		}
 	}
-
-	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		_state = ResizableToolState::Selected;
+		generateEdgePoints();
 	}
 
 }
 
 void ResizableTool::update() {
-	
+	if (_state == ResizableToolState::Resizing) {
+		for (auto& point : _edgePoints) {
+			point->update();
+		}
+		generateRect();
+		generateImage();
+		return;
+	}
 }
 
 void ResizableTool::draw() {
