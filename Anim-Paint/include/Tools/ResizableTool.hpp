@@ -40,20 +40,22 @@ public:
 	ResizableTool();
 	~ResizableTool();
 
-	void addPoint(sf::Vector2i point);
-	bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
-	bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
-	void generateRect();
-	void generateEdgePoints();
-	void setPosition(sf::Vector2i position);
+	virtual void addPoint(sf::Vector2i point);
+	virtual bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
+	virtual bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
+	virtual void generateRect();
+	virtual void generateImage();
+	virtual void generateEdgePoints();
+	virtual void setPosition(sf::Vector2i position);
 
-	void drawRect();
-	void drawEdgePoints();
+	virtual void drawRect();
+	void drawImage();
+	virtual void drawEdgePoints();
 
-	void cursorHover();
-	void handleEvent(const sf::Event& event);
-	void update();
-	void draw();
+	virtual void cursorHover();
+	virtual void handleEvent(const sf::Event& event);
+	virtual void update();
+	virtual void draw();
 };
 
 extern std::shared_ptr<ResizableTool> resizableTool;

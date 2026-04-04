@@ -7,11 +7,14 @@
 #include "Dialogs/Palette.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Cursor.hpp"
+#include "Tools/ResizableTool.hpp"
 #include "Tools/Selection.hpp"
+#include "Tools/Circle.hpp"
 #include "Dialogs/Dialog_Paste_From_File.hpp"
 #include "Tools/ClipBoard.hpp"
 #include "Dialogs/ConfirmDialog.hpp"
 #include "Tools/Filters.hpp"
+
 
 Toolbar::Toolbar() : Element() {
 
@@ -227,6 +230,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_circle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\circle.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_hover.png"));
 	_btn_circle->_onclick_func = [this]() { 
 		_toolType = ToolType::Circle;
+		resizableTool = std::make_shared<Circle>();
 		selectToolButton(_btn_circle);
 		};
 
