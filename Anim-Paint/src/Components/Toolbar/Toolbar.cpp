@@ -12,6 +12,7 @@
 #include "Tools/Circle.hpp"
 #include "Tools/Triangle.hpp"
 #include "Tools/HexagonPointTop.hpp"
+#include "Tools/HexagonFlatTop.hpp"
 #include "Dialogs/Dialog_Paste_From_File.hpp"
 #include "Tools/ClipBoard.hpp"
 #include "Dialogs/ConfirmDialog.hpp"
@@ -264,6 +265,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_hexagon_flat_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top_hover.png"));
 	_btn_hexagon_flat_top->_onclick_func = [this]() {
 		_toolType = ToolType::HexagonFlatTop;
+		resizable_tool = std::make_shared<HexagonFlatTop>();
 		selectToolButton(_btn_hexagon_flat_top);
 		};
 	
