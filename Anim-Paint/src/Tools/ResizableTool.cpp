@@ -283,18 +283,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			generateImage();
 			generateEdgePoints();
 
-			/*
-			// triangle
-			sf::ConvexShape convex;
-			convex.setPointCount(3);
-			convex.setPoint(0, sf::Vector2f(_rect.size.x / 2 + _rect.size.x%2, 0));
-			convex.setPoint(1, sf::Vector2f(_rect.size.x, _rect.size.y));
-			convex.setPoint(2, sf::Vector2f(0, _rect.size.y));
-
-			convex.setFillColor(toolbar->_first_color->_color);
-			rtex.draw(convex);
-			rtex.display();
-			*/
+			
 
 		}
 	}

@@ -10,6 +10,7 @@
 #include "Tools/ResizableTool.hpp"
 #include "Tools/Selection.hpp"
 #include "Tools/Circle.hpp"
+#include "Tools/Triangle.hpp"
 #include "Dialogs/Dialog_Paste_From_File.hpp"
 #include "Tools/ClipBoard.hpp"
 #include "Dialogs/ConfirmDialog.hpp"
@@ -237,6 +238,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_triangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\triangle.png"), getTexture(L"tex\\tools\\resizable_tools\\triangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\triangle_hover.png"));
 	_btn_triangle->_onclick_func = [this]() {
 		_toolType = ToolType::Triangle;
+		resizableTool = std::make_shared<Triangle>();
 		selectToolButton(_btn_triangle);
 		};
 
