@@ -204,21 +204,31 @@ void ResizableTool::drawRect() {
 }
 
 void ResizableTool::drawImage() {
-
-	if (_image == nullptr)
+	if (!_image)
 		return;
 
 	sf::Texture texture(*_image);
-	
 	_sprite = std::make_shared<sf::Sprite>(texture);
 	
 	float scale = canvas->_zoom * canvas->_zoom_delta;
 	float sx = float(_rect.size.x) / float(_image->getSize().x) * scale;
 	float sy = float(_rect.size.y) / float(_image->getSize().y) * scale;
-	
-	_sprite->setPosition(sf::Vector2f(_rect.position) * scale + sf::Vector2f(canvas->_position));
 	_sprite->setScale(sf::Vector2f(sx, sy));
-	
+
+	sf::IntRect canvasRect(sf::Vector2i(0, 0), canvas->_size);
+	auto intersection = _rect.findIntersection(canvasRect);
+	if (!intersection.has_value())
+		return;
+
+	sf::IntRect inter = intersection.value();
+	int tx = std::max(0, -_rect.position.x + inter.position.x);
+	int ty = std::max(0, -_rect.position.y + inter.position.y);
+	int tw = std::min(int(_image->getSize().x) - tx, inter.size.x);
+	int th = std::min(int(_image->getSize().y) - ty, inter.size.y);
+	_sprite->setTextureRect(sf::IntRect(sf::Vector2i(tx, ty), sf::Vector2i(tw, th)));
+
+	_sprite->setPosition(sf::Vector2f(inter.position) * scale + sf::Vector2f(canvas->_position));
+
 	window->draw(*_sprite);
 }
 
