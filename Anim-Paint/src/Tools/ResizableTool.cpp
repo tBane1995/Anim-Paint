@@ -104,6 +104,10 @@ void ResizableTool::generateRect() {
 	);
 }
 
+void ResizableTool::generateImage() {
+	_image = std::make_shared<sf::Image>();
+}
+
 void ResizableTool::generateEdgePoints() {
 
 	float scale = canvas->_zoom * canvas->_zoom_delta;
@@ -199,6 +203,25 @@ void ResizableTool::drawRect() {
 	window->draw(rect);
 }
 
+void ResizableTool::drawImage() {
+
+	if (_image == nullptr)
+		return;
+
+	sf::Texture texture(*_image);
+	
+	_sprite = std::make_shared<sf::Sprite>(texture);
+	
+	float scale = canvas->_zoom * canvas->_zoom_delta;
+	float sx = float(_rect.size.x) / float(_image->getSize().x) * scale;
+	float sy = float(_rect.size.y) / float(_image->getSize().y) * scale;
+	
+	_sprite->setPosition(sf::Vector2f(_rect.position) * scale + sf::Vector2f(canvas->_position));
+	_sprite->setScale(sf::Vector2f(sx, sy));
+	
+	window->draw(*_sprite);
+}
+
 void ResizableTool::drawEdgePoints() {
 
 	if (!(_points.size() >= 3 && (_state == ResizableToolState::Selected || _state == ResizableToolState::Resizing)))
@@ -257,21 +280,10 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			_points.push_back(oldPoint + sf::Vector2i(tile.x - oldPoint.x, tile.y - oldPoint.y));
 			_points.push_back(oldPoint + sf::Vector2i(0, tile.y - oldPoint.y));
 			generateRect();
+			generateImage();
 			generateEdgePoints();
 
-			sf::RenderTexture rtex = sf::RenderTexture();
-			rtex.resize(sf::Vector2u(_rect.size));
-			rtex.clear(sf::Color::Transparent);
 			/*
-			// circle
-			float radius = std::min(_rect.size.x, _rect.size.y) / 2.f;
-			sf::CircleShape circle(radius);
-			circle.setFillColor(toolbar->_first_color->_color);
-			circle.setOrigin(sf::Vector2f(radius, radius));
-			circle.setPosition(sf::Vector2f(radius, radius)); // środek koła w rtex
-			rtex.draw(circle);
-			*/
-
 			// triangle
 			sf::ConvexShape convex;
 			convex.setPointCount(3);
@@ -282,8 +294,8 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			convex.setFillColor(toolbar->_first_color->_color);
 			rtex.draw(convex);
 			rtex.display();
+			*/
 
-			_image = std::make_shared<sf::Image>(rtex.getTexture().copyToImage());
 		}
 	}
 
@@ -318,23 +330,8 @@ void ResizableTool::draw() {
 		return;
 
 	
-	sf::Texture texture(*_image);
-	_sprite = std::make_shared<sf::Sprite>(texture);
-	float radius = std::min(_rect.size.x, _rect.size.y) / 2.f;
-	float scale = canvas->_zoom * canvas->_zoom_delta;
-	// circle
-	//float sx = (_rect.size.x / (2.f * radius)) * scale;
-	//float sy = (_rect.size.y / (2.f * radius)) * scale;
 	
-	// triangle, rectangle, diamond, pentagon, hexagon, octagon
-	float sx = float(_rect.size.x) / float(_image->getSize().x) * scale;
-	float sy = float(_rect.size.y) / float(_image->getSize().y) * scale;
-
-	_sprite->setScale(sf::Vector2f(sx, sy));
-	_sprite->setPosition(sf::Vector2f(_rect.position) * scale + sf::Vector2f(canvas->_position));
-
-	window->draw(*_sprite);
-	
+	drawImage();
 	drawRect();
 	drawEdgePoints();
 }
