@@ -32,8 +32,5 @@ void HexagonPointTop::generateImage() {
 	rtex.draw(convex);
 	rtex.display();
 
-	rtex.draw(convex);
-	rtex.display();
-
 	_image = std::make_shared<sf::Image>(rtex.getTexture().copyToImage());
 }

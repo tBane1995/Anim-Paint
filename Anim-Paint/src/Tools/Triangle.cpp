@@ -26,12 +26,6 @@ void Triangle::generateImage() {
 	rtex.draw(convex);
 	rtex.display();
 
-	//float sx = _rect.size.x / 2.f;
-	//float sy = _rect.size.y / 2.f;
-	//circle.setScale(sf::Vector2f(sx, sy));
-
-	rtex.draw(convex);
-	rtex.display();
 
 	_image = std::make_shared<sf::Image>(rtex.getTexture().copyToImage());
 }
