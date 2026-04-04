@@ -325,4 +325,4 @@ void ResizableTool::draw() {
 	drawEdgePoints();
 }
 
-std::shared_ptr<ResizableTool> resizableTool;
+std::shared_ptr<ResizableTool> resizable_tool;

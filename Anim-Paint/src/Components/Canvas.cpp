@@ -141,8 +141,8 @@ void Canvas::setPosition(sf::Vector2i position) {
 		selection->generateEdgePoints();
 	}
 
-	if(resizableTool && resizableTool->_state == ResizableToolState::Selected) {
-		resizableTool->generateEdgePoints();
+	if(resizable_tool && resizable_tool->_state == ResizableToolState::Selected) {
+		resizable_tool->generateEdgePoints();
 	}
 }
 
