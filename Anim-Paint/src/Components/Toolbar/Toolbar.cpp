@@ -11,6 +11,7 @@
 #include "Tools/Selection.hpp"
 #include "Tools/Circle.hpp"
 #include "Tools/Triangle.hpp"
+#include "Tools/HexagonPointTop.hpp"
 #include "Dialogs/Dialog_Paste_From_File.hpp"
 #include "Tools/ClipBoard.hpp"
 #include "Dialogs/ConfirmDialog.hpp"
@@ -231,14 +232,14 @@ Toolbar::Toolbar() : Element() {
 	_btn_circle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\circle.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_hover.png"));
 	_btn_circle->_onclick_func = [this]() { 
 		_toolType = ToolType::Circle;
-		resizableTool = std::make_shared<Circle>();
+		resizable_tool = std::make_shared<Circle>();
 		selectToolButton(_btn_circle);
 		};
 
 	_btn_triangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\triangle.png"), getTexture(L"tex\\tools\\resizable_tools\\triangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\triangle_hover.png"));
 	_btn_triangle->_onclick_func = [this]() {
 		_toolType = ToolType::Triangle;
-		resizableTool = std::make_shared<Triangle>();
+		resizable_tool = std::make_shared<Triangle>();
 		selectToolButton(_btn_triangle);
 		};
 
@@ -269,6 +270,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_hexagon_point_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top_hover.png"));
 	_btn_hexagon_point_top->_onclick_func = [this]() {
 		_toolType = ToolType::HexagonPointTop;
+		resizable_tool = std::make_shared<HexagonPointTop>();
 		selectToolButton(_btn_hexagon_point_top);
 		};
 	

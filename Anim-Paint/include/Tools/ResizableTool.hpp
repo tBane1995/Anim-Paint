@@ -58,4 +58,4 @@ public:
 	virtual void draw();
 };
 
-extern std::shared_ptr<ResizableTool> resizableTool;
+extern std::shared_ptr<ResizableTool> resizable_tool;
