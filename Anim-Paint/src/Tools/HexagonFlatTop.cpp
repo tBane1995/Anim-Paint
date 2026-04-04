@@ -20,14 +20,14 @@ void HexagonFlatTop::generateImage() {
 	convex.setFillColor(toolbar->_first_color->_color);
 	convex.setPointCount(6);
 
-	float dx = (float)(_rect.size.x) / 4.f;
+	convex.setPoint(0, sf::Vector2f(0.25f, 0.f));
+	convex.setPoint(1, sf::Vector2f(0.75f, 0.f));
+	convex.setPoint(2, sf::Vector2f(1.f, 0.5f));
+	convex.setPoint(3, sf::Vector2f(0.75f, 1.f));
+	convex.setPoint(4, sf::Vector2f(0.25f, 1.f));
+	convex.setPoint(5, sf::Vector2f(0.f, 0.5f));
 
-	convex.setPoint(0, sf::Vector2f(dx, 0));
-	convex.setPoint(1, sf::Vector2f(_rect.size.x-dx, 0));
-	convex.setPoint(2, sf::Vector2f(_rect.size.x, _rect.size.y/2));
-	convex.setPoint(3, sf::Vector2f(_rect.size.x-dx, _rect.size.y));
-	convex.setPoint(4, sf::Vector2f(dx, _rect.size.y));
-	convex.setPoint(5, sf::Vector2f(0, _rect.size.y/2));
+	convex.setScale(sf::Vector2f(_rect.size.x, _rect.size.y));
 	
 	rtex.draw(convex);
 	rtex.display();
