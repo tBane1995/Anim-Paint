@@ -312,7 +312,7 @@ MainMenu::MainMenu() : Element() {
 	window_layers = std::make_shared<Option>(L"Layers");
 	window_layers->_onclick_func = [this]() {
 		std::shared_ptr<Dialog> ptr = std::dynamic_pointer_cast<Dialog>(layers_panel);
-		if (!isOpenStaticDialog(animations_panel)) {
+		if (!isOpenStaticDialog(layers_panel)) {
 			layers_panel->_state = DialogState::Idle;
 			static_dialogs.push_back(layers_panel);
 			window_layers->setActive(false);
