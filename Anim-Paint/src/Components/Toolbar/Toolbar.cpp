@@ -230,53 +230,53 @@ Toolbar::Toolbar() : Element() {
 	_separators.push_back(std::make_shared<Separator>());
 
 	// shapes 
-	_btn_circle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\circle.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_hover.png"));
+	_btn_circle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\circle.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_press.png"));
 	_btn_circle->_onclick_func = [this]() { 
 		_toolType = ToolType::Circle;
 		resizable_tool = std::make_shared<Circle>();
 		selectToolButton(_btn_circle);
 		};
 
-	_btn_triangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\triangle.png"), getTexture(L"tex\\tools\\resizable_tools\\triangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\triangle_hover.png"));
+	_btn_triangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\triangle.png"), getTexture(L"tex\\tools\\resizable_tools\\triangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\triangle_press.png"));
 	_btn_triangle->_onclick_func = [this]() {
 		_toolType = ToolType::Triangle;
 		resizable_tool = std::make_shared<Triangle>();
 		selectToolButton(_btn_triangle);
 		};
 
-	_btn_rectangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\rectangle.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_hover.png"));
+	_btn_rectangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\rectangle.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_press.png"));
 	_btn_rectangle->_onclick_func = [this]() {
 		_toolType = ToolType::Rectangle;
 		selectToolButton(_btn_rectangle);
 		};
 
-	_btn_diamond = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\diamond.png"), getTexture(L"tex\\tools\\resizable_tools\\diamond_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\diamond_hover.png"));
+	_btn_diamond = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\diamond.png"), getTexture(L"tex\\tools\\resizable_tools\\diamond_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\diamond_press.png"));
 	_btn_diamond->_onclick_func = [this]() {
 		_toolType = ToolType::Diamond;
 		selectToolButton(_btn_diamond);
 		};
 	
-	_btn_pentagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\pentagon.png"), getTexture(L"tex\\tools\\resizable_tools\\pentagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\pentagon_hover.png"));
+	_btn_pentagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\pentagon.png"), getTexture(L"tex\\tools\\resizable_tools\\pentagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\pentagon_press.png"));
 	_btn_pentagon->_onclick_func = [this]() {
 		_toolType = ToolType::Pentagon;
 		selectToolButton(_btn_pentagon);
 		};
 
-	_btn_hexagon_flat_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top_hover.png"));
+	_btn_hexagon_flat_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top_press.png"));
 	_btn_hexagon_flat_top->_onclick_func = [this]() {
 		_toolType = ToolType::HexagonFlatTop;
 		resizable_tool = std::make_shared<HexagonFlatTop>();
 		selectToolButton(_btn_hexagon_flat_top);
 		};
 	
-	_btn_hexagon_point_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top_hover.png"));
+	_btn_hexagon_point_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top_press.png"));
 	_btn_hexagon_point_top->_onclick_func = [this]() {
 		_toolType = ToolType::HexagonPointTop;
 		resizable_tool = std::make_shared<HexagonPointTop>();
 		selectToolButton(_btn_hexagon_point_top);
 		};
 	
-	_btn_octagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\octagon.png"), getTexture(L"tex\\tools\\resizable_tools\\octagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\octagon_hover.png"));
+	_btn_octagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\octagon.png"), getTexture(L"tex\\tools\\resizable_tools\\octagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\octagon_press.png"));
 	_btn_octagon->_onclick_func = [this]() {
 		_toolType = ToolType::Octagon;
 		selectToolButton(_btn_octagon);
