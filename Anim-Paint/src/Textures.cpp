@@ -177,15 +177,19 @@ void loadTextures() {
 
 	texturePaths.push_back(L"tex\\tools\\btn_brush.png");
 	texturePaths.push_back(L"tex\\tools\\btn_brush_hover.png");
+	texturePaths.push_back(L"tex\\tools\\btn_brush_press.png");
 
 	texturePaths.push_back(L"tex\\tools\\btn_fill.png");
 	texturePaths.push_back(L"tex\\tools\\btn_fill_hover.png");
+	texturePaths.push_back(L"tex\\tools\\btn_fill_press.png");
 
 	texturePaths.push_back(L"tex\\tools\\btn_picker.png");
 	texturePaths.push_back(L"tex\\tools\\btn_picker_hover.png");
+	texturePaths.push_back(L"tex\\tools\\btn_picker_press.png");
 
 	texturePaths.push_back(L"tex\\tools\\btn_eraser.png");
 	texturePaths.push_back(L"tex\\tools\\btn_eraser_hover.png");
+	texturePaths.push_back(L"tex\\tools\\btn_eraser_press.png");
 
 	texturePaths.push_back(L"tex\\tools\\btn_size_decrease.png");
 	texturePaths.push_back(L"tex\\tools\\btn_size_decrease_hover.png");

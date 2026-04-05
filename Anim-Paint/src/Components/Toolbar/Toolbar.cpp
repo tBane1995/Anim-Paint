@@ -180,7 +180,7 @@ Toolbar::Toolbar() : Element() {
 
 
 	// tools
-	_btn_brush = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"));
+	_btn_brush = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"), getTexture(L"tex\\tools\\btn_brush_press.png"));
 	_btn_brush->_onclick_func = [this]() {
 		_toolType = ToolType::Brush;
 		brush->setBrushType(BrushType::Circle);
@@ -188,7 +188,7 @@ Toolbar::Toolbar() : Element() {
 		};
 	_btn_brush->setTooltip(L"Brush Tool", L"Draw on the canvas using the primary color with LMB or the secondary color with RMB");
 
-	_btn_picker = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_picker.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"));
+	_btn_picker = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_picker.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"), getTexture(L"tex\\tools\\btn_picker_press.png"));
 	_btn_picker->_onclick_func = [this]() {
 		_toolType = ToolType::Picker;
 		brush->setBrushType(BrushType::Circle);
@@ -196,14 +196,14 @@ Toolbar::Toolbar() : Element() {
 		};
 	_btn_picker->setTooltip(L"Color Picker Tool", L"Pick a color from the canvas and set it as the active color");
 
-	_btn_fill = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"));
+	_btn_fill = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"), getTexture(L"tex\\tools\\btn_fill_press.png"));
 	_btn_fill->_onclick_func = [this]() {
 		_toolType = ToolType::Fill;
 		selectToolButton(_btn_fill);
 		};
 	_btn_fill->setTooltip(L"Fill Tool", L"Fill an area of the canvas using the primary color with LMB or the secondary color with RMB");
 
-	_btn_eraser = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"));
+	_btn_eraser = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"), getTexture(L"tex\\tools\\btn_eraser_press.png"));
 	_btn_eraser->_onclick_func = [this]() {
 		_toolType = ToolType::Eraser;
 		brush->setBrushType(BrushType::Square);
