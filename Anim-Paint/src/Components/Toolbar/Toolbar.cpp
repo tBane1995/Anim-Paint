@@ -11,6 +11,7 @@
 #include "Tools/Selection.hpp"
 #include "Tools/Circle.hpp"
 #include "Tools/Triangle.hpp"
+#include "Tools/Pentagon.hpp"
 #include "Tools/HexagonPointTop.hpp"
 #include "Tools/HexagonFlatTop.hpp"
 #include "Dialogs/Dialog_Paste_From_File.hpp"
@@ -259,6 +260,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_pentagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\pentagon.png"), getTexture(L"tex\\tools\\resizable_tools\\pentagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\pentagon_press.png"));
 	_btn_pentagon->_onclick_func = [this]() {
 		_toolType = ToolType::Pentagon;
+		resizable_tool = std::make_shared<Pentagon>();
 		selectToolButton(_btn_pentagon);
 		};
 
