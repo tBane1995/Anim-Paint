@@ -16,6 +16,7 @@
 #include "Tools/Pentagon.hpp"
 #include "Tools/HexagonPointTop.hpp"
 #include "Tools/HexagonFlatTop.hpp"
+#include "Tools/Octagon.hpp"
 #include "Dialogs/Dialog_Paste_From_File.hpp"
 #include "Tools/ClipBoard.hpp"
 #include "Dialogs/ConfirmDialog.hpp"
@@ -286,6 +287,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_octagon->_onclick_func = [this]() {
 		_toolType = ToolType::Octagon;
 		selectToolButton(_btn_octagon);
+		resizable_tool = std::make_shared<Octagon>();
 		};
 	
 	_shapes.clear();
