@@ -54,6 +54,8 @@ public:
 	void drawImage();
 	virtual void drawEdgePoints();
 
+	bool tooltypeIsShape();
+
 	virtual void cursorHover();
 	virtual void handleEvent(const sf::Event& event);
 	virtual void update();

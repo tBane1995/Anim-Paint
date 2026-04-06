@@ -288,6 +288,24 @@ void ResizableTool::drawEdgePoints() {
 	}
 }
 
+bool ResizableTool::tooltypeIsShape() {
+	if (
+		toolbar->_toolType == ToolType::Circle ||
+		toolbar->_toolType == ToolType::Rectangle ||
+		toolbar->_toolType == ToolType::Diamond ||
+		toolbar->_toolType == ToolType::Pentagon ||
+		toolbar->_toolType == ToolType::HexagonFlatTop ||
+		toolbar->_toolType == ToolType::HexagonPointTop ||
+		toolbar->_toolType == ToolType::Octagon) 
+	{
+
+		return true;
+	}
+	else
+		return false;
+
+}
+
 void ResizableTool::cursorHover() {
 
 	if (!dialogs.empty()) {
@@ -342,38 +360,37 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 		if (Element_pressed.get() == this || Element_pressed.get() == nullptr || _state == ResizableToolState::None || _state == ResizableToolState::Selected) {
 			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 
-			if (clickOnSelection(tile)) {
+			if (tooltypeIsShape() && clickOnSelection(tile)) {
 				_state = ResizableToolState::Moving;
 				_offset = tile - _rect.position;
 			}
-			else if (canvas->_rect.contains(cursor->_position)) {
+			else if (tooltypeIsShape()) {
 
-				if (_image != nullptr) {
-					pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, sf::Color::Transparent);
-					_image = nullptr;
-					history->saveStep();
-				}
+				if (canvas->_rect.contains(cursor->_position)) {
+					if (_image != nullptr) {
+						pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, sf::Color::Transparent);
+						_image = nullptr;
+						history->saveStep();
+					}
 
-				_state = ResizableToolState::Selecting;
-				_rect.size = sf::Vector2i(0, 0);
-				_points.clear();
-				_points.push_back(tile);
-				generateRect();
-				setPosition(tile);
-			}
-			else {
-
-				if (_image != nullptr) {
-					pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, sf::Color::Transparent);
-					_image = nullptr;
-					history->saveStep();
-					_state = ResizableToolState::None;
+					_state = ResizableToolState::Selecting;
+					_rect.size = sf::Vector2i(0, 0);
 					_points.clear();
+					_points.push_back(tile);
 					generateRect();
 					setPosition(tile);
 				}
-
-
+				else {
+					if (_image != nullptr) {
+						pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, sf::Color::Transparent);
+						_image = nullptr;
+						history->saveStep();
+						_state = ResizableToolState::None;
+						_points.clear();
+						generateRect();
+						setPosition(tile);
+					}
+				}
 			}
 		}
 		
