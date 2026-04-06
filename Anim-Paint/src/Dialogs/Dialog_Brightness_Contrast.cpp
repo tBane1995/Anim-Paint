@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Dialogs/Dialog_Brightness_Contrast.hpp"
 #include "Theme.hpp"
 #include "Animation/Animation.hpp"
@@ -8,6 +9,7 @@
 #include "Tools/Selection.hpp"
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
+
 
 Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"brightness-contrast", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
 
@@ -47,26 +49,35 @@ Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector<std::shared_p
 
 Dialog_Brightness_Contrast::~Dialog_Brightness_Contrast() {
 
-	if (Dialog_Brightness_Contrast::_state == BrightnessContrastState::Idle) {
-		_brightness_slider->setValue(0);
-		_contrast_slider->setValue(0);
+	try {
+		if (Dialog_Brightness_Contrast::_state == BrightnessContrastState::Idle) {
+			_brightness_slider->setValue(0);
+			_contrast_slider->setValue(0);
 
-		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
-		getCurrentAnimation()->getCurrentFrame()->_layers = _original_layers;
-		layers_panel->loadLayersFromCurrentFrame();
-	}else{
-		// is Edited
-		if (selection->_state == SelectionState::Selected) {
-			sf::Image original_image = getCurrentAnimation()->getCurrentLayer()->_image;
-			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
-			history->saveStep();
-			canvas->_isEdited = true;
-			selection->normalize(selection->_resizedRect);
-			getCurrentAnimation()->getCurrentLayer()->_image = original_image;
+			getCurrentAnimation()->getCurrentFrame()->_layers.clear();
+			getCurrentAnimation()->getCurrentFrame()->_layers = _original_layers;
+			layers_panel->loadLayersFromCurrentFrame();
 		}
 		else {
-			history->saveStep();
+			// is Edited
+			if (selection->_state == SelectionState::Selected) {
+				sf::Image original_image = getCurrentAnimation()->getCurrentLayer()->_image;
+				pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+				history->saveStep();
+				canvas->_isEdited = true;
+				selection->normalize(selection->_resizedRect);
+				getCurrentAnimation()->getCurrentLayer()->_image = original_image;
+			}
+			else {
+				history->saveStep();
+			}
 		}
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Exception in Dialog_Brightness_Contrast destructor: " << e.what() << std::endl;
+	}
+	catch (...) {
+		std::cerr << "Unknown exception in Dialog_Brightness_Contrast destructor" << std::endl;
 	}
 }
 

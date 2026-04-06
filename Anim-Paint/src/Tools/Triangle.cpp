@@ -15,7 +15,6 @@ void Triangle::generateImage() {
 	rtex.resize(sf::Vector2u(_rect.size));
 	rtex.clear(sf::Color::Transparent);
 
-	// triangle
 	sf::ConvexShape convex;
 	convex.setFillColor(toolbar->_first_color->_color);
 	convex.setPointCount(3);

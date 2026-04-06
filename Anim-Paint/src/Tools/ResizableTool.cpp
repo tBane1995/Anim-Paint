@@ -291,6 +291,7 @@ void ResizableTool::drawEdgePoints() {
 bool ResizableTool::tooltypeIsShape() {
 	if (
 		toolbar->_toolType == ToolType::Circle ||
+		toolbar->_toolType == ToolType::Triangle ||
 		toolbar->_toolType == ToolType::Rectangle ||
 		toolbar->_toolType == ToolType::Diamond ||
 		toolbar->_toolType == ToolType::Pentagon ||
