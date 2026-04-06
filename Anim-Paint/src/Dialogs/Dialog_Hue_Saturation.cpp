@@ -85,7 +85,7 @@ Dialog_Hue_Saturation::~Dialog_Hue_Saturation() {
 		_saturation_slider->setValue(100);
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
-		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+		getCurrentAnimation()->getCurrentFrame()->_layers = _original_layers;
 		layers_panel->loadLayersFromCurrentFrame();
 	}
 	else {

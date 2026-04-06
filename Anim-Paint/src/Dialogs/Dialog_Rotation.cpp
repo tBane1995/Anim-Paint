@@ -58,7 +58,7 @@ Dialog_Rotation::~Dialog_Rotation() {
 		_radius_slider->setValue(0);
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
-		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+		getCurrentAnimation()->getCurrentFrame()->_layers = _original_layers;
 		layers_panel->loadLayersFromCurrentFrame();
 	}
 	else {

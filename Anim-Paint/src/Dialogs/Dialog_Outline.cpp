@@ -21,6 +21,8 @@ Dialog_Outline::Dialog_Outline(std::vector<std::shared_ptr<Layer>> layers) : Dia
 	_outline_slider->setValue(1);
 	_outline_slider->_slider->_onEditFunction = [this]() { setTheFilter();  };
 
+	setTheFilter();
+
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
 		_outline_slider->setValue(1);
@@ -47,7 +49,7 @@ Dialog_Outline::~Dialog_Outline() {
 		_outline_slider->setValue(0);
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
-		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+		getCurrentAnimation()->getCurrentFrame()->_layers = _original_layers;
 		layers_panel->loadLayersFromCurrentFrame();
 	}
 	else {

@@ -52,7 +52,7 @@ Dialog_Brightness_Contrast::~Dialog_Brightness_Contrast() {
 		_contrast_slider->setValue(0);
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
-		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+		getCurrentAnimation()->getCurrentFrame()->_layers = _original_layers;
 		layers_panel->loadLayersFromCurrentFrame();
 	}else{
 		// is Edited

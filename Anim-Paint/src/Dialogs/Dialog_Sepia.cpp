@@ -44,7 +44,7 @@ Dialog_Sepia::~Dialog_Sepia() {
 		_sepia_slider->setValue(0);
 
 		getCurrentAnimation()->getCurrentFrame()->_layers.clear();
-		getCurrentAnimation()->getCurrentFrame()->_layers = _edited_layers;
+		getCurrentAnimation()->getCurrentFrame()->_layers = _original_layers;
 		layers_panel->loadLayersFromCurrentFrame();
 	}
 	else {
