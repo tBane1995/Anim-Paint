@@ -11,6 +11,7 @@
 #include "Tools/Selection.hpp"
 #include "Tools/Circle.hpp"
 #include "Tools/Triangle.hpp"
+#include "Tools/Rectangle.hpp"
 #include "Tools/Diamond.hpp"
 #include "Tools/Pentagon.hpp"
 #include "Tools/HexagonPointTop.hpp"
@@ -249,6 +250,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_rectangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\rectangle.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_press.png"));
 	_btn_rectangle->_onclick_func = [this]() {
 		_toolType = ToolType::Rectangle;
+		resizable_tool = std::make_shared<Rectangle>();
 		selectToolButton(_btn_rectangle);
 		};
 
