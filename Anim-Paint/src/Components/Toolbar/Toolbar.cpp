@@ -11,6 +11,7 @@
 #include "Tools/Selection.hpp"
 #include "Tools/Circle.hpp"
 #include "Tools/Triangle.hpp"
+#include "Tools/Diamond.hpp"
 #include "Tools/Pentagon.hpp"
 #include "Tools/HexagonPointTop.hpp"
 #include "Tools/HexagonFlatTop.hpp"
@@ -254,6 +255,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_diamond = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\diamond.png"), getTexture(L"tex\\tools\\resizable_tools\\diamond_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\diamond_press.png"));
 	_btn_diamond->_onclick_func = [this]() {
 		_toolType = ToolType::Diamond;
+		resizable_tool = std::make_shared<Diamond>();
 		selectToolButton(_btn_diamond);
 		};
 	
