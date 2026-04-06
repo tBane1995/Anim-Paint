@@ -6,7 +6,43 @@
 #include "WorldToTileConverter.hpp"
 #include "DebugLog.hpp"
 #include "Dialogs/Dialog.hpp"
+#include "Animation/Animation.hpp"
+#include "History.hpp"
+#include "Tools/Selection.hpp" // TO-DO - for the test using paste Image With Alpha
+/*
+void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor)
+{
+	sf::IntRect s(sf::Vector2i(0, 0), sf::Vector2i(src.getSize()));
 
+	if (dstX < 0) { s.position.x -= dstX; s.size.x += dstX; dstX = 0; }
+	if (dstY < 0) { s.position.y -= dstY; s.size.y += dstY; dstY = 0; }
+
+	const int dw = int(dst.getSize().x), dh = int(dst.getSize().y);
+
+	if (dstX >= dw || dstY >= dh)
+		return;
+
+	if (dstX + s.size.x > dw) s.size.x = dw - dstX;
+	if (dstY + s.size.y > dh) s.size.y = dh - dstY;
+
+	if (s.size.x <= 0 || s.size.y <= 0)
+		return;
+
+	sf::Image tmp;
+	tmp.resize(sf::Vector2u(s.size), sf::Color::Transparent);
+	if (!tmp.copy(src, sf::Vector2u(0, 0), s, true)) {
+		DebugError(L"pasteImageWithAlpha: image copy failed");
+		exit(0);
+	}
+	tmp.createMaskFromColor(alphaColor);
+
+	const sf::IntRect all(sf::Vector2i(0, 0), sf::Vector2i(tmp.getSize()));
+	if (!dst.copy(tmp, sf::Vector2u(dstX, dstY), all, true)) {
+		DebugError(L"pasteImageWithAlpha: image copy to dst failed");
+		exit(0);
+	}
+}
+*/
 ResizableTool::ResizableTool() : Element() {
 	_state = ResizableToolState::None;
 
@@ -278,6 +314,13 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			_offset = tile - _rect.position;
 		}
 		else if (canvas->_rect.contains(cursor->_position)) {
+
+			if (_image != nullptr) {
+				pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, sf::Color::Transparent);
+				_image = nullptr;
+				history->saveStep();
+			}
+
 			_state = ResizableToolState::Selecting;
 			_rect.size = sf::Vector2i(0, 0);
 			_points.clear();
@@ -286,10 +329,18 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			setPosition(tile);
 		}
 		else {
-			_state = ResizableToolState::None;
-			_points.clear();
-			generateRect();
-			setPosition(tile);
+
+			if (_image != nullptr) {
+				pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, sf::Color::Transparent);
+				_image = nullptr;
+				history->saveStep();
+				_state = ResizableToolState::None;
+				_points.clear();
+				generateRect();
+				setPosition(tile);
+			}
+
+			
 		}
 			
 	}
