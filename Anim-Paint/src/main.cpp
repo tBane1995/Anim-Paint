@@ -187,6 +187,7 @@ int main() {
 		Element_hovered = nullptr;
 
 		selection->cursorHover();
+		resizable_tool->cursorHover();
 		canvas->cursorHover();
 
 		toolbar->cursorHover();

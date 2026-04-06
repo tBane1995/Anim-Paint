@@ -9,6 +9,8 @@
 #include "Animation/Animation.hpp"
 #include "History.hpp"
 #include "Tools/Selection.hpp" // TO-DO - for the test using paste Image With Alpha
+#include "Components/MainMenu/MainMenu.hpp"
+#include "Dialogs/Palette.hpp"
 /*
 void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor)
 {
@@ -306,42 +308,75 @@ void ResizableTool::cursorHover() {
 }
 
 void ResizableTool::handleEvent(const sf::Event& event) {
+
+	if (!dialogs.empty()) {
+		return;
+	}
+
+	if (main_menu->cursorOnAnyMenuButton()) {
+		return;
+	}
+
+	if (main_menu->_state != MainMenuStates::Closed) {
+		return;
+	}
+
+	if ((_state == ResizableToolState::None || _state == ResizableToolState::Selected) && palette && palette->_rect.contains(cursor->_position)) {
+		return;
+	}
+
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+		if (Element_hovered.get() == this) {
+			Element_pressed = this->shared_from_this();
+		}
+	}
+
+	if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-
-		if (clickOnSelection(tile)) {
-			_state = ResizableToolState::Moving;
-			_offset = tile - _rect.position;
+		if (Element_pressed.get() == this && !clickOnSelection(tile)) {
+			Element_pressed = nullptr;
 		}
-		else if (canvas->_rect.contains(cursor->_position)) {
+	}
 
-			if (_image != nullptr) {
-				pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, sf::Color::Transparent);
-				_image = nullptr;
-				history->saveStep();
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+		if (Element_pressed.get() == this || Element_pressed.get() == nullptr || _state == ResizableToolState::None || _state == ResizableToolState::Selected) {
+			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+
+			if (clickOnSelection(tile)) {
+				_state = ResizableToolState::Moving;
+				_offset = tile - _rect.position;
 			}
+			else if (canvas->_rect.contains(cursor->_position)) {
 
-			_state = ResizableToolState::Selecting;
-			_rect.size = sf::Vector2i(0, 0);
-			_points.clear();
-			_points.push_back(tile);
-			generateRect();
-			setPosition(tile);
-		}
-		else {
+				if (_image != nullptr) {
+					pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, sf::Color::Transparent);
+					_image = nullptr;
+					history->saveStep();
+				}
 
-			if (_image != nullptr) {
-				pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, sf::Color::Transparent);
-				_image = nullptr;
-				history->saveStep();
-				_state = ResizableToolState::None;
+				_state = ResizableToolState::Selecting;
+				_rect.size = sf::Vector2i(0, 0);
 				_points.clear();
+				_points.push_back(tile);
 				generateRect();
 				setPosition(tile);
 			}
+			else {
 
-			
+				if (_image != nullptr) {
+					pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, sf::Color::Transparent);
+					_image = nullptr;
+					history->saveStep();
+					_state = ResizableToolState::None;
+					_points.clear();
+					generateRect();
+					setPosition(tile);
+				}
+
+
+			}
 		}
+		
 			
 	}
 	else if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv) {
