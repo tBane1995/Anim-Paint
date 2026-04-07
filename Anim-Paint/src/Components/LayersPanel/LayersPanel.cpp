@@ -199,7 +199,7 @@ void LayersPanel::cursorHover() {
 	if (canvas->_state != CanvasState::Idle)
 		return;
 
-	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
+	if (!(selection->_state == ResizableToolState::None || selection->_state == ResizableToolState::Selected))
 		return;
 
 	Dialog::cursorHover();

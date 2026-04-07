@@ -18,13 +18,13 @@ Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialo
 
 	saveOriginalLayers(layers);
 
-	int w = (selection->_state != SelectionState::None) ? selection->_resizedRect.size.x : canvas->_size.x;
-	int h = (selection->_state != SelectionState::None) ? selection->_resizedRect.size.y : canvas->_size.y;
+	int w = (selection->_state != ResizableToolState::None) ? selection->_resizedRect.size.x : canvas->_size.x;
+	int h = (selection->_state != ResizableToolState::None) ? selection->_resizedRect.size.y : canvas->_size.y;
 
-	int minw = (selection->_state != SelectionState::None) ? selection->_resizedRect.size.x/4 : canvas->_minSize.x/4;
-	int minh = (selection->_state != SelectionState::None) ? selection->_resizedRect.size.y/4 : canvas->_minSize.y/4;
-	int maxw = (selection->_state != SelectionState::None) ? selection->_resizedRect.size.x*4 : canvas->_maxSize.x*4;
-	int maxh = (selection->_state != SelectionState::None) ? selection->_resizedRect.size.y*4 : canvas->_maxSize.y*4;
+	int minw = (selection->_state != ResizableToolState::None) ? selection->_resizedRect.size.x/4 : canvas->_minSize.x/4;
+	int minh = (selection->_state != ResizableToolState::None) ? selection->_resizedRect.size.y/4 : canvas->_minSize.y/4;
+	int maxw = (selection->_state != ResizableToolState::None) ? selection->_resizedRect.size.x*4 : canvas->_maxSize.x*4;
+	int maxh = (selection->_state != ResizableToolState::None) ? selection->_resizedRect.size.y*4 : canvas->_maxSize.y*4;
 
 	_width_input = std::make_shared<NumberInput>(sf::Vector2i(64, basic_text_rect_height), 3, basic_text_size, w, minw, maxw);
 	_height_input = std::make_shared<NumberInput>(sf::Vector2i(64, basic_text_rect_height), 3, basic_text_size, h, minh, maxh);
@@ -70,8 +70,8 @@ Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialo
 
 	_reset = std::make_shared<ColoredButtonWithText>(L"reset", sf::Vector2i(64, 32));
 	_reset->_onclick_func = [this]() {
-		_width_input->setValue((selection->_state != SelectionState::None) ? selection->_resizedRect.size.x : canvas->_size.x);
-		_height_input->setValue((selection->_state != SelectionState::None) ? selection->_resizedRect.size.y : canvas->_size.y);
+		_width_input->setValue((selection->_state != ResizableToolState::None) ? selection->_resizedRect.size.x : canvas->_size.x);
+		_height_input->setValue((selection->_state != ResizableToolState::None) ? selection->_resizedRect.size.y : canvas->_size.y);
 		_width_percent_input->setValue(100);
 		_height_percent_input->setValue(100);
 		setTheFilter();
@@ -102,8 +102,8 @@ Dialog_Resize::~Dialog_Resize() {
 
 	if (Dialog_Resize::_state == ResizeState::Idle) {
 
-		_width_input->setValue((selection->_state!=SelectionState::None)?selection->_resizedRect.size.x : canvas->_size.x);
-		_height_input->setValue((selection->_state!=SelectionState::None)?selection->_resizedRect.size.y : canvas->_size.y);
+		_width_input->setValue((selection->_state!= ResizableToolState::None)?selection->_resizedRect.size.x : canvas->_size.x);
+		_height_input->setValue((selection->_state!= ResizableToolState::None)?selection->_resizedRect.size.y : canvas->_size.y);
 		_width_percent_input->setValue(100);
 		_height_percent_input->setValue(100);
 		setTheFilter();
@@ -114,7 +114,7 @@ Dialog_Resize::~Dialog_Resize() {
 	}
 	else {
 		// is Edited
-		if (selection->_state == SelectionState::Selected) {
+		if (selection->_state == ResizableToolState::Selected) {
 			sf::Image original_image = getCurrentAnimation()->getCurrentLayer()->_image;
 			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 			history->saveStep();
@@ -188,7 +188,7 @@ void Dialog_Resize::setPosition(sf::Vector2i position) {
 
 void Dialog_Resize::setTheFilter() {
 
-	if (selection->_state != SelectionState::None) {
+	if (selection->_state != ResizableToolState::None) {
 
 		selection->resizeImage();
 		set_resize(*selection->_resizedImage, _width_input->getValue(), _height_input->getValue(), toolbar->_second_color->_color);

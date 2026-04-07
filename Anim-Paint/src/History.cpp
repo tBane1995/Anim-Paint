@@ -89,7 +89,7 @@ bool History::canRedo() {
 void History::undo()
 {
 
-	if (selection->_state != SelectionState::None) {
+	if (selection->_state != ResizableToolState::None) {
 		selection->unselect();
 		return;
 	}

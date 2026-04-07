@@ -2,6 +2,7 @@
 #include "SFML/Graphics.hpp"
 #include "Element.hpp"
 #include "Controls/EdgePoint.hpp"
+#include "Tools/Rectangle.hpp"
 
 void removeImageWithAlpha(sf::Image& image, sf::IntRect rect, sf::Color alphaColor = sf::Color::Transparent);
 void removeImageWithMask(sf::Image& image, sf::IntRect rect, sf::Image& mask, sf::Color alphaColor = sf::Color::Transparent);
@@ -10,32 +11,19 @@ void copyImage(sf::Image& dst, sf::Image& src, sf::IntRect srcRect);
 void copyImageWithAlpha(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf::Color alphaColor = sf::Color::Transparent);
 void copyImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, int srcX, int srcY, sf::Image& mask, sf::Color alphaColor);
 
-void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor = sf::Color::Transparent);
 void pasteImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor = sf::Color::Transparent);
 
-enum class SelectionState { None, Selecting, Selected, Moving, Resizing };
 
-class Selection : public Element {
+class Selection : public ResizableTool {
 public:
-	SelectionState _state;
-
-	std::vector<sf::Vector2i> _points;
-
-	// offset
-	sf::Vector2i _offset;	// to move
-
-	// image
-	std::shared_ptr<sf::Image> _image;
-	sf::Texture _texture;
-	std::shared_ptr<sf::Sprite> _sprite;
+	ResizableToolState _state;
 
 	// outline
 	sf::RenderTexture _outlineRenderTexture;
 	sf::Vector2i _outlineOffset;
 	std::shared_ptr<sf::Sprite> _outlineSprite;
 
-	// rect, mask and shader
-	sf::IntRect _rect;
+	// mask and shader
 	std::shared_ptr<sf::Image> _maskImage;
 	sf::Shader _maskShader;
 
@@ -44,22 +32,6 @@ public:
 	std::shared_ptr<sf::Image> _resizedMaskImage;
 	sf::Shader _resizedMaskShader;
 	std::shared_ptr<sf::Image> _resizedImage;
-
-	// edge points
-	std::vector<std::shared_ptr<EdgePoint>> _edgePoints;
-	std::shared_ptr<EdgePoint> _point_left_top;
-	std::shared_ptr<EdgePoint> _point_top;
-	std::shared_ptr<EdgePoint> _point_right_top;
-	std::shared_ptr<EdgePoint> _point_left;
-	std::shared_ptr<EdgePoint> _point_right;
-	std::shared_ptr<EdgePoint> _point_left_bottom;
-	std::shared_ptr<EdgePoint> _point_bottom;
-	std::shared_ptr<EdgePoint> _point_right_bottom;
-	std::shared_ptr<EdgePoint> _hoveredEdgePoint;
-	std::shared_ptr<EdgePoint> _clickedEdgePoint;
-	sf::Vector2i _orginalEdgePointPosition;
-
-	sf::Time _moveTime; // to limit selection move
 
 	Selection();
 	~Selection();

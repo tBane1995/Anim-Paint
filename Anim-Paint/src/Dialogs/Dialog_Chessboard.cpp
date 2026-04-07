@@ -16,7 +16,7 @@ Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers)
 	saveOriginalLayers(layers);
 
 	int maxTileCount;
-	if(selection->_state!=SelectionState::None)
+	if(selection->_state!= ResizableToolState::None)
 		maxTileCount = std::max(selection->_resizedImage->getSize().x, selection->_resizedImage->getSize().y);
 	else
 		maxTileCount = std::max(getCurrentAnimation()->getCurrentLayer()->_image.getSize().x, getCurrentAnimation()->getCurrentLayer()->_image.getSize().y);
@@ -63,7 +63,7 @@ Dialog_Chessboard::~Dialog_Chessboard() {
 	}
 	else {
 		// is Edited
-		if (selection->_state == SelectionState::Selected) {
+		if (selection->_state == ResizableToolState::Selected) {
 			sf::Image original_image = getCurrentAnimation()->getCurrentLayer()->_image;
 			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 			history->saveStep();
@@ -106,7 +106,7 @@ void Dialog_Chessboard::setPosition(sf::Vector2i position) {
 
 void Dialog_Chessboard::setTheFilter() {
 
-	if (selection->_state != SelectionState::None) {
+	if (selection->_state != ResizableToolState::None) {
 
 		selection->resizeImage();
 		set_chessboard(*selection->_resizedImage, _tileCount_slider->getValue(), _transparency_slider->getValue(), toolbar->_first_color->_color, toolbar->_second_color->_color);

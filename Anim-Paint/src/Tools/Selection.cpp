@@ -223,41 +223,6 @@ void copyImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, int s
 	}
 } 
 
-void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor)
-{
-	sf::IntRect s(sf::Vector2i(0,0), sf::Vector2i(src.getSize()));
-
-	if (dstX < 0) { s.position.x -= dstX; s.size.x += dstX; dstX = 0; }
-	if (dstY < 0) { s.position.y -= dstY; s.size.y += dstY; dstY = 0; }
-
-	const int dw = int(dst.getSize().x), dh = int(dst.getSize().y);
-	
-	if (dstX >= dw || dstY >= dh) 
-		return;
-
-	if (dstX + s.size.x > dw) s.size.x = dw - dstX;
-	if (dstY + s.size.y > dh) s.size.y = dh - dstY;
-
-	if (s.size.x <= 0 || s.size.y <= 0) 
-		return;
-
-	sf::Image tmp;
-	tmp.resize(sf::Vector2u(s.size), sf::Color::Transparent);
-	if (!tmp.copy(src, sf::Vector2u(0, 0), s, true)) {
-		DebugError(L"pasteImageWithAlpha: image copy failed");
-		exit(0);
-	}
-	tmp.createMaskFromColor(alphaColor);
-
-	const sf::IntRect all(sf::Vector2i(0, 0), sf::Vector2i(tmp.getSize()));
-	if(!dst.copy(tmp, sf::Vector2u(dstX, dstY), all, true)) {
-		DebugError(L"pasteImageWithAlpha: image copy to dst failed");
-		exit(0);
-	}
-}
-
-
-
 void pasteImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor)
 {
 
@@ -302,9 +267,9 @@ void pasteImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::
 
 
 
-Selection::Selection() : Element() {
+Selection::Selection() : ResizableTool() {
 
-	_state = SelectionState::None;
+	_state = ResizableToolState::None;
 
 	_points.clear();
 
@@ -350,12 +315,12 @@ void Selection::unselect() {
 	_maskImage = nullptr;
 	_resizedImage = nullptr;
 	_resizedMaskImage = nullptr;
-	_state = SelectionState::None;
+	_state = ResizableToolState::None;
 }
 
 void Selection::selectAll() {
 
-	if (_state == SelectionState::Selected) {
+	if (_state == ResizableToolState::Selected) {
 		copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _rect.position.x, _rect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
 	}
 
@@ -387,7 +352,7 @@ void Selection::selectAll() {
 	copyImageWithMask(*_image, anim->getCurrentLayer()->_image, 0, 0, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
 	removeImageWithMask(anim->getCurrentLayer()->_image, _resizedRect, *_resizedMaskImage, sf::Color::Transparent);
 
-	_state = SelectionState::Selected;
+	_state = ResizableToolState::Selected;
 }
 
 
@@ -403,7 +368,7 @@ bool Selection::clickOnSelection(sf::Vector2i point) {
 void Selection::copy(sf::Image& canvas, sf::Color alphaColor)
 {
 
-	if (_state != SelectionState::Selected)
+	if (_state != ResizableToolState::Selected)
 		return;
 
 
@@ -522,7 +487,7 @@ bool Selection::paste(sf::Image& canvas, sf::Color emptyColor, sf::Image image)
 		return false;
 	}
 
-	_state = SelectionState::Selected;
+	_state = ResizableToolState::Selected;
 
 	_points.clear();
 	_outlineOffset = sf::Vector2i(0, 0);
@@ -544,7 +509,7 @@ bool Selection::paste(sf::Image& canvas, sf::Color emptyColor, sf::Image image)
 }
 
 void Selection::cut(sf::Image& canvas, sf::Color emptyColor) {
-	if (_state == SelectionState::Selected) {
+	if (_state == ResizableToolState::Selected) {
 
 		if (_image == nullptr) {
 			_image = std::make_shared<sf::Image>();
@@ -563,7 +528,7 @@ void Selection::cut(sf::Image& canvas, sf::Color emptyColor) {
 		}
 
 		_image = nullptr;
-		_state = SelectionState::None;
+		_state = ResizableToolState::None;
 		_rect = sf::IntRect(sf::Vector2i(-1, -1), sf::Vector2i(-1, -1));
 		_resizedRect = _rect;
 	}
@@ -1040,7 +1005,7 @@ void Selection::generateEdgePoints() {
 
 void Selection::setPosition(sf::Vector2i position) {
 
-	if (_state == SelectionState::None)
+	if (_state == ResizableToolState::None)
 		return;
 
 	sf::Vector2i delta = position - _rect.position;
@@ -1101,7 +1066,7 @@ void Selection::normalize(sf::IntRect newRect) {
 }
 
 void Selection::drawRect() {
-	if (!(_points.size() >= 3 && (_state == SelectionState::Selected || _state == SelectionState::Moving || _state == SelectionState::Resizing)))
+	if (!(_points.size() >= 3 && (_state == ResizableToolState::Selected || _state == ResizableToolState::Moving || _state == ResizableToolState::Resizing)))
 		return;
 
 	float scale = canvas->_zoom * canvas->_zoom_delta;
@@ -1126,7 +1091,7 @@ void Selection::drawRect() {
 
 void Selection::drawOutline() {
 
-	if (_state != SelectionState::Selecting)
+	if (_state != ResizableToolState::Selecting)
 		return;
 
 	if (_rect.size.x <= 1 || _rect.size.y <= 1)
@@ -1148,7 +1113,7 @@ void Selection::drawOutline() {
 
 void Selection::drawEdgePoints() {
 
-	if (!(_points.size() >= 3 && (_state == SelectionState::Selected || _state == SelectionState::Resizing)))
+	if (!(_points.size() >= 3 && (_state == ResizableToolState::Selected || _state == ResizableToolState::Resizing)))
 		return;
 
 	for (auto& point : _edgePoints) {
@@ -1189,7 +1154,7 @@ void Selection::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if((_state == SelectionState::None || _state == SelectionState::Selected) && palette && palette->_rect.contains(cursor->_position)) {
+	if((_state == ResizableToolState::None || _state == ResizableToolState::Selected) && palette && palette->_rect.contains(cursor->_position)) {
 		return;
 	}
 
@@ -1233,17 +1198,17 @@ void Selection::handleEvent(const sf::Event& event) {
 
 	// selection resizing
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (_state == SelectionState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
+		if (_state == ResizableToolState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
 			_clickedEdgePoint = _hoveredEdgePoint;
 			_orginalEdgePointPosition = _point_left_top->getPosition();
-			_state = SelectionState::Resizing;
+			_state = ResizableToolState::Resizing;
 			return;
 		}
 	}
-	else if (_state == SelectionState::Resizing) {
+	else if (_state == ResizableToolState::Resizing) {
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 			_clickedEdgePoint = nullptr;
-			_state = SelectionState::Selected;
+			_state = ResizableToolState::Selected;
 		}
 		return;
 	}
@@ -1266,12 +1231,12 @@ void Selection::handleEvent(const sf::Event& event) {
 	// other selection interactions
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 
-		if (Element_pressed.get() == this || Element_pressed.get() == nullptr || _state == SelectionState::None || _state == SelectionState::Selected) {
+		if (Element_pressed.get() == this || Element_pressed.get() == nullptr || _state == ResizableToolState::None || _state == ResizableToolState::Selected) {
 
 			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 
 			if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && clickOnSelection(tile)) {
-				_state = SelectionState::Moving;
+				_state = ResizableToolState::Moving;
 				Element_pressed = this->shared_from_this();
 				_offset = tile - _resizedRect.position;
 				
@@ -1285,11 +1250,11 @@ void Selection::handleEvent(const sf::Event& event) {
 								copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
 							_image = nullptr;
 							_resizedImage = nullptr;
-							if(getCurrentAnimation()->getCurrentLayer() && canvas->_isEdited == false && _state == SelectionState::Selected)
+							if(getCurrentAnimation()->getCurrentLayer() && canvas->_isEdited == false && _state == ResizableToolState::Selected)
 								history->saveStep();
 							
 						}
-						_state = SelectionState::Selecting;
+						_state = ResizableToolState::Selecting;
 						Element_pressed = this->shared_from_this();
 						_points.clear();
 						generateRect();
@@ -1303,11 +1268,11 @@ void Selection::handleEvent(const sf::Event& event) {
 								copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 							_image = nullptr;
 							_resizedImage = nullptr;
-							if (getCurrentAnimation()->getCurrentLayer() && canvas->_isEdited == false && _state == SelectionState::Selected)
+							if (getCurrentAnimation()->getCurrentLayer() && canvas->_isEdited == false && _state == ResizableToolState::Selected)
 								history->saveStep();
 						}
 
-						_state = SelectionState::None;
+						_state = ResizableToolState::None;
 						_points.clear();
 						_outlineOffset = sf::Vector2i(0, 0);
 						generateRect();
@@ -1326,15 +1291,15 @@ void Selection::handleEvent(const sf::Event& event) {
 			generateRect();
 			generateMask();
 
-			if (_state == SelectionState::Selecting) {
+			if (_state == ResizableToolState::Selecting) {
 				_resizedRect = _rect;
 				_resizedMaskImage = _maskImage;
 				_resizedImage = _image;
 			}
 
-			if (_state == SelectionState::Selecting) {
+			if (_state == ResizableToolState::Selecting) {
 				if (_rect.size.x < 2 || _rect.size.y < 2) {
-					_state = SelectionState::None;
+					_state = ResizableToolState::None;
 					_points.clear();
 					_outlineOffset = sf::Vector2i(0, 0);
 				}
@@ -1347,14 +1312,14 @@ void Selection::handleEvent(const sf::Event& event) {
 						}
 						*_resizedImage = *_image;
 					}
-					_state = SelectionState::Selected;
+					_state = ResizableToolState::Selected;
 					Element_pressed = this->shared_from_this();
 					generateEdgePoints();
 				}
 
 			}
-			else if (_state == SelectionState::Moving) {
-				_state = SelectionState::Selected;
+			else if (_state == ResizableToolState::Moving) {
+				_state = ResizableToolState::Selected;
 				Element_pressed = this->shared_from_this();
 				generateEdgePoints();
 			}
@@ -1362,7 +1327,7 @@ void Selection::handleEvent(const sf::Event& event) {
 	}
 
 	if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-		if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && _state == SelectionState::Moving) {
+		if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && _state == ResizableToolState::Moving) {
 			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 
 			sf::Vector2i desiredRectPos = tile - _offset;
@@ -1381,7 +1346,7 @@ void Selection::handleEvent(const sf::Event& event) {
 		}
 
 		else if (toolbar->_toolType == ToolType::Selector) {
-			if (_state == SelectionState::Selecting) {
+			if (_state == ResizableToolState::Selecting) {
 
 				sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_size, canvas->_zoom, canvas->_zoom_delta);
 
@@ -1418,7 +1383,7 @@ void Selection::handleEvent(const sf::Event& event) {
 		}
 		else if (toolbar->_toolType == ToolType::Lasso) {
 
-			if (_state == SelectionState::Selecting) {
+			if (_state == ResizableToolState::Selecting) {
 				sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_size, canvas->_zoom, canvas->_zoom_delta);
 
 				if (_image != nullptr) {
@@ -1459,7 +1424,7 @@ void Selection::update() {
 		return;
 	}
 
-	if (_state == SelectionState::Resizing) {
+	if (_state == ResizableToolState::Resizing) {
 		for (auto& point : _edgePoints) {
 			point->update();
 		}
@@ -1470,7 +1435,7 @@ void Selection::update() {
 		return;
 	}
 
-	if (_state == SelectionState::Selected) {
+	if (_state == ResizableToolState::Selected) {
 
 		if ((currentTime - _moveTime).asSeconds() > 0.075f) {
 

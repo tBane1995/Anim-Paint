@@ -137,7 +137,7 @@ void Canvas::setPosition(sf::Vector2i position) {
 	_point_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x / 2, getZoomedSize(_size).y));
 	_point_right_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y));
 
-	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == SelectionState::Selected) {
+	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == ResizableToolState::Selected) {
 		selection->generateEdgePoints();
 	}
 
@@ -514,7 +514,7 @@ void Canvas::cursorHover() {
 	if (!static_dialogs.empty() && static_dialogs.back()->_is_moved)
 		return;
 
-	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
+	if (!(selection->_state == ResizableToolState::None || selection->_state == ResizableToolState::Selected))
 		return;
 
 	if (_rect.contains(cursor->_position)) {
@@ -534,7 +534,7 @@ void Canvas::cursorHover() {
 		}
 	}
 	
-	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == SelectionState::Selected) {
+	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == ResizableToolState::Selected) {
 
 		selection->_hoveredEdgePoint = nullptr;
 
@@ -546,7 +546,7 @@ void Canvas::cursorHover() {
 		}
 	}
 
-	if(selection->_state == SelectionState::Selecting || selection->_state == SelectionState::Resizing) {
+	if(selection->_state == ResizableToolState::Selecting || selection->_state == ResizableToolState::Resizing) {
 		Element_hovered = this->shared_from_this();
 	}
 

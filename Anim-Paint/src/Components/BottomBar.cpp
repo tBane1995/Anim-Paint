@@ -81,7 +81,7 @@ void BottomBar::updateText() {
 		_textCanvasSize->setString(std::to_wstring(canvas->_size.x) + L" x " + std::to_wstring(canvas->_size.y));
 	}
 
-	if (selection->_state != SelectionState::None) {
+	if (selection->_state != ResizableToolState::None) {
 		std::wstring ssize = std::to_wstring(selection->_resizedRect.size.x) + L" x " + std::to_wstring(selection->_resizedRect.size.y);
 		_textSelectionSize->setString(ssize);
 	}
@@ -103,7 +103,7 @@ void BottomBar::cursorHover() {
 	if (canvas->_state != CanvasState::Idle)
 		return;
 
-	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
+	if (!(selection->_state == ResizableToolState::None || selection->_state == ResizableToolState::Selected))
 		return;
 
 	if (_rect.contains(cursor->_position)) {

@@ -258,7 +258,7 @@ MainMenu::MainMenu() : Element() {
 
 	select_none = std::make_shared<Option>(L"Select none", L"Ctrl+D");
 	select_none->_onclick_func = [this]() {
-		if (selection->_state != SelectionState::None) {
+		if (selection->_state != ResizableToolState::None) {
 			selection->unselect();
 		}
 		closeMenu();
@@ -702,7 +702,7 @@ void MainMenu::cursorHover() {
 	if (canvas->_state != CanvasState::Idle)
 		return;
 
-	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
+	if (!(selection->_state == ResizableToolState::None || selection->_state == ResizableToolState::Selected))
 		return;
 
 	if(!static_dialogs.empty() && static_dialogs.front()->_is_moved)

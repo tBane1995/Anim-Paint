@@ -53,7 +53,7 @@ Toolbar::Toolbar() : Element() {
 				selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img);
 				_option_transparency->_checkbox->_value = 0;
 				_toolType = ToolType::Selector;
-				selection->_state = SelectionState::Selected;
+				selection->_state = ResizableToolState::Selected;
 				selectToolButton(_btn_select);
 				confirm->_state = DialogState::ToClose;
 				};
@@ -64,7 +64,7 @@ Toolbar::Toolbar() : Element() {
 		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img)) {
 			_option_transparency->_checkbox->_value = 0;
 			_toolType = ToolType::Selector;
-			selection->_state = SelectionState::Selected;
+			selection->_state = ResizableToolState::Selected;
 			selectToolButton(_btn_select);
 		}
 		};
@@ -93,7 +93,7 @@ Toolbar::Toolbar() : Element() {
 				selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img);
 				_option_transparency->_checkbox->_value = 0;
 				_toolType = ToolType::Selector;
-				selection->_state = SelectionState::Selected;
+				selection->_state = ResizableToolState::Selected;
 				selectToolButton(_btn_select);
 				confirm->_state = DialogState::ToClose;
 				};
@@ -104,7 +104,7 @@ Toolbar::Toolbar() : Element() {
 		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img)) {
 			_option_transparency->_checkbox->_value = 0;
 			_toolType = ToolType::Selector;
-			selection->_state = SelectionState::Selected;
+			selection->_state = ResizableToolState::Selected;
 			selectToolButton(_btn_select);
 		}
 		};
@@ -135,7 +135,7 @@ Toolbar::Toolbar() : Element() {
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_cut->_onclick_func = [this]() {
 		//selection->cut(&animation->getCurrentLayer()->image, selection->img, second_color->color);
-		if (selection->_state == SelectionState::Selected) {
+		if (selection->_state == ResizableToolState::Selected) {
 			selection->cut(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent);
 		}
 		};
@@ -145,7 +145,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_copy->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_copy->_onclick_func = [this]() {
-		if (selection->_state == SelectionState::Selected) {
+		if (selection->_state == ResizableToolState::Selected) {
 			selection->copy(getCurrentAnimation()->getCurrentLayer()->_image, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent : _second_color->_color);
 			removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, selection->_resizedRect, *selection->_resizedMaskImage, sf::Color::Transparent);
 		}
@@ -635,7 +635,7 @@ void Toolbar::cursorHover() {
 	if (canvas->_state != CanvasState::Idle)
 		return;
 
-	if (!(selection->_state == SelectionState::None || selection->_state == SelectionState::Selected))
+	if (!(selection->_state == ResizableToolState::None || selection->_state == ResizableToolState::Selected))
 		return;
 
 	if (!static_dialogs.empty() && static_dialogs.front()->_is_moved)

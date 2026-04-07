@@ -38,7 +38,7 @@ Dialog_Paste_From_File::Dialog_Paste_From_File() : FileDialog(L"Paste From File"
 				selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img);
 				toolbar->_option_transparency->_checkbox->_value = 0;
 				toolbar->_toolType = ToolType::Selector;
-				selection->_state = SelectionState::Selected;
+				selection->_state = ResizableToolState::Selected;
 				toolbar->selectToolButton(toolbar->_btn_select);
 				confirm->_state = DialogState::ToClose;
 				};
@@ -48,7 +48,7 @@ Dialog_Paste_From_File::Dialog_Paste_From_File() : FileDialog(L"Paste From File"
 			selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img);
 			toolbar->_option_transparency->_checkbox->_value = 0;
 			toolbar->_toolType = ToolType::Selector;
-			selection->_state = SelectionState::Selected;
+			selection->_state = ResizableToolState::Selected;
 			toolbar->selectToolButton(toolbar->_btn_select);
 		}
 

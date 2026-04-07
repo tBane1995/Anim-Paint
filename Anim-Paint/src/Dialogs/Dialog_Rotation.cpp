@@ -63,7 +63,7 @@ Dialog_Rotation::~Dialog_Rotation() {
 	}
 	else {
 		// is Edited
-		if (selection->_state == SelectionState::Selected) {
+		if (selection->_state == ResizableToolState::Selected) {
 			sf::Image original_image = getCurrentAnimation()->getCurrentLayer()->_image;
 			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 			history->saveStep();
@@ -109,7 +109,7 @@ void Dialog_Rotation::setPosition(sf::Vector2i position) {
 
 void Dialog_Rotation::setTheFilter() {
 
-	if (selection->_state != SelectionState::None) {
+	if (selection->_state != ResizableToolState::None) {
 
 		selection->resizeImage();
 		set_smoothing(*selection->_resizedImage, _smoothness_slider->getValue(), _radius_slider->getValue());

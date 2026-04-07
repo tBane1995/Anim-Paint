@@ -3,7 +3,7 @@
 #include "Element.hpp"
 #include "Controls/EdgePoint.hpp"
 
-//void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor);
+void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor = sf::Color::Transparent);
 
 enum class ResizableToolState { None, Selecting, Selected, Moving, Resizing };
 

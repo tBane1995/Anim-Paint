@@ -11,7 +11,7 @@
 #include "Tools/Selection.hpp" // TO-DO - for the test using paste Image With Alpha
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Dialogs/Palette.hpp"
-/*
+
 void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor)
 {
 	sf::IntRect s(sf::Vector2i(0, 0), sf::Vector2i(src.getSize()));
@@ -44,7 +44,7 @@ void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf:
 		exit(0);
 	}
 }
-*/
+
 ResizableTool::ResizableTool() : Element() {
 	_state = ResizableToolState::None;
 
