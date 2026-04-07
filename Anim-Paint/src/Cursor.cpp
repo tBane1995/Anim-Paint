@@ -63,7 +63,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 	}
 
 	if (_hoveredElement != canvas && 
-		(toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso || (resizable_tool!= nullptr && resizable_tool->tooltypeIsShape())) && resizable_tool->_state != ResizableToolState::Selected &&
+		(toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso || (resizable_tool!= nullptr && resizable_tool->tooltypeIsShape())) && (resizable_tool->_state != ResizableToolState::None && resizable_tool->_state != ResizableToolState::Selected) &&
 		_hoveredElement == Element_hovered)
 		return;
 
@@ -241,6 +241,13 @@ void Cursor::handleEvent(const sf::Event& event) {
 		}
 	}
 	
+	if (resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Selecting) {
+		window->setMouseCursorVisible(true);
+		window->setMouseCursor(*_crossCursor);
+		_brushIsVisible = false;
+		return;
+	}
+
 	sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 	if ((resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Selected && resizable_tool->clickOnSelection(tile) && !(palette!=nullptr && palette->_rect.contains(_position))) ||
 		(resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Moving)) {
