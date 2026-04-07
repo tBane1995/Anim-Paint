@@ -525,6 +525,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			_state = ResizableToolState::None;
 			_points.clear();
 			generateRect();
+			_image = nullptr;
 			generateEdgePoints();
 			return;
 		}
@@ -551,9 +552,6 @@ void ResizableTool::draw() {
 		return;
 
 	if (_state == ResizableToolState::None)
-		return;
-
-	if(_rect.size.x <= 1 || _rect.size.y <= 1)
 		return;
 	
 	drawImage();

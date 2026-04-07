@@ -171,12 +171,14 @@ void copyImageWithAlpha(sf::Image& dst, sf::Image& src, sf::IntRect srcRect, sf:
 	}
 }
 
-void copyImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, int srcX, int srcY, sf::Image& mask, sf::Color alphaColor)
+void copyImageWithMask(sf::Image* dst, sf::Image* src, int dstX, int dstY, int srcX, int srcY, sf::Image& mask, sf::Color alphaColor)
 {
-	int dw = (int)dst.getSize().x;
-	int dh = (int)dst.getSize().y;
-	int sw = (int)src.getSize().x;
-	int sh = (int)src.getSize().y;
+	if (!src || !dst) return;
+
+	int dw = (int)dst->getSize().x;
+	int dh = (int)dst->getSize().y;
+	int sw = (int)src->getSize().x;
+	int sh = (int)src->getSize().y;
 
 	if (dw <= 0 || dh <= 0 || sw <= 0 || sh <= 0) return;
 
@@ -215,10 +217,10 @@ void copyImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, int s
 			const sf::Color m = mask.getPixel(sf::Vector2u(mx, my));
 			if (m != sf::Color::White) continue; // tylko białe = kopiuj
 
-			const sf::Color c = src.getPixel(sf::Vector2u(sx, sy));
+			const sf::Color c = src->getPixel(sf::Vector2u(sx, sy));
 			if (c.a == 0 || c == alphaColor) continue;
 
-			dst.setPixel(sf::Vector2u(dx, dy), c);
+			dst->setPixel(sf::Vector2u(dx, dy), c);
 		}
 	}
 } 
@@ -321,7 +323,7 @@ void Selection::unselect() {
 void Selection::selectAll() {
 
 	if (_state == ResizableToolState::Selected) {
-		copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _rect.position.x, _rect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
+		copyImageWithMask(&getCurrentAnimation()->getCurrentLayer()->_image, _resizedImage.get(), _rect.position.x, _rect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 	}
 
 	_points.clear();
@@ -349,7 +351,7 @@ void Selection::selectAll() {
 
 	generateEdgePoints();
 
-	copyImageWithMask(*_image, anim->getCurrentLayer()->_image, 0, 0, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
+	copyImageWithMask(&*_image, &anim->getCurrentLayer()->_image, 0, 0, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
 	removeImageWithMask(anim->getCurrentLayer()->_image, _resizedRect, *_resizedMaskImage, sf::Color::Transparent);
 
 	_state = ResizableToolState::Selected;
@@ -661,9 +663,10 @@ void Selection::resizeRect() {
 }
 
 void Selection::resizeImage() {
+	_resizedImage = nullptr;
 	if (_image == nullptr) return;
-	if (_rect.size.x <= 1 || _rect.size.y <= 1) return;
-	if (_resizedRect.size.x <= 1 || _resizedRect.size.y <= 1) return;
+	if (_rect.size.x < 1 || _rect.size.y < 1) return;
+	if (_resizedRect.size.x < 1 || _resizedRect.size.y < 1) return;
 
 	_resizedImage = std::make_shared<sf::Image>(*_image);
 	set_resize(*_resizedImage, _resizedRect.size.x, _resizedRect.size.y);
@@ -1247,7 +1250,7 @@ void Selection::handleEvent(const sf::Event& event) {
 					if (canvas->_rect.contains(cursor->_position)) {
 						if (_rect.size.x > 1 && _rect.size.y > 1) {
 							if(getCurrentAnimation()->getCurrentLayer())
-								copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
+								copyImageWithMask(&getCurrentAnimation()->getCurrentLayer()->_image, _resizedImage.get(), _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
 							_image = nullptr;
 							_resizedImage = nullptr;
 							if(getCurrentAnimation()->getCurrentLayer() && canvas->_isEdited == false && _state == ResizableToolState::Selected)
@@ -1265,7 +1268,7 @@ void Selection::handleEvent(const sf::Event& event) {
 					else {
 						if (_rect.size.x > 1 && _rect.size.y > 1) {
 							if (getCurrentAnimation()->getCurrentLayer())
-								copyImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *_resizedImage, _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+								copyImageWithMask(&getCurrentAnimation()->getCurrentLayer()->_image, _resizedImage.get(), _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 							_image = nullptr;
 							_resizedImage = nullptr;
 							if (getCurrentAnimation()->getCurrentLayer() && canvas->_isEdited == false && _state == ResizableToolState::Selected)
@@ -1307,7 +1310,7 @@ void Selection::handleEvent(const sf::Event& event) {
 					if (_rect.size.x > 1 && _rect.size.y > 1) {
 						toolbar->_option_transparency->_checkbox->_value = 0;
 						if (getCurrentAnimation()->getCurrentLayer()) {
-							copyImageWithMask(*_image, getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, _rect.position.x, _rect.position.y, *_maskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+							copyImageWithMask(&*_image, &getCurrentAnimation()->getCurrentLayer()->_image, 0, 0, _rect.position.x, _rect.position.y, *_maskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 							removeImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, _resizedRect, *_resizedMaskImage, sf::Color::Transparent);
 						}
 						*_resizedImage = *_image;
