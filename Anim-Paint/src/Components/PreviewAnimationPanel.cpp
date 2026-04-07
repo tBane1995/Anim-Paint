@@ -53,7 +53,7 @@ void PreviewAnimationPanel::cursorHover() {
 	if (canvas->_state != CanvasState::Idle)
 		return;
 
-	if (!(selection->_state == ResizableToolState::None || selection->_state == ResizableToolState::Selected))
+	if (resizable_tool != nullptr && resizable_tool->_state != ResizableToolState::None && resizable_tool->_state != ResizableToolState::Selected)
 		return;
 
 	Dialog::cursorHover();

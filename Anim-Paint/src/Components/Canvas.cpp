@@ -514,7 +514,7 @@ void Canvas::cursorHover() {
 	if (!static_dialogs.empty() && static_dialogs.back()->_is_moved)
 		return;
 
-	if (!(resizable_tool != nullptr && (resizable_tool->_state == ResizableToolState::None || resizable_tool->_state == ResizableToolState::Selected)))
+	if (resizable_tool != nullptr && resizable_tool->_state != ResizableToolState::None && resizable_tool->_state != ResizableToolState::Selected)
 		return;
 
 	if (_rect.contains(cursor->_position)) {
@@ -524,7 +524,7 @@ void Canvas::cursorHover() {
 	_hoveredEdgePoint = nullptr;
 	
 	if (_state == CanvasState::Idle) {
-		if (toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
+		if (toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso && !(resizable_tool != nullptr && resizable_tool->tooltypeIsShape())) {
 			for (auto& point : _edgePoints) {
 				point->cursorHover();
 				if (Element_hovered == point) {
@@ -546,7 +546,7 @@ void Canvas::cursorHover() {
 		}
 	}
 
-	if(resizable_tool->_state == ResizableToolState::Selecting || resizable_tool->_state == ResizableToolState::Resizing) {
+	if(resizable_tool!=nullptr && (resizable_tool->_state == ResizableToolState::Selecting || resizable_tool->_state == ResizableToolState::Resizing)) {
 		Element_hovered = this->shared_from_this();
 	}
 
@@ -722,7 +722,7 @@ void Canvas::draw() {
 		}
 	}
 
-	if (dialogs.empty() && toolbar->_toolType != ToolType::Selector && toolbar->_toolType != ToolType::Lasso) {
+	if (resizable_tool == nullptr) {
 		for (auto& point : _edgePoints) {
 			point->draw();
 		}

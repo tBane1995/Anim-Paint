@@ -424,7 +424,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if ((_state == ResizableToolState::None || _state == ResizableToolState::Selected) && palette && palette->_rect.contains(cursor->_position)) {
+	if ( (_state == ResizableToolState::None || _state == ResizableToolState::Selected) && palette && palette->_rect.contains(cursor->_position)) {
 		return;
 	}
 
@@ -507,9 +507,10 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			setPosition(clampedRectPos);
 		}
 		else if(_state == ResizableToolState::Selecting) {
+			_state = ResizableToolState::Selecting;
 			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 			_rect.size = tile - _rect.position;
-			sf::Vector2i oldPoint = _points.front();
+			sf::Vector2i oldPoint = (!_points.empty()) ? _points.front() : tile;
 			_points.clear();
 			_points.push_back(oldPoint);
 			_points.push_back(oldPoint + sf::Vector2i(tile.x - oldPoint.x, 0));
@@ -520,8 +521,11 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 		}
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-		_state = ResizableToolState::Selected;
-		generateEdgePoints();
+		
+		if(_state == ResizableToolState::Selecting) {
+			_state = ResizableToolState::Selected;
+			generateEdgePoints();
+		}
 	}
 
 }
@@ -547,8 +551,6 @@ void ResizableTool::draw() {
 
 	if(_rect.size.x <= 1 || _rect.size.y <= 1)
 		return;
-
-	
 	
 	drawImage();
 	drawRect();

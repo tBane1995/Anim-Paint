@@ -84,6 +84,9 @@ void BottomBar::updateText() {
 	if (selection->_state != ResizableToolState::None) {
 		std::wstring ssize = std::to_wstring(selection->_resizedRect.size.x) + L" x " + std::to_wstring(selection->_resizedRect.size.y);
 		_textSelectionSize->setString(ssize);
+	}else if (resizable_tool != nullptr && resizable_tool->_state != ResizableToolState::None) {
+		std::wstring ssize = std::to_wstring(resizable_tool->_rect.size.x) + L" x " + std::to_wstring(resizable_tool->_rect.size.y);
+		_textSelectionSize->setString(ssize);
 	}
 	else {
 		_textSelectionSize->setString(L"");

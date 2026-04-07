@@ -121,7 +121,7 @@ int main() {
 
 	brush = std::make_shared<Brush>(2);
 	selection = std::make_shared<Selection>();
-	resizable_tool = std::make_shared<ResizableTool>();
+	resizable_tool = nullptr;
 
 	history = std::make_shared<History>();
 	history->saveStep();
@@ -185,8 +185,8 @@ int main() {
 
 		// cursor hovering
 		Element_hovered = nullptr;
-
-		resizable_tool->cursorHover();
+		if (resizable_tool)
+			resizable_tool->cursorHover();
 		canvas->cursorHover();
 
 		toolbar->cursorHover();
@@ -241,7 +241,8 @@ int main() {
 			main_menu->handleEvent(*event);
 
 			toolbar->handleEvent(*event);
-			resizable_tool->handleEvent(*event);
+			if (resizable_tool)
+				resizable_tool->handleEvent(*event);
 			canvas->handleEvent(*event);
 			
 			for (auto it = static_dialogs.begin(); it != static_dialogs.end(); it+=1) {
@@ -267,13 +268,14 @@ int main() {
 		}
 		
 		// update
-		selection->update();
-		resizable_tool->update();
+		if(resizable_tool)
+			resizable_tool->update();
 		
 		// render
 		window->clear(sf::Color(56, 56, 56));
 		canvas->draw();
-		resizable_tool->draw();
+		if (resizable_tool)
+			resizable_tool->draw();
 		cursor->draw();
 
 		for (auto it = static_dialogs.end(); it != static_dialogs.begin(); ) {
