@@ -106,7 +106,7 @@ void BottomBar::cursorHover() {
 	if (canvas->_state != CanvasState::Idle)
 		return;
 
-	if (!(resizable_tool != nullptr && (resizable_tool->_state == ResizableToolState::None || resizable_tool->_state == ResizableToolState::Selected)))
+	if (resizable_tool != nullptr && (resizable_tool->_state == ResizableToolState::Moving || resizable_tool->_state == ResizableToolState::Selecting || resizable_tool->_state == ResizableToolState::Resizing))
 		return;
 
 	if (_rect.contains(cursor->_position)) {
