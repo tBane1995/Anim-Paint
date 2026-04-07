@@ -702,7 +702,7 @@ void MainMenu::cursorHover() {
 	if (canvas->_state != CanvasState::Idle)
 		return;
 
-	if (!(selection->_state == ResizableToolState::None || selection->_state == ResizableToolState::Selected))
+	if (!(resizable_tool != nullptr && (resizable_tool->_state == ResizableToolState::None || resizable_tool->_state == ResizableToolState::Selected)))
 		return;
 
 	if(!static_dialogs.empty() && static_dialogs.front()->_is_moved)

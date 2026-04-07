@@ -514,7 +514,7 @@ void Canvas::cursorHover() {
 	if (!static_dialogs.empty() && static_dialogs.back()->_is_moved)
 		return;
 
-	if (!(resizable_tool!=nullptr && (resizable_tool->_state == ResizableToolState::None || resizable_tool->_state == ResizableToolState::Selected)))
+	if (!(resizable_tool != nullptr && (resizable_tool->_state == ResizableToolState::None || resizable_tool->_state == ResizableToolState::Selected)))
 		return;
 
 	if (_rect.contains(cursor->_position)) {
