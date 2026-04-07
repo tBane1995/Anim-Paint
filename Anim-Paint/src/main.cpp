@@ -186,7 +186,6 @@ int main() {
 		// cursor hovering
 		Element_hovered = nullptr;
 
-		selection->cursorHover();
 		resizable_tool->cursorHover();
 		canvas->cursorHover();
 
@@ -242,7 +241,6 @@ int main() {
 			main_menu->handleEvent(*event);
 
 			toolbar->handleEvent(*event);
-			selection->handleEvent(*event);
 			resizable_tool->handleEvent(*event);
 			canvas->handleEvent(*event);
 			
@@ -275,7 +273,6 @@ int main() {
 		// render
 		window->clear(sf::Color(56, 56, 56));
 		canvas->draw();
-		selection->draw();
 		resizable_tool->draw();
 		cursor->draw();
 

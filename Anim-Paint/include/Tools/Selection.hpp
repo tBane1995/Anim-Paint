@@ -16,7 +16,6 @@ void pasteImageWithMask(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::
 
 class Selection : public ResizableTool {
 public:
-	ResizableToolState _state;
 
 	// outline
 	sf::RenderTexture _outlineRenderTexture;

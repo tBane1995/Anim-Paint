@@ -53,6 +53,7 @@ Toolbar::Toolbar() : Element() {
 				selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img);
 				_option_transparency->_checkbox->_value = 0;
 				_toolType = ToolType::Selector;
+				resizable_tool = selection;
 				selection->_state = ResizableToolState::Selected;
 				selectToolButton(_btn_select);
 				confirm->_state = DialogState::ToClose;
@@ -64,6 +65,7 @@ Toolbar::Toolbar() : Element() {
 		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img)) {
 			_option_transparency->_checkbox->_value = 0;
 			_toolType = ToolType::Selector;
+			resizable_tool = selection;
 			selection->_state = ResizableToolState::Selected;
 			selectToolButton(_btn_select);
 		}
@@ -93,6 +95,7 @@ Toolbar::Toolbar() : Element() {
 				selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img);
 				_option_transparency->_checkbox->_value = 0;
 				_toolType = ToolType::Selector;
+				resizable_tool = selection;
 				selection->_state = ResizableToolState::Selected;
 				selectToolButton(_btn_select);
 				confirm->_state = DialogState::ToClose;
@@ -104,6 +107,7 @@ Toolbar::Toolbar() : Element() {
 		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img)) {
 			_option_transparency->_checkbox->_value = 0;
 			_toolType = ToolType::Selector;
+			resizable_tool = selection;
 			selection->_state = ResizableToolState::Selected;
 			selectToolButton(_btn_select);
 		}
@@ -157,6 +161,7 @@ Toolbar::Toolbar() : Element() {
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_select->_onclick_func = [this]() {
 		_toolType = ToolType::Selector;
+		resizable_tool = selection;
 		selectToolButton(_btn_select);
 		};
 	_btn_select->setTooltip(L"Selection Tool", L"Select an area of the canvas move, copy, or cut");
@@ -166,6 +171,7 @@ Toolbar::Toolbar() : Element() {
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_lasso->_onclick_func = [this]() {
 		_toolType = ToolType::Lasso;
+		resizable_tool = selection;
 		selectToolButton(_btn_lasso);
 		};
 	_btn_lasso->setTooltip(L"Lasso Tool", L"Select an area of the canvas with a freehand selection to move, copy or cut");
@@ -187,6 +193,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_brush = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"), getTexture(L"tex\\tools\\btn_brush_press.png"));
 	_btn_brush->_onclick_func = [this]() {
 		_toolType = ToolType::Brush;
+		resizable_tool = nullptr;
 		brush->setBrushType(BrushType::Circle);
 		selectToolButton(_btn_brush);
 		};
@@ -195,6 +202,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_picker = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_picker.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"), getTexture(L"tex\\tools\\btn_picker_press.png"));
 	_btn_picker->_onclick_func = [this]() {
 		_toolType = ToolType::Picker;
+		resizable_tool = nullptr;
 		brush->setBrushType(BrushType::Circle);
 		selectToolButton(_btn_picker);
 		};
@@ -203,6 +211,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_fill = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"), getTexture(L"tex\\tools\\btn_fill_press.png"));
 	_btn_fill->_onclick_func = [this]() {
 		_toolType = ToolType::Fill;
+		resizable_tool = nullptr;
 		selectToolButton(_btn_fill);
 		};
 	_btn_fill->setTooltip(L"Fill Tool", L"Fill an area of the canvas using the primary color with LMB or the secondary color with RMB");
@@ -210,6 +219,7 @@ Toolbar::Toolbar() : Element() {
 	_btn_eraser = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"), getTexture(L"tex\\tools\\btn_eraser_press.png"));
 	_btn_eraser->_onclick_func = [this]() {
 		_toolType = ToolType::Eraser;
+		resizable_tool = nullptr;
 		brush->setBrushType(BrushType::Square);
 		selectToolButton(_btn_eraser);
 		};
@@ -635,7 +645,7 @@ void Toolbar::cursorHover() {
 	if (canvas->_state != CanvasState::Idle)
 		return;
 
-	if (!(selection->_state == ResizableToolState::None || selection->_state == ResizableToolState::Selected))
+	if (!(resizable_tool!= nullptr && (resizable_tool->_state == ResizableToolState::None || resizable_tool->_state == ResizableToolState::Selected)))
 		return;
 
 	if (!static_dialogs.empty() && static_dialogs.front()->_is_moved)

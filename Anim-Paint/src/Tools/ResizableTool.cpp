@@ -183,6 +183,90 @@ void ResizableTool::generateEdgePoints() {
 
 }
 
+void ResizableTool::resizeRect() {
+
+	float scale = (float)(canvas->_zoom * canvas->_zoom_delta);
+
+	sf::Vector2f p = (sf::Vector2f(cursor->_position) + sf::Vector2f(_edgePoints[0]->getSize()) / 2.0f - sf::Vector2f(_clickedEdgePoint->getPosition())) / scale;
+
+	float minX = (float)_point_left->getPosition().x;
+	float minY = (float)_point_top->getPosition().y;
+	float maxX = (float)_point_right->getPosition().x;
+	float maxY = (float)_point_bottom->getPosition().y;
+
+	float dx = (float)((int)p.x) * scale;
+	float dy = (float)((int)p.y) * scale;
+
+	if (_clickedEdgePoint == _point_left_top) {
+		minX = (float)_point_left->getPosition().x + dx;
+		minY = (float)_point_top->getPosition().y + dy;
+	}
+	else if (_clickedEdgePoint == _point_right_top) {
+		maxX = (float)_point_right->getPosition().x + dx;
+		minY = (float)_point_top->getPosition().y + dy;
+	}
+	else if (_clickedEdgePoint == _point_left_bottom) {
+		minX = (float)_point_left->getPosition().x + dx;
+		maxY = (float)_point_bottom->getPosition().y + dy;
+	}
+	else if (_clickedEdgePoint == _point_right_bottom) {
+		maxX = (float)_point_right->getPosition().x + dx;
+		maxY = (float)_point_bottom->getPosition().y + dy;
+	}
+	else if (_clickedEdgePoint == _point_left) {
+		minX = (float)_point_left->getPosition().x + dx;
+	}
+	else if (_clickedEdgePoint == _point_right) {
+		maxX = (float)_point_right->getPosition().x + dx;
+	}
+	else if (_clickedEdgePoint == _point_top) {
+		minY = (float)_point_top->getPosition().y + dy;
+	}
+	else if (_clickedEdgePoint == _point_bottom) {
+		maxY = (float)_point_bottom->getPosition().y + dy;
+	}
+
+	const float m = (float)(selection_border_width);
+	const float MIN_SIZE_WORLD = scale + 2.0f * m;
+
+	if (_clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_left || _clickedEdgePoint == _point_left_bottom)
+		minX = std::min(minX, maxX - MIN_SIZE_WORLD);
+
+	if (_clickedEdgePoint == _point_right_top || _clickedEdgePoint == _point_right || _clickedEdgePoint == _point_right_bottom)
+		maxX = std::max(maxX, minX + MIN_SIZE_WORLD);
+
+	if (_clickedEdgePoint == _point_left_top || _clickedEdgePoint == _point_top || _clickedEdgePoint == _point_right_top)
+		minY = std::min(minY, maxY - MIN_SIZE_WORLD);
+
+	if (_clickedEdgePoint == _point_left_bottom || _clickedEdgePoint == _point_bottom || _clickedEdgePoint == _point_right_bottom)
+		maxY = std::max(maxY, minY + MIN_SIZE_WORLD);
+
+	float iminX = std::min(minX, maxX);
+	float iminY = std::min(minY, maxY);
+	float imaxX = std::max(minX, maxX);
+	float imaxY = std::max(minY, maxY);
+
+	_point_left_top->setPosition(sf::Vector2i((int)iminX, (int)iminY));
+	_point_top->setPosition(sf::Vector2i((int)((iminX + imaxX) / 2.0f), (int)iminY));
+	_point_right_top->setPosition(sf::Vector2i((int)imaxX, (int)iminY));
+
+	_point_left->setPosition(sf::Vector2i((int)iminX, (int)((iminY + imaxY) / 2.0f)));
+	_point_right->setPosition(sf::Vector2i((int)imaxX, (int)((iminY + imaxY) / 2.0f)));
+
+	_point_left_bottom->setPosition(sf::Vector2i((int)iminX, (int)imaxY));
+	_point_bottom->setPosition(sf::Vector2i((int)((iminX + imaxX) / 2.0f), (int)imaxY));
+	_point_right_bottom->setPosition(sf::Vector2i((int)imaxX, (int)imaxY));
+
+	sf::Vector2i minT = worldToTile(sf::Vector2i((int)(iminX + m), (int)(iminY + m)), canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+
+	sf::Vector2i maxT = worldToTile(sf::Vector2i((int)(imaxX - m), (int)(imaxY - m)), canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+
+	sf::Vector2i size = maxT - minT;
+
+	_rect = sf::IntRect(minT, size);
+}
+
+
 bool ResizableTool::clickOnSelection(sf::Vector2i point) {
 
 	if (_rect.size.x <= 1 || _rect.size.y <= 1)
@@ -344,6 +428,23 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 		return;
 	}
 
+	// shapes resizing
+	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
+		if (_state == ResizableToolState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
+			_clickedEdgePoint = _hoveredEdgePoint;
+			_orginalEdgePointPosition = _point_left_top->getPosition();
+			_state = ResizableToolState::Resizing;
+			return;
+		}
+	}
+	else if (_state == ResizableToolState::Resizing) {
+		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			_clickedEdgePoint = nullptr;
+			_state = ResizableToolState::Selected;
+		}
+		return;
+	}
+
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (Element_hovered.get() == this) {
 			Element_pressed = this->shared_from_this();
@@ -430,7 +531,7 @@ void ResizableTool::update() {
 		for (auto& point : _edgePoints) {
 			point->update();
 		}
-		generateRect();
+		resizeRect();
 		generateImage();
 		return;
 	}
@@ -438,16 +539,7 @@ void ResizableTool::update() {
 
 void ResizableTool::draw() {
 
-	if (!(
-		toolbar->_toolType == ToolType::Circle ||
-		toolbar->_toolType == ToolType::Triangle ||
-		toolbar->_toolType == ToolType::Rectangle ||
-		toolbar->_toolType == ToolType::Diamond ||
-		toolbar->_toolType == ToolType::Pentagon ||
-		toolbar->_toolType == ToolType::HexagonFlatTop ||
-		toolbar->_toolType == ToolType::HexagonPointTop ||
-		toolbar->_toolType == ToolType::Octagon
-		))
+	if (!tooltypeIsShape())
 		return;
 
 	if (_state == ResizableToolState::None)

@@ -514,7 +514,7 @@ void Canvas::cursorHover() {
 	if (!static_dialogs.empty() && static_dialogs.back()->_is_moved)
 		return;
 
-	if (!(selection->_state == ResizableToolState::None || selection->_state == ResizableToolState::Selected))
+	if (!(resizable_tool!=nullptr && (resizable_tool->_state == ResizableToolState::None || resizable_tool->_state == ResizableToolState::Selected)))
 		return;
 
 	if (_rect.contains(cursor->_position)) {
@@ -534,19 +534,19 @@ void Canvas::cursorHover() {
 		}
 	}
 	
-	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == ResizableToolState::Selected) {
+	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso || (resizable_tool!= nullptr && resizable_tool->tooltypeIsShape())) && resizable_tool->_state == ResizableToolState::Selected) {
 
-		selection->_hoveredEdgePoint = nullptr;
+		resizable_tool->_hoveredEdgePoint = nullptr;
 
-		for (auto& point : selection->_edgePoints) {
+		for (auto& point : resizable_tool->_edgePoints) {
 			point->cursorHover();
 			if (Element_hovered == point) {
-				selection->_hoveredEdgePoint = point;
+				resizable_tool->_hoveredEdgePoint = point;
 			}
 		}
 	}
 
-	if(selection->_state == ResizableToolState::Selecting || selection->_state == ResizableToolState::Resizing) {
+	if(resizable_tool->_state == ResizableToolState::Selecting || resizable_tool->_state == ResizableToolState::Resizing) {
 		Element_hovered = this->shared_from_this();
 	}
 
@@ -610,7 +610,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (!(Element_hovered.get() == this || Element_hovered == nullptr || Element_hovered == selection)) {
+	if (!(Element_hovered.get() == this || Element_hovered == nullptr || (resizable_tool!= nullptr && Element_hovered == resizable_tool))) {
 		return;
 	}
 
@@ -626,7 +626,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 		}
 	}
 
-	if(Element_hovered.get() == this || Element_hovered.get() == nullptr || Element_hovered == selection) {
+	if(Element_hovered.get() == this || Element_hovered.get() == nullptr || (resizable_tool!= nullptr && Element_hovered == resizable_tool)) {
 		if (const auto* mws = event.getIf<sf::Event::MouseWheelScrolled>()) {
 			setZoom(mws->delta);
 		}

@@ -63,7 +63,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 	}
 
 	if (_hoveredElement != canvas && 
-		(toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state != ResizableToolState::Selected &&
+		(toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso || (resizable_tool!= nullptr && resizable_tool->tooltypeIsShape())) && resizable_tool->_state != ResizableToolState::Selected &&
 		_hoveredElement == Element_hovered)
 		return;
 
@@ -96,12 +96,12 @@ void Cursor::handleEvent(const sf::Event& event) {
 		return;
 	}
 	
-	// selection edge points
-	if ((selection->_hoveredEdgePoint != nullptr || selection->_clickedEdgePoint != nullptr) && 
+	// resizable_tool edge points
+	if ((resizable_tool->_hoveredEdgePoint != nullptr || resizable_tool->_clickedEdgePoint != nullptr) &&
 		!(palette != nullptr && palette->_rect.contains(_position)) &&
-		(selection->_state == ResizableToolState::Selected || selection->_state == ResizableToolState::Resizing)) {
+		(resizable_tool->_state == ResizableToolState::Selected || resizable_tool->_state == ResizableToolState::Resizing)) {
 
-		if (selection->_hoveredEdgePoint == selection->_point_left_top || selection->_clickedEdgePoint == selection->_point_left_top) {
+		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_left_top || resizable_tool->_clickedEdgePoint == resizable_tool->_point_left_top) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopLeft);
 			window->setMouseCursor(*_cursor);
@@ -109,7 +109,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 			return;
 		}
 
-		if (selection->_hoveredEdgePoint == selection->_point_top || selection->_clickedEdgePoint == selection->_point_top) {
+		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_top || resizable_tool->_clickedEdgePoint == resizable_tool->_point_top) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTop);
 			window->setMouseCursor(*_cursor);
@@ -117,7 +117,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 			return;
 		}
 
-		if (selection->_hoveredEdgePoint == selection->_point_right_top || selection->_clickedEdgePoint == selection->_point_right_top) {
+		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_right_top || resizable_tool->_clickedEdgePoint == resizable_tool->_point_right_top) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeTopRight);
 			window->setMouseCursor(*_cursor);
@@ -125,7 +125,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 			return;
 		}
 
-		if (selection->_hoveredEdgePoint == selection->_point_left || selection->_clickedEdgePoint == selection->_point_left) {
+		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_left || resizable_tool->_clickedEdgePoint == resizable_tool->_point_left) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeLeft);
 			window->setMouseCursor(*_cursor);
@@ -133,7 +133,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 			return;
 		}
 
-		if (selection->_hoveredEdgePoint == selection->_point_right || selection->_clickedEdgePoint == selection->_point_right) {
+		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_right || resizable_tool->_clickedEdgePoint == resizable_tool->_point_right) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeRight);
 			window->setMouseCursor(*_cursor);
@@ -141,7 +141,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 			return;
 		}
 
-		if (selection->_hoveredEdgePoint == selection->_point_left_bottom || selection->_clickedEdgePoint == selection->_point_left_bottom) {
+		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_left_bottom || resizable_tool->_clickedEdgePoint == resizable_tool->_point_left_bottom) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomLeft);
 			window->setMouseCursor(*_cursor);
@@ -149,7 +149,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 			return;
 		}
 
-		if (selection->_hoveredEdgePoint == selection->_point_bottom || selection->_clickedEdgePoint == selection->_point_bottom) {
+		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_bottom || resizable_tool->_clickedEdgePoint == resizable_tool->_point_bottom) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottom);
 			window->setMouseCursor(*_cursor);
@@ -157,7 +157,7 @@ void Cursor::handleEvent(const sf::Event& event) {
 			return;
 		}
 
-		if (selection->_hoveredEdgePoint == selection->_point_right_bottom || selection->_clickedEdgePoint == selection->_point_right_bottom) {
+		if (resizable_tool->_hoveredEdgePoint == resizable_tool->_point_right_bottom || resizable_tool->_clickedEdgePoint == resizable_tool->_point_right_bottom) {
 			window->setMouseCursorVisible(true);
 			_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeBottomRight);
 			window->setMouseCursor(*_cursor);
@@ -242,8 +242,8 @@ void Cursor::handleEvent(const sf::Event& event) {
 	}
 	
 	sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-	if ((selection->_state == ResizableToolState::Selected && selection->clickOnSelection(tile) && !(palette!=nullptr && palette->_rect.contains(_position))) ||
-		selection->_state == ResizableToolState::Moving) {
+	if ((resizable_tool->_state == ResizableToolState::Selected && resizable_tool->clickOnSelection(tile) && !(palette!=nullptr && palette->_rect.contains(_position))) ||
+		resizable_tool->_state == ResizableToolState::Moving) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
 		window->setMouseCursor(*_cursor);
