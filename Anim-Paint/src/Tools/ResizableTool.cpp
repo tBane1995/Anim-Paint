@@ -521,11 +521,15 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 		}
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-		
-		if(_state == ResizableToolState::Selecting) {
-			_state = ResizableToolState::Selected;
+		if(_rect.size.x <= 1 || _rect.size.y <= 1) {
+			_state = ResizableToolState::None;
+			_points.clear();
+			generateRect();
 			generateEdgePoints();
+			return;
 		}
+		_state = ResizableToolState::Selected;
+		generateEdgePoints();
 	}
 
 }
