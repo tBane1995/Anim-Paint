@@ -713,7 +713,7 @@ void Toolbar::handleEvent(const sf::Event& event) {
 		}else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::D) {
 			_toolType = ToolType::Selector;
 			selectToolButton(_btn_select);
-			selection->unselect();
+			selection->reset();
 
 		}
 

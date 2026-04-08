@@ -306,7 +306,7 @@ Selection::~Selection() {
 
 }
 
-void Selection::unselect() {
+void Selection::reset() {
 
 	paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *_resizedImage);
 	_points.clear();

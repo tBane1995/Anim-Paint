@@ -8,6 +8,7 @@
 #include "Components/Canvas.hpp"
 #include "Tools/Selection.hpp"
 #include "Components/MainMenu/MainMenu.hpp"
+#include "Components/Toolbar/Toolbar.hpp"
 
 Step::Step() {
 	_animations.clear();
@@ -79,7 +80,7 @@ void History::saveStep() {
 }
 
 bool History::canUndo() {
-	return _currentStep > 0;
+	return (_currentStep > 0 || (resizable_tool != nullptr && resizable_tool->_state != ResizableToolState::None));
 }
 
 bool History::canRedo() {
@@ -89,12 +90,12 @@ bool History::canRedo() {
 void History::undo()
 {
 
-	if (selection->_state != ResizableToolState::None) {
-		selection->unselect();
-		return;
+	if (resizable_tool != nullptr && resizable_tool->_state != ResizableToolState::None) {
+		pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *resizable_tool->_image, resizable_tool->_rect.position.x, resizable_tool->_rect.position.y, sf::Color::Transparent);
+		saveStep();
+		resizable_tool->reset();
 	}
-
-	if (!canUndo()) return;
+	else if (!canUndo()) return;
 
 	_currentStep-=1;
 

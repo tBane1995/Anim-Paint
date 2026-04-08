@@ -259,7 +259,7 @@ MainMenu::MainMenu() : Element() {
 	select_none = std::make_shared<Option>(L"Select none", L"Ctrl+D");
 	select_none->_onclick_func = [this]() {
 		if (selection->_state != ResizableToolState::None) {
-			selection->unselect();
+			selection->reset();
 		}
 		closeMenu();
 		};
@@ -815,6 +815,8 @@ void MainMenu::update() {
 	for (auto& mb : _menu_boxes)
 		mb->update();
 
+	edit_redo->setActive(history->canRedo());
+	edit_undo->setActive(history->canUndo());
 }
 
 void MainMenu::draw() {

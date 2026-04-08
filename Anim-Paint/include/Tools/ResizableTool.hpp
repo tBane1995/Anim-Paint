@@ -44,6 +44,7 @@ public:
 	virtual void addPoint(sf::Vector2i point);
 	virtual bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
 	virtual bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
+	virtual void reset();
 	virtual void generateRect();
 	virtual void generateImage();
 	virtual void generateEdgePoints();

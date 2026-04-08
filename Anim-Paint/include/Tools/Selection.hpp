@@ -36,7 +36,7 @@ public:
 	~Selection();
 
 	
-	void unselect();
+	void reset();
 	void selectAll();
 	bool clickOnSelection(sf::Vector2i point);
 	void copy(sf::Image& canvas, sf::Color alphaColor);

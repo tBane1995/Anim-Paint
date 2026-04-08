@@ -247,9 +247,17 @@ void Cursor::handleEvent() {
 		}
 	}
 
+	if (resizable_tool != nullptr && Element_pressed == resizable_tool && resizable_tool->_state == ResizableToolState::Selecting) {
+		window->setMouseCursorVisible(true);
+		_cursor = _crossCursor;
+		window->setMouseCursor(*_cursor);
+		_brushIsVisible = false;
+		return;
+	}
+
 	sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-	if ((Element_pressed == resizable_tool && resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Selected && !(palette!=nullptr && palette->_rect.contains(_position))) ||
-		(Element_pressed == resizable_tool && resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Moving)) {
+	if ((_hoveredElement == resizable_tool && resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Selected && !(palette!=nullptr && palette->_rect.contains(_position))) ||
+		(_hoveredElement == resizable_tool && resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Moving)) {
 
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
@@ -274,13 +282,7 @@ void Cursor::handleEvent() {
 		return;
 	}
 
-	if (resizable_tool != nullptr && (Element_pressed == resizable_tool)) {
-		window->setMouseCursorVisible(true);
-		_cursor = _crossCursor;
-		window->setMouseCursor(*_cursor);
-		_brushIsVisible = false;
-		return;
-	}
+	
 
 	if (_hoveredElement == canvas) {
 		if (toolbar->_toolType == ToolType::Brush) {

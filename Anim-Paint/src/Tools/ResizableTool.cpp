@@ -117,6 +117,14 @@ bool ResizableTool::isPointInPolygon(sf::Vector2i p, std::vector < sf::Vector2i 
 	return inside;
 }
 
+void ResizableTool::reset() {
+	_state = ResizableToolState::None;
+	_points.clear();
+	generateRect();
+	generateImage();
+	generateEdgePoints();
+}
+
 void ResizableTool::generateRect() {
 
 	if (_points.empty()) {
@@ -479,6 +487,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 					}
 
 					_state = ResizableToolState::Selecting;
+					Element_pressed = this->shared_from_this();
 					_rect.size = sf::Vector2i(0, 0);
 					_points.clear();
 					_points.push_back(tile);
