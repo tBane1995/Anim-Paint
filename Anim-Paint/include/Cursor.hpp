@@ -24,7 +24,7 @@ public:
 	~Cursor();
 
 	void update();
-	void handleEvent(const sf::Event& event);
+	void handleEvent();
 	void draw();
 };
 

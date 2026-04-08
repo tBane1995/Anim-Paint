@@ -50,7 +50,7 @@ void Cursor::update() {
 	_position = sf::Mouse::getPosition(*window);
 }
 
-void Cursor::handleEvent(const sf::Event& event) {
+void Cursor::handleEvent() {
 
 	brush->setPosition(worldToTile(_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta));
 
@@ -71,12 +71,13 @@ void Cursor::handleEvent(const sf::Event& event) {
 	if (_hoveredElement) {
 		std::string className = typeid(*_hoveredElement).name();		// get class name
 		std::wstring wClassName(className.begin(), className.end());	// convert to wide_string
-		//std::wcout << wClassName + L"\n";
+		std::wcout << wClassName + L"\n";
 	}
 	else {
 		//std::wcout << L"nullptr\n";
 	}
 	*/
+	
 	if (dynamic_cast<TextInput*>(_hoveredElement.get()) != nullptr) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::Text);
@@ -247,8 +248,9 @@ void Cursor::handleEvent(const sf::Event& event) {
 	}
 
 	sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
-	if ((_hoveredElement == resizable_tool && resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Selected && resizable_tool->clickOnSelection(tile) && !(palette!=nullptr && palette->_rect.contains(_position))) ||
-		(_hoveredElement == resizable_tool && resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Moving)) {
+	if ((Element_pressed == resizable_tool && resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Selected && !(palette!=nullptr && palette->_rect.contains(_position))) ||
+		(Element_pressed == resizable_tool && resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Moving)) {
+
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
 		window->setMouseCursor(*_cursor);

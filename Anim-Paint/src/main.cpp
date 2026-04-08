@@ -262,14 +262,13 @@ int main() {
 				}
 				
 			}
-				
-
-			cursor->handleEvent(*event);
+			
 			bottom_bar->handleEvent(*event);
 
 		}
 		
 		// update
+		cursor->handleEvent();
 		if(resizable_tool)
 			resizable_tool->update();
 		
