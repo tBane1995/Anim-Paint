@@ -227,7 +227,7 @@ void Dialog::handleEvent(const sf::Event& event) {
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
 		_is_moved = false;
-		if(Element_pressed.get() == this)
+		if(Element_pressed.get() == this && !_rect.contains(cursor->_position))
 			Element_pressed = nullptr;
 	}else if(const auto* kp = event.getIf<sf::Event::KeyPressed>(); kp && kp->code == sf::Keyboard::Key::Escape){
 		_state = DialogState::ToClose;

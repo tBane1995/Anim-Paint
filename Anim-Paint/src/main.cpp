@@ -185,9 +185,10 @@ int main() {
 
 		// cursor hovering
 		Element_hovered = nullptr;
+		
+		canvas->cursorHover();
 		if (resizable_tool)
 			resizable_tool->cursorHover();
-		canvas->cursorHover();
 
 		toolbar->cursorHover();
 		main_menu->cursorHover();
@@ -241,9 +242,10 @@ int main() {
 			main_menu->handleEvent(*event);
 
 			toolbar->handleEvent(*event);
+			
+			canvas->handleEvent(*event);
 			if (resizable_tool)
 				resizable_tool->handleEvent(*event);
-			canvas->handleEvent(*event);
 			
 			for (auto it = static_dialogs.begin(); it != static_dialogs.end(); it+=1) {
 				auto& dialog = *it;

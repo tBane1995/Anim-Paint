@@ -396,18 +396,17 @@ void ResizableTool::cursorHover() {
 	if (!dialogs.empty()) {
 		return;
 	}
+	
+	sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+
+	if (clickOnSelection(tile) || (Element_pressed.get() == this && _state == ResizableToolState::Selecting)) {
+		Element_hovered = this->shared_from_this();
+	}
 
 	for (auto& edgePoint : _edgePoints) {
 		edgePoint->cursorHover();
 	}
 
-	if (_hoveredEdgePoint != nullptr) {
-		return;
-	}
-
-	if (_rect.contains(cursor->_position)) {
-		Element_hovered = this->shared_from_this();
-	}
 }
 
 void ResizableTool::handleEvent(const sf::Event& event) {
@@ -459,7 +458,11 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 	}
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
-		if (Element_pressed.get() == this || Element_pressed.get() == nullptr || _state == ResizableToolState::None || _state == ResizableToolState::Selected) {
+		
+		if ((Element_hovered == canvas || Element_hovered.get() == nullptr || Element_hovered.get() == this || 
+			Element_pressed == canvas || Element_pressed.get() == this) 
+			&& (_state == ResizableToolState::None || _state == ResizableToolState::Selected)) {
+
 			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 
 			if (tooltypeIsShape() && clickOnSelection(tile)) {

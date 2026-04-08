@@ -125,12 +125,6 @@ void Tooltip::setButton(std::shared_ptr<Button> button){
 	_button = button;
 	_timer = currentTime;
 
-	// TO-DO
-	// get class name of button object
-	// std::string className = typeid(*_button).name();
-	// std::wstring wClassName(className.begin(), className.end());
-	// _title = _button->_title + L"(" + wClassName + L")";
-
 	_title = _button->_title;
 	_description = wrap_text(192, basicFont, tooltip_text_font_size, _button->_description);
 
