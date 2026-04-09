@@ -11,6 +11,9 @@ Octagon::~Octagon() {
 
 void Octagon::generateImage() {
 
+	if (_rect.size.x < 1 || _rect.size.y < 1)
+		return;
+
 	sf::RenderTexture rtex;
 	rtex.resize(sf::Vector2u(_rect.size));
 	rtex.clear(sf::Color::Transparent);

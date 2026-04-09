@@ -146,12 +146,15 @@ void ResizableTool::generateRect() {
 
 	_rect = sf::IntRect(
 		sf::Vector2i(minX, minY),
-		sf::Vector2i(maxX - minX + 1, maxY - minY + 1)
+		sf::Vector2i(maxX - minX, maxY - minY)
 	);
 }
 
 void ResizableTool::generateImage() {
-	_image = std::make_shared<sf::Image>();
+	if (_rect.size.x < 1 || _rect.size.y < 1)
+		return;
+
+	_image = std::make_shared<sf::Image>(sf::Vector2u(_rect.size), sf::Color::Transparent);
 }
 
 void ResizableTool::generateEdgePoints() {
@@ -277,7 +280,7 @@ void ResizableTool::resizeRect() {
 
 bool ResizableTool::clickOnSelection(sf::Vector2i point) {
 
-	if (_rect.size.x <= 1 || _rect.size.y <= 1)
+	if (_rect.size.x < 1 || _rect.size.y < 1)
 		return false;
 
 	return _rect.contains(point);
@@ -321,6 +324,9 @@ void ResizableTool::drawRect() {
 			_state == ResizableToolState::Resizing)))
 		return;
 
+	if(_rect.size.x < 1 || _rect.size.y < 1)
+		return;
+
 	float scale = canvas->_zoom * canvas->_zoom_delta;
 
 	sf::Vector2f rectSize;
@@ -342,7 +348,11 @@ void ResizableTool::drawRect() {
 }
 
 void ResizableTool::drawImage() {
+
 	if (!_image)
+		return;
+
+	if (_image->getSize().x == 0 || _image->getSize().y == 0)
 		return;
 
 	sf::Texture texture(*_image);
@@ -404,6 +414,9 @@ void ResizableTool::cursorHover() {
 	if (!dialogs.empty()) {
 		return;
 	}
+
+	if(_state == ResizableToolState::None)
+		return;
 	
 	sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 
@@ -533,7 +546,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 		}
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
-		if(_rect.size.x <= 1 || _rect.size.y <= 1) {
+		if(_rect.size.x < 1 || _rect.size.y < 1) {
 			_state = ResizableToolState::None;
 			_points.clear();
 			generateRect();
@@ -566,6 +579,7 @@ void ResizableTool::draw() {
 	if (_state == ResizableToolState::None)
 		return;
 	
+
 	drawImage();
 	drawRect();
 	drawEdgePoints();

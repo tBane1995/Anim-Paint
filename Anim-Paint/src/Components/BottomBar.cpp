@@ -65,15 +65,17 @@ void BottomBar::resize() {
 void BottomBar::updateText() {
 	_hoveredElement = Element_hovered;
 
-	if (_hoveredElement == canvas) {
+	if (_hoveredElement == canvas || 
+		(resizable_tool != nullptr && _hoveredElement == resizable_tool && canvas->_rect.contains(cursor->_position)) ||
+		(resizable_tool != nullptr && Element_pressed == resizable_tool) ||
+		(resizable_tool != nullptr && resizable_tool->_state == ResizableToolState::Resizing && resizable_tool->_clickedEdgePoint != nullptr)
+		) {
 		sf::Vector2i coords = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 		std::wstring text = std::to_wstring(coords.x) + L" x " + std::to_wstring(coords.y);
 		_textCursorPosition->setString(text);
 	}
-
-	if (_hoveredElement == nullptr) {
+	else {
 		_textCursorPosition->setString(L"");
-		_textCanvasSize->setString(std::to_wstring(canvas->_size.x) + L" x " + std::to_wstring(canvas->_size.y));
 	}
 
 	if (canvas->_state == CanvasState::Resizing) {
