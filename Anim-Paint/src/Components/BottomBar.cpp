@@ -81,7 +81,7 @@ void BottomBar::updateText() {
 		_textCanvasSize->setString(std::to_wstring(canvas->_size.x) + L" x " + std::to_wstring(canvas->_size.y));
 	}
 
-	if (selection->_state != ResizableToolState::None) {
+	if (resizable_tool != nullptr && resizable_tool == selection && selection->_state != ResizableToolState::None) {
 		std::wstring ssize = std::to_wstring(selection->_resizedRect.size.x) + L" x " + std::to_wstring(selection->_resizedRect.size.y);
 		_textSelectionSize->setString(ssize);
 	}else if (resizable_tool != nullptr && resizable_tool->_state != ResizableToolState::None) {
@@ -124,7 +124,9 @@ void BottomBar::handleEvent(const sf::Event& event) {
 
 	if (Element_hovered != canvas && 
 		Element_hovered != canvas->_hoveredEdgePoint && Element_pressed != canvas->_hoveredEdgePoint &&
-		Element_hovered != selection->_hoveredEdgePoint && Element_pressed != selection->_hoveredEdgePoint &&
+		resizable_tool != nullptr && 
+		Element_hovered != resizable_tool && 
+		Element_hovered != resizable_tool->_hoveredEdgePoint && Element_pressed != resizable_tool->_hoveredEdgePoint &&
 		_hoveredElement == Element_hovered)
 		return;
 
