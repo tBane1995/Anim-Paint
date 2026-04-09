@@ -67,6 +67,7 @@ void Cursor::handleEvent() {
 		return;
 
 	_hoveredElement = Element_hovered;
+	
 	/*
 	if (_hoveredElement) {
 		std::string className = typeid(*_hoveredElement).name();		// get class name
@@ -103,7 +104,9 @@ void Cursor::handleEvent() {
 	}
 	
 	// resizable_tool edge points
-	if ((resizable_tool != nullptr && (resizable_tool->_hoveredEdgePoint != nullptr || resizable_tool->_clickedEdgePoint != nullptr)) &&
+	if ((resizable_tool != nullptr &&
+		((resizable_tool->_hoveredEdgePoint != nullptr && _hoveredElement == resizable_tool->_hoveredEdgePoint) || 
+		(resizable_tool->_clickedEdgePoint != nullptr && _hoveredElement == resizable_tool->_clickedEdgePoint))) &&
 		!(palette != nullptr && palette->_rect.contains(_position)) &&
 		(resizable_tool->_state == ResizableToolState::Selected || resizable_tool->_state == ResizableToolState::Resizing)) {
 
