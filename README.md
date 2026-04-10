@@ -1,52 +1,52 @@
-# Anim Paint
+# Anim Paint v1.10
 
-## Spis treści
-- [Opis](#opis)
-- [Zrzuty ekranu](#zrzuty-ekranu)
-- [Instalacja](#instalacja)
-- [Technologie](#technologie)
-- [Licencja](#licencja)
+## Contents
+- [Description](#description)
+- [Screenshots](#screenshots)
+- [Installation](#installation)
+- [Technology](#technology)
+- [License](#license)
 
-## Opis
-**Anim Paint**
+## Description
+**Anim Paint** is a simple pixel art painting tool inspired by MS Paint, designed for creating and editing pixel art with support for layers, frames, and animations.
 
-## Zrzuty ekranu
-![Zrzut ekranu](screenshots/01.png)
-![Zrzut ekranu](screenshots/02.png)
-![Zrzut ekranu](screenshots/03.png)
-![Zrzut ekranu](screenshots/04.png)
-![Zrzut ekranu](screenshots/05.png)
-![Zrzut ekranu](screenshots/06.png)
-![Zrzut ekranu](screenshots/07.png)
-![Zrzut ekranu](screenshots/08.png)
-![Zrzut ekranu](screenshots/09.png)
-![Zrzut ekranu](screenshots/10.png)
-![Zrzut ekranu](screenshots/11.png)
-![Zrzut ekranu](screenshots/12.png)
-![Zrzut ekranu](screenshots/13.png)
+## Screenshots
+![Screenshot](screenshots/01.png)
+![Screenshot](screenshots/02.png)
+![Screenshot](screenshots/03.png)
+![Screenshot](screenshots/04.png)
+![Screenshot](screenshots/05.png)
+![Screenshot](screenshots/06.png)
+![Screenshot](screenshots/07.png)
+![Screenshot](screenshots/08.png)
+![Screenshot](screenshots/09.png)
+![Screenshot](screenshots/10.png)
+![Screenshot](screenshots/11.png)
+![Screenshot](screenshots/12.png)
+![Screenshot](screenshots/13.png)
 
-## Instalacja
-1. Pobierz i zainstaluj Visual Studio 2022
-2. Pobierz i zainstaluje CMake
-3. Pobierz bibliotekę SFML-3.0.2 (https://www.sfml-dev.org/) i umieść ją w katalogu `C:\SFML-3.0.2`.
-4. Otwórz **Wiersz poleceń (cmd)**.
-5. Przejdź do katalogu projektu:
+## Installation
+1. Download and install Visual Studio 2022
+2. Download and install CMake
+3. Download Library SFML-3.0.2 (https://www.sfml-dev.org/) i umieść ją w katalogu `C:\SFML-3.0.2`.
+4. Open The **Command Prompt (cmd)**.
+5. Go to project directory:
 `
 cd ..\..\Anim Paint
 `
-6. Utwórz folder **build**:
+6. Create directory **build**:
 `
 mkdir build
 `
-7. Wejdź do folderu **build**:
+7. Go to directory **build**:
 `
 cd build
 `
-8. Uruchom konfigurację projektu za pomocą **CMake**:
+8. Create project using **CMake**:
 `
 cmake ..
 `
-9. Zbuduj projekt:
+9. Build project:
 `
 cmake --build .
 `
@@ -54,21 +54,21 @@ cmake --build .
 11. Set the Working Directory 
 `Project -> Properties -> Debugging -> Working Directory -> "$(ProjectDir)/../Anim-Paint"`
 
-12. Plik wykonywalny znajdziesz w **build/Debug** lub **build/Release**
+12. Exe is in **build/Debug** lub **build/Release**
 
-## Technologie
-Program stworzono w języku C++ z wykorzystaniem biblioteki SFML 3.0.2.  
+## Techonology
+Program created in C++ with using SFML 3.0.2.  
   
-## Licencja
-Licencja Otwarta – Uznanie autorstwa  
-  
-Ten program może być:  
--Pobierany  
--Kopiowany  
--Modyfikowany  
--Wykorzystywany w projektach prywatnych i komercyjnych  
-  
-Pod warunkiem, że:  
--Zachowana zostanie informacja o autorze oryginalnego programu  
--Podane zostanie źródło (link do repozytorium)  
--W przypadku modyfikacji, należy wyraźnie zaznaczyć, że program został zmodyfikowany oraz przez kogo.  
+## License
+Open License – Attribution
+
+This program may be:
+- Downloaded
+- Copied
+- Modified
+- Used in personal and commercial projects
+
+Provided that:
+- Attribution to the original author is retained
+- The source (link to the repository) is provided
+- In the event of modification, it must be clearly stated that the program was modified and by whom.
