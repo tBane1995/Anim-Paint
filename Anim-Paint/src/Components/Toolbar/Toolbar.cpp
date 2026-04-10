@@ -710,6 +710,8 @@ void Toolbar::handleEvent(const sf::Event& event) {
 			_toolType = ToolType::Selector;
 			selectToolButton(_btn_select);
 			selection->selectAll();
+			resizable_tool = selection;
+
 		}else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl) && kp->code == sf::Keyboard::Key::D) {
 			_toolType = ToolType::Selector;
 			selectToolButton(_btn_select);

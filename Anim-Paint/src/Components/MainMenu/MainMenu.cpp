@@ -253,6 +253,7 @@ MainMenu::MainMenu() : Element() {
 		toolbar->selectToolButton(toolbar->_btn_select);
 		toolbar->_toolType = ToolType::Selector;
 		selection->selectAll();
+		resizable_tool = selection;
 		closeMenu();
 		};
 
