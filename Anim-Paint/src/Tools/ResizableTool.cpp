@@ -404,6 +404,17 @@ void ResizableTool::setPosition(sf::Vector2i position) {
 	_point_right_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y + m)));
 }
 
+void ResizableTool::pasteToCanvas() {
+	if(_image == nullptr)
+		return;
+
+	if(_state == ResizableToolState::None)
+		return;
+
+	pasteImageWithNewColorAndAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, toolbar->_first_color->_color, sf::Color::Transparent);
+
+}
+
 void ResizableTool::drawRect() {
 	if (!
 		(_points.size() >= 3 &&
@@ -594,7 +605,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 
 				if (canvas->_rect.contains(cursor->_position)) {
 					if (_image != nullptr) {
-						pasteImageWithNewColorAndAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, toolbar->_first_color->_color, sf::Color::Transparent);
+						pasteToCanvas();
 						_image = nullptr;
 						history->saveStep();
 					}
@@ -609,7 +620,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 				}
 				else {
 					if (_image != nullptr) {
-						pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, sf::Color::Transparent);
+						pasteToCanvas();
 						_image = nullptr;
 						history->saveStep();
 						_state = ResizableToolState::None;

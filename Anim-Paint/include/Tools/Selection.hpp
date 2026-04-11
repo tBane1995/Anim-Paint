@@ -40,6 +40,7 @@ public:
 	void selectAll();
 	bool clickOnSelection(sf::Vector2i point);
 	void copy(sf::Image& canvas, sf::Color alphaColor);
+	void pasteToCanvas();
 	void paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor);
 	bool paste(sf::Image& canvas, sf::Color emptyColor, sf::Image image);
 	void cut(sf::Image& canvas, sf::Color emptyColor);

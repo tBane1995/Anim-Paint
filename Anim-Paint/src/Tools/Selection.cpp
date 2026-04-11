@@ -427,6 +427,25 @@ void Selection::copy(sf::Image& canvas, sf::Color alphaColor)
 
 }
 
+void Selection::pasteToCanvas() {
+
+	if(_state == ResizableToolState::None)
+		return;
+
+	if (_resizedImage == nullptr)
+		return;
+
+	if (_resizedMaskImage == nullptr)
+		return;
+
+	if(getCurrentAnimation()->getCurrentLayer() == nullptr)
+		return;
+
+	copyImageWithMask(&getCurrentAnimation()->getCurrentLayer()->_image, _resizedImage.get(), _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+
+
+}
+
 void Selection::paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Image& mask, sf::Color alphaColor)
 {
 
@@ -473,14 +492,6 @@ void Selection::paste(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Im
 
 bool Selection::paste(sf::Image& canvas, sf::Color emptyColor, sf::Image image)
 {
-
-	if (_image != nullptr && _resizedImage != nullptr) {
-		paste(canvas, *_image, _rect.position.x, _rect.position.y, *_maskImage, emptyColor);
-	}
-	else {
-		_image = std::make_shared<sf::Image>();
-	}
-
 	_image = std::make_shared<sf::Image>(image);
 
 	if (_image->getSize().x <= 0 || _image->getSize().y <= 0) {
@@ -1254,8 +1265,7 @@ void Selection::handleEvent(const sf::Event& event) {
 				if (toolbar->_btn_copy->_state == ButtonState::Idle && toolbar->_btn_cut->_state == ButtonState::Idle && toolbar->_btn_paste->_state == ButtonState::Idle) {
 					if (canvas->_rect.contains(cursor->_position)) {
 						if (_rect.size.x > 1 && _rect.size.y > 1) {
-							if(getCurrentAnimation()->getCurrentLayer())
-								copyImageWithMask(&getCurrentAnimation()->getCurrentLayer()->_image, _resizedImage.get(), _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value==0)?sf::Color::Transparent:toolbar->_second_color->_color);
+							pasteToCanvas();
 							_image = nullptr;
 							_resizedImage = nullptr;
 							if(getCurrentAnimation()->getCurrentLayer() && canvas->_isEdited == false && _state == ResizableToolState::Selected)
@@ -1272,8 +1282,8 @@ void Selection::handleEvent(const sf::Event& event) {
 					}
 					else {
 						if (_rect.size.x > 1 && _rect.size.y > 1) {
-							if (getCurrentAnimation()->getCurrentLayer())
-								copyImageWithMask(&getCurrentAnimation()->getCurrentLayer()->_image, _resizedImage.get(), _resizedRect.position.x, _resizedRect.position.y, 0, 0, *_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
+
+							pasteToCanvas();
 							_image = nullptr;
 							_resizedImage = nullptr;
 							if (getCurrentAnimation()->getCurrentLayer() && canvas->_isEdited == false && _state == ResizableToolState::Selected)

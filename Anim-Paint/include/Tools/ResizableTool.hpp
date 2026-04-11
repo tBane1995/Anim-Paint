@@ -55,6 +55,8 @@ public:
 	bool clickOnSelection(sf::Vector2i point);
 	virtual void setPosition(sf::Vector2i position);
 
+	virtual void pasteToCanvas();
+
 	virtual void drawRect();
 	void drawImage();
 	virtual void drawEdgePoints();

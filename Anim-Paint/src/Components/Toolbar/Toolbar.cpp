@@ -62,6 +62,9 @@ Toolbar::Toolbar() : Element() {
 			return;
 		}
 
+		if (resizable_tool != nullptr)
+			resizable_tool->pasteToCanvas();
+		
 		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img)) {
 			_option_transparency->_checkbox->_value = 0;
 			_toolType = ToolType::Selector;
@@ -104,6 +107,9 @@ Toolbar::Toolbar() : Element() {
 			return;
 		}
 
+		if (resizable_tool != nullptr)
+			resizable_tool->pasteToCanvas();
+
 		if (selection->paste(getCurrentAnimation()->getCurrentLayer()->_image, sf::Color::Transparent, *img)) {
 			_option_transparency->_checkbox->_value = 0;
 			_toolType = ToolType::Selector;
@@ -115,6 +121,8 @@ Toolbar::Toolbar() : Element() {
 
 	_option_from_file = std::make_shared<Option>(L"from file", L"Ctrl+B");
 	_option_from_file->_onclick_func = [this]() {
+		if (resizable_tool != nullptr)
+			resizable_tool->pasteToCanvas();
 		dialogs.push_back(std::make_shared<Dialog_Paste_From_File>());
 		_btn_paste_menu->_isOpen = false;
 		};
@@ -160,8 +168,12 @@ Toolbar::Toolbar() : Element() {
 	_btn_select->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_select->_onclick_func = [this]() {
-		_toolType = ToolType::Selector;
-		resizable_tool = selection;
+		if(_toolType != ToolType::Selector) {
+			if (resizable_tool != nullptr)
+				resizable_tool->pasteToCanvas();
+			_toolType = ToolType::Selector;
+			resizable_tool = selection;
+		}
 		selectToolButton(_btn_select);
 		};
 	_btn_select->setTooltip(L"Selection Tool", L"Select an area of the canvas move, copy, or cut");
@@ -170,8 +182,12 @@ Toolbar::Toolbar() : Element() {
 	_btn_lasso->setRectColors(tools_button_idle_color, tools_button_hover_color, tools_button_press_color, tools_button_select_color, tools_button_inactive_color,
 		tools_border_width, tools_button_idle_border_color, tools_button_hover_border_color, tools_button_press_border_color, tools_button_select_border_color, tools_button_inactive_border_color);
 	_btn_lasso->_onclick_func = [this]() {
-		_toolType = ToolType::Lasso;
-		resizable_tool = selection;
+		if (_toolType != ToolType::Lasso) {
+			if (resizable_tool != nullptr)
+				resizable_tool->pasteToCanvas();
+			_toolType = ToolType::Lasso;
+			resizable_tool = selection;
+		}
 		selectToolButton(_btn_lasso);
 		};
 	_btn_lasso->setTooltip(L"Lasso Tool", L"Select an area of the canvas with a freehand selection to move, copy or cut");
@@ -192,6 +208,8 @@ Toolbar::Toolbar() : Element() {
 	// tools
 	_btn_brush = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_brush.png"), getTexture(L"tex\\tools\\btn_brush_hover.png"), getTexture(L"tex\\tools\\btn_brush_press.png"));
 	_btn_brush->_onclick_func = [this]() {
+		if (resizable_tool != nullptr)
+			resizable_tool->pasteToCanvas();
 		_toolType = ToolType::Brush;
 		resizable_tool = nullptr;
 		brush->setBrushType(BrushType::Circle);
@@ -201,6 +219,8 @@ Toolbar::Toolbar() : Element() {
 
 	_btn_picker = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_picker.png"), getTexture(L"tex\\tools\\btn_picker_hover.png"), getTexture(L"tex\\tools\\btn_picker_press.png"));
 	_btn_picker->_onclick_func = [this]() {
+		if (resizable_tool != nullptr)
+			resizable_tool->pasteToCanvas();
 		_toolType = ToolType::Picker;
 		resizable_tool = nullptr;
 		brush->setBrushType(BrushType::Circle);
@@ -210,6 +230,8 @@ Toolbar::Toolbar() : Element() {
 
 	_btn_fill = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_fill.png"), getTexture(L"tex\\tools\\btn_fill_hover.png"), getTexture(L"tex\\tools\\btn_fill_press.png"));
 	_btn_fill->_onclick_func = [this]() {
+		if (resizable_tool != nullptr)
+			resizable_tool->pasteToCanvas();
 		_toolType = ToolType::Fill;
 		resizable_tool = nullptr;
 		selectToolButton(_btn_fill);
@@ -218,6 +240,8 @@ Toolbar::Toolbar() : Element() {
 
 	_btn_eraser = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\btn_eraser.png"), getTexture(L"tex\\tools\\btn_eraser_hover.png"), getTexture(L"tex\\tools\\btn_eraser_press.png"));
 	_btn_eraser->_onclick_func = [this]() {
+		if (resizable_tool != nullptr)
+			resizable_tool->pasteToCanvas();
 		_toolType = ToolType::Eraser;
 		resizable_tool = nullptr;
 		brush->setBrushType(BrushType::Square);
@@ -246,58 +270,90 @@ Toolbar::Toolbar() : Element() {
 	// shapes 
 	_btn_circle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\circle.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\circle_press.png"));
 	_btn_circle->_onclick_func = [this]() { 
-		_toolType = ToolType::Circle;
-		resizable_tool = std::make_shared<Circle>();
+		if (_toolType != ToolType::Circle) {
+			if(resizable_tool != nullptr)
+				resizable_tool->pasteToCanvas();
+			_toolType = ToolType::Circle;
+			resizable_tool = std::make_shared<Circle>();
+		}
 		selectToolButton(_btn_circle);
 		};
 
 	_btn_triangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\triangle.png"), getTexture(L"tex\\tools\\resizable_tools\\triangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\triangle_press.png"));
 	_btn_triangle->_onclick_func = [this]() {
-		_toolType = ToolType::Triangle;
-		resizable_tool = std::make_shared<Triangle>();
+		if (_toolType != ToolType::Triangle) {
+			if(resizable_tool != nullptr)
+				resizable_tool->pasteToCanvas();
+			_toolType = ToolType::Triangle;
+			resizable_tool = std::make_shared<Triangle>();
+		}
 		selectToolButton(_btn_triangle);
 		};
 
 	_btn_rectangle = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\rectangle.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\rectangle_press.png"));
 	_btn_rectangle->_onclick_func = [this]() {
-		_toolType = ToolType::Rectangle;
-		resizable_tool = std::make_shared<Rectangle>();
+		if (_toolType != ToolType::Rectangle) {
+			if (resizable_tool != nullptr)
+				resizable_tool->pasteToCanvas();			
+			_toolType = ToolType::Rectangle;
+			resizable_tool = std::make_shared<Rectangle>();
+		}
 		selectToolButton(_btn_rectangle);
 		};
 
 	_btn_diamond = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\diamond.png"), getTexture(L"tex\\tools\\resizable_tools\\diamond_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\diamond_press.png"));
 	_btn_diamond->_onclick_func = [this]() {
-		_toolType = ToolType::Diamond;
-		resizable_tool = std::make_shared<Diamond>();
+		if (_toolType != ToolType::Diamond) {
+			if (resizable_tool != nullptr)
+				resizable_tool->pasteToCanvas();
+			_toolType = ToolType::Diamond;
+			resizable_tool = std::make_shared<Diamond>();
+		}
 		selectToolButton(_btn_diamond);
 		};
 	
 	_btn_pentagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\pentagon.png"), getTexture(L"tex\\tools\\resizable_tools\\pentagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\pentagon_press.png"));
 	_btn_pentagon->_onclick_func = [this]() {
-		_toolType = ToolType::Pentagon;
-		resizable_tool = std::make_shared<Pentagon>();
+		if (_toolType != ToolType::Pentagon) {
+			if (resizable_tool != nullptr)
+				resizable_tool->pasteToCanvas();
+			_toolType = ToolType::Pentagon;
+			resizable_tool = std::make_shared<Pentagon>();
+		}
 		selectToolButton(_btn_pentagon);
 		};
 
 	_btn_hexagon_flat_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_flat_top_press.png"));
 	_btn_hexagon_flat_top->_onclick_func = [this]() {
-		_toolType = ToolType::HexagonFlatTop;
-		resizable_tool = std::make_shared<HexagonFlatTop>();
+		if (_toolType != ToolType::HexagonFlatTop) {
+			if (resizable_tool != nullptr)
+				resizable_tool->pasteToCanvas();
+			_toolType = ToolType::HexagonFlatTop;
+			resizable_tool = std::make_shared<HexagonFlatTop>();
+		}
 		selectToolButton(_btn_hexagon_flat_top);
 		};
 	
 	_btn_hexagon_point_top = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\hexagon_point_top_press.png"));
 	_btn_hexagon_point_top->_onclick_func = [this]() {
-		_toolType = ToolType::HexagonPointTop;
-		resizable_tool = std::make_shared<HexagonPointTop>();
+		if (_toolType != ToolType::HexagonPointTop) {
+			if (resizable_tool != nullptr)
+				resizable_tool->pasteToCanvas();
+			_toolType = ToolType::HexagonPointTop;
+			resizable_tool = std::make_shared<HexagonPointTop>();
+		}	
 		selectToolButton(_btn_hexagon_point_top);
 		};
 	
 	_btn_octagon = std::make_shared<ButtonWithSprite>(getTexture(L"tex\\tools\\resizable_tools\\octagon.png"), getTexture(L"tex\\tools\\resizable_tools\\octagon_hover.png"), getTexture(L"tex\\tools\\resizable_tools\\octagon_press.png"));
 	_btn_octagon->_onclick_func = [this]() {
-		_toolType = ToolType::Octagon;
+		if (_toolType != ToolType::Octagon) {
+			if (resizable_tool != nullptr)
+				resizable_tool->pasteToCanvas();
+			_toolType = ToolType::Octagon;
+			resizable_tool = std::make_shared<Octagon>();
+		}
 		selectToolButton(_btn_octagon);
-		resizable_tool = std::make_shared<Octagon>();
 		};
 	
 	_shapes.clear();
