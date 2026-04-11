@@ -102,11 +102,11 @@ void Cursor::handleEvent() {
 		_brushIsVisible = false;
 		return;
 	}
-	
+
 	// resizable_tool edge points
 	if ((resizable_tool != nullptr &&
 		((resizable_tool->_hoveredEdgePoint != nullptr && _hoveredElement == resizable_tool->_hoveredEdgePoint) || 
-		(resizable_tool->_clickedEdgePoint != nullptr && _hoveredElement == resizable_tool->_clickedEdgePoint))) &&
+		(resizable_tool->_clickedEdgePoint != nullptr && Element_pressed == resizable_tool->_clickedEdgePoint))) &&
 		!(palette != nullptr && palette->_rect.contains(_position)) &&
 		(resizable_tool->_state == ResizableToolState::Selected || resizable_tool->_state == ResizableToolState::Resizing)) {
 

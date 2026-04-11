@@ -426,6 +426,10 @@ void ResizableTool::cursorHover() {
 
 	for (auto& edgePoint : _edgePoints) {
 		edgePoint->cursorHover();
+		if (Element_hovered == edgePoint) {
+			_hoveredEdgePoint = edgePoint;
+			return;
+		}
 	}
 
 }
@@ -452,6 +456,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_state == ResizableToolState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
 			_clickedEdgePoint = _hoveredEdgePoint;
+			Element_pressed = _clickedEdgePoint;
 			_orginalEdgePointPosition = _point_left_top->getPosition();
 			_state = ResizableToolState::Resizing;
 			return;
@@ -459,6 +464,8 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 	}
 	else if (_state == ResizableToolState::Resizing) {
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			if(Element_pressed == _clickedEdgePoint)
+				Element_pressed = nullptr;
 			_clickedEdgePoint = nullptr;
 			_state = ResizableToolState::Selected;
 		}

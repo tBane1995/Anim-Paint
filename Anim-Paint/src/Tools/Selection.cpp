@@ -1141,6 +1141,9 @@ void Selection::cursorHover() {
 
 	for (auto& edgePoint : _edgePoints) {
 		edgePoint->cursorHover();
+		if(Element_hovered == edgePoint) {
+			_hoveredEdgePoint = edgePoint;
+		}
 	}
 
 }
@@ -1205,6 +1208,7 @@ void Selection::handleEvent(const sf::Event& event) {
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		if (_state == ResizableToolState::Selected && _hoveredEdgePoint != nullptr && Element_hovered == _hoveredEdgePoint) {
 			_clickedEdgePoint = _hoveredEdgePoint;
+			Element_pressed = _clickedEdgePoint;
 			_orginalEdgePointPosition = _point_left_top->getPosition();
 			_state = ResizableToolState::Resizing;
 			return;
@@ -1212,6 +1216,8 @@ void Selection::handleEvent(const sf::Event& event) {
 	}
 	else if (_state == ResizableToolState::Resizing) {
 		if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
+			if (Element_pressed == _clickedEdgePoint)
+				Element_pressed = nullptr;
 			_clickedEdgePoint = nullptr;
 			_state = ResizableToolState::Selected;
 		}
@@ -1229,16 +1235,6 @@ void Selection::handleEvent(const sf::Event& event) {
 		if (Element_pressed.get() == this && !clickOnSelection(tile)) {
 			Element_pressed = nullptr;
 		}
-	}
-
-	
-	if (Element_pressed) {
-		std::string className = typeid(*Element_pressed).name();		// get class name
-		std::wstring wClassName(className.begin(), className.end());	// convert to wide_string
-		std::wcout << wClassName + L"\n";
-	}
-	else {
-		std::wcout << L"nullptr\n";
 	}
 
 	// other selection interactions
@@ -1333,10 +1329,11 @@ void Selection::handleEvent(const sf::Event& event) {
 			}
 			else if (_state == ResizableToolState::Moving) {
 				_state = ResizableToolState::Selected;
-				if(Element_pressed.get() == this)
-					Element_pressed = nullptr;
 				generateEdgePoints();
 			}
+
+			if (Element_pressed.get() == this)
+				Element_pressed = nullptr;
 		}
 	}
 
