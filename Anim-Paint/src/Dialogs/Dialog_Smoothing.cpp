@@ -9,7 +9,7 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
-Dialog_Smoothing::Dialog_Smoothing(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"smoothing", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
+Dialog_Smoothing::Dialog_Smoothing(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"smoothing", sf::Vector2i(272, 160), sf::Vector2i(8, 120)) {
 
 	_state = SmoothingState::Idle;
 	saveOriginalLayers(layers);

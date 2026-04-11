@@ -9,7 +9,7 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
-Dialog_Sepia::Dialog_Sepia(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"sepia", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
+Dialog_Sepia::Dialog_Sepia(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"sepia", sf::Vector2i(272, 160), sf::Vector2i(8, 120)) {
 
 	_state = SepiaState::Idle;
 

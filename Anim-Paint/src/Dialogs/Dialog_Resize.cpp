@@ -12,7 +12,7 @@
 #include "Components/Canvas.hpp"
 
 
-Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"resize", sf::Vector2i(256, 160+64), sf::Vector2i(8, 120)) {
+Dialog_Resize::Dialog_Resize(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"resize", sf::Vector2i(272, 160+64), sf::Vector2i(8, 120)) {
 
 	_state = ResizeState::Idle;
 

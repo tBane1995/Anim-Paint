@@ -40,7 +40,7 @@ sf::Color AverageColorAlphaWeighted(const sf::Image& image, uint8_t alphaThresho
 	return sf::Color(r, g, b, 255);
 }
 
-Dialog_Hue_Saturation::Dialog_Hue_Saturation(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"hue - saturation", sf::Vector2i(256, 192), sf::Vector2i(8, 120)) {
+Dialog_Hue_Saturation::Dialog_Hue_Saturation(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"hue - saturation", sf::Vector2i(272, 192), sf::Vector2i(8, 120)) {
 
 	_state = HueSaturationState::Idle;
 

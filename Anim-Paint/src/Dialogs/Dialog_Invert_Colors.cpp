@@ -9,7 +9,7 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
-Dialog_Invert_Colors::Dialog_Invert_Colors(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"invert colors", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
+Dialog_Invert_Colors::Dialog_Invert_Colors(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"invert colors", sf::Vector2i(272, 160), sf::Vector2i(8, 120)) {
 
 	_state = InvertColorsState::Idle;
 

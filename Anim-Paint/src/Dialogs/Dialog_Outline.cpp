@@ -10,7 +10,7 @@
 #include "Components/Toolbar/Toolbar.hpp"
 #include "Components/Canvas.hpp"
 
-Dialog_Outline::Dialog_Outline(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"outline", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
+Dialog_Outline::Dialog_Outline(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"outline", sf::Vector2i(272, 160), sf::Vector2i(8, 120)) {
 
 	_state = OutlineState::Idle;
 

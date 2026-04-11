@@ -9,7 +9,7 @@
 #include "Tools/Selection.hpp"
 #include "Components/Canvas.hpp"
 
-Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"chessboard", sf::Vector2i(256+16, 160), sf::Vector2i(8, 120)) {
+Dialog_Chessboard::Dialog_Chessboard(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"chessboard", sf::Vector2i(272, 160), sf::Vector2i(8, 120)) {
 
 	_state = ChessboardState::Idle;
 

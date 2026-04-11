@@ -11,7 +11,7 @@
 #include "Components/Canvas.hpp"
 
 
-Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"brightness-contrast", sf::Vector2i(256, 160), sf::Vector2i(8, 120)) {
+Dialog_Brightness_Contrast::Dialog_Brightness_Contrast(std::vector<std::shared_ptr<Layer>> layers) : Dialog(L"brightness-contrast", sf::Vector2i(272, 160), sf::Vector2i(8, 120)) {
 
 	_state = BrightnessContrastState::Idle;
 
