@@ -252,8 +252,8 @@ MainMenu::MainMenu() : Element() {
 	select_all->_onclick_func = [this]() {
 		toolbar->selectToolButton(toolbar->_btn_select);
 		toolbar->_toolType = ToolType::Selector;
-		selection->selectAll();
 		resizable_tool = selection;
+		selection->selectAll();
 		closeMenu();
 		};
 
