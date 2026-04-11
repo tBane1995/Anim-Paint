@@ -20,7 +20,7 @@ void HexagonFlatTop::generateImage() {
 
 	// triangle
 	sf::ConvexShape convex;
-	convex.setFillColor(toolbar->_first_color->_color);
+	convex.setFillColor(sf::Color::Black);
 	convex.setPointCount(6);
 
 	convex.setPoint(0, sf::Vector2f(0.25f, 0.f));

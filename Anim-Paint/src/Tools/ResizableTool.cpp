@@ -12,6 +12,28 @@
 #include "Components/MainMenu/MainMenu.hpp"
 #include "Dialogs/Palette.hpp"
 
+std::string replace_black_shader_source = R"(
+    uniform sampler2D texture;
+    uniform vec4 alphaColor;
+    uniform vec4 newColor;
+
+    void main() {
+        vec2 uv = gl_TexCoord[0].xy;
+		
+		vec4 c = texture2D(texture, uv);
+
+		if(c == alphaColor){
+			gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+		}
+		else{
+			if(c == vec4(0.0, 0.0, 0.0, 1.0))
+				gl_FragColor = newColor;
+			else
+				gl_FragColor = c;
+		}
+    }
+)";
+
 void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor)
 {
 	sf::IntRect s(sf::Vector2i(0, 0), sf::Vector2i(src.getSize()));
@@ -45,6 +67,68 @@ void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf:
 	}
 }
 
+
+void pasteImageWithNewColorAndAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color newColor, sf::Color alphaColor)
+{
+	sf::IntRect s(sf::Vector2i(0, 0), sf::Vector2i(src.getSize()));
+
+	if (dstX < 0) { s.position.x -= dstX; s.size.x += dstX; dstX = 0; }
+	if (dstY < 0) { s.position.y -= dstY; s.size.y += dstY; dstY = 0; }
+
+	const int dw = int(dst.getSize().x), dh = int(dst.getSize().y);
+
+	if (dstX >= dw || dstY >= dh)
+		return;
+
+	if (dstX + s.size.x > dw) s.size.x = dw - dstX;
+	if (dstY + s.size.y > dh) s.size.y = dh - dstY;
+
+	if (s.size.x <= 0 || s.size.y <= 0)
+		return;
+
+	sf::Image tmp;
+	tmp.resize(sf::Vector2u(s.size), sf::Color::Transparent);
+	if (!tmp.copy(src, sf::Vector2u(0, 0), s, true)) {
+		DebugError(L"pasteImageWithNewColorAndAlpha: image copy failed");
+		exit(0);
+	}
+
+	sf::Texture tex;
+	if (!tex.loadFromImage(tmp)) {
+		DebugError(L"pasteImageWithNewColorAndAlpha: failed to load texture from image.");
+		exit(0);
+	}
+
+	sf::RenderTexture rtex;
+	if (!rtex.resize(tex.getSize())) {
+		DebugError(L"pasteImageWithNewColorAndAlpha: failed to resize render texture.");
+		exit(0);
+	}
+
+	sf::Shader sh;
+	if (!sh.loadFromMemory(replace_black_shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"pasteImageWithNewColorAndAlpha: failed to load shader from memory.");
+		exit(0);
+	}
+
+	sh.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor));
+	sh.setUniform("newColor", sf::Glsl::Vec4(newColor));
+
+	sf::Sprite spr(tex);
+	rtex.clear(sf::Color::Transparent);
+	rtex.draw(spr, &sh);
+	rtex.display();
+
+	sf::Image result = rtex.getTexture().copyToImage();
+
+	// TERAZ wklejasz wynik w odpowiednie miejsce
+	if (!dst.copy(result, sf::Vector2u(dstX, dstY), sf::IntRect({ 0, 0 }, { (int)result.getSize().x, (int)result.getSize().y }), true)) {
+		DebugError(L"final copy failed");
+		exit(0);
+	}
+
+}
+
 ResizableTool::ResizableTool() : Element() {
 	_state = ResizableToolState::None;
 
@@ -53,6 +137,12 @@ ResizableTool::ResizableTool() : Element() {
 
 	_offset = sf::Vector2i(0, 0);
 	_moveTime = currentTime;
+
+	replace_black_color_shader = sf::Shader();
+	if (!replace_black_color_shader.loadFromMemory(replace_black_shader_source, sf::Shader::Type::Fragment)) {
+		DebugError(L"ResizableTool: failed to load shader from memory.");
+		exit(0);
+	}
 }
 
 ResizableTool::~ResizableTool() {
@@ -356,12 +446,12 @@ void ResizableTool::drawImage() {
 		return;
 
 	sf::Texture texture(*_image);
-	_sprite = std::make_shared<sf::Sprite>(texture);
+	sf::Sprite sprite(texture);
 	
 	float scale = canvas->_zoom * canvas->_zoom_delta;
 	float sx = float(_rect.size.x) / float(_image->getSize().x) * scale;
 	float sy = float(_rect.size.y) / float(_image->getSize().y) * scale;
-	_sprite->setScale(sf::Vector2f(sx, sy));
+	sprite.setScale(sf::Vector2f(sx, sy));
 
 	sf::IntRect canvasRect(sf::Vector2i(0, 0), canvas->_size);
 	auto intersection = _rect.findIntersection(canvasRect);
@@ -373,11 +463,14 @@ void ResizableTool::drawImage() {
 	int ty = std::max(0, -_rect.position.y + inter.position.y);
 	int tw = std::min(int(_image->getSize().x) - tx, inter.size.x);
 	int th = std::min(int(_image->getSize().y) - ty, inter.size.y);
-	_sprite->setTextureRect(sf::IntRect(sf::Vector2i(tx, ty), sf::Vector2i(tw, th)));
+	sprite.setTextureRect(sf::IntRect(sf::Vector2i(tx, ty), sf::Vector2i(tw, th)));
 
-	_sprite->setPosition(sf::Vector2f(inter.position) * scale + sf::Vector2f(canvas->_position));
+	sprite.setPosition(sf::Vector2f(inter.position) * scale + sf::Vector2f(canvas->_position));
 
-	window->draw(*_sprite);
+	replace_black_color_shader.setUniform("alphaColor", sf::Glsl::Vec4(sf::Color::Transparent));
+	replace_black_color_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
+
+	window->draw(sprite, &replace_black_color_shader);
 }
 
 void ResizableTool::drawEdgePoints() {
@@ -501,7 +594,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 
 				if (canvas->_rect.contains(cursor->_position)) {
 					if (_image != nullptr) {
-						pasteImageWithAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, sf::Color::Transparent);
+						pasteImageWithNewColorAndAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, toolbar->_first_color->_color, sf::Color::Transparent);
 						_image = nullptr;
 						history->saveStep();
 					}

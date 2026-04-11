@@ -20,7 +20,7 @@ void Rectangle::generateImage() {
 
     sf::ConvexShape convex;
     convex.setPointCount(4);
-    convex.setFillColor(toolbar->_first_color->_color);
+    convex.setFillColor(sf::Color::Black);
 
 	convex.setPoint(0, sf::Vector2f(0, 0));
 	convex.setPoint(1, sf::Vector2f((float)(_rect.size.x), 0));

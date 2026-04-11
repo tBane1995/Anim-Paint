@@ -3,7 +3,10 @@
 #include "Element.hpp"
 #include "Controls/EdgePoint.hpp"
 
+extern std::string replace_black_shader_source;
+
 void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color alphaColor = sf::Color::Transparent);
+void pasteImageWithNewColorAndAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color newColor, sf::Color alphaColor = sf::Color::Transparent);
 
 enum class ResizableToolState { None, Selecting, Selected, Moving, Resizing };
 
@@ -18,7 +21,7 @@ public:
 	// image
 	std::shared_ptr<sf::Image> _image;
 	sf::Texture _texture;
-	std::shared_ptr<sf::Sprite> _sprite;
+	sf::Shader replace_black_color_shader;
 
 	// others
 	sf::Vector2i _offset;	// to move

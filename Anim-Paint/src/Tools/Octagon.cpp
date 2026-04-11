@@ -20,7 +20,7 @@ void Octagon::generateImage() {
 
     sf::ConvexShape convex;
     convex.setPointCount(8);
-    convex.setFillColor(toolbar->_first_color->_color);
+    convex.setFillColor(sf::Color::Black);
 
 	convex.setPoint(0, sf::Vector2f((float)(_rect.size.x)*0.75f, 0));
 	convex.setPoint(1, sf::Vector2f((float)(_rect.size.x), (float)(_rect.size.y)*0.25f));

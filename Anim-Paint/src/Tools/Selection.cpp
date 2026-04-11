@@ -288,7 +288,6 @@ Selection::Selection() : ResizableTool() {
 		exit(0);
 	}
 
-	_sprite = nullptr;
 	_outlineSprite = nullptr;
 
 	_resizedMaskImage = nullptr;
@@ -734,18 +733,18 @@ void Selection::drawImage(bool useMask) {
 
 	float scale = canvas->_zoom * canvas->_zoom_delta;
 
-	_sprite = std::make_shared<sf::Sprite>(_texture);
-	_sprite->setTextureRect(texRect);
-	_sprite->setScale(sf::Vector2f(scale, scale));
+	sf::Sprite sprite(_texture);
+	sprite.setTextureRect(texRect);
+	sprite.setScale(sf::Vector2f(scale, scale));
 
 	sf::Vector2f spritePos;
 	spritePos.x = (float)(canvas->_position.x) + (float)(visibleRect.position.x) * scale;
 	spritePos.y = (float)(canvas->_position.y) + (float)(visibleRect.position.y) * scale;
-	_sprite->setPosition(spritePos);
+	sprite.setPosition(spritePos);
 
 	sf::RenderStates rs;
 	rs.shader = &_maskShader;
-	window->draw(*_sprite, rs);
+	window->draw(sprite, rs);
 
 }
 
@@ -808,20 +807,19 @@ void Selection::drawResizedImage(bool useMask) {
 	_maskShader.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor.r/255.0f, alphaColor.g/255.0f, alphaColor.b/255.0f, alphaColor.a/255.0f));
 
 
-	_sprite = std::make_shared<sf::Sprite>(_texture);
-	_sprite->setTextureRect(texRect);
+	sf::Sprite sprite(_texture);
+	sprite.setTextureRect(texRect);
 	float scale = canvas->_zoom * canvas->_zoom_delta;
-	_sprite->setScale(sf::Vector2f(scale, scale));
+	sprite.setScale(sf::Vector2f(scale, scale));
 
 	sf::Vector2f spritePos;
 	spritePos.x = (float)(canvas->_position.x) + (float)(visibleRect.position.x) * scale;
 	spritePos.y = (float)(canvas->_position.y) + (float)(visibleRect.position.y) * scale;
-	_sprite->setPosition(spritePos);
+	sprite.setPosition(spritePos);
 
 	sf::RenderStates rs;
 	rs.shader = &_maskShader;
-	window->draw(*_sprite, rs);
-
+	window->draw(sprite, rs);
 }
 
 

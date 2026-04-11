@@ -20,7 +20,7 @@ void HexagonPointTop::generateImage() {
 
 	// triangle
 	sf::ConvexShape convex;
-	convex.setFillColor(toolbar->_first_color->_color);
+	convex.setFillColor(sf::Color::Black);
 	convex.setPointCount(6);
 
 	// point-top hexagon

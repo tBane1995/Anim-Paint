@@ -19,7 +19,7 @@ void Triangle::generateImage() {
 	rtex.clear(sf::Color::Transparent);
 
 	sf::ConvexShape convex;
-	convex.setFillColor(toolbar->_first_color->_color);
+	convex.setFillColor(sf::Color::Black);
 	convex.setPointCount(3);
 	convex.setPoint(0, sf::Vector2f(_rect.size.x / 2 + _rect.size.x%2, 0));
 	convex.setPoint(1, sf::Vector2f(_rect.size.x, _rect.size.y));

@@ -21,7 +21,7 @@ void Circle::generateImage() {
 	float radius = 1;
 
 	sf::CircleShape circle(radius);
-	circle.setFillColor(toolbar->_first_color->_color);
+	circle.setFillColor(sf::Color::Black);
 	circle.setOrigin(sf::Vector2f(radius, radius));
 	circle.setPosition(sf::Vector2f(_rect.size.x / 2.f, _rect.size.y / 2.f));
 

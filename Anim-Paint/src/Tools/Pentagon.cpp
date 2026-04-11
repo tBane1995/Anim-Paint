@@ -20,7 +20,7 @@ void Pentagon::generateImage() {
 
     sf::ConvexShape convex;
     convex.setPointCount(5);
-    convex.setFillColor(toolbar->_first_color->_color);
+    convex.setFillColor(sf::Color::Black);
 
     float radius = std::min(_rect.size.x, _rect.size.y) / 2.f;
     float cx = 0.f;
