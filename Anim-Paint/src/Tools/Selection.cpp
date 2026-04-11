@@ -1130,17 +1130,19 @@ void Selection::cursorHover() {
 		return;
 	}
 
+	if (_state == ResizableToolState::None)
+		return;
+
+	sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
+
+	if (clickOnSelection(tile) || (Element_pressed.get() == this && _state == ResizableToolState::Selecting)) {
+		Element_hovered = this->shared_from_this();
+	}
+
 	for (auto& edgePoint : _edgePoints) {
 		edgePoint->cursorHover();
 	}
 
-	if(_hoveredEdgePoint != nullptr) {
-		return;
-	}
-
-	if (_rect.contains(cursor->_position)) {
-		Element_hovered = this->shared_from_this();
-	}
 }
 
 void Selection::handleEvent(const sf::Event& event) {
@@ -1230,17 +1232,26 @@ void Selection::handleEvent(const sf::Event& event) {
 	}
 
 	
+	if (Element_pressed) {
+		std::string className = typeid(*Element_pressed).name();		// get class name
+		std::wstring wClassName(className.begin(), className.end());	// convert to wide_string
+		std::wcout << wClassName + L"\n";
+	}
+	else {
+		std::wcout << L"nullptr\n";
+	}
 
 	// other selection interactions
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 
-		if (Element_pressed.get() == this || Element_pressed.get() == nullptr || _state == ResizableToolState::None || _state == ResizableToolState::Selected) {
+		if ((Element_hovered == canvas || Element_hovered.get() == nullptr || Element_hovered.get() == this ||
+			Element_pressed == canvas || Element_pressed.get() == this)
+			&& (_state == ResizableToolState::None || _state == ResizableToolState::Selected)) {
 
 			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 
 			if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && clickOnSelection(tile)) {
 				_state = ResizableToolState::Moving;
-				Element_pressed = this->shared_from_this();
 				_offset = tile - _resizedRect.position;
 				
 			}
@@ -1316,14 +1327,14 @@ void Selection::handleEvent(const sf::Event& event) {
 						*_resizedImage = *_image;
 					}
 					_state = ResizableToolState::Selected;
-					Element_pressed = this->shared_from_this();
 					generateEdgePoints();
 				}
 
 			}
 			else if (_state == ResizableToolState::Moving) {
 				_state = ResizableToolState::Selected;
-				Element_pressed = this->shared_from_this();
+				if(Element_pressed.get() == this)
+					Element_pressed = nullptr;
 				generateEdgePoints();
 			}
 		}
