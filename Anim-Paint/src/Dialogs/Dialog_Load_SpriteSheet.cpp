@@ -145,10 +145,11 @@ Dialog_Load_SpriteSheet::Dialog_Load_SpriteSheet(std::filesystem::path path) : D
 			animations_panel->updateText();
 			frames_panel->updateText();
 			bottom_bar->updateText();
-			canvas->reset();
-			canvas->_size = size;
-			canvas->generateBackground(size);
-			canvas->setCenter();
+			canvases.back()->reset();
+			for (auto& canvas : canvases) {
+				canvas->resize(size);
+				canvas->setCenter();
+			}
 			_state = DialogState::ToClose;
 		}
 		};

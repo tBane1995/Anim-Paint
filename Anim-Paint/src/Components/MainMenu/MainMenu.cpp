@@ -73,8 +73,8 @@ MainMenu::MainMenu() : Element() {
 			animations_panel->updateText();
 			frames_panel->updateText();
 			layers_panel->loadLayersFromCurrentFrame();
-			canvas->reset();
-			canvas->setCenter();
+			canvases.back()->reset();
+			canvases.back()->setCenter();
 			confirmDialog->_state = DialogState::ToClose;
 			};
 		dialogs.push_back(confirmDialog);

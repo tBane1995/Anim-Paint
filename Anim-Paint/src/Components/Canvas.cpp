@@ -54,7 +54,7 @@ void Canvas::reset() {
 
 	_isEdited = false;
 
-	generateBackground(_size);
+	setGenerateBackgroundAllCanvases(_size);
 	generateEdgePoints();
 }
 
