@@ -346,6 +346,12 @@ int Canvas::wrap(int v, int size) {
 
 void Canvas::drawPixels(sf::Color color)
 {
+	if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(_coords.x == 0 && _coords.y == 0))
+		return;
+
+	if (main_menu->canvas_repeating->_checkbox->_value == 1 && (_coords.x != 0 && _coords.y != 0))
+		return;
+
 	std::shared_ptr<Layer> layer = getCurrentAnimation()->getCurrentLayer();
 	if (layer == nullptr)
 		return;
@@ -482,6 +488,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 		_isEdited = false;
 
 	if (Element_pressed.get() == this || (Element_pressed.get() == nullptr && Element_hovered.get() == this)) {
+
 		if (toolbar->_toolType == ToolType::Brush) {
 			drawPixels(toolbar->_first_color->_color);
 			_isEdited = true;
