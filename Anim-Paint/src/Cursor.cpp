@@ -287,6 +287,13 @@ void Cursor::handleEvent() {
 
 	bool hoveredCanvas = false;
 	for (auto& canvas : canvases) {
+
+		if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(canvas->_coords.x == 0 && canvas->_coords.y == 0))
+			continue;
+
+		if (main_menu->canvas_repeating->_checkbox->_value == 1 && (canvas->_coords.x != 0 && canvas->_coords.y != 0))
+			continue;
+
 		if(_hoveredElement == canvas) {
 			hoveredCanvas = true;
 			break;
