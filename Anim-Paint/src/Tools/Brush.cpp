@@ -182,7 +182,7 @@ std::vector<std::vector<bool>> Brush::getBrush() {
 void Brush::draw() {
 
     std::vector<std::vector<bool>> brush = getBrush();
-    const float scale = canvas->_zoom * canvas->_zoom_delta;
+    float scale = canvas->_zoom * canvas->_zoom_delta;
 
     const int h = static_cast<int>(brush.size());
     const int w = h ? static_cast<int>(brush[0].size()) : 0;
@@ -209,8 +209,8 @@ void Brush::draw() {
                 int tx = _position.x - halfX + x;
                 int ty = _position.y - halfY + y;
                 
-                int cx = std::floor((float)tx / canvas->_size.x);
-                int cy = std::floor((float)ty / canvas->_size.y);
+                int cx = std::floor((float)tx / Canvas::_size.x);
+                int cy = std::floor((float)ty / Canvas::_size.y);
 
                 // single - only draw on the main canvas
                 if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(cx == 0 && cy == 0)) {
@@ -222,8 +222,8 @@ void Brush::draw() {
                     continue;
                 }
 
-                tx = (tx % canvas->_size.x + canvas->_size.x) % canvas->_size.x;
-                ty = (ty % canvas->_size.y + canvas->_size.y) % canvas->_size.y;
+                tx = (tx % Canvas::_size.x + Canvas::_size.x) % Canvas::_size.x;
+                ty = (ty % Canvas::_size.y + Canvas::_size.y) % Canvas::_size.y;
 
 				//std::wcout << tx << L", " << ty << L"\n";
                 sf::RectangleShape rect(sf::Vector2f(scale, scale));

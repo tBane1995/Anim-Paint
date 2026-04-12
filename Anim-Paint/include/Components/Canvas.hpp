@@ -13,17 +13,17 @@ public:
 	sf::Texture _bg_texture;
 	sf::IntRect _rect;
 
-	sf::Vector2i _minSize;
-	sf::Vector2i _maxSize;
-	sf::Vector2i _size;
+	static sf::Vector2i _minSize;
+	static sf::Vector2i _maxSize;
+	static sf::Vector2i _size;
 	sf::Vector2i _position;
 
-	int _pixelSize;
+	static int _pixelSize;
 
-	float _zoom;		// TO_DO in percentage 
-	float _zoom_delta;	// const
-	float _min_zoom;
-	float _max_zoom;
+	static float _zoom;		// TO_DO in percentage 
+	static float _zoom_delta;	// const
+	static float _min_zoom;
+	static float _max_zoom;
 
 	bool _isEdited;		// if brush/eraser/fill was used, then true
 	

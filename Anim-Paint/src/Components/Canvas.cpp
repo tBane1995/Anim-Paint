@@ -18,11 +18,18 @@
 #include "Components/BottomBar.hpp"
 #include "Time.hpp"
 
-Canvas::Canvas(sf::Vector2i coords) : Element() {
-	_minSize = sf::Vector2i(16, 16);
-	_maxSize = sf::Vector2i(256, 256);
-	_pixelSize = 8;
+sf::Vector2i Canvas::_minSize = sf::Vector2i(16, 16);
+sf::Vector2i Canvas::_maxSize = sf::Vector2i(256, 256);
+int Canvas::_pixelSize = 8;
+float Canvas::_zoom_delta = 16.0f;
+float Canvas::_min_zoom = 0.125f;
+float Canvas::_max_zoom = 1.0f;
+float Canvas::_zoom = 0.25f;
 
+sf::Vector2i Canvas::_size = sf::Vector2i(32, 32);
+
+Canvas::Canvas(sf::Vector2i coords) : Element() {
+	
 	_coords = coords;
 
 	reset();
@@ -34,15 +41,14 @@ Canvas::~Canvas() {
 }
 
 void Canvas::reset() {
-	int targetSize = 32;
-	int sides = std::max(targetSize, targetSize);
 
 	_zoom_delta = 16.0f;
 	_min_zoom = 0.125f;
 	_max_zoom = 1.0f;
-	_zoom = (float)(targetSize) / (float)(sides * 4);
+	_zoom = 0.25f;
 
-	_size = sf::Vector2i(targetSize, targetSize);
+	_size = sf::Vector2i(32, 32);
+
 	_state = CanvasState::Idle;
 	_offset = sf::Vector2i(0, 0);
 
@@ -172,7 +178,7 @@ void Canvas::setZoom(float mouseWheelScrolllDelta) {
 
 	sf::Vector2i mouseAfterZoom = sf::Vector2i(sf::Vector2f(mouseBeforeZoom) * (_zoom / oldZoom));
 	_position += (cursor->_position - (_position + mouseAfterZoom));
-	setPosition(_position);
+	setPositionAllCanvases(_position);
 }
 
 void Canvas::resize(std::shared_ptr<EdgePoint> edgePoint, sf::Vector2i cursorPosition) {
