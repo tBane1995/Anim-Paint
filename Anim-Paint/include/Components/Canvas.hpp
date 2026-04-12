@@ -60,6 +60,7 @@ public:
 	void setPosition(sf::Vector2i position);
 	void setZoom(float mouseWheelScrolllDelta);
 	void resize(std::shared_ptr<EdgePoint> edgePoint, sf::Vector2i cursorPosition);
+	void setGenerateBackgroundAllCanvases(sf::Vector2i newSize);
 	void setResizeAllCanvases(sf::Vector2i newSize);
 	void setPositionAllCanvases(sf::Vector2i position);
 

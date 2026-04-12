@@ -108,8 +108,8 @@ void Canvas::generateBackground(sf::Vector2i size) {
 	}
 
 	sf::Vector2i pos;
-	pos.x = _rect.position.x + _coords.x * s.x;
-	pos.y = _rect.position.y + _coords.y * s.y;
+	pos.x = _rect.position.x;
+	pos.y = _rect.position.y;
 	_rect = sf::IntRect(pos, s);
 	
 }
@@ -173,11 +173,11 @@ void Canvas::setZoom(float mouseWheelScrolllDelta) {
 
 	_zoom += 0.0625f * mouseWheelScrolllDelta;
 	_zoom = std::clamp(_zoom, _min_zoom, _max_zoom);
-
-	generateBackground(_size);
-
 	sf::Vector2i mouseAfterZoom = sf::Vector2i(sf::Vector2f(mouseBeforeZoom) * (_zoom / oldZoom));
 	_position += (cursor->_position - (_position + mouseAfterZoom));
+
+	setGenerateBackgroundAllCanvases(_size);
+	setResizeAllCanvases(_size);
 	setPositionAllCanvases(_position);
 }
 
@@ -323,6 +323,12 @@ void Canvas::resize(std::shared_ptr<EdgePoint> edgePoint, sf::Vector2i cursorPos
 
 }
 
+void Canvas::setGenerateBackgroundAllCanvases(sf::Vector2i newSize) {
+	for (auto& canvas : canvases) {
+		canvas->generateBackground(newSize);
+	}
+}
+
 void Canvas::setResizeAllCanvases(sf::Vector2i newSize) {
 	for (auto& canvas : canvases) {
 		canvas->resize(newSize);
@@ -409,6 +415,7 @@ void Canvas::drawPixels(sf::Color color)
 
 void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords) {
 
+
 	if (colorToEdit == newColor)
 		return;
 
@@ -441,6 +448,12 @@ void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelC
 
 void Canvas::fillPixels(sf::Color color) {
 
+	if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(_coords.x == 0 && _coords.y == 0))
+		return;
+
+	if (main_menu->canvas_repeating->_checkbox->_value == 1 && (_coords.x != 0 && _coords.y != 0))
+		return;
+
 	std::shared_ptr<Layer> layer = getCurrentAnimation()->getCurrentLayer();
 
 	if (layer == nullptr) {
@@ -458,6 +471,12 @@ void Canvas::fillPixels(sf::Color color) {
 }
 
 void Canvas::pickPixel() {
+
+	if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(_coords.x == 0 && _coords.y == 0))
+		return;
+
+	if (main_menu->canvas_repeating->_checkbox->_value == 1 && (_coords.x != 0 && _coords.y != 0))
+		return;
 
 	std::shared_ptr<Layer> layer = getCurrentAnimation()->getCurrentLayer();
 	if (layer == nullptr) {
