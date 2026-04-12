@@ -45,7 +45,9 @@ public:
 	CanvasState _state;
 	sf::Vector2i _offset;	// to movements of canvas
 
-	Canvas();
+	sf::Vector2i _coords;
+
+	Canvas(sf::Vector2i coords = sf::Vector2i(0,0));
 	~Canvas();
 
 	void reset();
@@ -58,6 +60,9 @@ public:
 	void setPosition(sf::Vector2i position);
 	void setZoom(float mouseWheelScrolllDelta);
 	void resize(std::shared_ptr<EdgePoint> edgePoint, sf::Vector2i cursorPosition);
+	void setResizeAllCanvases(sf::Vector2i newSize);
+	void setPositionAllCanvases(sf::Vector2i position);
+
 	void drawPixels(sf::Color color);
 	void fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords);
 	void fillPixels(sf::Color color);
@@ -79,3 +84,4 @@ public:
 };
 
 extern std::shared_ptr<Canvas> canvas;
+extern std::vector<std::shared_ptr<Canvas>> canvases;

@@ -18,10 +18,12 @@
 #include "Components/BottomBar.hpp"
 #include "Time.hpp"
 
-Canvas::Canvas() : Element() {
+Canvas::Canvas(sf::Vector2i coords) : Element() {
 	_minSize = sf::Vector2i(16, 16);
 	_maxSize = sf::Vector2i(256, 256);
 	_pixelSize = 8;
+
+	_coords = coords;
 
 	reset();
 	setCenter();
@@ -55,7 +57,11 @@ sf::Vector2i Canvas::getZoomedSize(sf::Vector2i size) {
 }      
 
 void Canvas::setCenter() {
-	setPosition((sf::Vector2i(window->getSize()) - sf::Vector2i(getZoomedSize(_size))) / 2);
+	sf::Vector2i s = getZoomedSize(_size);
+	sf::Vector2i newPos;
+	newPos.x = int((window->getSize().x - s.x) / 2) + _coords.x * s.x;
+	newPos.y = int((window->getSize().y - s.y) / 2) + _coords.y * s.y;
+	setPosition(newPos);
 }
 
 void Canvas::resize(sf::Vector2i newSize) {
@@ -95,20 +101,25 @@ void Canvas::generateBackground(sf::Vector2i size) {
 		exit(0);
 	}
 
-	_rect = sf::IntRect(_rect.position, s);
+	sf::Vector2i pos;
+	pos.x = _rect.position.x + _coords.x * s.x;
+	pos.y = _rect.position.y + _coords.y * s.y;
+	_rect = sf::IntRect(pos, s);
 	
 }
 
 void Canvas::generateEdgePoints() {
+
+	sf::Vector2i s = getZoomedSize(_size);
 	_edgePoints.clear();
 	_point_left_top = std::make_shared<EdgePoint>(_position);
-	_point_top = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x / 2, 0));
-	_point_right_top = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x, 0));
-	_point_left = std::make_shared<EdgePoint>(_position + sf::Vector2i(0, getZoomedSize(_size).y / 2));
-	_point_right = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y / 2));
-	_point_left_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(0, getZoomedSize(_size).y));
-	_point_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x / 2, getZoomedSize(_size).y));
-	_point_right_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y));
+	_point_top = std::make_shared<EdgePoint>(_position + sf::Vector2i(s.x / 2, 0));
+	_point_right_top = std::make_shared<EdgePoint>(_position + sf::Vector2i(s.x, 0));
+	_point_left = std::make_shared<EdgePoint>(_position + sf::Vector2i(0, s.y / 2));
+	_point_right = std::make_shared<EdgePoint>(_position + sf::Vector2i(s.x, s.y / 2));
+	_point_left_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(0, s.y));
+	_point_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(s.x / 2, s.y));
+	_point_right_bottom = std::make_shared<EdgePoint>(_position + sf::Vector2i(s.x, s.y));
 
 	_edgePoints.push_back(_point_left_top);
 	_edgePoints.push_back(_point_top);
@@ -124,18 +135,21 @@ void Canvas::generateEdgePoints() {
 }
 
 void Canvas::setPosition(sf::Vector2i position) {
-	_position = position;
+
+	sf::Vector2i s = getZoomedSize(_size);
+	_position.x = position.x;
+	_position.y = position.y;
 	
 	_rect.position = position;
 
 	_point_left_top->setPosition(_position);
-	_point_top->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x / 2, 0));
-	_point_right_top->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x, 0));
-	_point_left->setPosition(_position + sf::Vector2i(0, getZoomedSize(_size).y / 2));
-	_point_right->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y / 2));
-	_point_left_bottom->setPosition(_position + sf::Vector2i(0, getZoomedSize(_size).y));
-	_point_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x / 2, getZoomedSize(_size).y));
-	_point_right_bottom->setPosition(_position + sf::Vector2i(getZoomedSize(_size).x, getZoomedSize(_size).y));
+	_point_top->setPosition(_position + sf::Vector2i(s.x / 2, 0));
+	_point_right_top->setPosition(_position + sf::Vector2i(s.x, 0));
+	_point_left->setPosition(_position + sf::Vector2i(0, s.y / 2));
+	_point_right->setPosition(_position + sf::Vector2i(s.x, s.y / 2));
+	_point_left_bottom->setPosition(_position + sf::Vector2i(0, s.y));
+	_point_bottom->setPosition(_position + sf::Vector2i(s.x / 2, s.y));
+	_point_right_bottom->setPosition(_position + sf::Vector2i(s.x, s.y));
 
 	if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && selection->_state == ResizableToolState::Selected) {
 		selection->generateEdgePoints();
@@ -145,9 +159,6 @@ void Canvas::setPosition(sf::Vector2i position) {
 		resizable_tool->generateEdgePoints();
 	}
 }
-
-
-
 
 void Canvas::setZoom(float mouseWheelScrolllDelta) {
 
@@ -300,7 +311,26 @@ void Canvas::resize(std::shared_ptr<EdgePoint> edgePoint, sf::Vector2i cursorPos
 		}
 
 	}
+
+	setResizeAllCanvases(_size);
+	setPositionAllCanvases(_position);
+
 }
+
+void Canvas::setResizeAllCanvases(sf::Vector2i newSize) {
+	for (auto& canvas : canvases) {
+		canvas->resize(newSize);
+	}
+}
+
+void Canvas::setPositionAllCanvases(sf::Vector2i position) {
+	for (auto& canvas : canvases) {
+		sf::Vector2i s = getZoomedSize(_size);
+		sf::Vector2i newPos = canvases.back()->_position + sf::Vector2i(s.x * canvas->_coords.x, s.y * canvas->_coords.y);
+		canvas->setPosition(newPos);
+	}
+}
+
 
 void Canvas::drawPixels(sf::Color color) {
 
@@ -704,6 +734,13 @@ void Canvas::update() {
 
 void Canvas::draw() {
 
+	if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(_coords.x == 0 && _coords.y == 0))
+		return;
+
+	if (main_menu->canvas_repeating->_checkbox->_value == 1 && _coords.x != 0 && _coords.y != 0)
+		return;
+
+
 	sf::Sprite sprite(_bg_texture);
 	sprite.setPosition(sf::Vector2f(_rect.position));
 	window->draw(sprite);
@@ -728,9 +765,24 @@ void Canvas::draw() {
 		}
 	}
 
-	if (resizable_tool == nullptr) {
-		for (auto& point : _edgePoints) {
-			point->draw();
+	
+
+	if(_coords == sf::Vector2i(0, 0)) {
+
+		sf::Vector2f rectSize;
+		rectSize.x = float(_rect.size.x);
+		rectSize.y = float(_rect.size.y);
+		sf::RectangleShape rect(rectSize);
+		rect.setOutlineColor(sf::Color(47,47,47));
+		rect.setOutlineThickness(1.0f);
+		rect.setFillColor(sf::Color::Transparent);
+		rect.setPosition(sf::Vector2f(_rect.position));
+		window->draw(rect);
+
+		if (resizable_tool == nullptr) {
+			for (auto& point : _edgePoints) {
+				point->draw();
+			}
 		}
 	}
 
@@ -738,3 +790,4 @@ void Canvas::draw() {
 
 
 std::shared_ptr<Canvas> canvas;
+std::vector<std::shared_ptr<Canvas>> canvases;

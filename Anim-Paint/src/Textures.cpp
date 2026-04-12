@@ -72,6 +72,12 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\main_menu\\import.png");
 	texturePaths.push_back(L"tex\\main_menu\\undo.png");
 	texturePaths.push_back(L"tex\\main_menu\\redo.png");
+	texturePaths.push_back(L"tex\\main_menu\\canvas_single.png");
+	texturePaths.push_back(L"tex\\main_menu\\canvas_single_hover.png");
+	texturePaths.push_back(L"tex\\main_menu\\canvas_cross.png");
+	texturePaths.push_back(L"tex\\main_menu\\canvas_cross_hover.png");
+	texturePaths.push_back(L"tex\\main_menu\\canvas_multi.png");
+	texturePaths.push_back(L"tex\\main_menu\\canvas_multi_hover.png");
 
 	// dialogs
 	texturePaths.push_back(L"tex\\dialog\\increase.png");

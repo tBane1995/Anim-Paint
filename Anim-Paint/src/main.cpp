@@ -116,6 +116,16 @@ int main() {
 	main_menu->setActiveForWindows();
 
 	canvas = std::make_shared<Canvas>();
+	for (int y = -1; y <= 1; y += 1) {
+		for(int x = -1; x <= 1; x += 1) {
+			if(x == 0 && y == 0)
+				continue;
+			canvases.push_back(std::make_shared<Canvas>(sf::Vector2i(x, y)));
+		}
+	}
+	//canvases.push_back(std::make_shared<Canvas>(sf::Vector2i(0,0)));
+	canvases.push_back(canvas); // TO-DO - remove this after added center canvas
+
 	bottom_bar = std::make_shared<BottomBar>();
 	tooltip = std::make_shared<Tooltip>();
 
@@ -186,7 +196,9 @@ int main() {
 		// cursor hovering
 		Element_hovered = nullptr;
 		
-		canvas->cursorHover();
+		for (auto& canvas : canvases)
+			canvas->cursorHover();
+		
 		if (resizable_tool)
 			resizable_tool->cursorHover();
 
@@ -209,8 +221,8 @@ int main() {
 		toolbar->update();
 
 		
-		
-		canvas->update();
+		for (auto& canvas : canvases)
+			canvas->update();
 
 		for(auto& dialog : static_dialogs)
 			dialog->update();
@@ -242,8 +254,10 @@ int main() {
 			main_menu->handleEvent(*event);
 
 			toolbar->handleEvent(*event);
-			
-			canvas->handleEvent(*event);
+
+			for (auto& canvas : canvases)
+				canvas->handleEvent(*event);
+
 			if (resizable_tool)
 				resizable_tool->handleEvent(*event);
 			
@@ -274,7 +288,10 @@ int main() {
 		
 		// render
 		window->clear(sf::Color(56, 56, 56));
-		canvas->draw();
+
+		for(auto& canvas : canvases)
+			canvas->draw();
+
 		if (resizable_tool)
 			resizable_tool->draw();
 		cursor->draw();

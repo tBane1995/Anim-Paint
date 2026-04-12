@@ -287,8 +287,9 @@ MainMenu::MainMenu() : Element() {
 		};
 	_menu_boxes.push_back(windows);
 
-	canvas_repeating = std::make_shared<OptionWithCheckbox>(L"Canvas repeating", getTexture(L"tex\\unchecked.png"), getTexture(L"tex\\unchecked_hover.png"));
-	canvas_repeating->addValue(getTexture(L"tex\\checked.png"), getTexture(L"tex\\checked_hover.png"));
+	canvas_repeating = std::make_shared<OptionWithCheckbox>(L"Canvas repeating", getTexture(L"tex\\main_menu\\canvas_single.png"), getTexture(L"tex\\main_menu\\canvas_single_hover.png"));
+	canvas_repeating->addValue(getTexture(L"tex\\main_menu\\canvas_cross.png"), getTexture(L"tex\\main_menu\\canvas_cross_hover.png"));
+	canvas_repeating->addValue(getTexture(L"tex\\main_menu\\canvas_multi.png"), getTexture(L"tex\\main_menu\\canvas_multi_hover.png"));
 
 	window_animations = std::make_shared<Option>(L"Animations");
 	window_animations->_onclick_func = [this]() {
