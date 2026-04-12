@@ -285,9 +285,15 @@ void Cursor::handleEvent() {
 		return;
 	}
 
-	
+	bool hoveredCanvas = false;
+	for (auto& canvas : canvases) {
+		if(_hoveredElement == canvas) {
+			hoveredCanvas = true;
+			break;
+		}
+	}
 
-	if (_hoveredElement == canvas) {
+	if (hoveredCanvas) {
 		if (toolbar->_toolType == ToolType::Brush) {
 			window->setMouseCursorVisible(true);
 			_cursor = _brushCursor;
@@ -343,7 +349,7 @@ void Cursor::draw() {
 	}
 
 	if (_brushIsVisible == true) {
-		brush->draw(canvas->_position, canvas->_size, canvas->_zoom, canvas->_zoom_delta);
+		brush->draw();
 	}
 }
 

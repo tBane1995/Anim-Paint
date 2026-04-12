@@ -324,44 +324,75 @@ void Canvas::setResizeAllCanvases(sf::Vector2i newSize) {
 }
 
 void Canvas::setPositionAllCanvases(sf::Vector2i position) {
+
+	canvases.back()->_position = position;
+
 	for (auto& canvas : canvases) {
-		sf::Vector2i s = getZoomedSize(_size);
+		sf::Vector2i s = getZoomedSize(canvas->_size);
 		sf::Vector2i newPos = canvases.back()->_position + sf::Vector2i(s.x * canvas->_coords.x, s.y * canvas->_coords.y);
 		canvas->setPosition(newPos);
 	}
 }
 
+int Canvas::wrap(int v, int size) {
+	return (v % size + size) % size;
+}
 
-void Canvas::drawPixels(sf::Color color) {
-
+void Canvas::drawPixels(sf::Color color)
+{
 	std::shared_ptr<Layer> layer = getCurrentAnimation()->getCurrentLayer();
-
-	if (layer == nullptr) {
+	if (layer == nullptr)
 		return;
-	}
 
-	std::vector<sf::Vector2i> pixelsToDraw = getPointsFromLine(brush->_lastPosition, brush->_position);
+	std::vector<sf::Vector2i> pixelsToDraw =
+		getPointsFromLine(brush->_lastPosition, brush->_position);
 
 	std::vector<std::vector<bool>> b = brush->getBrush();
 	sf::Image& image = layer->_image;
 
-	for (auto& pixel : pixelsToDraw) {
-		for (int y = 0; y < b.size(); y++) {
-			for (int x = 0; x < b[y].size(); x++) {
-				if (b[y][x]) {
+	int mode = main_menu->canvas_repeating->_checkbox->_value;
 
-					int tx = pixel.x - (int)(b[y].size()) / 2 + x;
-					int ty = pixel.y - (int)(b.size()) / 2 + y;
+	for (auto& pixel : pixelsToDraw)
+	{
+		for (int y = 0; y < (int)b.size(); y++)
+		{
+			for (int x = 0; x < (int)b[y].size(); x++)
+			{
+				if (!b[y][x])
+					continue;
 
-					if (tx < 0 || ty < 0 || tx >= _size.x || ty >= _size.y)
-						continue;
+				// Brush offset
+				int tx = pixel.x - (int)b[y].size() / 2 + x;
+				int ty = pixel.y - (int)b.size() / 2 + y;
 
-					image.setPixel(sf::Vector2u(tx, ty), color);
-				}
+				// Canvas coordinates (which tile are we in)
+				int cx = (pixel.x - _coords.x * _size.x) / _size.x;
+				int cy = (pixel.y - _coords.y * _size.y) / _size.y;
+
+				bool center = (cx == 0 && cy == 0);
+				bool cross = (cx == 0 || cy == 0);
+
+				// ----------------------------
+				// REPEATING MODES
+				// ----------------------------
+				if (mode == 0 && !center)
+					continue;
+
+				if (mode == 1 && !cross)
+					continue;
+
+				// mode == 2 → FULL (all tiles allowed)
+
+				// ----------------------------
+				// Local wrap inside canvas only
+				// ----------------------------
+				tx = wrap(tx, _size.x);
+				ty = wrap(ty, _size.y);
+
+				image.setPixel(sf::Vector2u(tx, ty), color);
 			}
 		}
 	}
-
 }
 
 void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords) {
@@ -497,6 +528,7 @@ void Canvas::mouseRightButtonReleasedEvent() {
 void Canvas::mouseMovedWithLeftButtonPressedEvent() {
 
 	if (_state == CanvasState::Idle) {
+
 		if (Element_pressed.get() == this || (Element_pressed.get() == nullptr && Element_hovered.get() == this)) {
 			if (toolbar->_toolType == ToolType::Brush) {
 				drawPixels(toolbar->_first_color->_color);
@@ -693,6 +725,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 
 
 	if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv!=nullptr && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+		Element_pressed = this->shared_from_this();
 		mouseMovedWithLeftButtonPressedEvent();
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
@@ -726,7 +759,7 @@ void Canvas::update() {
 		sf::Vector2f target = sf::Vector2f(cursor->_position + _offset);
 		int x = (int)(clampAxisOverscroll(target.x, (float)(_rect.size.x), (float)(window->getSize().x), 0.5f));
 		int y = (int)(clampAxisOverscroll(target.y, (float)(_rect.size.y), (float)(window->getSize().y), 0.5f));
-		setPosition(sf::Vector2i(x, y));
+		setPositionAllCanvases(sf::Vector2i(x, y));
 	}
 
 	

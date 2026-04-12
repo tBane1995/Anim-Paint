@@ -1,6 +1,9 @@
 ﻿#include "Tools/Brush.hpp"
 #include "Window.hpp"
 #include "Components/Toolbar/Toolbar.hpp"
+#include "Components/Canvas.hpp"
+#include "Cursor.hpp"
+#include "Components/MainMenu/MainMenu.hpp"
 
 std::vector<std::vector<std::vector<bool>>> circle_brushes = {
 
@@ -176,33 +179,59 @@ std::vector<std::vector<bool>> Brush::getBrush() {
     }
 }
 
-void Brush::draw(sf::Vector2i canvas_position, sf::Vector2i canvas_size, float zoom, float zoom_delta) {
+void Brush::draw() {
+
     std::vector<std::vector<bool>> brush = getBrush();
-
-
-    const float scale = zoom * zoom_delta;
+    const float scale = canvas->_zoom * canvas->_zoom_delta;
 
     const int h = static_cast<int>(brush.size());
     const int w = h ? static_cast<int>(brush[0].size()) : 0;
     const int halfX = w / 2;
     const int halfY = h / 2;
 
-    // bazowa pozycja lewego-górnego kafelka pędzla w tej samej skali
-    sf::Vector2f brush_pos = sf::Vector2f(canvas_position) + sf::Vector2f((_position.x - halfX) * scale, (_position.y - halfY) * scale);
+    for (auto& canvas : canvases) {
 
-    sf::RectangleShape rect({ scale, scale });
-    rect.setFillColor(toolbar->_first_color->_color);
+        // single
+        if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(canvas->_coords.x == 0 && canvas->_coords.y == 0)) {
+            continue;
+        }
 
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
-            if (!brush[y][x]) continue;
+        // cross
+        if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(canvas->_coords.x == 0 || canvas->_coords.y == 0)) {
+            continue;
+        }
 
-            const int tx = _position.x - halfX + x;
-            const int ty = _position.y - halfY + y;
-            if (tx < 0 || ty < 0 || tx >= canvas_size.x || ty >= canvas_size.y) continue;
+        for (int y = 0; y < h; ++y) {
+            for (int x = 0; x < w; ++x) {
+                if (!brush[y][x]) continue;
 
-            rect.setPosition(brush_pos + sf::Vector2f(x * scale, y * scale));
-            window->draw(rect);
+
+                int tx = _position.x - halfX + x;
+                int ty = _position.y - halfY + y;
+                
+                int cx = std::floor((float)tx / canvas->_size.x);
+                int cy = std::floor((float)ty / canvas->_size.y);
+
+                // single - only draw on the main canvas
+                if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(cx == 0 && cy == 0)) {
+                    continue;
+                }
+
+                // cross - only  on the main canvas
+                if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(cx == 0 || cy == 0)) {
+                    continue;
+                }
+
+                tx = (tx % canvas->_size.x + canvas->_size.x) % canvas->_size.x;
+                ty = (ty % canvas->_size.y + canvas->_size.y) % canvas->_size.y;
+
+				//std::wcout << tx << L", " << ty << L"\n";
+                sf::RectangleShape rect(sf::Vector2f(scale, scale));
+                rect.setFillColor(toolbar->_first_color->_color);
+                rect.setPosition(sf::Vector2f(canvas->_position) + sf::Vector2f(tx * scale, ty * scale));  
+
+                window->draw(rect);
+            }
         }
     }
 }
