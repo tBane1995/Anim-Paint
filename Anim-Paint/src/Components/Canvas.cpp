@@ -786,6 +786,8 @@ void Canvas::update() {
 	}
 	else if (_state == CanvasState::Moving) {
 		sf::Vector2f target = sf::Vector2f(cursor->_position + _offset);
+		target.x -= _coords.x * getZoomedSize(_size).x;
+		target.y -= _coords.y * getZoomedSize(_size).y;
 		int x = (int)(clampAxisOverscroll(target.x, (float)(_rect.size.x), (float)(window->getSize().x), 0.5f));
 		int y = (int)(clampAxisOverscroll(target.y, (float)(_rect.size.y), (float)(window->getSize().y), 0.5f));
 		setPositionAllCanvases(sf::Vector2i(x, y));
@@ -839,15 +841,29 @@ void Canvas::draw() {
 	// draw outline and edge points only on the main canvas (0,0)
 	if(_coords == sf::Vector2i(0, 0)) {
 
+		// double outline to make it more visible on different backgrounds
+		
+		// dark outline
+		float outlineThickness = 1.0f;
 		sf::Vector2f rectSize;
 		rectSize.x = float(_rect.size.x);
 		rectSize.y = float(_rect.size.y);
 		sf::RectangleShape rect(rectSize);
 		rect.setOutlineColor(sf::Color(47,47,47));
-		rect.setOutlineThickness(1.0f);
+		rect.setOutlineThickness(outlineThickness);
 		rect.setFillColor(sf::Color::Transparent);
 		rect.setPosition(sf::Vector2f(_rect.position));
 		window->draw(rect);
+
+		// light outline
+		rectSize.x = float(_rect.size.x) + 2.f * outlineThickness;
+		rectSize.y = float(_rect.size.y) + 2.f * outlineThickness;
+		sf::RectangleShape rect2(rectSize);
+		rect2.setOutlineColor(sf::Color(95,95,95));
+		rect2.setOutlineThickness(outlineThickness);
+		rect2.setFillColor(sf::Color::Transparent);
+		rect2.setPosition(sf::Vector2f(_rect.position) - sf::Vector2f(outlineThickness, outlineThickness));
+		window->draw(rect2);
 
 		if (resizable_tool == nullptr) {
 			for (auto& point : _edgePoints) {
