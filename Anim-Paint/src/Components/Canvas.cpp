@@ -345,7 +345,10 @@ void Canvas::drawPixels(sf::Color color)
 	if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(_coords.x == 0 && _coords.y == 0))
 		return;
 
-	if (main_menu->canvas_repeating->_checkbox->_value == 1 && (_coords.x != 0 && _coords.y != 0))
+	if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(_coords.x == 0 || _coords.y == 0))
+		return;
+
+	if(_rect.contains(cursor->_position) == false)
 		return;
 
 	std::shared_ptr<Layer> layer = getCurrentAnimation()->getCurrentLayer();
@@ -448,7 +451,7 @@ void Canvas::fillPixels(sf::Color color) {
 	if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(_coords.x == 0 && _coords.y == 0))
 		return;
 
-	if (main_menu->canvas_repeating->_checkbox->_value == 1 && (_coords.x != 0 && _coords.y != 0))
+	if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(_coords.x == 0 ||_coords.y == 0))
 		return;
 
 	std::shared_ptr<Layer> layer = getCurrentAnimation()->getCurrentLayer();
@@ -591,7 +594,11 @@ void Canvas::mouseMovedWithRightButtonPressedEvent() {
 
 void Canvas::cursorHover() {
 
-	
+	if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(_coords.x == 0 && _coords.y == 0))
+		return;
+
+	if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(_coords.x == 0 || _coords.y == 0))
+		return;
 
 	if (!dialogs.empty())
 		return;
@@ -644,6 +651,12 @@ void Canvas::cursorHover() {
 }
 
 void Canvas::handleEvent(const sf::Event& event) {
+
+	if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(_coords.x == 0 && _coords.y == 0))
+		return;
+
+	if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(_coords.x == 0 || _coords.y == 0))
+		return;
 
 	if(!dialogs.empty())
 		return;
@@ -801,7 +814,7 @@ void Canvas::draw() {
 	if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(_coords.x == 0 && _coords.y == 0))
 		return;
 
-	if (main_menu->canvas_repeating->_checkbox->_value == 1 && _coords.x != 0 && _coords.y != 0)
+	if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(_coords.x == 0 || _coords.y == 0))
 		return;
 
 	// draw chessboard background
