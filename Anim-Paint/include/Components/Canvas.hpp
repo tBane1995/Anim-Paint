@@ -25,6 +25,8 @@ public:
 	static float _min_zoom;
 	static float _max_zoom;
 
+	static std::shared_ptr<sf::Shader> _chessboardShader;
+
 	bool _isEdited;		// if brush/eraser/fill was used, then true
 	
 	std::vector<std::shared_ptr<EdgePoint>> _edgePoints;	// points use to resize of canvas

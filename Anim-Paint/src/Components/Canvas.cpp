@@ -17,6 +17,7 @@
 #include "History.hpp"
 #include "Components/BottomBar.hpp"
 #include "Time.hpp"
+#include "Tools/Filters.hpp"
 
 sf::Vector2i Canvas::_minSize = sf::Vector2i(16, 16);
 sf::Vector2i Canvas::_maxSize = sf::Vector2i(256, 256);
@@ -25,15 +26,28 @@ float Canvas::_zoom_delta = 16.0f;
 float Canvas::_min_zoom = 0.125f;
 float Canvas::_max_zoom = 1.0f;
 float Canvas::_zoom = 0.25f;
+std::shared_ptr<sf::Shader> Canvas::_chessboardShader = nullptr;
 
 sf::Vector2i Canvas::_size = sf::Vector2i(32, 32);
 
 Canvas::Canvas(sf::Vector2i coords) : Element() {
 	
+	// shader is static
+	if (Canvas::_chessboardShader == nullptr) {
+		Canvas::_chessboardShader = std::make_shared<sf::Shader>();
+		if (!Canvas::_chessboardShader->loadFromMemory(alpha_chessboard_shader_source, sf::Shader::Type::Fragment)) {
+			DebugError(L"Canvas::Canvas: failed to load shader from memory.");
+			exit(0);
+		}
+	}
+
 	_coords = coords;
 
 	reset();
 	setCenter();
+
+	
+	
 }
 
 Canvas::~Canvas() {
@@ -76,42 +90,18 @@ void Canvas::resize(sf::Vector2i newSize) {
 }
 void Canvas::generateBackground(sf::Vector2i size) {
 
-	_bg_image = sf::Image();
 	sf::Vector2i s = getZoomedSize(size);
-	_bg_image.resize(sf::Vector2u(s), sf::Color::Transparent);
-
-	sf::Color c1 = canvas_color1;
-	sf::Color c2 = canvas_color2;
-
-	for (int y = 0; y < s.y; y++) {
-		for (int x = 0; x < s.x; x++) {
-
-			int xx = x / _pixelSize;
-			int yy = y / _pixelSize;
-
-			sf::Color c;
-
-			if (yy % 2 == 0)
-				(xx % 2 == 0) ? c = c1 : c = c2;
-			else
-				(xx % 2 == 1) ? c = c1 : c = c2;
-
-			_bg_image.setPixel(sf::Vector2u(x,y), c);
-
-		}
-	}
-
-	_bg_texture = sf::Texture();
-	if (!_bg_texture.loadFromImage(_bg_image)) {
-		DebugError(L"Canvas::generateBackground: Failed to load texture from image.");
-		exit(0);
-	}
 
 	sf::Vector2i pos;
 	pos.x = _rect.position.x;
 	pos.y = _rect.position.y;
 	_rect = sf::IntRect(pos, s);
+
+	sf::Vector2u imageSize = sf::Vector2u(s.x / Canvas::_pixelSize, s.y / Canvas::_pixelSize);
+	_bg_image.resize(imageSize);
 	
+	_bg_texture = sf::Texture(_bg_image);
+
 }
 
 void Canvas::generateEdgePoints() {
@@ -805,11 +795,19 @@ void Canvas::draw() {
 	if (main_menu->canvas_repeating->_checkbox->_value == 1 && _coords.x != 0 && _coords.y != 0)
 		return;
 
-
+	// draw chessboard background
 	sf::Sprite sprite(_bg_texture);
 	sprite.setPosition(sf::Vector2f(_rect.position));
-	window->draw(sprite);
+	sf::Vector2f scale = sf::Vector2f(float(_rect.size.x) / _bg_texture.getSize().x, float(_rect.size.y) / _bg_texture.getSize().y);
+	sprite.setScale(scale);
+	_chessboardShader->setUniform("rectPos", sf::Vector2f(_rect.position));
+	_chessboardShader->setUniform("rectSize", sf::Vector2f(_rect.size));
 
+	sf::RenderStates rs;
+	rs.shader = _chessboardShader.get();
+	window->draw(sprite, rs);
+
+	// draw layers
 	for (int i = 0; i < getCurrentAnimation()->getLayersCount(); i++) {
 
 		if (layers_panel->layersBoxes[i]->_visibling->_value == 0) {	// 0 - visible, 1 - invisible
@@ -831,7 +829,7 @@ void Canvas::draw() {
 	}
 
 	
-
+	// draw outline and edge points only on the main canvas (0,0)
 	if(_coords == sf::Vector2i(0, 0)) {
 
 		sf::Vector2f rectSize;
