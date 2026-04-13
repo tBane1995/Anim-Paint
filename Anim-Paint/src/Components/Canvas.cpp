@@ -383,20 +383,12 @@ void Canvas::drawPixels(sf::Color color)
 				bool center = (cx == 0 && cy == 0);
 				bool cross = (cx == 0 || cy == 0);
 
-				// ----------------------------
-				// REPEATING MODES
-				// ----------------------------
-				if (mode == 0 && !center)
+				if (mode == 0 && !(cx == 0 && cy == 0))
 					continue;
 
-				if (mode == 1 && !cross)
+				if (mode == 1 && !(cx == 0 || cy == 0))
 					continue;
 
-				// mode == 2 → FULL (all tiles allowed)
-
-				// ----------------------------
-				// Local wrap inside canvas only
-				// ----------------------------
 				tx = wrap(tx, _size.x);
 				ty = wrap(ty, _size.y);
 
@@ -405,45 +397,73 @@ void Canvas::drawPixels(sf::Color color)
 		}
 	}
 }
-
-void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords) {
-
-
+void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords)
+{
 	if (colorToEdit == newColor)
 		return;
 
-	sf::IntRect imageRect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(getCurrentAnimation()->getCurrentLayer()->_image.getSize()));
 	sf::Image& image = getCurrentAnimation()->getCurrentLayer()->_image;
 
-	std::vector < sf::Vector2i > pixels;
-	std::vector<std::vector<bool>> visited(_size.y, std::vector<bool>(_size.x, false));
+	std::vector<sf::Vector2i> pixels;
+
+	sf::Vector2i min, max;
+	min = sf::Vector2i(INT_MAX, INT_MAX);
+	max = sf::Vector2i(INT_MIN, INT_MIN);
+	for (auto& canvas : canvases) {
+		if (canvas->_coords.x < min.x) min.x = canvas->_coords.x;
+		if (canvas->_coords.y < min.y) min.y = canvas->_coords.y;
+		if (canvas->_coords.x > max.x) max.x = canvas->_coords.x;
+		if (canvas->_coords.y > max.y) max.y = canvas->_coords.y;
+	}
+
+	sf::Vector2i size;
+	size.x = (max.x - min.x + 1) * _size.x;
+	size.y = (max.y - min.y + 1) * _size.y;
+
+	std::vector<std::vector<bool>> visited(size.y, std::vector<bool>(size.x, false));
+
+	int mode = main_menu->canvas_repeating->_checkbox->_value;
 
 	pixels.push_back(pixelCoords);
 
-	while (!pixels.empty()) {
-
+	while (!pixels.empty())
+	{
 		sf::Vector2i t = pixels.back();
 		pixels.pop_back();
+
+		int cx = (int)std::floor((float)t.x / _size.x);
+		int cy = (int)std::floor((float)t.y / _size.y);
+
+		if (mode == 0 && !(cx == 0 && cy == 0))
+			continue;
+
+		if (mode == 1 && !(cx == 0 || cy == 0))
+			continue;
+
+		int vx = t.x - min.x * _size.x;
+		int vy = t.y - min.y * _size.y;
+
+		if (vx < 0 || vy < 0 || vx >= size.x || vy >= size.y)
+			continue;
+
+		if (visited[vy][vx])
+			continue;
+
+		visited[vy][vx] = true;
 
 		int gx = wrap(t.x, _size.x);
 		int gy = wrap(t.y, _size.y);
 
-		if (visited[gy][gx])
-			continue;
-
-		visited[gy][gx] = true;
-
-		if (image.getPixel(sf::Vector2u(gx, gy)) == colorToEdit) {
+		if (image.getPixel(sf::Vector2u(gx, gy)) == colorToEdit)
+		{
 			image.setPixel(sf::Vector2u(gx, gy), newColor);
 
-			pixels.push_back(sf::Vector2i(gx - 1, gy));
-			pixels.push_back(sf::Vector2i(gx + 1, gy));;
-			pixels.push_back(sf::Vector2i(gx, gy - 1));;
-			pixels.push_back(sf::Vector2i(gx, gy + 1));;
+			pixels.push_back(sf::Vector2i(t.x - 1, t.y));
+			pixels.push_back(sf::Vector2i(t.x + 1, t.y));
+			pixels.push_back(sf::Vector2i(t.x, t.y - 1));
+			pixels.push_back(sf::Vector2i(t.x, t.y + 1));
 		}
-
 	}
-
 }
 
 void Canvas::fillPixels(sf::Color color) {
@@ -451,7 +471,7 @@ void Canvas::fillPixels(sf::Color color) {
 	if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(_coords.x == 0 && _coords.y == 0))
 		return;
 
-	if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(_coords.x == 0 ||_coords.y == 0))
+	if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(_coords.x == 0 || _coords.y == 0))
 		return;
 
 	std::shared_ptr<Layer> layer = getCurrentAnimation()->getCurrentLayer();
@@ -467,6 +487,10 @@ void Canvas::fillPixels(sf::Color color) {
 		return;
 
 	sf::Color colorToEdit = layer->_image.getPixel(sf::Vector2u(tile.x, tile.y));
+
+	tile.x += _coords.x * _size.x;
+	tile.y += _coords.y * _size.y;
+
 	fill(colorToEdit, color, tile);
 }
 
@@ -506,7 +530,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 	if(_isEdited)
 		_isEdited = false;
 
-	if (Element_pressed.get() == this || (Element_pressed.get() == nullptr && Element_hovered.get() == this)) {
+	if (Element_pressed.get() == this || Element_hovered.get() == this) {
 
 		if (toolbar->_toolType == ToolType::Brush) {
 			drawPixels(toolbar->_first_color->_color);
@@ -528,7 +552,7 @@ void Canvas::mouseLeftButtonPressedEvent() {
 }
 
 void Canvas::mouseRightButtonPressedEvent() {
-	if (Element_pressed.get() == this || (Element_pressed.get() == nullptr && Element_hovered.get() == this)) {
+	if (Element_pressed.get() == this || Element_hovered.get() == this) {
 		if (toolbar->_toolType == ToolType::Brush) {
 			drawPixels(toolbar->_second_color->_color);
 			_isEdited = true;
