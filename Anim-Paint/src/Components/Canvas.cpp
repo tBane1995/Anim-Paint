@@ -701,7 +701,7 @@ void Canvas::handleEvent(const sf::Event& event) {
 		return;
 	}
 
-	if (!(Element_hovered.get() == this || Element_hovered == nullptr || (resizable_tool!= nullptr && Element_hovered == resizable_tool))) {
+	if (!(Element_hovered.get() == this || Element_hovered == nullptr || _state == CanvasState::Moving || (resizable_tool!= nullptr && Element_hovered == resizable_tool))) {
 		return;
 	}
 
