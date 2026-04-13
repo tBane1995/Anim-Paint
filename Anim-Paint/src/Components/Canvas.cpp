@@ -413,6 +413,8 @@ void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelC
 	sf::Image& image = getCurrentAnimation()->getCurrentLayer()->_image;
 
 	std::vector < sf::Vector2i > pixels;
+	std::vector<std::vector<bool>> visited(_size.y, std::vector<bool>(_size.x, false));
+
 	pixels.push_back(pixelCoords);
 
 	while (!pixels.empty()) {
@@ -420,16 +422,21 @@ void Canvas::fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelC
 		sf::Vector2i t = pixels.back();
 		pixels.pop_back();
 
-		if (!imageRect.contains(t))
+		int gx = wrap(t.x, _size.x);
+		int gy = wrap(t.y, _size.y);
+
+		if (visited[gy][gx])
 			continue;
 
-		if (image.getPixel(sf::Vector2u(t.x, t.y)) == colorToEdit) {
-			image.setPixel(sf::Vector2u(t.x, t.y), newColor);
+		visited[gy][gx] = true;
 
-			pixels.push_back(sf::Vector2i(t.x - 1, t.y));
-			pixels.push_back(sf::Vector2i(t.x + 1, t.y));;
-			pixels.push_back(sf::Vector2i(t.x, t.y - 1));;
-			pixels.push_back(sf::Vector2i(t.x, t.y + 1));;
+		if (image.getPixel(sf::Vector2u(gx, gy)) == colorToEdit) {
+			image.setPixel(sf::Vector2u(gx, gy), newColor);
+
+			pixels.push_back(sf::Vector2i(gx - 1, gy));
+			pixels.push_back(sf::Vector2i(gx + 1, gy));;
+			pixels.push_back(sf::Vector2i(gx, gy - 1));;
+			pixels.push_back(sf::Vector2i(gx, gy + 1));;
 		}
 
 	}
