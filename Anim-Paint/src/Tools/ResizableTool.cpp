@@ -490,7 +490,6 @@ void ResizableTool::drawImage() {
 	if (_previewImage->getSize().x == 0 || _previewImage->getSize().y == 0)
 		return;
 
-	//sf::Texture texture(*_image);
 	sf::Texture texture(*_previewImage);
 	sf::Sprite sprite(texture);
 	
@@ -714,7 +713,6 @@ void ResizableTool::draw() {
 	if (_state == ResizableToolState::None)
 		return;
 	
-	//generatePreviewImage();
 	drawImage();
 	drawRect();
 	drawEdgePoints();

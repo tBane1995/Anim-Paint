@@ -250,7 +250,7 @@ void Cursor::handleEvent() {
 		}
 	}
 
-	if (resizable_tool != nullptr && Element_pressed == resizable_tool && resizable_tool->_state == ResizableToolState::Selecting) {
+	if (resizable_tool != nullptr && (Element_pressed == nullptr || canvasIsPressed() || Element_pressed == resizable_tool) && resizable_tool->_state == ResizableToolState::Selecting) {
 		window->setMouseCursorVisible(true);
 		_cursor = _crossCursor;
 		window->setMouseCursor(*_cursor);
