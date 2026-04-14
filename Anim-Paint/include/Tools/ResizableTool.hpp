@@ -22,6 +22,7 @@ public:
 	std::shared_ptr<sf::Image> _image;
 	sf::Texture _texture;
 	sf::Shader replace_black_color_shader;
+	std::shared_ptr<sf::Image> _previewImage;
 
 	// others
 	sf::Vector2i _offset;	// to move
@@ -50,6 +51,7 @@ public:
 	virtual void reset();
 	virtual void generateRect();
 	virtual void generateImage();
+	virtual void generatePreviewImage();
 	virtual void generateEdgePoints();
 	virtual void resizeRect();
 	bool clickOnSelection(sf::Vector2i point);

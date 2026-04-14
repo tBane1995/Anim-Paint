@@ -29,6 +29,7 @@ void OptionWithCheckbox::setPosition(sf::Vector2i position, int shortcut_offset)
 
 void OptionWithCheckbox::click() {
 	_checkbox->click();
+
 }
 
 void OptionWithCheckbox::cursorHover() {

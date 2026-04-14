@@ -25,3 +25,7 @@ sf::Vector2i tileToWorld(sf::Vector2i p, sf::Vector2i canvas_position, float zoo
 	float scale = zoom * zoom_delta;
 	return sf::Vector2i(sf::Vector2f(p) * scale) + canvas_position;
 }
+
+int wrap(int v, int size) {
+	return (v % size + size) % size;
+}

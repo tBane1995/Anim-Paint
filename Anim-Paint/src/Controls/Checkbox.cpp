@@ -60,11 +60,6 @@ void Checkbox::hover() {
 
 void Checkbox::click() {
 	_state = CheckboxState::Pressed;
-
-	_value += 1;
-	if (_value >= _textures.size())
-		_value = 0;
-
 	_clickTime = currentTime;
 }
 
@@ -79,6 +74,8 @@ void Checkbox::cursorHover() {
 }
 
 void Checkbox::handleEvent(const sf::Event& event) {
+	
+
 	if (Element_hovered.get() == this) {
 
 		if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
@@ -97,6 +94,11 @@ void Checkbox::update() {
 
 	if (_state == CheckboxState::Pressed) {
 		if ((currentTime - _clickTime).asSeconds() > 0.05f) {
+
+			_value += 1;
+			if (_value >= _textures.size())
+				_value = 0;
+
 			if (_onclick_func) {
 				_onclick_func();
 			}

@@ -66,7 +66,6 @@ public:
 	void setResizeAllCanvases(sf::Vector2i newSize);
 	void setPositionAllCanvases(sf::Vector2i position);
 
-	int wrap(int v, int size);
 	void drawPixels(sf::Color color);
 	void fill(sf::Color colorToEdit, sf::Color newColor, sf::Vector2i pixelCoords);
 	void fillPixels(sf::Color color);
@@ -89,3 +88,6 @@ public:
 
 extern std::shared_ptr<Canvas> canvas;
 extern std::vector<std::shared_ptr<Canvas>> canvases;
+
+bool canvasIsHovered();
+bool canvasIsPressed();

@@ -70,61 +70,40 @@ void pasteImageWithAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf:
 
 void pasteImageWithNewColorAndAlpha(sf::Image& dst, sf::Image& src, int dstX, int dstY, sf::Color newColor, sf::Color alphaColor)
 {
-	sf::IntRect s(sf::Vector2i(0, 0), sf::Vector2i(src.getSize()));
-
-	if (dstX < 0) { s.position.x -= dstX; s.size.x += dstX; dstX = 0; }
-	if (dstY < 0) { s.position.y -= dstY; s.size.y += dstY; dstY = 0; }
-
-	const int dw = int(dst.getSize().x), dh = int(dst.getSize().y);
-
-	if (dstX >= dw || dstY >= dh)
-		return;
-
-	if (dstX + s.size.x > dw) s.size.x = dw - dstX;
-	if (dstY + s.size.y > dh) s.size.y = dh - dstY;
-
-	if (s.size.x <= 0 || s.size.y <= 0)
-		return;
-
-	sf::Image tmp;
-	tmp.resize(sf::Vector2u(s.size), sf::Color::Transparent);
-	if (!tmp.copy(src, sf::Vector2u(0, 0), s, true)) {
-		DebugError(L"pasteImageWithNewColorAndAlpha: image copy failed");
-		exit(0);
-	}
 
 	sf::Texture tex;
-	if (!tex.loadFromImage(tmp)) {
-		DebugError(L"pasteImageWithNewColorAndAlpha: failed to load texture from image.");
-		exit(0);
-	}
+	tex.loadFromImage(src);
 
 	sf::RenderTexture rtex;
-	if (!rtex.resize(tex.getSize())) {
-		DebugError(L"pasteImageWithNewColorAndAlpha: failed to resize render texture.");
-		exit(0);
-	}
+	rtex.resize(src.getSize());
 
 	sf::Shader sh;
-	if (!sh.loadFromMemory(replace_black_shader_source, sf::Shader::Type::Fragment)) {
-		DebugError(L"pasteImageWithNewColorAndAlpha: failed to load shader from memory.");
-		exit(0);
-	}
+	sh.loadFromMemory(replace_black_shader_source, sf::Shader::Type::Fragment);
 
 	sh.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor));
 	sh.setUniform("newColor", sf::Glsl::Vec4(newColor));
 
 	sf::Sprite spr(tex);
+
 	rtex.clear(sf::Color::Transparent);
 	rtex.draw(spr, &sh);
 	rtex.display();
 
 	sf::Image result = rtex.getTexture().copyToImage();
 
-	// TERAZ wklejasz wynik w odpowiednie miejsce
-	if (!dst.copy(result, sf::Vector2u(dstX, dstY), sf::IntRect({ 0, 0 }, { (int)result.getSize().x, (int)result.getSize().y }), true)) {
-		DebugError(L"final copy failed");
-		exit(0);
+	for (int y = 0; y < (int)result.getSize().y; y++) {
+		for (int x = 0; x < (int)result.getSize().x; x++) {
+
+			int gx = wrap(dstX + x, dst.getSize().x);
+			int gy = wrap(dstY + y, dst.getSize().y);
+
+			sf::Color c = result.getPixel(sf::Vector2u(x, y));
+
+			if (c.a == 0)
+				continue;
+
+			dst.setPixel(sf::Vector2u(gx, gy), c);
+		}
 	}
 
 }
@@ -213,6 +192,7 @@ void ResizableTool::reset() {
 	generateRect();
 	generateImage();
 	generateEdgePoints();
+	generatePreviewImage();
 }
 
 void ResizableTool::generateRect() {
@@ -245,6 +225,51 @@ void ResizableTool::generateImage() {
 		return;
 
 	_image = std::make_shared<sf::Image>(sf::Vector2u(_rect.size), sf::Color::Transparent);
+}
+
+void ResizableTool::generatePreviewImage() {
+
+	_previewImage = std::make_shared<sf::Image>();
+
+	if (_rect.size.x < 1 || _rect.size.y < 1)
+		return;
+
+	if(_image == nullptr)
+		return;
+
+	if(_image->getSize().x < 1 || _image->getSize().y < 1)
+		return;
+
+	_previewImage->resize(_image->getSize(), sf::Color::Transparent);
+
+	for (int y = 0; y < _image->getSize().y; y++) {
+		for (int x = 0; x < _image->getSize().x; x++) {
+
+			sf::Vector2i globalPos = _rect.position + sf::Vector2i(x, y);
+
+			bool insideAnyCanvas = false;
+
+			for (auto& canvas : canvases) {
+
+				if (main_menu->canvas_repeating->_checkbox->_value == 0 && !(canvas->_coords.x == 0 && canvas->_coords.y == 0))
+					continue;
+
+				if (main_menu->canvas_repeating->_checkbox->_value == 1 && !(canvas->_coords.x == 0 || canvas->_coords.y == 0))
+					continue;
+
+				sf::Vector2i canvasPos(canvas->_coords.x * canvas->_size.x, canvas->_coords.y * canvas->_size.y);
+				sf::IntRect canvasRect(canvasPos, canvas->_size);
+				if (canvasRect.contains(globalPos)) {
+					insideAnyCanvas = true;
+					break;
+				}
+			}
+
+			if (insideAnyCanvas) {
+				_previewImage->setPixel(sf::Vector2u(x, y), _image->getPixel(sf::Vector2u(x, y)));
+			}
+		}
+	}
 }
 
 void ResizableTool::generateEdgePoints() {
@@ -411,7 +436,10 @@ void ResizableTool::pasteToCanvas() {
 	if(_state == ResizableToolState::None)
 		return;
 
-	pasteImageWithNewColorAndAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_image, _rect.position.x, _rect.position.y, toolbar->_first_color->_color, sf::Color::Transparent);
+	if (_previewImage == nullptr)
+		return;
+
+	pasteImageWithNewColorAndAlpha(getCurrentAnimation()->getCurrentLayer()->_image, *_previewImage, _rect.position.x, _rect.position.y, toolbar->_first_color->_color, sf::Color::Transparent);
 
 }
 
@@ -456,7 +484,14 @@ void ResizableTool::drawImage() {
 	if (_image->getSize().x == 0 || _image->getSize().y == 0)
 		return;
 
-	sf::Texture texture(*_image);
+	if (!_previewImage)
+		return;
+
+	if (_previewImage->getSize().x == 0 || _previewImage->getSize().y == 0)
+		return;
+
+	//sf::Texture texture(*_image);
+	sf::Texture texture(*_previewImage);
 	sf::Sprite sprite(texture);
 	
 	float scale = canvas->_zoom * canvas->_zoom_delta;
@@ -464,19 +499,7 @@ void ResizableTool::drawImage() {
 	float sy = float(_rect.size.y) / float(_image->getSize().y) * scale;
 	sprite.setScale(sf::Vector2f(sx, sy));
 
-	sf::IntRect canvasRect(sf::Vector2i(0, 0), canvas->_size);
-	auto intersection = _rect.findIntersection(canvasRect);
-	if (!intersection.has_value())
-		return;
-
-	sf::IntRect inter = intersection.value();
-	int tx = std::max(0, -_rect.position.x + inter.position.x);
-	int ty = std::max(0, -_rect.position.y + inter.position.y);
-	int tw = std::min(int(_image->getSize().x) - tx, inter.size.x);
-	int th = std::min(int(_image->getSize().y) - ty, inter.size.y);
-	sprite.setTextureRect(sf::IntRect(sf::Vector2i(tx, ty), sf::Vector2i(tw, th)));
-
-	sprite.setPosition(sf::Vector2f(inter.position) * scale + sf::Vector2f(canvas->_position));
+	sprite.setPosition(sf::Vector2f(_rect.position) * scale + sf::Vector2f(canvas->_position));
 
 	replace_black_color_shader.setUniform("alphaColor", sf::Glsl::Vec4(sf::Color::Transparent));
 	replace_black_color_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
@@ -591,9 +614,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 		
-		if ((Element_hovered == canvas || Element_hovered.get() == nullptr || Element_hovered.get() == this || 
-			Element_pressed == canvas || Element_pressed.get() == this) 
-			&& (_state == ResizableToolState::None || _state == ResizableToolState::Selected)) {
+		if ((Element_hovered == nullptr || Element_pressed.get() == this || canvasIsHovered() || canvasIsPressed()) && (_state == ResizableToolState::None || _state == ResizableToolState::Selected)) {
 
 			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 
@@ -641,6 +662,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			clampedRectPos.x = std::clamp(clampedRectPos.x, - _rect.size.x, canvas->_size.x);
 			clampedRectPos.y = std::clamp(clampedRectPos.y, - _rect.size.y, canvas->_size.y);
 			setPosition(clampedRectPos);
+			generatePreviewImage();
 		}
 		else if(_state == ResizableToolState::Selecting) {
 			_state = ResizableToolState::Selecting;
@@ -654,6 +676,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 			_points.push_back(oldPoint + sf::Vector2i(0, tile.y - oldPoint.y));
 			generateRect();
 			generateImage();
+			generatePreviewImage();
 		}
 	}
 	else if (const auto* mbr = event.getIf<sf::Event::MouseButtonReleased>(); mbr && mbr->button == sf::Mouse::Button::Left) {
@@ -678,6 +701,7 @@ void ResizableTool::update() {
 		}
 		resizeRect();
 		generateImage();
+		generatePreviewImage(); 
 		return;
 	}
 }
@@ -690,7 +714,7 @@ void ResizableTool::draw() {
 	if (_state == ResizableToolState::None)
 		return;
 	
-
+	//generatePreviewImage();
 	drawImage();
 	drawRect();
 	drawEdgePoints();

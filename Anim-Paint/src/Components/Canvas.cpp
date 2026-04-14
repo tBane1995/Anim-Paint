@@ -30,6 +30,8 @@ std::shared_ptr<sf::Shader> Canvas::_chessboardShader = nullptr;
 
 sf::Vector2i Canvas::_size = sf::Vector2i(32, 32);
 
+
+
 Canvas::Canvas(sf::Vector2i coords) : Element() {
 	
 	// shader is static
@@ -218,11 +220,11 @@ void Canvas::resize(std::shared_ptr<EdgePoint> edgePoint, sf::Vector2i cursorPos
 		maxX = (float)(_point_right->getPosition().x) + float(pp.x) * _zoom * _zoom_delta;
 	}
 
-	float minWpx = (float)(canvas->_minSize.x * _zoom * _zoom_delta);
-	float minHpx = (float)(canvas->_minSize.y * _zoom * _zoom_delta);
+	float minWpx = (float)(_minSize.x * _zoom * _zoom_delta);
+	float minHpx = (float)(_minSize.y * _zoom * _zoom_delta);
 
-	float maxWpx = (float)(canvas->_maxSize.x * _zoom * _zoom_delta);
-	float maxHpx = (float)(canvas->_maxSize.y * _zoom * _zoom_delta);
+	float maxWpx = (float)(_maxSize.x * _zoom * _zoom_delta);
+	float maxHpx = (float)(_maxSize.y * _zoom * _zoom_delta);
 
 	// Który bok/narożnik jest przeciągany?
 	const bool movingLeft = (edgePoint == _point_left || edgePoint == _point_left_top || edgePoint == _point_left_bottom);
@@ -334,10 +336,6 @@ void Canvas::setPositionAllCanvases(sf::Vector2i position) {
 		sf::Vector2i newPos = canvases.back()->_position + sf::Vector2i(s.x * canvas->_coords.x, s.y * canvas->_coords.y);
 		canvas->setPosition(newPos);
 	}
-}
-
-int Canvas::wrap(int v, int size) {
-	return (v % size + size) % size;
 }
 
 void Canvas::drawPixels(sf::Color color)
@@ -914,3 +912,21 @@ void Canvas::draw() {
 
 std::shared_ptr<Canvas> canvas;
 std::vector<std::shared_ptr<Canvas>> canvases;
+
+bool canvasIsHovered() {
+	for (auto& canvas : canvases) {
+		if (Element_hovered.get() == canvas.get()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool canvasIsPressed() {
+	for (auto& canvas : canvases) {
+		if (Element_pressed.get() == canvas.get()) {
+			return true;
+		}
+	}
+	return false;
+}

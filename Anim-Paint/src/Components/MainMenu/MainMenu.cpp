@@ -290,7 +290,11 @@ MainMenu::MainMenu() : Element() {
 	canvas_repeating = std::make_shared<OptionWithCheckbox>(L"Canvas repeating", getTexture(L"tex\\main_menu\\canvas_single.png"), getTexture(L"tex\\main_menu\\canvas_single_hover.png"));
 	canvas_repeating->addValue(getTexture(L"tex\\main_menu\\canvas_cross.png"), getTexture(L"tex\\main_menu\\canvas_cross_hover.png"));
 	canvas_repeating->addValue(getTexture(L"tex\\main_menu\\canvas_multi.png"), getTexture(L"tex\\main_menu\\canvas_multi_hover.png"));
-
+	canvas_repeating->_checkbox->_onclick_func = [this]() {
+		if (resizable_tool != nullptr) {
+			resizable_tool->generatePreviewImage();
+		}
+		};
 	window_animations = std::make_shared<Option>(L"Animations");
 	window_animations->_onclick_func = [this]() {
 		if (!isOpenStaticDialog(animations_panel)) {		
