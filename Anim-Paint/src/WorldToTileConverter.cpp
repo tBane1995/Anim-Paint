@@ -21,6 +21,17 @@ sf::Vector2i worldToTile(sf::Vector2i p, sf::Vector2i canvasPosition, float zoom
 	return sf::Vector2i(tx, ty);
 }
 
+sf::Vector2i worldToTile(sf::Vector2i p, int canvasXPosition, int canvasYPosition, float zoom, float zoom_delta) {
+	float scale = zoom * zoom_delta;
+	float localX = float(p.x - canvasXPosition);
+	float localY = float(p.y - canvasYPosition);
+	int tx = int(std::floor(localX / scale));
+	int ty = int(std::floor(localY / scale));
+
+	//std::cout << "tx = " << tx << ", ty = " << ty << "\n";
+	return sf::Vector2i(tx, ty);
+}
+
 sf::Vector2i tileToWorld(sf::Vector2i p, sf::Vector2i canvas_position, float zoom, float zoom_delta) {
 	float scale = zoom * zoom_delta;
 	return sf::Vector2i(sf::Vector2f(p) * scale) + canvas_position;
