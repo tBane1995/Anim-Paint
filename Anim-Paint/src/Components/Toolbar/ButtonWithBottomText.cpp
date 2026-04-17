@@ -4,7 +4,7 @@
 #include "Cursor.hpp"
 #include "Window.hpp"
 
-ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position) : Button()
+ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, std::shared_ptr<Texture> pressTexture, sf::Vector2i position) : Button()
 {
 	_rectIdleColor = rectColor;
 	_rectHoverColor = rectColor;
@@ -26,6 +26,7 @@ ButtonWithBottomText::ButtonWithBottomText(std::wstring text, sf::Color rectColo
 
 	_texture = texture;
 	_hoverTexture = hoverTexture;
+	_pressTexture = pressTexture;
 
 	_rect = sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(48, 64));
 
@@ -104,7 +105,27 @@ void ButtonWithBottomText::draw() {
 	rect.setPosition(rectPosition);
 	window->draw(rect);
 
-	sf::Sprite sprite((_state == ButtonState::Idle) ? *_texture->_texture : *_hoverTexture->_texture);
+	std::shared_ptr<Texture> tex;
+	switch (_state)
+	{
+		case ButtonState::Pressed:
+			tex = _pressTexture;
+			break;
+
+		case ButtonState::Hover:
+			tex = _hoverTexture;
+			break;
+
+		case ButtonState::Idle:
+			tex = _texture;
+			break;
+
+		default:
+			tex = _texture;
+			break;
+	}
+
+	sf::Sprite sprite(*tex->_texture);
 	sprite.setPosition(sf::Vector2f(_rect.position));
 	window->draw(sprite);
 

@@ -168,18 +168,23 @@ void loadTextures() {
 
 	texturePaths.push_back(L"tex\\toolbar\\btn_paste.png");
 	texturePaths.push_back(L"tex\\toolbar\\btn_paste_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_paste_press.png");
 	
 	texturePaths.push_back(L"tex\\toolbar\\btn_cut.png");
 	texturePaths.push_back(L"tex\\toolbar\\btn_cut_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_cut_press.png");
 
 	texturePaths.push_back(L"tex\\toolbar\\btn_copy.png");
 	texturePaths.push_back(L"tex\\toolbar\\btn_copy_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_copy_press.png");
 
 	texturePaths.push_back(L"tex\\toolbar\\btn_select.png");
 	texturePaths.push_back(L"tex\\toolbar\\btn_select_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_select_press.png");
 
 	texturePaths.push_back(L"tex\\toolbar\\btn_lasso.png");
 	texturePaths.push_back(L"tex\\toolbar\\btn_lasso_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_lasso_press.png");
 
 	texturePaths.push_back(L"tex\\toolbar\\btn_brush.png");
 	texturePaths.push_back(L"tex\\toolbar\\btn_brush_hover.png");
@@ -199,9 +204,11 @@ void loadTextures() {
 
 	texturePaths.push_back(L"tex\\toolbar\\btn_size_decrease.png");
 	texturePaths.push_back(L"tex\\toolbar\\btn_size_decrease_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_size_decrease_press.png");
 
 	texturePaths.push_back(L"tex\\toolbar\\btn_size_increase.png");
 	texturePaths.push_back(L"tex\\toolbar\\btn_size_increase_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_size_increase_press.png");
 
 	texturePaths.push_back(L"tex\\toolbar\\btn_palette_colors.png");
 	texturePaths.push_back(L"tex\\toolbar\\btn_palette_colors_hover.png");

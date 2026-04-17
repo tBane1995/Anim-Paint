@@ -5,7 +5,7 @@
 #include "Time.hpp"
 #include "Window.hpp"
 
-PaletteButton::PaletteButton(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position) : ButtonWithBottomText(text, rectColor, textColor, hoverTextColor, texture, hoverTexture, position) {
+PaletteButton::PaletteButton(std::wstring text, sf::Color rectColor, sf::Color textColor, sf::Color hoverTextColor, std::shared_ptr<Texture> texture, std::shared_ptr<Texture> hoverTexture, sf::Vector2i position) : ButtonWithBottomText(text, rectColor, textColor, hoverTextColor, texture, hoverTexture, hoverTexture, position) {
 	_shader = sf::Shader();
 	if (!_shader.loadFromMemory(palette_button_shader_source, sf::Shader::Type::Fragment)) {
 		DebugError(L"PaletteButton::PaletteButton: failed to load shader from memory.");
