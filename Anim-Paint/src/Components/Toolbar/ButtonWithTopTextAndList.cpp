@@ -20,8 +20,8 @@ ButtonWithTopTextAndList::ButtonWithTopTextAndList(std::wstring text, sf::Color 
 	_rectPressBorderColor = tools_button_press_border_color;
 	_rectSelectBorderColor = tools_button_select_border_color;
 
-	_texture = getTexture(L"tex\\tools\\bottom_arrow.png");
-	_hoverTexture = getTexture(L"tex\\tools\\bottom_arrow_hover.png");
+	_texture = getTexture(L"tex\\toolbar\\bottom_arrow.png");
+	_hoverTexture = getTexture(L"tex\\toolbar\\bottom_arrow_hover.png");
 
 	_textColor = textColor;
 	_hoverTextColor = hoverTextColor;
