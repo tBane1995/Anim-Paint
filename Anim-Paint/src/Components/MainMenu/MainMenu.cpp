@@ -824,6 +824,7 @@ void MainMenu::update() {
 	edit_redo->setActive(history->canRedo());
 	edit_undo->setActive(history->canUndo());
 	select_none->setActive((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && resizable_tool!= nullptr && resizable_tool->_state != ResizableToolState::None);
+	select_align_center->setActive((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && resizable_tool!= nullptr && resizable_tool->_state != ResizableToolState::None);
 	
 }
 
