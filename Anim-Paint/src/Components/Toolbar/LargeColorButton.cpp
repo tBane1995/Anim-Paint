@@ -3,7 +3,7 @@
 #include "Tools/Filters.hpp"
 #include "DebugLog.hpp"
 
-LargeColorButton::LargeColorButton(sf::Color color) : ButtonWithSprite(getTexture(L"tex\\tools\\frame_large.png"), getTexture(L"tex\\tools\\frame_large_hover.png"), getTexture(L"tex\\tools\\frame_large_hover.png")) {
+LargeColorButton::LargeColorButton(sf::Color color) : ButtonWithSprite(getTexture(L"tex\\toolbar\\frame_large.png"), getTexture(L"tex\\toolbar\\frame_large_hover.png"), getTexture(L"tex\\toolbar\\frame_large_hover.png")) {
 	_color = color;
 
     _shader = sf::Shader();

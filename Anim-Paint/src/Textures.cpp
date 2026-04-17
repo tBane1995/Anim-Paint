@@ -157,86 +157,86 @@ void loadTextures() {
 	texturePaths.push_back(L"tex\\btn32\\checked_press.png");
 
 	// tools
-	texturePaths.push_back(L"tex\\tools\\bottom_arrow.png");
-	texturePaths.push_back(L"tex\\tools\\bottom_arrow_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\bottom_arrow.png");
+	texturePaths.push_back(L"tex\\toolbar\\bottom_arrow_hover.png");
 
-	texturePaths.push_back(L"tex\\tools\\frame.png");
-	texturePaths.push_back(L"tex\\tools\\frame_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\frame.png");
+	texturePaths.push_back(L"tex\\toolbar\\frame_hover.png");
 
-	texturePaths.push_back(L"tex\\tools\\frame_large.png");
-	texturePaths.push_back(L"tex\\tools\\frame_large_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\frame_large.png");
+	texturePaths.push_back(L"tex\\toolbar\\frame_large_hover.png");
 
-	texturePaths.push_back(L"tex\\tools\\btn_paste.png");
-	texturePaths.push_back(L"tex\\tools\\btn_paste_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_paste.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_paste_hover.png");
 	
-	texturePaths.push_back(L"tex\\tools\\btn_cut.png");
-	texturePaths.push_back(L"tex\\tools\\btn_cut_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_cut.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_cut_hover.png");
 
-	texturePaths.push_back(L"tex\\tools\\btn_copy.png");
-	texturePaths.push_back(L"tex\\tools\\btn_copy_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_copy.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_copy_hover.png");
 
-	texturePaths.push_back(L"tex\\tools\\btn_select.png");
-	texturePaths.push_back(L"tex\\tools\\btn_select_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_select.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_select_hover.png");
 
-	texturePaths.push_back(L"tex\\tools\\btn_lasso.png");
-	texturePaths.push_back(L"tex\\tools\\btn_lasso_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_lasso.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_lasso_hover.png");
 
-	texturePaths.push_back(L"tex\\tools\\btn_brush.png");
-	texturePaths.push_back(L"tex\\tools\\btn_brush_hover.png");
-	texturePaths.push_back(L"tex\\tools\\btn_brush_press.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_brush.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_brush_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_brush_press.png");
 
-	texturePaths.push_back(L"tex\\tools\\btn_fill.png");
-	texturePaths.push_back(L"tex\\tools\\btn_fill_hover.png");
-	texturePaths.push_back(L"tex\\tools\\btn_fill_press.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_fill.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_fill_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_fill_press.png");
 
-	texturePaths.push_back(L"tex\\tools\\btn_picker.png");
-	texturePaths.push_back(L"tex\\tools\\btn_picker_hover.png");
-	texturePaths.push_back(L"tex\\tools\\btn_picker_press.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_picker.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_picker_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_picker_press.png");
 
-	texturePaths.push_back(L"tex\\tools\\btn_eraser.png");
-	texturePaths.push_back(L"tex\\tools\\btn_eraser_hover.png");
-	texturePaths.push_back(L"tex\\tools\\btn_eraser_press.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_eraser.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_eraser_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_eraser_press.png");
 
-	texturePaths.push_back(L"tex\\tools\\btn_size_decrease.png");
-	texturePaths.push_back(L"tex\\tools\\btn_size_decrease_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_size_decrease.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_size_decrease_hover.png");
 
-	texturePaths.push_back(L"tex\\tools\\btn_size_increase.png");
-	texturePaths.push_back(L"tex\\tools\\btn_size_increase_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_size_increase.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_size_increase_hover.png");
 
-	texturePaths.push_back(L"tex\\tools\\btn_palette_colors.png");
-	texturePaths.push_back(L"tex\\tools\\btn_palette_colors_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_palette_colors.png");
+	texturePaths.push_back(L"tex\\toolbar\\btn_palette_colors_hover.png");
 
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\circle.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\circle_hover.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\circle_press.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\circle.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\circle_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\circle_press.png");
 
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\triangle.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\triangle_hover.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\triangle_press.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\triangle.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\triangle_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\triangle_press.png");
 
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\rectangle.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\rectangle_hover.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\rectangle_press.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\rectangle.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\rectangle_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\rectangle_press.png");
 
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\diamond.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\diamond_hover.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\diamond_press.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\diamond.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\diamond_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\diamond_press.png");
 
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\pentagon.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\pentagon_hover.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\pentagon_press.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\pentagon.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\pentagon_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\pentagon_press.png");
 
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\hexagon_flat_top.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\hexagon_flat_top_hover.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\hexagon_flat_top_press.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\hexagon_flat_top.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\hexagon_flat_top_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\hexagon_flat_top_press.png");
 
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\hexagon_point_top.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\hexagon_point_top_hover.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\hexagon_point_top_press.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\hexagon_point_top.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\hexagon_point_top_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\hexagon_point_top_press.png");
 
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\octagon.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\octagon_hover.png");
-	texturePaths.push_back(L"tex\\tools\\resizable_tools\\octagon_press.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\octagon.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\octagon_hover.png");
+	texturePaths.push_back(L"tex\\toolbar\\resizable_tools\\octagon_press.png");
 
 	// bottom bar
 	texturePaths.push_back(L"tex\\bottom_bar\\cursor_position.png");
