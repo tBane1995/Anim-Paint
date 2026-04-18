@@ -119,7 +119,7 @@ Dialog_Resize::~Dialog_Resize() {
 			pasteImageWithMask(getCurrentAnimation()->getCurrentLayer()->_image, *selection->_resizedImage, selection->_resizedRect.position.x, selection->_resizedRect.position.y, *selection->_resizedMaskImage, (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color);
 			history->saveStep();
 			canvas->_isEdited = true;
-			selection->normalize(selection->_resizedRect);
+			selection->scale(selection->_resizedRect);
 			getCurrentAnimation()->getCurrentLayer()->_image = original_image;
 		}
 		else {

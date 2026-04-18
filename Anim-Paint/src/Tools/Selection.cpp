@@ -1055,7 +1055,7 @@ void Selection::setPosition(sf::Vector2i position) {
 	_point_right_bottom->setPosition(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y + m)));
 }
 
-void Selection::normalize(sf::IntRect newRect) {
+void Selection::scale(sf::IntRect newRect) {
 	// This function adjusts the selection points and images to fit the new rectangle after resizing.
 	_resizedRect = newRect;
 

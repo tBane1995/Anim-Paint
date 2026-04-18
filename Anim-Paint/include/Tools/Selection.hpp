@@ -54,7 +54,7 @@ public:
 
 	void shiftOriginIfNeeded(sf::Vector2i& point);
 	void addPoint(sf::Vector2i point);
-	void normalize(sf::IntRect newRectSize);
+	void scale(sf::IntRect newRectSize);
 	bool pointOnSegment(sf::Vector2i p, sf::Vector2i a, sf::Vector2i b);
 	bool isPointInPolygon(sf::Vector2i p, std::vector<sf::Vector2i>& poly);
 	void generateRect();
