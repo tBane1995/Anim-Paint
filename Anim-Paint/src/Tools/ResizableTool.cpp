@@ -117,8 +117,8 @@ ResizableTool::ResizableTool() : Element() {
 	_offset = sf::Vector2i(0, 0);
 	_moveTime = currentTime;
 
-	replace_black_color_shader = sf::Shader();
-	if (!replace_black_color_shader.loadFromMemory(replace_black_shader_source, sf::Shader::Type::Fragment)) {
+	_shader = sf::Shader();
+	if (!_shader.loadFromMemory(replace_black_shader_source, sf::Shader::Type::Fragment)) {
 		DebugError(L"ResizableTool: failed to load shader from memory.");
 		exit(0);
 	}
@@ -688,10 +688,10 @@ void ResizableTool::drawImage() {
 
 	sprite.setPosition(sf::Vector2f(_rect.position) * scale + sf::Vector2f(canvas->_position));
 
-	replace_black_color_shader.setUniform("alphaColor", sf::Glsl::Vec4(sf::Color::Transparent));
-	replace_black_color_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
+	_shader.setUniform("alphaColor", sf::Glsl::Vec4(sf::Color::Transparent));
+	_shader.setUniform("newColor", sf::Glsl::Vec4(toolbar->_first_color->_color));
 
-	window->draw(sprite, &replace_black_color_shader);
+	window->draw(sprite, &_shader);
 }
 
 void ResizableTool::drawEdgePoints() {

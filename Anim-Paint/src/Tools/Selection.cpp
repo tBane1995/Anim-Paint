@@ -283,7 +283,7 @@ Selection::Selection() : ResizableTool() {
 
 	_maskImage = nullptr;
 
-	if (!_maskShader.loadFromMemory(mask_shader_source, sf::Shader::Type::Fragment)) {
+	if (!_shader.loadFromMemory(mask_shader_source, sf::Shader::Type::Fragment)) {
 		DebugError(L"Lasso::Lasso: Failed to load shader from memory.");
 		exit(0);
 	}
@@ -292,11 +292,6 @@ Selection::Selection() : ResizableTool() {
 
 	_resizedMaskImage = nullptr;
 	_resizedImage = nullptr;
-
-	if (!_resizedMaskShader.loadFromMemory(resize_mask_shader_source, sf::Shader::Type::Fragment)) {
-		DebugError(L"Lasso::Lasso: Failed to load shader from memory.");
-		exit(0);
-	}
 
 	_moveTime = sf::Time::Zero;
 }
@@ -738,9 +733,9 @@ void Selection::drawImage(bool useMask) {
 
 	sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color;
 
-	_maskShader.setUniform("texture", _texture);
-	_maskShader.setUniform("mask", maskTexture);
-	_maskShader.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor.r, alphaColor.g, alphaColor.b, alphaColor.a));
+	_shader.setUniform("texture", _texture);
+	_shader.setUniform("mask", maskTexture);
+	_shader.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor.r, alphaColor.g, alphaColor.b, alphaColor.a));
 
 	float scale = canvas->_zoom * canvas->_zoom_delta;
 
@@ -754,7 +749,7 @@ void Selection::drawImage(bool useMask) {
 	sprite.setPosition(spritePos);
 
 	sf::RenderStates rs;
-	rs.shader = &_maskShader;
+	rs.shader = &_shader;
 	window->draw(sprite, rs);
 
 }
@@ -813,9 +808,9 @@ void Selection::drawResizedImage(bool useMask) {
 
 	sf::Color alphaColor = (toolbar->_option_transparency->_checkbox->_value == 0) ? sf::Color::Transparent : toolbar->_second_color->_color;
 
-	_maskShader.setUniform("texture", _texture);
-	_maskShader.setUniform("mask", maskTexture);
-	_maskShader.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor.r/255.0f, alphaColor.g/255.0f, alphaColor.b/255.0f, alphaColor.a/255.0f));
+	_shader.setUniform("texture", _texture);
+	_shader.setUniform("mask", maskTexture);
+	_shader.setUniform("alphaColor", sf::Glsl::Vec4(alphaColor.r/255.0f, alphaColor.g/255.0f, alphaColor.b/255.0f, alphaColor.a/255.0f));
 
 
 	sf::Sprite sprite(_texture);
@@ -829,7 +824,7 @@ void Selection::drawResizedImage(bool useMask) {
 	sprite.setPosition(spritePos);
 
 	sf::RenderStates rs;
-	rs.shader = &_maskShader;
+	rs.shader = &_shader;
 	window->draw(sprite, rs);
 }
 

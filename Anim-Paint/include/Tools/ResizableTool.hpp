@@ -21,7 +21,7 @@ public:
 	// image
 	std::shared_ptr<sf::Image> _image;
 	sf::Texture _texture;
-	sf::Shader replace_black_color_shader;
+	sf::Shader _shader;
 	std::shared_ptr<sf::Image> _previewImage;
 
 	// others

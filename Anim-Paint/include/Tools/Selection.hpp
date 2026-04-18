@@ -24,12 +24,10 @@ public:
 
 	// mask and shader
 	std::shared_ptr<sf::Image> _maskImage;
-	sf::Shader _maskShader;
 
 	// resized things
 	sf::IntRect _resizedRect;
 	std::shared_ptr<sf::Image> _resizedMaskImage;
-	sf::Shader _resizedMaskShader;
 	std::shared_ptr<sf::Image> _resizedImage;
 
 	Selection();
