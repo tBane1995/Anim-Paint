@@ -278,36 +278,40 @@ std::string sepia_shader_source = R"(
 )";
 
 std::string outline_shader_source = R"(
-    uniform sampler2D u_tex;
-    uniform vec2 texelSize;           // 1.0 / textureSize
-    uniform int outlineWidth;        // 0..8 px
-    uniform vec4 backgroundColor;
-    uniform vec4 outlineColor;        // color (rgb) + power (a) [0..1]
-    uniform float threshold;           // background similarity tolerance (0.02..0.08)
+   uniform sampler2D u_tex;
+    uniform vec2 texelSize;
+    uniform int outlineWidth;       // 0..8 px
+    uniform vec4 backgroundColor;   // także alpha
+    uniform vec4 outlineColor;      // rgb + alpha
+    uniform float threshold;        // np. 0.02..0.08
 
-    float colorDistance(vec3 a, vec3 b) { return length(a - b); }
+    float colorDistance(vec4 a, vec4 b)
+    {
+        return length(a - b);
+    }
 
-    void main() {
+    void main()
+    {
         vec2 uv   = gl_TexCoord[0].xy;
         vec4 base = texture2D(u_tex, uv);
 
-        float isBg = step(colorDistance(base.rgb, backgroundColor.rgb), threshold);
-        
-        float ow = (float)outlineWidth;
-        int r = int(ceil(clamp(ow, 0.0, 8.0)));
+        float isBg = step(colorDistance(base, backgroundColor), threshold);
+
+        int r = int(clamp(float(outlineWidth), 0.0, 8.0));
 
         float hasNonBgNeighbor = 0.0;
+
         if (r > 0) {
-            for (int dy = -outlineWidth; dy <= outlineWidth; dy++) {
-                for (int dx = -outlineWidth; dx <= outlineWidth; dx++) {
+            for (int dy = -8; dy <= 8; dy++) {
+                for (int dx = -8; dx <= 8; dx++) {
                     if (abs(dx) > r || abs(dy) > r) continue;
-                    if (dx*dx + dy*dy > r*r)       continue; // circle check
-                    if (dx == 0 && dy == 0)        continue; // skip self
+                    if (dx * dx + dy * dy > r * r)  continue;
+                    if (dx == 0 && dy == 0)         continue;
 
                     vec2 o = vec2(float(dx), float(dy)) * texelSize;
-                    vec3 c = texture2D(u_tex, uv + o).rgb;
+                    vec4 c = texture2D(u_tex, uv + o);
 
-                    float isBgSample = step(colorDistance(c, backgroundColor.rgb), threshold);
+                    float isBgSample = step(colorDistance(c, backgroundColor), threshold);
                     hasNonBgNeighbor = max(hasNonBgNeighbor, 1.0 - isBgSample);
                 }
             }
@@ -315,8 +319,8 @@ std::string outline_shader_source = R"(
 
         float edge = isBg * hasNonBgNeighbor;
 
-        vec3  rgbOut = mix(base.rgb, outlineColor.rgb, edge * outlineColor.a);
-        float aOut   = base.a;
+        vec3 rgbOut = mix(base.rgb, outlineColor.rgb, edge * outlineColor.a);
+        float aOut  = max(base.a, edge * outlineColor.a);
 
         gl_FragColor = vec4(rgbOut, aOut);
     }
