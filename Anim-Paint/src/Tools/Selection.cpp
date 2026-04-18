@@ -16,6 +16,7 @@
 #include "Dialogs/Palette.hpp"
 #include "Components/LayersPanel/LayersPanel.hpp"
 #include "Tools/Filters.hpp"
+#include <typeinfo>
 
 std::string mask_shader_source = R"(
     uniform sampler2D texture;
@@ -1244,14 +1245,14 @@ void Selection::handleEvent(const sf::Event& event) {
 	// other selection interactions
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 
-		if ((canvasIsHovered() || Element_hovered.get() == nullptr || canvasIsPressed() || Element_pressed.get() == nullptr)
-			&& (_state == ResizableToolState::None || _state == ResizableToolState::Selected)) {
-
+		if ((canvasIsHovered() || Element_hovered.get() == nullptr || Element_hovered.get() == this || canvasIsPressed() || Element_pressed.get() == nullptr || Element_pressed.get() == this) &&
+			(_state == ResizableToolState::None || _state == ResizableToolState::Selected)) {
 			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
 
 			if ((toolbar->_toolType == ToolType::Selector || toolbar->_toolType == ToolType::Lasso) && clickOnSelection(tile)) {
 				_state = ResizableToolState::Moving;
 				_offset = tile - _resizedRect.position;
+				DebugLog(L"Start Selection");
 				
 			}
 			else if (toolbar->_toolType == ToolType::Lasso || toolbar->_toolType == ToolType::Selector) {
