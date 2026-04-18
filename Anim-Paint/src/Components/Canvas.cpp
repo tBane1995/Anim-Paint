@@ -387,8 +387,15 @@ void Canvas::drawPixels(sf::Color color)
 				if (mode == 1 && !(cx == 0 || cy == 0))
 					continue;
 
-				tx = wrap(tx, _size.x);
-				ty = wrap(ty, _size.y);
+				if (mode == 1 || mode == 2) {
+					tx = wrap(tx, _size.x);
+					ty = wrap(ty, _size.y);
+				}
+				else {
+					tx = std::clamp(tx, _coords.x * _size.x, _coords.x * _size.x + _size.x - 1);
+					ty = std::clamp(ty, _coords.y * _size.y, _coords.y * _size.y + _size.y - 1);
+				}
+				
 
 				image.setPixel(sf::Vector2u(tx, ty), color);
 			}
