@@ -292,7 +292,10 @@ MainMenu::MainMenu() : Element() {
 	canvas_repeating->addValue(getTexture(L"tex\\main_menu\\canvas_multi.png"), getTexture(L"tex\\main_menu\\canvas_multi_hover.png"));
 	canvas_repeating->_checkbox->_onclick_func = [this]() {
 		if (resizable_tool != nullptr) {
+			sf::Vector2i clampedPos = resizable_tool->getClampedTilePosition(resizable_tool->_rect.position);
+			resizable_tool->setPosition(clampedPos);
 			resizable_tool->generatePreviewImage();
+			resizable_tool->generateEdgePoints();
 		}
 		};
 	window_animations = std::make_shared<Option>(L"Animations");

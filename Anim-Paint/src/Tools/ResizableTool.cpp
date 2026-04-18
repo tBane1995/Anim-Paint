@@ -401,7 +401,22 @@ bool ResizableTool::clickOnSelection(sf::Vector2i point) {
 	return _rect.contains(point);
 }
 
-sf::Vector2i ResizableTool::getClampedPosition() {
+void ResizableTool::scale(sf::IntRect newRect) {
+
+	float scaleX = float(newRect.size.x - 1) / float(_rect.size.x - 1);
+	float scaleY = float(newRect.size.y - 1) / float(_rect.size.y - 1);
+
+	for (auto& p : _points) {
+		p.x = int(p.x * scaleX);
+		p.y = int(p.y * scaleY);
+	}
+
+	_rect = newRect;
+	//generateRect();
+
+}
+
+sf::Vector2i ResizableTool::getClampedPosition(sf::Vector2i newGlobalPosition) {
 	int snapThreshold = 8;
 
 	int bestDX = snapThreshold;
@@ -410,8 +425,8 @@ sf::Vector2i ResizableTool::getClampedPosition() {
 	bool snapX = false;
 	bool snapY = false;
 
-	int snappedX = cursor->_position.x;
-	int snappedY = cursor->_position.y;
+	int snappedX = newGlobalPosition.x;
+	int snappedY = newGlobalPosition.y;
 
 	for (auto& canvas : canvases) {
 
@@ -428,28 +443,28 @@ sf::Vector2i ResizableTool::getClampedPosition() {
 		int top = canvas->_rect.position.y;
 		int bottom = canvas->_rect.position.y + canvas->_rect.size.y;
 
-		int dxLeft = abs(left - cursor->_position.x);
+		int dxLeft = abs(left - newGlobalPosition.x);
 		if (dxLeft < bestDX) {
 			bestDX = dxLeft;
 			snappedX = left;
 			snapX = true;
 		}
 
-		int dxRight = abs(right - cursor->_position.x);
+		int dxRight = abs(right - newGlobalPosition.x);
 		if (dxRight < bestDX) {
 			bestDX = dxRight;
 			snappedX = right;
 			snapX = true;
 		}
 
-		int dyTop = abs(top - cursor->_position.y);
+		int dyTop = abs(top - newGlobalPosition.y);
 		if (dyTop < bestDY) {
 			bestDY = dyTop;
 			snappedY = top;
 			snapY = true;
 		}
 
-		int dyBottom = abs(bottom - cursor->_position.y);
+		int dyBottom = abs(bottom - newGlobalPosition.y);
 		if (dyBottom < bestDY) {
 			bestDY = dyBottom;
 			snappedY = bottom;
@@ -457,7 +472,7 @@ sf::Vector2i ResizableTool::getClampedPosition() {
 		}
 	}
 
-	sf::Vector2i finalPos = cursor->_position;
+	sf::Vector2i finalPos = newGlobalPosition;
 
 	if (snapX && bestDX < snapThreshold)
 		finalPos.x = snappedX;
@@ -507,8 +522,66 @@ sf::Vector2i ResizableTool::getClampedPosition() {
 	return pos;
 }
 
+sf::Vector2i ResizableTool::getClampedTilePosition(sf::Vector2i newPos)
+{
+	int minDistanceSq = INT_MAX;
+	std::shared_ptr<Canvas> canvasToClamp = nullptr;
+
+	if(canvases.empty())
+		return newPos;
+
+	for (auto& canvas : canvases) {
+
+		if (main_menu->canvas_repeating->_checkbox->_value == 0 &&
+			!(canvas->_coords.x == 0 && canvas->_coords.y == 0))
+			continue;
+
+		if (main_menu->canvas_repeating->_checkbox->_value == 1 &&
+			!(canvas->_coords.x == 0 || canvas->_coords.y == 0))
+			continue;
+
+		sf::Vector2i canvasPos(
+			canvas->_coords.x * canvas->_size.x,
+			canvas->_coords.y * canvas->_size.y
+		);
+
+		int left = canvasPos.x;
+		int right = canvasPos.x + canvas->_size.x;
+		int top = canvasPos.y;
+		int bottom = canvasPos.y + canvas->_size.y;
+
+		int dx = std::max({ left - newPos.x, 0, newPos.x - right });
+		int dy = std::max({ top - newPos.y, 0, newPos.y - bottom });
+
+		int distSq = dx * dx + dy * dy;
+
+		if (distSq < minDistanceSq) {
+			minDistanceSq = distSq;
+			canvasToClamp = canvas;
+		}
+	}
+
+	sf::Vector2i canvasPos(
+		canvasToClamp->_coords.x * canvasToClamp->_size.x,
+		canvasToClamp->_coords.y * canvasToClamp->_size.y
+	);
+
+	sf::Vector2i pos = newPos;
+
+	pos.x = std::clamp(pos.x, canvasPos.x - _rect.size.x, canvasPos.x + canvasToClamp->_size.x);
+	pos.y = std::clamp(pos.y, canvasPos.y - _rect.size.y, canvasPos.y + canvasToClamp->_size.y);
+
+	return pos;
+}
+
 void ResizableTool::setPosition(sf::Vector2i position) {
+	sf::Vector2i delta = position - _rect.position;
+
 	_rect.position = position;
+
+	for (auto& p : _points) {
+		p += delta;
+	}
 
 	float scale = canvas->_zoom * canvas->_zoom_delta;
 
@@ -533,6 +606,15 @@ void ResizableTool::setPosition(sf::Vector2i position) {
 	_point_left_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(-m), (int)(rectSize.y + m)));
 	_point_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x / 2), (int)(rectSize.y + m)));
 	_point_right_bottom = std::make_shared<EdgePoint>(sf::Vector2i(rectPos) + sf::Vector2i((int)(rectSize.x + m), (int)(rectSize.y + m)));
+
+	_edgePoints.push_back(_point_left_top);
+	_edgePoints.push_back(_point_top);
+	_edgePoints.push_back(_point_right_top);
+	_edgePoints.push_back(_point_left);
+	_edgePoints.push_back(_point_right);
+	_edgePoints.push_back(_point_left_bottom);
+	_edgePoints.push_back(_point_bottom);
+	_edgePoints.push_back(_point_right_bottom);
 }
 
 void ResizableTool::pasteToCanvas() {
@@ -762,7 +844,7 @@ void ResizableTool::handleEvent(const sf::Event& event) {
 	}
 	else if (const auto* mv = event.getIf<sf::Event::MouseMoved>(); mv) {
 		if (_state == ResizableToolState::Moving) {
-			setPosition(getClampedPosition());
+			setPosition(getClampedPosition(cursor->_position));
 			generatePreviewImage();
 		}
 		else if(_state == ResizableToolState::Selecting) {

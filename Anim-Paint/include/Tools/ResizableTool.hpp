@@ -55,7 +55,9 @@ public:
 	virtual void generateEdgePoints();
 	virtual void resizeRect();
 	bool clickOnSelection(sf::Vector2i point);
-	sf::Vector2i getClampedPosition();
+	void scale(sf::IntRect newRect);
+	sf::Vector2i getClampedPosition(sf::Vector2i newGlobalPosition);
+	sf::Vector2i getClampedTilePosition(sf::Vector2i newPos);
 	virtual void setPosition(sf::Vector2i position);
 
 	virtual void pasteToCanvas();
