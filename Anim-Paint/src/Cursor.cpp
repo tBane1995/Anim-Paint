@@ -175,7 +175,14 @@ void Cursor::handleEvent() {
 		}
 	}
 
-	if (canvas->_state == CanvasState::Moving) {
+	bool canvasIsMoving = false;
+	for(auto& canvas : canvases) {
+		if (canvas->_state == CanvasState::Moving) {
+			canvasIsMoving = true;
+			break;
+		}
+	}
+	if (canvasIsMoving) {
 		window->setMouseCursorVisible(true);
 		_cursor = std::make_shared<sf::Cursor>(sf::Cursor::Type::SizeAll);
 		window->setMouseCursor(*_cursor);
