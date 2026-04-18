@@ -1244,8 +1244,7 @@ void Selection::handleEvent(const sf::Event& event) {
 	// other selection interactions
 	if (const auto* mbp = event.getIf<sf::Event::MouseButtonPressed>(); mbp && mbp->button == sf::Mouse::Button::Left) {
 
-		if ((Element_hovered == canvas || Element_hovered.get() == nullptr || Element_hovered.get() == this ||
-			Element_pressed == canvas || Element_pressed.get() == this)
+		if ((canvasIsHovered() || Element_hovered.get() == nullptr || canvasIsPressed() || Element_pressed.get() == nullptr)
 			&& (_state == ResizableToolState::None || _state == ResizableToolState::Selected)) {
 
 			sf::Vector2i tile = worldToTile(cursor->_position, canvas->_position, canvas->_zoom, canvas->_zoom_delta);
